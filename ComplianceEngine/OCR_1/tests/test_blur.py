@@ -55,24 +55,36 @@ print(
 
 import numpy as np
 
-# Create artificial glare
+# Create a realistic artificial glare spot
 glare_image = image.copy()
 
 h, w = glare_image.shape[:2]
 
-# Add a bright rectangular region
-cv2.rectangle(
+# Create a bright elliptical highlight
+cv2.ellipse(
     glare_image,
-    (int(w * 0.35), int(h * 0.30)),
-    (int(w * 0.65), int(h * 0.70)),
+    (int(w * 0.50), int(h * 0.35)),
+    (int(w * 0.08), int(h * 0.04)),
+    -15,
+    0,
+    360,
     (255, 255, 255),
     -1
 )
 
-artificial_glare_score = calculate_glare_score(glare_image)
+# Slightly blur the highlight to simulate camera glare
+glare_image = cv2.GaussianBlur(
+    glare_image,
+    (11, 11),
+    0
+)
+
+artificial_glare_score = calculate_glare_score(
+    glare_image
+)
 
 print(
-    f"Artificial glare: "
+    f"Realistic artificial glare: "
     f"{artificial_glare_score:.4f} "
     f"({artificial_glare_score * 100:.2f}%)"
 )

@@ -47,37 +47,75 @@ def normalize_blur_score(
 
 def calculate_glare_score(image):
     """
-    Calculate the percentage of pixels affected by glare.
+    Estimate specular glare using brightness and saturation.
 
     Returns:
-        float: glare ratio between 0 and 1.
-
-    Higher value = more glare.
+        float: fraction of image occupied by glare-like pixels.
     """
 
     if image is None:
         raise ValueError("Image could not be loaded.")
 
-    # Convert BGR to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    # Split HSV channels
-    _, saturation, value = cv2.split(hsv)
-
-    # Very bright + low saturation pixels are likely specular highlights.
-    glare_mask = cv2.inRange(
-        hsv,
-        (0, 0, 220),
-        (180, 80, 255)
+    hsv = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2HSV
     )
 
-    glare_pixels = cv2.countNonZero(glare_mask)
+    _, saturation, value = cv2.split(hsv)
 
-    total_pixels = image.shape[0] * image.shape[1]
+    # Very bright pixels
+    bright = value >= 235
 
-    glare_ratio = glare_pixels / total_pixels
+    # Specular highlights tend to have low saturation
+    low_saturation = saturation <= 50
 
-    return float(glare_ratio)
+    glare_mask = (
+        bright &
+        low_saturation
+    ).astype(np.uint8) * 255
+
+    # Remove isolated single-pixel noise
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_ELLIPSE,
+        (3, 3)
+    )
+
+    glare_mask = cv2.morphologyEx(
+        glare_mask,
+        cv2.MORPH_OPEN,
+        kernel
+    )
+
+    # Join nearby highlight pixels
+    glare_mask = cv2.morphologyEx(
+        glare_mask,
+        cv2.MORPH_CLOSE,
+        kernel
+    )
+
+    # -----------------------------------------
+    # Remove tiny connected components
+    # -----------------------------------------
+
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
+        glare_mask,
+        connectivity=8
+    )
+
+    filtered_mask = np.zeros_like(glare_mask)
+
+    for i in range(1, num_labels):
+
+        area = stats[i, cv2.CC_STAT_AREA]
+
+        if area >= 20:
+            filtered_mask[labels == i] = 255
+
+    glare_pixels = cv2.countNonZero(
+        filtered_mask
+    )
+
+    return glare_pixels / filtered_mask.size
 
 def calculate_exposure_score(image):
     """
@@ -254,7 +292,7 @@ def quality_gate(image):
     if blur_quality < 0.50:
         reasons.append("Image is too blurry.")
 
-    if glare_score > 0.15:
+    if glare_score > 0.10:
         reasons.append("Too much glare detected.")
 
     if exposure_quality < 0.50:
