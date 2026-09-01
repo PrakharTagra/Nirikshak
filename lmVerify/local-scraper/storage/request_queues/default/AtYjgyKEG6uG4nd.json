@@ -1,0 +1,9 @@
+{
+	"id": "AtYjgyKEG6uG4nd",
+	"json": "{\"id\":\"AtYjgyKEG6uG4nd\",\"url\":\"https://www.amazon.in/gp/product/B0H7S6LT9P?aref=Tbd3Nv3axj&aaxitk=daf688ebc20f2caca6b3a319c60cd6fc&pd_rd_plhdr=t&pf_rd_r=AMG6BXNMDW14A5HHQ1TH&th=1\",\"loadedUrl\":\"https://www.amazon.in/gp/product/B0H7S6LT9P?aref=Tbd3Nv3axj&aaxitk=daf688ebc20f2caca6b3a319c60cd6fc&pd_rd_plhdr=t&pf_rd_r=AMG6BXNMDW14A5HHQ1TH&th=1\",\"uniqueKey\":\"https://www.amazon.in/gp/product/B0H7S6LT9P?aaxitk=daf688ebc20f2caca6b3a319c60cd6fc&aref=Tbd3Nv3axj&pd_rd_plhdr=t&pf_rd_r=AMG6BXNMDW14A5HHQ1TH&th=1\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-08-30T06:07:49.719Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://www.amazon.in/gp/product/B0H7S6LT9P?aaxitk=daf688ebc20f2caca6b3a319c60cd6fc&aref=Tbd3Nv3axj&pd_rd_plhdr=t&pf_rd_r=AMG6BXNMDW14A5HHQ1TH&th=1",
+	"url": "https://www.amazon.in/gp/product/B0H7S6LT9P?aref=Tbd3Nv3axj&aaxitk=daf688ebc20f2caca6b3a319c60cd6fc&pd_rd_plhdr=t&pf_rd_r=AMG6BXNMDW14A5HHQ1TH&th=1"
+}
