@@ -1,10 +1,14 @@
 import cv2
+import sys
 
 from preprocessing.roi import detect_product_roi
 from preprocessing.quality_gate import quality_gate
 
-
-IMAGE_PATH = "tests/bottle.jpeg"
+IMAGE_PATH = (
+    sys.argv[1]
+    if len(sys.argv) > 1
+    else "tests/sample.jpeg"
+)
 
 image = cv2.imread(IMAGE_PATH)
 
