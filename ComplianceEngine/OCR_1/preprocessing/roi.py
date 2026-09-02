@@ -3,6 +3,7 @@ import numpy as np
 
 
 def _clip_box(box, width, height):
+
     x1, y1, x2, y2 = box
 
     x1 = max(0, int(x1))
@@ -16,24 +17,22 @@ def _clip_box(box, width, height):
     return x1, y1, x2, y2
 
 
-def _box_to_corners(box):
-    x1, y1, x2, y2 = box
-
-    return np.array([
-        [x1, y1],
-        [x2 - 1, y1],
-        [x2 - 1, y2 - 1],
-        [x1, y2 - 1]
-    ], dtype=np.float32)
-
-
 def detect_product_roi(image):
     """
-    Detect COMPLETE visible product.
+    Product-focused ROI detection.
 
-    No PDP detection.
-    No text-panel detection.
-    No Hough rectangles.
+    Goal:
+        Detect the main retail product instead of
+        selecting hands/background.
+
+    Strategy:
+        1. Work on resized image
+        2. Create a center-focused search region
+        3. Use GrabCut only inside that region
+        4. Remove weak/background regions
+        5. Prefer compact central product
+        6. Add small padding
+        7. Fallback to center crop if segmentation fails
     """
 
     if image is None:
@@ -41,11 +40,11 @@ def detect_product_roi(image):
 
     original_h, original_w = image.shape[:2]
 
-    # --------------------------------------------------------
-    # Resize only for faster detection
-    # --------------------------------------------------------
+    # ========================================================
+    # 1. RESIZE
+    # ========================================================
 
-    max_dimension = 900
+    max_dimension = 1000
 
     scale = min(
         1.0,
@@ -53,6 +52,7 @@ def detect_product_roi(image):
     )
 
     if scale < 1.0:
+
         work = cv2.resize(
             image,
             None,
@@ -60,28 +60,73 @@ def detect_product_roi(image):
             fy=scale,
             interpolation=cv2.INTER_AREA
         )
+
     else:
         work = image.copy()
 
     h, w = work.shape[:2]
 
-    # --------------------------------------------------------
-    # GrabCut
+    # ========================================================
+    # 2. CENTER PRODUCT SEARCH REGION
     #
-    # Product is expected to be reasonably central.
-    # We use ONE large rectangle, not individual components.
-    # --------------------------------------------------------
+    # We deliberately DO NOT allow the entire image to
+    # become foreground.
+    #
+    # Product is expected to be the main central object.
+    # ========================================================
 
-    mask = np.zeros(
+    rx1 = int(w * 0.18)
+    rx2 = int(w * 0.82)
+
+    ry1 = int(h * 0.12)
+    ry2 = int(h * 0.98)
+
+    rw = rx2 - rx1
+    rh = ry2 - ry1
+
+    # ========================================================
+    # 3. GRABCUT MASK
+    # ========================================================
+
+    mask = np.full(
         (h, w),
+        cv2.GC_BGD,
         dtype=np.uint8
     )
 
-    rect_x = int(w * 0.14)
-    rect_y = int(h * 0.02)
+    # Search region = probable background
+    mask[
+        ry1:ry2,
+        rx1:rx2
+    ] = cv2.GC_PR_BGD
 
-    rect_w = int(w * 0.72)
-    rect_h = int(h * 0.96)
+    # Strong central product seed
+    sx1 = int(w * 0.34)
+    sx2 = int(w * 0.66)
+
+    sy1 = int(h * 0.22)
+    sy2 = int(h * 0.96)
+
+    mask[
+        sy1:sy2,
+        sx1:sx2
+    ] = cv2.GC_PR_FGD
+
+    # Strong foreground core
+    cx1 = int(w * 0.40)
+    cx2 = int(w * 0.60)
+
+    cy1 = int(h * 0.30)
+    cy2 = int(h * 0.90)
+
+    mask[
+        cy1:cy2,
+        cx1:cx2
+    ] = cv2.GC_FGD
+
+    # ========================================================
+    # 4. GRABCUT
+    # ========================================================
 
     bg_model = np.zeros(
         (1, 65),
@@ -94,41 +139,48 @@ def detect_product_roi(image):
     )
 
     try:
+
         cv2.grabCut(
             work,
             mask,
-            (
-                rect_x,
-                rect_y,
-                rect_w,
-                rect_h
-            ),
+            None,
             bg_model,
             fg_model,
-            4,
-            cv2.GC_INIT_WITH_RECT
+            5,
+            cv2.GC_INIT_WITH_MASK
         )
+
     except cv2.error:
-        return None, None
 
-    # --------------------------------------------------------
-    # Foreground
-    # --------------------------------------------------------
+        mask = None
 
-    foreground = np.where(
-        (mask == cv2.GC_FGD) |
-        (mask == cv2.GC_PR_FGD),
-        255,
-        0
-    ).astype(np.uint8)
+    # ========================================================
+    # 5. CREATE FOREGROUND MASK
+    # ========================================================
 
-    # --------------------------------------------------------
-    # Join broken parts of the SAME product
-    # --------------------------------------------------------
+    if mask is not None:
+
+        foreground = np.where(
+            (mask == cv2.GC_FGD) |
+            (mask == cv2.GC_PR_FGD),
+            255,
+            0
+        ).astype(np.uint8)
+
+    else:
+
+        foreground = np.zeros(
+            (h, w),
+            dtype=np.uint8
+        )
+
+    # ========================================================
+    # 6. MORPHOLOGICAL CLEANUP
+    # ========================================================
 
     kernel_size = max(
-        9,
-        int(min(h, w) * 0.02)
+        5,
+        int(min(h, w) * 0.015)
     )
 
     if kernel_size % 2 == 0:
@@ -146,68 +198,200 @@ def detect_product_roi(image):
         iterations=2
     )
 
-    # Remove tiny noise
-    small_kernel = cv2.getStructuringElement(
-        cv2.MORPH_ELLIPSE,
-        (5, 5)
-    )
-
     foreground = cv2.morphologyEx(
         foreground,
         cv2.MORPH_OPEN,
-        small_kernel,
+        kernel,
         iterations=1
     )
 
-    # --------------------------------------------------------
-    # IMPORTANT:
-    # Do NOT select a connected component.
+    # ========================================================
+    # 7. CONNECTED COMPONENT ANALYSIS
+    # ========================================================
+
+    num_labels, labels, stats, centroids = (
+        cv2.connectedComponentsWithStats(
+            foreground,
+            connectivity=8
+        )
+    )
+
+    candidates = []
+
+    center_x = w / 2
+    center_y = h / 2
+
+    for i in range(1, num_labels):
+
+        x = stats[i, cv2.CC_STAT_LEFT]
+        y = stats[i, cv2.CC_STAT_TOP]
+
+        bw = stats[i, cv2.CC_STAT_WIDTH]
+        bh = stats[i, cv2.CC_STAT_HEIGHT]
+
+        area = stats[i, cv2.CC_STAT_AREA]
+
+        if bw <= 0 or bh <= 0:
+            continue
+
+        area_ratio = (
+            area / float(w * h)
+        )
+
+        box_ratio = (
+            bw * bh
+        ) / float(w * h)
+
+        component_cx = (
+            x + bw / 2
+        )
+
+        component_cy = (
+            y + bh / 2
+        )
+
+        # Distance from image center
+        distance = np.sqrt(
+            (
+                (component_cx - center_x) / w
+            ) ** 2
+            +
+            (
+                (component_cy - center_y) / h
+            ) ** 2
+        )
+
+        # ====================================================
+        # PRODUCT SCORE
+        # ====================================================
+
+        score = 0.0
+
+        # Centrality
+        score += max(
+            0,
+            1.0 - distance * 2.5
+        ) * 3.0
+
+        # Large enough object
+        if box_ratio > 0.08:
+            score += 2.0
+
+        if box_ratio > 0.15:
+            score += 2.0
+
+        # Retail products commonly have substantial height
+        if bh / float(h) > 0.40:
+            score += 2.0
+
+        if bh / float(h) > 0.60:
+            score += 1.5
+
+        # Avoid tiny text-like components
+        if area_ratio < 0.01:
+            score -= 5.0
+
+        candidates.append(
+            (
+                score,
+                x,
+                y,
+                bw,
+                bh
+            )
+        )
+
+    # ========================================================
+    # 8. SELECT BEST PRODUCT CANDIDATE
+    # ========================================================
+
+    candidates.sort(
+        key=lambda item: item[0],
+        reverse=True
+    )
+
+    selected = None
+
+    if candidates:
+
+        best = candidates[0]
+
+        score, x, y, bw, bh = best
+
+        # Must be reasonably product-sized
+        if (
+            bw >= w * 0.12
+            and bh >= h * 0.30
+        ):
+            selected = (
+                x,
+                y,
+                bw,
+                bh
+            )
+
+    # ========================================================
+    # 9. FALLBACK
     #
-    # Take ALL foreground points together.
-    # --------------------------------------------------------
-
-    points = cv2.findNonZero(foreground)
-
-    if points is None:
-        return None, None
-
-    x, y, box_w, box_h = cv2.boundingRect(points)
-
-    if box_w <= 0 or box_h <= 0:
-        return None, None
-
-    # --------------------------------------------------------
-    # Convert back to original image coordinates
-    # --------------------------------------------------------
-
-    if scale < 1.0:
-        x = int(x / scale)
-        y = int(y / scale)
-        box_w = int(box_w / scale)
-        box_h = int(box_h / scale)
-
-    # --------------------------------------------------------
-    # GENEROUS PADDING
+    # If segmentation is unreliable, don't return the
+    # entire photograph.
     #
-    # Better to keep a little background than cut PDP/product.
-    # --------------------------------------------------------
+    # Instead return a product-focused central region.
+    # ========================================================
+
+    if selected is None:
+
+        x = int(w * 0.22)
+        y = int(h * 0.12)
+
+        bw = int(w * 0.56)
+        bh = int(h * 0.84)
+
+    else:
+
+        x, y, bw, bh = selected
+
+    # ========================================================
+    # 10. ADD SMALL PRODUCT PADDING
+    #
+    # Not huge padding — we want the product, not the
+    # surrounding hand/background.
+    # ========================================================
 
     padding_x = max(
-        20,
-        int(box_w * 0.08)
+        10,
+        int(bw * 0.06)
     )
 
     padding_y = max(
-        20,
-        int(box_h * 0.05)
+        10,
+        int(bh * 0.04)
     )
+
+    x1 = x - padding_x
+    y1 = y - padding_y
+
+    x2 = x + bw + padding_x
+    y2 = y + bh + padding_y
+
+    # ========================================================
+    # 11. CONVERT TO ORIGINAL IMAGE
+    # ========================================================
+
+    if scale < 1.0:
+
+        x1 = int(x1 / scale)
+        y1 = int(y1 / scale)
+
+        x2 = int(x2 / scale)
+        y2 = int(y2 / scale)
 
     box = _clip_box(
         (
-            x - padding_x,
-            y - padding_y,
-            x + box_w + padding_x,
-            y + box_h + padding_y
+            x1,
+            y1,
+            x2,
+            y2
         ),
         original_w,
         original_h
@@ -218,9 +402,9 @@ def detect_product_roi(image):
 
     x1, y1, x2, y2 = box
 
-    # --------------------------------------------------------
-    # Crop from ORIGINAL image
-    # --------------------------------------------------------
+    # ========================================================
+    # 12. FINAL PRODUCT CROP
+    # ========================================================
 
     roi = image[
         y1:y2,
@@ -230,13 +414,25 @@ def detect_product_roi(image):
     if roi.size == 0:
         return None, None
 
-    corners = _box_to_corners(box)
+    # ========================================================
+    # 13. METADATA
+    # ========================================================
+
+    corners = np.array(
+        [
+            [x1, y1],
+            [x2 - 1, y1],
+            [x2 - 1, y2 - 1],
+            [x1, y2 - 1]
+        ],
+        dtype=np.float32
+    )
 
     metadata = {
         "corners": corners,
         "geometry": "product",
-        "confidence": 0.90,
-        "method": "grabcut_full_product"
+        "confidence": 0.85,
+        "method": "center_focused_product_detection"
     }
 
     return roi, metadata
