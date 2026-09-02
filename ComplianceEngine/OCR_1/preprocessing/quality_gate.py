@@ -3,70 +3,49 @@ import numpy as np
 
 
 def calculate_blur_score(image):
-    """
-    Calculate image sharpness using Laplacian variance.
-
-    Higher score = sharper image.
-    Lower score = blurrier image.
-    """
-
     if image is None:
         raise ValueError("Image could not be loaded.")
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    score = cv2.Laplacian(
-        gray,
-        cv2.CV_64F
-    ).var()
+    # Normalize image size so blur score is more consistent
+    max_dim = max(gray.shape)
 
-    return float(score)
+    if max_dim > 1000:
+        scale = 1000 / max_dim
+        gray = cv2.resize(gray, None, fx=scale, fy=scale)
+
+    return float(cv2.Laplacian(gray, cv2.CV_64F).var())
 
 
-def normalize_blur_score(
-    score,
-    min_score=50.0,
-    max_score=500.0
-):
+def normalize_blur_score(raw_score):
     """
-    Convert raw Laplacian variance into a 0-1 quality score.
+    Convert blur score into a 0-1 quality score.
 
-    0.0 = very blurry
-    1.0 = sufficiently sharp
-
-    Scores above max_score are capped at 1.
-    Scores below min_score are capped at 0.
+    This is intentionally tolerant because real phone
+    photographs may have moderate blur.
     """
 
-    normalized = (
-        (score - min_score)
-        / (max_score - min_score)
-    )
+    # Severe blur
+    if raw_score <= 15:
+        return 0.0
 
-    return max(0.0, min(1.0, normalized))
+    # Good sharpness
+    if raw_score >= 100:
+        return 1.0
+
+    return (raw_score - 15) / (100 - 15)
+
 
 def calculate_glare_score(image):
-    """
-    Estimate specular glare using brightness and saturation.
-
-    Returns:
-        float: fraction of image occupied by glare-like pixels.
-    """
-
     if image is None:
         raise ValueError("Image could not be loaded.")
 
-    hsv = cv2.cvtColor(
-        image,
-        cv2.COLOR_BGR2HSV
-    )
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     _, saturation, value = cv2.split(hsv)
 
-    # Very bright pixels
     bright = value >= 235
-
-    # Specular highlights tend to have low saturation
     low_saturation = saturation <= 50
 
     glare_mask = (
@@ -74,7 +53,6 @@ def calculate_glare_score(image):
         low_saturation
     ).astype(np.uint8) * 255
 
-    # Remove isolated single-pixel noise
     kernel = cv2.getStructuringElement(
         cv2.MORPH_ELLIPSE,
         (3, 3)
@@ -86,16 +64,11 @@ def calculate_glare_score(image):
         kernel
     )
 
-    # Join nearby highlight pixels
     glare_mask = cv2.morphologyEx(
         glare_mask,
         cv2.MORPH_CLOSE,
         kernel
     )
-
-    # -----------------------------------------
-    # Remove tiny connected components
-    # -----------------------------------------
 
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
         glare_mask,
@@ -105,145 +78,180 @@ def calculate_glare_score(image):
     filtered_mask = np.zeros_like(glare_mask)
 
     for i in range(1, num_labels):
-
         area = stats[i, cv2.CC_STAT_AREA]
 
         if area >= 20:
             filtered_mask[labels == i] = 255
 
-    glare_pixels = cv2.countNonZero(
-        filtered_mask
-    )
+    glare_pixels = cv2.countNonZero(filtered_mask)
 
     return glare_pixels / filtered_mask.size
 
+
 def calculate_exposure_score(image):
-    """
-    Calculate an exposure quality score between 0 and 1.
-
-    1.0 = good exposure
-    0.0 = severely under/over exposed
-
-    This is an initial heuristic and will be calibrated
-    using real bottle images.
-    """
-
     if image is None:
         raise ValueError("Image could not be loaded.")
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Mean brightness: 0 = black, 255 = white
-    mean_brightness = gray.mean()
+    mean_brightness = np.mean(gray)
 
-    # Percentage of very dark pixels
-    dark_pixels = cv2.countNonZero(
-        cv2.inRange(gray, 0, 30)
-    )
+    # Reasonable exposure range
+    if 60 <= mean_brightness <= 210:
+        return 1.0
 
-    # Percentage of very bright pixels
-    bright_pixels = cv2.countNonZero(
-        cv2.inRange(gray, 225, 255)
-    )
+    if mean_brightness < 30 or mean_brightness > 245:
+        return 0.0
 
-    total_pixels = gray.size
-
-    dark_ratio = dark_pixels / total_pixels
-    bright_ratio = bright_pixels / total_pixels
-
-    # Start with a neutral score
-    score = 1.0
-
-    # Penalize excessive darkness
     if mean_brightness < 60:
-        score -= 0.5
-    elif mean_brightness < 90:
-        score -= 0.25
+        return (mean_brightness - 30) / 30
 
-    # Penalize excessive brightness
-    if mean_brightness > 200:
-        score -= 0.5
-    elif mean_brightness > 180:
-        score -= 0.25
+    return (245 - mean_brightness) / 35
 
-    # Penalize excessive clipped regions
-    if dark_ratio > 0.20:
-        score -= 0.25
-
-    if bright_ratio > 0.20:
-        score -= 0.25
-
-    return max(0.0, min(1.0, score))
 
 def estimate_skew(image):
     """
-    Estimate the dominant horizontal text/edge angle.
+    Estimate actual image skew while ignoring
+    diagonal text, curved edges and random objects.
 
-    Returns:
-        float: estimated skew angle in degrees.
+    Only near-horizontal structural lines are used.
     """
 
     if image is None:
         raise ValueError("Image could not be loaded.")
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2GRAY
+    )
 
-    # Detect edges
-    edges = cv2.Canny(gray, 50, 150)
+    # Resize large images for stable Hough detection
+    max_dim = max(gray.shape)
 
-    # Detect line segments
+    if max_dim > 1200:
+        scale = 1200 / max_dim
+
+        gray = cv2.resize(
+            gray,
+            None,
+            fx=scale,
+            fy=scale
+        )
+
+    # Smooth small text/noise
+    gray = cv2.GaussianBlur(
+        gray,
+        (5, 5),
+        0
+    )
+
+    edges = cv2.Canny(
+        gray,
+        50,
+        150
+    )
+
     lines = cv2.HoughLinesP(
         edges,
         1,
         np.pi / 180,
-        threshold=100,
-        minLineLength=50,
-        maxLineGap=20
+        threshold=80,
+        minLineLength=max(
+            50,
+            int(min(gray.shape[:2]) * 0.15)
+        ),
+        maxLineGap=25
     )
 
     if lines is None:
         return 0.0
 
-    angles = []
+    candidates = []
 
     for line in lines:
+
         x1, y1, x2, y2 = line.reshape(-1)
 
         dx = x2 - x1
         dy = y2 - y1
 
-        # Ignore almost vertical lines
-        if abs(dx) < 5:
+        length = np.sqrt(
+            dx * dx + dy * dy
+        )
+
+        if length < 30:
             continue
 
         angle = np.degrees(
             np.arctan2(dy, dx)
         )
 
-        # We care about near-horizontal lines.
-        if -45 <= angle <= 45:
-            angles.append(angle)
+        # Normalize line orientation to [-90, 90]
+        if angle > 90:
+            angle -= 180
 
-    if not angles:
+        if angle < -90:
+            angle += 180
+
+        # IMPORTANT:
+        # Only near-horizontal lines are useful
+        # for estimating camera tilt.
+        #
+        # This rejects:
+        # - diagonal text
+        # - random background edges
+        # - bottle curvature
+        # - vertical bottle boundaries
+        if abs(angle) > 12:
+            continue
+
+        candidates.append(
+            (angle, length)
+        )
+
+    if not candidates:
         return 0.0
 
-    return float(np.median(angles))
+    # Longer structural lines are more trustworthy.
+    candidates.sort(
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    # Use strongest structural lines.
+    selected = candidates[
+        :min(20, len(candidates))
+    ]
+
+    angles = np.array(
+        [item[0] for item in selected],
+        dtype=np.float32
+    )
+
+    weights = np.array(
+        [item[1] for item in selected],
+        dtype=np.float32
+    )
+
+    if np.sum(weights) == 0:
+        return 0.0
+
+    weighted_angle = np.average(
+        angles,
+        weights=weights
+    )
+
+    # Safety clamp.
+    if abs(weighted_angle) > 12:
+        return 0.0
+
+    return float(weighted_angle)
+
 
 def quality_gate(image):
-    """
-    Run all pre-OCR image quality checks.
-
-    Returns:
-        dict containing individual metrics,
-        overall quality score, and pass/fail status.
-    """
 
     if image is None:
         raise ValueError("Image could not be loaded.")
-
-    # -------------------------
-    # Calculate raw metrics
-    # -------------------------
 
     blur_raw = calculate_blur_score(image)
     blur_quality = normalize_blur_score(blur_raw)
@@ -253,11 +261,6 @@ def quality_gate(image):
     exposure_quality = calculate_exposure_score(image)
 
     skew_deg = estimate_skew(image)
-
-    # -------------------------
-    # Convert skew into quality
-    # -------------------------
-
     abs_skew = abs(skew_deg)
 
     if abs_skew <= 3:
@@ -268,13 +271,9 @@ def quality_gate(image):
 
     else:
         skew_quality = (
-            (12 - abs_skew)
-            / (12 - 3)
+            (12 - abs_skew) /
+            (12 - 3)
         )
-
-    # -------------------------
-    # Calculate overall score
-    # -------------------------
 
     final_quality = (
         0.35 * blur_quality
@@ -283,14 +282,11 @@ def quality_gate(image):
         + 0.20 * skew_quality
     )
 
-    # -------------------------
-    # Initial acceptance rules
-    # -------------------------
-
     reasons = []
 
-    if blur_quality < 0.50:
-        reasons.append("Image is too blurry.")
+    # Only reject genuinely severe blur
+    if blur_raw < 15:
+        reasons.append("Image is severely blurry.")
 
     if glare_score > 0.10:
         reasons.append("Too much glare detected.")
@@ -305,47 +301,54 @@ def quality_gate(image):
 
     return {
         "passed": passed,
-
-        "final_quality": round(
-            final_quality,
-            3
-        ),
+        "final_quality": round(final_quality, 3),
 
         "blur": {
-            "raw_score": round(
-                blur_raw,
-                2
-            ),
-            "quality": round(
-                blur_quality,
-                3
-            )
+            "raw_score": round(blur_raw, 2),
+            "quality": round(blur_quality, 3)
         },
 
         "glare": {
-            "ratio": round(
-                glare_score,
-                4
-            )
+            "ratio": round(glare_score, 4)
         },
 
         "exposure": {
-            "quality": round(
-                exposure_quality,
-                3
-            )
+            "quality": round(exposure_quality, 3)
         },
 
         "skew": {
-            "degrees": round(
-                skew_deg,
-                2
-            ),
-            "quality": round(
-                skew_quality,
-                3
-            )
+            "degrees": round(skew_deg, 2),
+            "quality": round(skew_quality, 3)
         },
 
         "reasons": reasons
+    }
+
+def check_resolution(image, min_width=640, min_height=480):
+    """
+    Check whether image resolution is sufficient
+    for product detection and OCR.
+    """
+
+    if image is None:
+        raise ValueError("Image could not be loaded.")
+
+    height, width = image.shape[:2]
+
+    passed = (
+        width >= min_width
+        and height >= min_height
+    )
+
+    return {
+        "passed": passed,
+        "width": width,
+        "height": height,
+        "minimum_width": min_width,
+        "minimum_height": min_height,
+        "reason": (
+            None
+            if passed
+            else "Image resolution is too low. Please recapture the image."
+        )
     }

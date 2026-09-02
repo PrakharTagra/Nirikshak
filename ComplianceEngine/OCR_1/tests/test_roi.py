@@ -4,7 +4,7 @@ from preprocessing.roi import detect_product_roi
 from preprocessing.quality_gate import quality_gate
 
 
-IMAGE_PATH = "tests/sample.jpeg"
+IMAGE_PATH = "tests/bottle.jpeg"
 
 image = cv2.imread(IMAGE_PATH)
 

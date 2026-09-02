@@ -91,3 +91,45 @@ def perspective_correct(image, corners):
     )
 
     return corrected
+
+
+from preprocessing.cylinderical import cylindrical_unwrap
+
+
+def correct_geometry(image, geometry, corners=None):
+    """
+    Apply the appropriate geometric correction.
+
+    Args:
+        image: Product ROI.
+        geometry: Detected geometry type.
+        corners: Product corners, required for planar correction.
+
+    Returns:
+        Corrected product image.
+    """
+
+    if image is None:
+        raise ValueError("Image could not be loaded.")
+
+    if geometry == "planar":
+
+        if corners is None:
+            raise ValueError(
+                "Corners are required for planar correction."
+            )
+
+        return perspective_correct(
+            image,
+            corners
+        )
+
+    elif geometry == "cylindrical":
+
+        return cylindrical_unwrap(
+            image
+        )
+
+    # Unknown geometry:
+    # don't distort the image unnecessarily.
+    return image.copy()
