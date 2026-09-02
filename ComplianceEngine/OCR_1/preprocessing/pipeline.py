@@ -16,14 +16,44 @@ from preprocessing.roi import (
 )
 
 
+# ============================================================
+# IMAGE ORIENTATION
+# ============================================================
+
+def make_vertical(image):
+
+    if image is None:
+        raise ValueError(
+            "Image could not be loaded."
+        )
+
+    h, w = image.shape[:2]
+
+    # Landscape image → rotate 90° clockwise
+    if w > h:
+
+        return cv2.rotate(
+            image,
+            cv2.ROTATE_90_CLOCKWISE
+        )
+
+    return image.copy()
+
+
+# ============================================================
+# MAIN PREPROCESSING PIPELINE
+# ============================================================
+
 def preprocess_product(image):
 
     if image is None:
-        raise ValueError("Image could not be loaded.")
+        raise ValueError(
+            "Image could not be loaded."
+        )
 
-    # ==================================================
+    # ========================================================
     # 1. RESOLUTION CHECK
-    # ==================================================
+    # ========================================================
 
     resolution = check_resolution(image)
 
@@ -40,23 +70,29 @@ def preprocess_product(image):
             "reason": resolution["reason"]
         }
 
-    # ==================================================
-    # 2. ORIGINAL QUALITY CHECK
-    # ==================================================
+    # ========================================================
+    # 2. MAKE IMAGE VERTICAL
+    # ========================================================
+
+    image = make_vertical(image)
+
+    # ========================================================
+    # 3. ORIGINAL QUALITY CHECK
+    # ========================================================
 
     original_quality = quality_gate(image)
 
-    # ==================================================
-    # 3. AUTO DESKEW
-    # ==================================================
+    # ========================================================
+    # 4. AUTO DESKEW
+    # ========================================================
 
     deskew_result = deskew_image(image)
 
     deskewed = deskew_result["image"]
 
-    # ==================================================
-    # 4. ENHANCEMENT
-    # ==================================================
+    # ========================================================
+    # 5. IMAGE ENHANCEMENT
+    # ========================================================
 
     enhancement = enhance_image(
         deskewed,
@@ -65,9 +101,9 @@ def preprocess_product(image):
 
     enhanced = enhancement["image"]
 
-    # ==================================================
-    # 5. PRODUCT ROI DETECTION
-    # ==================================================
+    # ========================================================
+    # 6. FULL PRODUCT ROI DETECTION
+    # ========================================================
 
     roi, metadata = detect_product_roi(
         enhanced
@@ -86,9 +122,9 @@ def preprocess_product(image):
             "reason": "Could not detect product."
         }
 
-    # ==================================================
-    # 6. FINAL PRODUCT QUALITY CHECK
-    # ==================================================
+    # ========================================================
+    # 7. FINAL PRODUCT QUALITY CHECK
+    # ========================================================
 
     product_quality = quality_gate(
         roi
@@ -110,9 +146,9 @@ def preprocess_product(image):
             )
         }
 
-    # ==================================================
-    # 7. FINAL RESULT
-    # ==================================================
+    # ========================================================
+    # 8. FINAL RESULT
+    # ========================================================
 
     return {
         "success": True,
