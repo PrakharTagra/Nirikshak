@@ -1,0 +1,9 @@
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+date: Thu, 03 Sep 2026 09:44:08 GMT
+server: uvicorn
+x-preprocess-metadata: {"original_width": 1792, "original_height": 2382, "output_width": 888, "output_height": 2229, "boundary_detected": true, "deskew_method": "perspective_warp", "rotation_angle_deg": 0.0, "sharpness_score": 1333.9, "glare_area_fraction": 0.0017, "usable": true, "reject_reasons": []}
+content-type: image/png
+Transfer-Encoding: chunked
+
