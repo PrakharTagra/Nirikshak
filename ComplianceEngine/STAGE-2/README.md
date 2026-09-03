@@ -72,8 +72,12 @@ Runs Stage 2 preprocessing and passes the processed image directly to the
 Stage 4 OCR package. Returns both `preprocess_metadata` and the Stage 4 OCR
 result in one JSON response. The processed PNG is stored in
 `outputs/preprocessed/` before OCR runs, and its path is returned as
-`preprocessed_image`. Install the dependencies from this directory's
-`requirements.txt` before using this endpoint.
+`preprocessed_image`. A formatted copy of the complete result is saved in
+`outputs/ocr_results/`, with its path returned as `result_json`. The response
+also exposes `extracted_text`, `metadata`, `declarations`, and `regions` at
+the top level; the original nested `ocr` object is retained for compatibility.
+Install the dependencies from this directory's `requirements.txt` before
+using this endpoint.
 
 ### `GET /health`
 Liveness check.

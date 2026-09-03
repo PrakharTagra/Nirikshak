@@ -44,6 +44,7 @@ app = FastAPI(
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024  # 15 MB
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
 PREPROCESSED_DIR = Path(__file__).resolve().parents[1] / "outputs" / "preprocessed"
+OCR_RESULTS_DIR = Path(__file__).resolve().parents[1] / "outputs" / "ocr_results"
 
 
 def _get_ocr_runner():
@@ -142,6 +143,22 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
         output_path.write_bytes(buf.tobytes())
 
         ocr_result = _get_ocr_runner()(out_img)
+        result_path = OCR_RESULTS_DIR / f"{output_path.stem}.json"
+        OCR_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        result_path.write_text(
+            json.dumps(
+                {
+                    "extracted_text": ocr_result.get("text", ""),
+                    "metadata": meta.to_dict(),
+                    "declarations": ocr_result.get("declarations", {}),
+                    "regions": ocr_result.get("regions", []),
+                    "ocr": ocr_result,
+                    "preprocessed_image": str(output_path),
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
     except PreprocessingError as e:
         raise HTTPException(status_code=422, detail=str(e))
     except RuntimeError as e:
@@ -152,8 +169,12 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
 
     return JSONResponse(
         {
-            "preprocess_metadata": meta.to_dict(),
+            "extracted_text": ocr_result.get("text", ""),
+            "metadata": meta.to_dict(),
+            "declarations": ocr_result.get("declarations", {}),
+            "regions": ocr_result.get("regions", []),
             "preprocessed_image": str(output_path),
+            "result_json": str(result_path),
             "ocr": ocr_result,
         }
     )
