@@ -176,5 +176,8 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
             "preprocessed_image": str(output_path),
             "result_json": str(result_path),
             "ocr": ocr_result,
+            # Base64 makes the service contract usable when the Node deployment
+            # engine runs in a different container/host from Stage 2/4.
+            "image_base64": base64.b64encode(buf.tobytes()).decode("ascii"),
         }
     )

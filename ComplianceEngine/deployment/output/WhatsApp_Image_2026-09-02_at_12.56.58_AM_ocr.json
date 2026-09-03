@@ -1,0 +1,1373 @@
+{
+  "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-02 at 12.56.58 AM.jpeg",
+  "preprocessedImagePath": "C:\\Users\\prakh\\Desktop\\ComplianceEngine\\deployment\\temp\\preprocessed\\WhatsApp Image 2026-09-02 at 12.56.58 AM_1788438287870_preprocessed.png",
+  "ocrResult": {
+    "lines": [
+      {
+        "id": 0,
+        "text": "Batch No.",
+        "confidence": 0.9986,
+        "bbox": [
+          [
+            435,
+            226
+          ],
+          [
+            515,
+            228
+          ],
+          [
+            514,
+            257
+          ],
+          [
+            434,
+            255
+          ]
+        ],
+        "heightPx": 29.02,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 1,
+        "text": "U6EG564T N",
+        "confidence": 0.9527,
+        "bbox": [
+          [
+            581,
+            254
+          ],
+          [
+            812,
+            252
+          ],
+          [
+            812,
+            285
+          ],
+          [
+            581,
+            287
+          ]
+        ],
+        "heightPx": 33,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 2,
+        "text": "Mfg. Date",
+        "confidence": 0.9794,
+        "bbox": [
+          [
+            435,
+            260
+          ],
+          [
+            517,
+            262
+          ],
+          [
+            516,
+            295
+          ],
+          [
+            434,
+            292
+          ]
+        ],
+        "heightPx": 32.52,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 3,
+        "text": "09/07126 12:36",
+        "confidence": 0.9647,
+        "bbox": [
+          [
+            582,
+            281
+          ],
+          [
+            874,
+            278
+          ],
+          [
+            874,
+            312
+          ],
+          [
+            582,
+            316
+          ]
+        ],
+        "heightPx": 34.5,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 4,
+        "text": "MRPRs.",
+        "confidence": 0.9876,
+        "bbox": [
+          [
+            437,
+            294
+          ],
+          [
+            506,
+            297
+          ],
+          [
+            505,
+            326
+          ],
+          [
+            436,
+            323
+          ]
+        ],
+        "heightPx": 29.02,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 5,
+        "text": "Rs.190.00 175.00",
+        "confidence": 0.9947,
+        "bbox": [
+          [
+            583,
+            310
+          ],
+          [
+            892,
+            303
+          ],
+          [
+            892,
+            337
+          ],
+          [
+            583,
+            344
+          ]
+        ],
+        "heightPx": 34,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 6,
+        "text": "(Incl.of all taxes)",
+        "confidence": 0.9142,
+        "bbox": [
+          [
+            437,
+            316
+          ],
+          [
+            550,
+            319
+          ],
+          [
+            550,
+            346
+          ],
+          [
+            437,
+            343
+          ]
+        ],
+        "heightPx": 27,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 7,
+        "text": "Rs.1.9 4/ml",
+        "confidence": 0.9583,
+        "bbox": [
+          [
+            586,
+            337
+          ],
+          [
+            781,
+            334
+          ],
+          [
+            781,
+            365
+          ],
+          [
+            586,
+            367
+          ]
+        ],
+        "heightPx": 30.5,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 8,
+        "text": "USP Rs./ml",
+        "confidence": 0.9937,
+        "bbox": [
+          [
+            438,
+            351
+          ],
+          [
+            532,
+            351
+          ],
+          [
+            532,
+            379
+          ],
+          [
+            438,
+            379
+          ]
+        ],
+        "heightPx": 28,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 9,
+        "text": "For works address, refer first 2 characters of the batch number",
+        "confidence": 0.9874,
+        "bbox": [
+          [
+            439,
+            395
+          ],
+          [
+            875,
+            399
+          ],
+          [
+            875,
+            425
+          ],
+          [
+            439,
+            421
+          ]
+        ],
+        "heightPx": 26,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 10,
+        "text": "1",
+        "confidence": 0.7442,
+        "bbox": [
+          [
+            1070,
+            411
+          ],
+          [
+            1079,
+            411
+          ],
+          [
+            1079,
+            419
+          ],
+          [
+            1070,
+            419
+          ]
+        ],
+        "heightPx": 8,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 11,
+        "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+        "confidence": 0.9983,
+        "bbox": [
+          [
+            440,
+            419
+          ],
+          [
+            889,
+            421
+          ],
+          [
+            889,
+            447
+          ],
+          [
+            440,
+            445
+          ]
+        ],
+        "heightPx": 26,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 12,
+        "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
+        "confidence": 0.9778,
+        "bbox": [
+          [
+            441,
+            442
+          ],
+          [
+            1112,
+            445
+          ],
+          [
+            1112,
+            472
+          ],
+          [
+            441,
+            469
+          ]
+        ],
+        "heightPx": 27,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 13,
+        "text": "Manufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.",
+        "confidence": 0.6431,
+        "bbox": [
+          [
+            441,
+            465
+          ],
+          [
+            1197,
+            469
+          ],
+          [
+            1197,
+            496
+          ],
+          [
+            441,
+            492
+          ]
+        ],
+        "heightPx": 27,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 14,
+        "text": "Gurugram,Haryana-122018 India.Contactus:Manager,Cmplaintsaegd.Ofice f Marketer P:011-41704999,Emailcar@rllonconsumer.com",
+        "confidence": 0.7177,
+        "bbox": [
+          [
+            442,
+            486
+          ],
+          [
+            1164,
+            488
+          ],
+          [
+            1164,
+            514
+          ],
+          [
+            442,
+            512
+          ]
+        ],
+        "heightPx": 26,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 15,
+        "text": "90 ml (2 Numbers x45 ml)",
+        "confidence": 0.9565,
+        "bbox": [
+          [
+            584,
+            515
+          ],
+          [
+            813,
+            517
+          ],
+          [
+            813,
+            545
+          ],
+          [
+            584,
+            542
+          ]
+        ],
+        "heightPx": 27.5,
+        "heightMm": null,
+        "language": null
+      },
+      {
+        "id": 16,
+        "text": "Net Quantity :",
+        "confidence": 0.9697,
+        "bbox": [
+          [
+            442,
+            516
+          ],
+          [
+            576,
+            518
+          ],
+          [
+            576,
+            546
+          ],
+          [
+            442,
+            543
+          ]
+        ],
+        "heightPx": 27.5,
+        "heightMm": null,
+        "language": null
+      }
+    ],
+    "regions": [
+      {
+        "text": "Batch No.",
+        "confidence": 0.9986,
+        "bbox": [
+          [
+            435,
+            226
+          ],
+          [
+            515,
+            228
+          ],
+          [
+            514,
+            257
+          ],
+          [
+            434,
+            255
+          ]
+        ],
+        "pixel_height": 29.02
+      },
+      {
+        "text": "U6EG564T N",
+        "confidence": 0.9527,
+        "bbox": [
+          [
+            581,
+            254
+          ],
+          [
+            812,
+            252
+          ],
+          [
+            812,
+            285
+          ],
+          [
+            581,
+            287
+          ]
+        ],
+        "pixel_height": 33
+      },
+      {
+        "text": "Mfg. Date",
+        "confidence": 0.9794,
+        "bbox": [
+          [
+            435,
+            260
+          ],
+          [
+            517,
+            262
+          ],
+          [
+            516,
+            295
+          ],
+          [
+            434,
+            292
+          ]
+        ],
+        "pixel_height": 32.52
+      },
+      {
+        "text": "09/07126 12:36",
+        "confidence": 0.9647,
+        "bbox": [
+          [
+            582,
+            281
+          ],
+          [
+            874,
+            278
+          ],
+          [
+            874,
+            312
+          ],
+          [
+            582,
+            316
+          ]
+        ],
+        "pixel_height": 34.5
+      },
+      {
+        "text": "MRPRs.",
+        "confidence": 0.9876,
+        "bbox": [
+          [
+            437,
+            294
+          ],
+          [
+            506,
+            297
+          ],
+          [
+            505,
+            326
+          ],
+          [
+            436,
+            323
+          ]
+        ],
+        "pixel_height": 29.02
+      },
+      {
+        "text": "Rs.190.00 175.00",
+        "confidence": 0.9947,
+        "bbox": [
+          [
+            583,
+            310
+          ],
+          [
+            892,
+            303
+          ],
+          [
+            892,
+            337
+          ],
+          [
+            583,
+            344
+          ]
+        ],
+        "pixel_height": 34
+      },
+      {
+        "text": "(Incl.of all taxes)",
+        "confidence": 0.9142,
+        "bbox": [
+          [
+            437,
+            316
+          ],
+          [
+            550,
+            319
+          ],
+          [
+            550,
+            346
+          ],
+          [
+            437,
+            343
+          ]
+        ],
+        "pixel_height": 27
+      },
+      {
+        "text": "Rs.1.9 4/ml",
+        "confidence": 0.9583,
+        "bbox": [
+          [
+            586,
+            337
+          ],
+          [
+            781,
+            334
+          ],
+          [
+            781,
+            365
+          ],
+          [
+            586,
+            367
+          ]
+        ],
+        "pixel_height": 30.5
+      },
+      {
+        "text": "USP Rs./ml",
+        "confidence": 0.9937,
+        "bbox": [
+          [
+            438,
+            351
+          ],
+          [
+            532,
+            351
+          ],
+          [
+            532,
+            379
+          ],
+          [
+            438,
+            379
+          ]
+        ],
+        "pixel_height": 28
+      },
+      {
+        "text": "For works address, refer first 2 characters of the batch number",
+        "confidence": 0.9874,
+        "bbox": [
+          [
+            439,
+            395
+          ],
+          [
+            875,
+            399
+          ],
+          [
+            875,
+            425
+          ],
+          [
+            439,
+            421
+          ]
+        ],
+        "pixel_height": 26
+      },
+      {
+        "text": "1",
+        "confidence": 0.7442,
+        "bbox": [
+          [
+            1070,
+            411
+          ],
+          [
+            1079,
+            411
+          ],
+          [
+            1079,
+            419
+          ],
+          [
+            1070,
+            419
+          ]
+        ],
+        "pixel_height": 8
+      },
+      {
+        "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+        "confidence": 0.9983,
+        "bbox": [
+          [
+            440,
+            419
+          ],
+          [
+            889,
+            421
+          ],
+          [
+            889,
+            447
+          ],
+          [
+            440,
+            445
+          ]
+        ],
+        "pixel_height": 26
+      },
+      {
+        "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
+        "confidence": 0.9778,
+        "bbox": [
+          [
+            441,
+            442
+          ],
+          [
+            1112,
+            445
+          ],
+          [
+            1112,
+            472
+          ],
+          [
+            441,
+            469
+          ]
+        ],
+        "pixel_height": 27
+      },
+      {
+        "text": "Manufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.",
+        "confidence": 0.6431,
+        "bbox": [
+          [
+            441,
+            465
+          ],
+          [
+            1197,
+            469
+          ],
+          [
+            1197,
+            496
+          ],
+          [
+            441,
+            492
+          ]
+        ],
+        "pixel_height": 27
+      },
+      {
+        "text": "Gurugram,Haryana-122018 India.Contactus:Manager,Cmplaintsaegd.Ofice f Marketer P:011-41704999,Emailcar@rllonconsumer.com",
+        "confidence": 0.7177,
+        "bbox": [
+          [
+            442,
+            486
+          ],
+          [
+            1164,
+            488
+          ],
+          [
+            1164,
+            514
+          ],
+          [
+            442,
+            512
+          ]
+        ],
+        "pixel_height": 26
+      },
+      {
+        "text": "90 ml (2 Numbers x45 ml)",
+        "confidence": 0.9565,
+        "bbox": [
+          [
+            584,
+            515
+          ],
+          [
+            813,
+            517
+          ],
+          [
+            813,
+            545
+          ],
+          [
+            584,
+            542
+          ]
+        ],
+        "pixel_height": 27.5
+      },
+      {
+        "text": "Net Quantity :",
+        "confidence": 0.9697,
+        "bbox": [
+          [
+            442,
+            516
+          ],
+          [
+            576,
+            518
+          ],
+          [
+            576,
+            546
+          ],
+          [
+            442,
+            543
+          ]
+        ],
+        "pixel_height": 27.5
+      }
+    ],
+    "text": "Batch No.\nU6EG564T N\nMfg. Date\n09/07126 12:36\nMRPRs.\nRs.190.00 175.00\n(Incl.of all taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\n1\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.\nGurugram,Haryana-122018 India.Contactus:Manager,Cmplaintsaegd.Ofice f Marketer P:011-41704999,Emailcar@rllonconsumer.com\n90 ml (2 Numbers x45 ml)\nNet Quantity :",
+    "engine": "RapidOCR",
+    "timing": {
+      "total_seconds": 2.149302900012117,
+      "stages_seconds": [
+        1.0060091000050306,
+        0.03183870000066236,
+        1.111455100006424
+      ]
+    },
+    "metadata": {
+      "original_width": 1600,
+      "original_height": 900,
+      "output_width": 1600,
+      "output_height": 900,
+      "boundary_detected": false,
+      "deskew_method": "rotation_only",
+      "rotation_angle_deg": 0,
+      "sharpness_score": 779.99,
+      "glare_area_fraction": 0.0089,
+      "usable": true,
+      "reject_reasons": [
+        "Package/label boundary could not be confidently detected; only rotation-based deskew was applied. Consider re-capturing with the full label in frame against a contrasting background."
+      ]
+    },
+    "raw": {
+      "success": true,
+      "text": "Batch No.\nU6EG564T N\nMfg. Date\n09/07126 12:36\nMRPRs.\nRs.190.00 175.00\n(Incl.of all taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\n1\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.\nGurugram,Haryana-122018 India.Contactus:Manager,Cmplaintsaegd.Ofice f Marketer P:011-41704999,Emailcar@rllonconsumer.com\n90 ml (2 Numbers x45 ml)\nNet Quantity :",
+      "regions": [
+        {
+          "text": "Batch No.",
+          "confidence": 0.9986,
+          "bbox": [
+            [
+              435,
+              226
+            ],
+            [
+              515,
+              228
+            ],
+            [
+              514,
+              257
+            ],
+            [
+              434,
+              255
+            ]
+          ],
+          "pixel_height": 29.02
+        },
+        {
+          "text": "U6EG564T N",
+          "confidence": 0.9527,
+          "bbox": [
+            [
+              581,
+              254
+            ],
+            [
+              812,
+              252
+            ],
+            [
+              812,
+              285
+            ],
+            [
+              581,
+              287
+            ]
+          ],
+          "pixel_height": 33
+        },
+        {
+          "text": "Mfg. Date",
+          "confidence": 0.9794,
+          "bbox": [
+            [
+              435,
+              260
+            ],
+            [
+              517,
+              262
+            ],
+            [
+              516,
+              295
+            ],
+            [
+              434,
+              292
+            ]
+          ],
+          "pixel_height": 32.52
+        },
+        {
+          "text": "09/07126 12:36",
+          "confidence": 0.9647,
+          "bbox": [
+            [
+              582,
+              281
+            ],
+            [
+              874,
+              278
+            ],
+            [
+              874,
+              312
+            ],
+            [
+              582,
+              316
+            ]
+          ],
+          "pixel_height": 34.5
+        },
+        {
+          "text": "MRPRs.",
+          "confidence": 0.9876,
+          "bbox": [
+            [
+              437,
+              294
+            ],
+            [
+              506,
+              297
+            ],
+            [
+              505,
+              326
+            ],
+            [
+              436,
+              323
+            ]
+          ],
+          "pixel_height": 29.02
+        },
+        {
+          "text": "Rs.190.00 175.00",
+          "confidence": 0.9947,
+          "bbox": [
+            [
+              583,
+              310
+            ],
+            [
+              892,
+              303
+            ],
+            [
+              892,
+              337
+            ],
+            [
+              583,
+              344
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "(Incl.of all taxes)",
+          "confidence": 0.9142,
+          "bbox": [
+            [
+              437,
+              316
+            ],
+            [
+              550,
+              319
+            ],
+            [
+              550,
+              346
+            ],
+            [
+              437,
+              343
+            ]
+          ],
+          "pixel_height": 27
+        },
+        {
+          "text": "Rs.1.9 4/ml",
+          "confidence": 0.9583,
+          "bbox": [
+            [
+              586,
+              337
+            ],
+            [
+              781,
+              334
+            ],
+            [
+              781,
+              365
+            ],
+            [
+              586,
+              367
+            ]
+          ],
+          "pixel_height": 30.5
+        },
+        {
+          "text": "USP Rs./ml",
+          "confidence": 0.9937,
+          "bbox": [
+            [
+              438,
+              351
+            ],
+            [
+              532,
+              351
+            ],
+            [
+              532,
+              379
+            ],
+            [
+              438,
+              379
+            ]
+          ],
+          "pixel_height": 28
+        },
+        {
+          "text": "For works address, refer first 2 characters of the batch number",
+          "confidence": 0.9874,
+          "bbox": [
+            [
+              439,
+              395
+            ],
+            [
+              875,
+              399
+            ],
+            [
+              875,
+              425
+            ],
+            [
+              439,
+              421
+            ]
+          ],
+          "pixel_height": 26
+        },
+        {
+          "text": "1",
+          "confidence": 0.7442,
+          "bbox": [
+            [
+              1070,
+              411
+            ],
+            [
+              1079,
+              411
+            ],
+            [
+              1079,
+              419
+            ],
+            [
+              1070,
+              419
+            ]
+          ],
+          "pixel_height": 8
+        },
+        {
+          "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+          "confidence": 0.9983,
+          "bbox": [
+            [
+              440,
+              419
+            ],
+            [
+              889,
+              421
+            ],
+            [
+              889,
+              447
+            ],
+            [
+              440,
+              445
+            ]
+          ],
+          "pixel_height": 26
+        },
+        {
+          "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
+          "confidence": 0.9778,
+          "bbox": [
+            [
+              441,
+              442
+            ],
+            [
+              1112,
+              445
+            ],
+            [
+              1112,
+              472
+            ],
+            [
+              441,
+              469
+            ]
+          ],
+          "pixel_height": 27
+        },
+        {
+          "text": "Manufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.",
+          "confidence": 0.6431,
+          "bbox": [
+            [
+              441,
+              465
+            ],
+            [
+              1197,
+              469
+            ],
+            [
+              1197,
+              496
+            ],
+            [
+              441,
+              492
+            ]
+          ],
+          "pixel_height": 27
+        },
+        {
+          "text": "Gurugram,Haryana-122018 India.Contactus:Manager,Cmplaintsaegd.Ofice f Marketer P:011-41704999,Emailcar@rllonconsumer.com",
+          "confidence": 0.7177,
+          "bbox": [
+            [
+              442,
+              486
+            ],
+            [
+              1164,
+              488
+            ],
+            [
+              1164,
+              514
+            ],
+            [
+              442,
+              512
+            ]
+          ],
+          "pixel_height": 26
+        },
+        {
+          "text": "90 ml (2 Numbers x45 ml)",
+          "confidence": 0.9565,
+          "bbox": [
+            [
+              584,
+              515
+            ],
+            [
+              813,
+              517
+            ],
+            [
+              813,
+              545
+            ],
+            [
+              584,
+              542
+            ]
+          ],
+          "pixel_height": 27.5
+        },
+        {
+          "text": "Net Quantity :",
+          "confidence": 0.9697,
+          "bbox": [
+            [
+              442,
+              516
+            ],
+            [
+              576,
+              518
+            ],
+            [
+              576,
+              546
+            ],
+            [
+              442,
+              543
+            ]
+          ],
+          "pixel_height": 27.5
+        }
+      ],
+      "declarations": {
+        "commodityName": {
+          "present": false,
+          "text": null,
+          "bbox": null,
+          "confidence": null
+        },
+        "manufacturer": {
+          "present": true,
+          "text": "Manufactured & Marketed by:Brillo Consume Produt P Ld Red. Ofce: 10th Flor, Tower 2. AIP Busie Club Gol Course Et. Rad Sector 62.",
+          "address": true,
+          "bbox": [
+            [
+              441,
+              465
+            ],
+            [
+              1197,
+              469
+            ],
+            [
+              1197,
+              496
+            ],
+            [
+              441,
+              492
+            ]
+          ],
+          "confidence": 0.6431
+        },
+        "netQuantity": {
+          "present": true,
+          "rawText": "Net Quantity :",
+          "value": null,
+          "unit": null,
+          "unitKind": null,
+          "qualifiedWhenPacked": false,
+          "bbox": [
+            [
+              442,
+              516
+            ],
+            [
+              576,
+              518
+            ],
+            [
+              576,
+              546
+            ],
+            [
+              442,
+              543
+            ]
+          ],
+          "pixel_height": 27.5
+        },
+        "mfgDate": {
+          "present": true,
+          "rawText": "Mfg. Date",
+          "date": "Mfg. Date",
+          "bbox": [
+            [
+              435,
+              260
+            ],
+            [
+              517,
+              262
+            ],
+            [
+              516,
+              295
+            ],
+            [
+              434,
+              292
+            ]
+          ]
+        },
+        "mrp": {
+          "present": false,
+          "rawText": "",
+          "value": null,
+          "inclusiveOfTaxesStated": false,
+          "bbox": null
+        },
+        "consumerCare": {
+          "present": false,
+          "rawText": "",
+          "bbox": null
+        },
+        "standardPackDeclaration": {
+          "present": false,
+          "rawText": "",
+          "bbox": null
+        }
+      },
+      "engine": "RapidOCR",
+      "timing": {
+        "total_seconds": 2.149302900012117,
+        "stages_seconds": [
+          1.0060091000050306,
+          0.03183870000066236,
+          1.111455100006424
+        ]
+      }
+    }
+  }
+}
