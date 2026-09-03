@@ -1,0 +1,1048 @@
+{
+  "extracted_text": "Batch No.\nU6EG564TN\nMfg.Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(incl. al all laves)\nRs.1.94/ml\nUSP Rs./ml\nFor works addross, rofor first 2 characters of the batch number\nAll Out\u00ae ULTRA Refill Liquid Vaporiser (Noocshoid InsectIolrle).\nExpiry Date  : 2 Yrs. from Mig. Dats, Ragn. No. : CIR.-131142/2015 - Transfluthrin (LV) (SS5)-108\nManufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.\nGoroyree, Gur\u00edase -122 018,Idia Contant we: Kaunger. Cempliento of Regil Office of Manister Ph 211 - A1OMP. Emall:com@baencsemmsor.com\nNet Quantity\n(2 Numbers x 45 ml)\n90ml",
+  "metadata": {
+    "original_width": 2730,
+    "original_height": 1536,
+    "output_width": 1532,
+    "output_height": 817,
+    "boundary_detected": true,
+    "deskew_method": "perspective_warp",
+    "rotation_angle_deg": 0.0,
+    "sharpness_score": 528.17,
+    "glare_area_fraction": 0.0005,
+    "usable": true,
+    "reject_reasons": []
+  },
+  "declarations": {
+    "commodityName": {
+      "present": false,
+      "text": null,
+      "bbox": null,
+      "confidence": null
+    },
+    "manufacturer": {
+      "present": true,
+      "text": "Manufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.",
+      "address": true,
+      "bbox": [
+        [
+          201.0,
+          419.0
+        ],
+        [
+          1364.0,
+          420.0
+        ],
+        [
+          1364.0,
+          460.0
+        ],
+        [
+          200.0,
+          459.0
+        ]
+      ],
+      "confidence": 0.7456
+    },
+    "netQuantity": {
+      "present": true,
+      "rawText": "Net Quantity",
+      "value": null,
+      "unit": null,
+      "unitKind": null,
+      "qualifiedWhenPacked": false,
+      "bbox": [
+        [
+          203.0,
+          503.0
+        ],
+        [
+          360.0,
+          503.0
+        ],
+        [
+          360.0,
+          543.0
+        ],
+        [
+          203.0,
+          543.0
+        ]
+      ],
+      "pixel_height": 40.0
+    },
+    "mfgDate": {
+      "present": true,
+      "rawText": "Mfg.Date",
+      "date": "Mfg.Date",
+      "bbox": [
+        [
+          193.0,
+          93.0
+        ],
+        [
+          318.0,
+          93.0
+        ],
+        [
+          318.0,
+          138.0
+        ],
+        [
+          193.0,
+          138.0
+        ]
+      ]
+    },
+    "mrp": {
+      "present": true,
+      "rawText": "MRP Rs.",
+      "value": null,
+      "inclusiveOfTaxesStated": false,
+      "bbox": [
+        [
+          196.0,
+          144.0
+        ],
+        [
+          305.0,
+          148.0
+        ],
+        [
+          303.0,
+          190.0
+        ],
+        [
+          194.0,
+          186.0
+        ]
+      ]
+    },
+    "consumerCare": {
+      "present": false,
+      "rawText": "",
+      "bbox": null
+    },
+    "standardPackDeclaration": {
+      "present": false,
+      "rawText": "",
+      "bbox": null
+    }
+  },
+  "regions": [
+    {
+      "text": "Batch No.",
+      "confidence": 0.9991,
+      "bbox": [
+        [
+          192.0,
+          37.0
+        ],
+        [
+          317.0,
+          40.0
+        ],
+        [
+          317.0,
+          81.0
+        ],
+        [
+          191.0,
+          78.0
+        ]
+      ],
+      "pixel_height": 41.01
+    },
+    {
+      "text": "U6EG564TN",
+      "confidence": 0.9997,
+      "bbox": [
+        [
+          423.0,
+          84.0
+        ],
+        [
+          771.0,
+          81.0
+        ],
+        [
+          771.0,
+          128.0
+        ],
+        [
+          423.0,
+          130.0
+        ]
+      ],
+      "pixel_height": 46.5
+    },
+    {
+      "text": "Mfg.Date",
+      "confidence": 0.9373,
+      "bbox": [
+        [
+          193.0,
+          93.0
+        ],
+        [
+          318.0,
+          93.0
+        ],
+        [
+          318.0,
+          138.0
+        ],
+        [
+          193.0,
+          138.0
+        ]
+      ],
+      "pixel_height": 45.0
+    },
+    {
+      "text": "09/07126 12:36",
+      "confidence": 0.9485,
+      "bbox": [
+        [
+          426.0,
+          126.0
+        ],
+        [
+          863.0,
+          122.0
+        ],
+        [
+          864.0,
+          170.0
+        ],
+        [
+          426.0,
+          174.0
+        ]
+      ],
+      "pixel_height": 48.01
+    },
+    {
+      "text": "MRP Rs.",
+      "confidence": 0.988,
+      "bbox": [
+        [
+          196.0,
+          144.0
+        ],
+        [
+          305.0,
+          148.0
+        ],
+        [
+          303.0,
+          190.0
+        ],
+        [
+          194.0,
+          186.0
+        ]
+      ],
+      "pixel_height": 42.05
+    },
+    {
+      "text": "Rs.190.00 175.00",
+      "confidence": 0.9872,
+      "bbox": [
+        [
+          427.0,
+          169.0
+        ],
+        [
+          893.0,
+          163.0
+        ],
+        [
+          894.0,
+          212.0
+        ],
+        [
+          427.0,
+          218.0
+        ]
+      ],
+      "pixel_height": 49.01
+    },
+    {
+      "text": "(incl. al all laves)",
+      "confidence": 0.974,
+      "bbox": [
+        [
+          195.0,
+          179.0
+        ],
+        [
+          372.0,
+          181.0
+        ],
+        [
+          372.0,
+          221.0
+        ],
+        [
+          194.0,
+          219.0
+        ]
+      ],
+      "pixel_height": 40.01
+    },
+    {
+      "text": "Rs.1.94/ml",
+      "confidence": 0.9965,
+      "bbox": [
+        [
+          432.0,
+          213.0
+        ],
+        [
+          726.0,
+          211.0
+        ],
+        [
+          726.0,
+          254.0
+        ],
+        [
+          432.0,
+          256.0
+        ]
+      ],
+      "pixel_height": 43.0
+    },
+    {
+      "text": "USP Rs./ml",
+      "confidence": 0.9956,
+      "bbox": [
+        [
+          196.0,
+          231.0
+        ],
+        [
+          341.0,
+          233.0
+        ],
+        [
+          341.0,
+          276.0
+        ],
+        [
+          195.0,
+          274.0
+        ]
+      ],
+      "pixel_height": 43.01
+    },
+    {
+      "text": "For works addross, rofor first 2 characters of the batch number",
+      "confidence": 0.9908,
+      "bbox": [
+        [
+          200.0,
+          304.0
+        ],
+        [
+          874.0,
+          312.0
+        ],
+        [
+          873.0,
+          351.0
+        ],
+        [
+          199.0,
+          343.0
+        ]
+      ],
+      "pixel_height": 39.01
+    },
+    {
+      "text": "All Out\u00ae ULTRA Refill Liquid Vaporiser (Noocshoid InsectIolrle).",
+      "confidence": 0.9735,
+      "bbox": [
+        [
+          201.0,
+          342.0
+        ],
+        [
+          898.0,
+          349.0
+        ],
+        [
+          897.0,
+          387.0
+        ],
+        [
+          200.0,
+          380.0
+        ]
+      ],
+      "pixel_height": 38.01
+    },
+    {
+      "text": "Expiry Date  : 2 Yrs. from Mig. Dats, Ragn. No. : CIR.-131142/2015 - Transfluthrin (LV) (SS5)-108",
+      "confidence": 0.9795,
+      "bbox": [
+        [
+          201.0,
+          380.0
+        ],
+        [
+          1236.0,
+          383.0
+        ],
+        [
+          1236.0,
+          425.0
+        ],
+        [
+          200.0,
+          422.0
+        ]
+      ],
+      "pixel_height": 42.01
+    },
+    {
+      "text": "Manufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.",
+      "confidence": 0.7456,
+      "bbox": [
+        [
+          201.0,
+          419.0
+        ],
+        [
+          1364.0,
+          420.0
+        ],
+        [
+          1364.0,
+          460.0
+        ],
+        [
+          200.0,
+          459.0
+        ]
+      ],
+      "pixel_height": 40.01
+    },
+    {
+      "text": "Goroyree, Gur\u00edase -122 018,Idia Contant we: Kaunger. Cempliento of Regil Office of Manister Ph 211 - A1OMP. Emall:com@baencsemmsor.com",
+      "confidence": 0.8822,
+      "bbox": [
+        [
+          201.0,
+          452.0
+        ],
+        [
+          1322.0,
+          453.0
+        ],
+        [
+          1322.0,
+          491.0
+        ],
+        [
+          201.0,
+          490.0
+        ]
+      ],
+      "pixel_height": 38.0
+    },
+    {
+      "text": "Net Quantity",
+      "confidence": 0.9995,
+      "bbox": [
+        [
+          203.0,
+          503.0
+        ],
+        [
+          360.0,
+          503.0
+        ],
+        [
+          360.0,
+          543.0
+        ],
+        [
+          203.0,
+          543.0
+        ]
+      ],
+      "pixel_height": 40.0
+    },
+    {
+      "text": "(2 Numbers x 45 ml)",
+      "confidence": 0.9861,
+      "bbox": [
+        [
+          550.0,
+          503.0
+        ],
+        [
+          784.0,
+          503.0
+        ],
+        [
+          784.0,
+          542.0
+        ],
+        [
+          550.0,
+          542.0
+        ]
+      ],
+      "pixel_height": 39.0
+    },
+    {
+      "text": "90ml",
+      "confidence": 0.992,
+      "bbox": [
+        [
+          434.0,
+          504.0
+        ],
+        [
+          508.0,
+          504.0
+        ],
+        [
+          508.0,
+          540.0
+        ],
+        [
+          434.0,
+          540.0
+        ]
+      ],
+      "pixel_height": 36.0
+    }
+  ],
+  "ocr": {
+    "success": true,
+    "text": "Batch No.\nU6EG564TN\nMfg.Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(incl. al all laves)\nRs.1.94/ml\nUSP Rs./ml\nFor works addross, rofor first 2 characters of the batch number\nAll Out\u00ae ULTRA Refill Liquid Vaporiser (Noocshoid InsectIolrle).\nExpiry Date  : 2 Yrs. from Mig. Dats, Ragn. No. : CIR.-131142/2015 - Transfluthrin (LV) (SS5)-108\nManufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.\nGoroyree, Gur\u00edase -122 018,Idia Contant we: Kaunger. Cempliento of Regil Office of Manister Ph 211 - A1OMP. Emall:com@baencsemmsor.com\nNet Quantity\n(2 Numbers x 45 ml)\n90ml",
+    "regions": [
+      {
+        "text": "Batch No.",
+        "confidence": 0.9991,
+        "bbox": [
+          [
+            192.0,
+            37.0
+          ],
+          [
+            317.0,
+            40.0
+          ],
+          [
+            317.0,
+            81.0
+          ],
+          [
+            191.0,
+            78.0
+          ]
+        ],
+        "pixel_height": 41.01
+      },
+      {
+        "text": "U6EG564TN",
+        "confidence": 0.9997,
+        "bbox": [
+          [
+            423.0,
+            84.0
+          ],
+          [
+            771.0,
+            81.0
+          ],
+          [
+            771.0,
+            128.0
+          ],
+          [
+            423.0,
+            130.0
+          ]
+        ],
+        "pixel_height": 46.5
+      },
+      {
+        "text": "Mfg.Date",
+        "confidence": 0.9373,
+        "bbox": [
+          [
+            193.0,
+            93.0
+          ],
+          [
+            318.0,
+            93.0
+          ],
+          [
+            318.0,
+            138.0
+          ],
+          [
+            193.0,
+            138.0
+          ]
+        ],
+        "pixel_height": 45.0
+      },
+      {
+        "text": "09/07126 12:36",
+        "confidence": 0.9485,
+        "bbox": [
+          [
+            426.0,
+            126.0
+          ],
+          [
+            863.0,
+            122.0
+          ],
+          [
+            864.0,
+            170.0
+          ],
+          [
+            426.0,
+            174.0
+          ]
+        ],
+        "pixel_height": 48.01
+      },
+      {
+        "text": "MRP Rs.",
+        "confidence": 0.988,
+        "bbox": [
+          [
+            196.0,
+            144.0
+          ],
+          [
+            305.0,
+            148.0
+          ],
+          [
+            303.0,
+            190.0
+          ],
+          [
+            194.0,
+            186.0
+          ]
+        ],
+        "pixel_height": 42.05
+      },
+      {
+        "text": "Rs.190.00 175.00",
+        "confidence": 0.9872,
+        "bbox": [
+          [
+            427.0,
+            169.0
+          ],
+          [
+            893.0,
+            163.0
+          ],
+          [
+            894.0,
+            212.0
+          ],
+          [
+            427.0,
+            218.0
+          ]
+        ],
+        "pixel_height": 49.01
+      },
+      {
+        "text": "(incl. al all laves)",
+        "confidence": 0.974,
+        "bbox": [
+          [
+            195.0,
+            179.0
+          ],
+          [
+            372.0,
+            181.0
+          ],
+          [
+            372.0,
+            221.0
+          ],
+          [
+            194.0,
+            219.0
+          ]
+        ],
+        "pixel_height": 40.01
+      },
+      {
+        "text": "Rs.1.94/ml",
+        "confidence": 0.9965,
+        "bbox": [
+          [
+            432.0,
+            213.0
+          ],
+          [
+            726.0,
+            211.0
+          ],
+          [
+            726.0,
+            254.0
+          ],
+          [
+            432.0,
+            256.0
+          ]
+        ],
+        "pixel_height": 43.0
+      },
+      {
+        "text": "USP Rs./ml",
+        "confidence": 0.9956,
+        "bbox": [
+          [
+            196.0,
+            231.0
+          ],
+          [
+            341.0,
+            233.0
+          ],
+          [
+            341.0,
+            276.0
+          ],
+          [
+            195.0,
+            274.0
+          ]
+        ],
+        "pixel_height": 43.01
+      },
+      {
+        "text": "For works addross, rofor first 2 characters of the batch number",
+        "confidence": 0.9908,
+        "bbox": [
+          [
+            200.0,
+            304.0
+          ],
+          [
+            874.0,
+            312.0
+          ],
+          [
+            873.0,
+            351.0
+          ],
+          [
+            199.0,
+            343.0
+          ]
+        ],
+        "pixel_height": 39.01
+      },
+      {
+        "text": "All Out\u00ae ULTRA Refill Liquid Vaporiser (Noocshoid InsectIolrle).",
+        "confidence": 0.9735,
+        "bbox": [
+          [
+            201.0,
+            342.0
+          ],
+          [
+            898.0,
+            349.0
+          ],
+          [
+            897.0,
+            387.0
+          ],
+          [
+            200.0,
+            380.0
+          ]
+        ],
+        "pixel_height": 38.01
+      },
+      {
+        "text": "Expiry Date  : 2 Yrs. from Mig. Dats, Ragn. No. : CIR.-131142/2015 - Transfluthrin (LV) (SS5)-108",
+        "confidence": 0.9795,
+        "bbox": [
+          [
+            201.0,
+            380.0
+          ],
+          [
+            1236.0,
+            383.0
+          ],
+          [
+            1236.0,
+            425.0
+          ],
+          [
+            200.0,
+            422.0
+          ]
+        ],
+        "pixel_height": 42.01
+      },
+      {
+        "text": "Manufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.",
+        "confidence": 0.7456,
+        "bbox": [
+          [
+            201.0,
+            419.0
+          ],
+          [
+            1364.0,
+            420.0
+          ],
+          [
+            1364.0,
+            460.0
+          ],
+          [
+            200.0,
+            459.0
+          ]
+        ],
+        "pixel_height": 40.01
+      },
+      {
+        "text": "Goroyree, Gur\u00edase -122 018,Idia Contant we: Kaunger. Cempliento of Regil Office of Manister Ph 211 - A1OMP. Emall:com@baencsemmsor.com",
+        "confidence": 0.8822,
+        "bbox": [
+          [
+            201.0,
+            452.0
+          ],
+          [
+            1322.0,
+            453.0
+          ],
+          [
+            1322.0,
+            491.0
+          ],
+          [
+            201.0,
+            490.0
+          ]
+        ],
+        "pixel_height": 38.0
+      },
+      {
+        "text": "Net Quantity",
+        "confidence": 0.9995,
+        "bbox": [
+          [
+            203.0,
+            503.0
+          ],
+          [
+            360.0,
+            503.0
+          ],
+          [
+            360.0,
+            543.0
+          ],
+          [
+            203.0,
+            543.0
+          ]
+        ],
+        "pixel_height": 40.0
+      },
+      {
+        "text": "(2 Numbers x 45 ml)",
+        "confidence": 0.9861,
+        "bbox": [
+          [
+            550.0,
+            503.0
+          ],
+          [
+            784.0,
+            503.0
+          ],
+          [
+            784.0,
+            542.0
+          ],
+          [
+            550.0,
+            542.0
+          ]
+        ],
+        "pixel_height": 39.0
+      },
+      {
+        "text": "90ml",
+        "confidence": 0.992,
+        "bbox": [
+          [
+            434.0,
+            504.0
+          ],
+          [
+            508.0,
+            504.0
+          ],
+          [
+            508.0,
+            540.0
+          ],
+          [
+            434.0,
+            540.0
+          ]
+        ],
+        "pixel_height": 36.0
+      }
+    ],
+    "declarations": {
+      "commodityName": {
+        "present": false,
+        "text": null,
+        "bbox": null,
+        "confidence": null
+      },
+      "manufacturer": {
+        "present": true,
+        "text": "Manufactured & Marketed by: Athien Cssumer Product Pol. Ltd., Ongu. Offie, 1l Piar, Towor 2, ABV. Betoe Stah. Sel Caore Est. 8an. Sector 42.",
+        "address": true,
+        "bbox": [
+          [
+            201.0,
+            419.0
+          ],
+          [
+            1364.0,
+            420.0
+          ],
+          [
+            1364.0,
+            460.0
+          ],
+          [
+            200.0,
+            459.0
+          ]
+        ],
+        "confidence": 0.7456
+      },
+      "netQuantity": {
+        "present": true,
+        "rawText": "Net Quantity",
+        "value": null,
+        "unit": null,
+        "unitKind": null,
+        "qualifiedWhenPacked": false,
+        "bbox": [
+          [
+            203.0,
+            503.0
+          ],
+          [
+            360.0,
+            503.0
+          ],
+          [
+            360.0,
+            543.0
+          ],
+          [
+            203.0,
+            543.0
+          ]
+        ],
+        "pixel_height": 40.0
+      },
+      "mfgDate": {
+        "present": true,
+        "rawText": "Mfg.Date",
+        "date": "Mfg.Date",
+        "bbox": [
+          [
+            193.0,
+            93.0
+          ],
+          [
+            318.0,
+            93.0
+          ],
+          [
+            318.0,
+            138.0
+          ],
+          [
+            193.0,
+            138.0
+          ]
+        ]
+      },
+      "mrp": {
+        "present": true,
+        "rawText": "MRP Rs.",
+        "value": null,
+        "inclusiveOfTaxesStated": false,
+        "bbox": [
+          [
+            196.0,
+            144.0
+          ],
+          [
+            305.0,
+            148.0
+          ],
+          [
+            303.0,
+            190.0
+          ],
+          [
+            194.0,
+            186.0
+          ]
+        ]
+      },
+      "consumerCare": {
+        "present": false,
+        "rawText": "",
+        "bbox": null
+      },
+      "standardPackDeclaration": {
+        "present": false,
+        "rawText": "",
+        "bbox": null
+      }
+    },
+    "engine": "RapidOCR",
+    "timing": {
+      "total_seconds": 2.5348378000198863,
+      "stages_seconds": [
+        0.9144284999929368,
+        0.07364590000361204,
+        1.5467634000233375
+      ]
+    }
+  },
+  "preprocessed_image": "D:\\SIH\\Nirikshak\\ComplianceEngine\\STAGE-2\\outputs\\preprocessed\\0a4b2df85e854a90924f0662ae0c0fc8.png"
+}

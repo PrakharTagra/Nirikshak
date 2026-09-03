@@ -1,0 +1,33 @@
+{
+  "imagePath": "C:\\Users\\Preet\\Downloads\\Gemini_Generated_Image_smmrousmmrousmmr (1).png",
+  "preprocessedImagePath": "D:\\SIH\\Nirikshak\\ComplianceEngine\\deployment\\temp\\preprocessed\\Gemini_Generated_Image_smmrousmmrousmmr (1)_1788440146747_preprocessed.png",
+  "labelMetrics": {
+    "numeralHeightMm": {
+      "rsp": null,
+      "netQty": null
+    },
+    "numeralWidthMm": {
+      "rsp": null,
+      "netQty": null
+    },
+    "calibrationAvailable": false,
+    "pixelsPerMm": null,
+    "pdpAreaCm2": null,
+    "contrastOk": true,
+    "isBlownFormedMoldedEmbossedOrPerforated": false,
+    "isExemptCharacterShape": false,
+    "isBlownFormedMoldedOnGlassOrPlastic": false,
+    "isHandwrittenOrHandScript": false,
+    "handwritingIsClearUnambiguousLegible": false,
+    "legibilityIssue": false,
+    "declarationOnlyReadableThroughLiquid": false,
+    "quantityDeclarationSurroundingAreaHasPrintedInfo": false,
+    "rspOnCrownCapOrBottle": false,
+    "wrapperTransparentAndDeclarationsReadableThrough": false,
+    "innerPackageHasNoOuterCoverDeclaration": false,
+    "outerContainerHasAllDeclarations": false,
+    "languageUsed": [
+      "English"
+    ]
+  }
+}
