@@ -21,6 +21,9 @@ import base64
 import io
 import json
 import logging
+import sys
+from pathlib import Path
+from uuid import uuid4
 
 import cv2
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -40,6 +43,23 @@ app = FastAPI(
 
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024  # 15 MB
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+PREPROCESSED_DIR = Path(__file__).resolve().parents[1] / "outputs" / "preprocessed"
+
+
+def _get_ocr_runner():
+    """Load Stage 4 lazily so preprocessing can run without OCR installed."""
+    stage4_path = Path(__file__).resolve().parents[2] / "STAGE-4"
+    if str(stage4_path) not in sys.path:
+        sys.path.insert(0, str(stage4_path))
+
+    try:
+        from ocr import run_ocr
+    except ImportError as exc:
+        raise RuntimeError(
+            "Stage 4 OCR dependencies are not installed. Run: "
+            "python -m pip install -r ../STAGE-4/requirements.txt"
+        ) from exc
+    return run_ocr
 
 
 async def _read_and_validate(image: UploadFile) -> bytes:
@@ -105,3 +125,35 @@ async def preprocess_image(image: UploadFile = File(...)):
 
     headers = {"X-Preprocess-Metadata": json.dumps(meta.to_dict())}
     return StreamingResponse(io.BytesIO(buf.tobytes()), media_type="image/png", headers=headers)
+
+
+@app.post("/preprocess/ocr")
+async def preprocess_and_ocr(image: UploadFile = File(...)):
+    """Store Stage 2 output, then pass the same image to Stage 4 OCR."""
+    data = await _read_and_validate(image)
+    try:
+        out_img, meta = preprocess(data)
+        ok, buf = cv2.imencode(".png", out_img)
+        if not ok:
+            raise RuntimeError("Failed to encode preprocessed image.")
+
+        PREPROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+        output_path = PREPROCESSED_DIR / f"{uuid4().hex}.png"
+        output_path.write_bytes(buf.tobytes())
+
+        ocr_result = _get_ocr_runner()(out_img)
+    except PreprocessingError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception:
+        logger.exception("Unexpected preprocessing/OCR failure")
+        raise HTTPException(status_code=500, detail="Internal preprocessing/OCR error.")
+
+    return JSONResponse(
+        {
+            "preprocess_metadata": meta.to_dict(),
+            "preprocessed_image": str(output_path),
+            "ocr": ocr_result,
+        }
+    )

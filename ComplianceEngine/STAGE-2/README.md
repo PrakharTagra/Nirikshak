@@ -67,6 +67,14 @@ Same input. Returns the processed image directly as `image/png`, with the
 same metadata JSON in the `X-Preprocess-Metadata` response header — use
 this to pipe straight into Stage 3 without a base64 round-trip.
 
+### `POST /preprocess/ocr`
+Runs Stage 2 preprocessing and passes the processed image directly to the
+Stage 4 OCR package. Returns both `preprocess_metadata` and the Stage 4 OCR
+result in one JSON response. The processed PNG is stored in
+`outputs/preprocessed/` before OCR runs, and its path is returned as
+`preprocessed_image`. Install the dependencies from this directory's
+`requirements.txt` before using this endpoint.
+
 ### `GET /health`
 Liveness check.
 
