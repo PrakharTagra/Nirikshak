@@ -17,14 +17,19 @@ const logger = require('../utils/logger');
 
 const SEVERITY_LABEL = { critical: 'CRITICAL', major: 'MAJOR', minor: 'MINOR' };
 
-function buildReportBlocks({ imagePath, packageRecord, complianceResult }) {
+function buildReportBlocks({ imagePath, imagePaths, packageRecord, complianceResult }) {
   const blocks = [];
   const now = new Date().toISOString();
+  const allImages = imagePaths && imagePaths.length > 0 ? imagePaths : imagePath ? [imagePath] : [];
 
   blocks.push({ text: config.report.orgName, size: FONT_HEADING_SIZE, bold: true });
   blocks.push({ text: 'Legal Metrology (Packaged Commodities) Compliance Report', size: FONT_SUBHEADING_SIZE, bold: true, gapBefore: 4 });
   blocks.push({ text: `Generated: ${now}`, size: 9, gapBefore: 4 });
-  blocks.push({ text: `Source image: ${path.basename(imagePath)}`, size: 9 });
+  if (allImages.length > 1) {
+    blocks.push({ text: `Source panels/images (${allImages.length}): ${allImages.map((p) => path.basename(p)).join(', ')}`, size: 9 });
+  } else if (allImages.length === 1) {
+    blocks.push({ text: `Source image: ${path.basename(allImages[0])}`, size: 9 });
+  }
 
   blocks.push({ text: 'Product Details', size: FONT_SUBHEADING_SIZE, bold: true, gapBefore: 16 });
   blocks.push({ text: `Category: ${packageRecord.commodity.category || 'Unclassified'}`, size: 10, gapBefore: 4 });
@@ -78,9 +83,9 @@ function buildReportBlocks({ imagePath, packageRecord, complianceResult }) {
   return blocks;
 }
 
-async function generateReport({ imagePath, packageRecord, complianceResult, productDir }) {
+async function generateReport({ imagePath, imagePaths, packageRecord, complianceResult, productDir }) {
   ensureDirs(productDir);
-  const blocks = buildReportBlocks({ imagePath, packageRecord, complianceResult });
+  const blocks = buildReportBlocks({ imagePath, imagePaths, packageRecord, complianceResult });
   const pdfBuffer = generatePdfBuffer(blocks);
 
   const outFile = path.join(productDir, 'report.pdf');

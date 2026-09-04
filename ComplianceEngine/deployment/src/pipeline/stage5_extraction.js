@@ -36,10 +36,13 @@ function classifyLine(text) {
 }
 
 function parseNetQuantity(text) {
-  const match = text.match(/(\d+(?:\.\d+)?)\s*(kg|g|ml|l|litre|liter)\b/i);
+  const match = text.match(/(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|grams?|ml|l|litres?|liters?)\b/i);
   if (!match) return { value: null, unit: null };
   let unit = match[2].toLowerCase();
-  if (unit === 'litre' || unit === 'liter') unit = 'l';
+  if (unit.startsWith('kg')) unit = 'kg';
+  else if (unit.startsWith('g')) unit = 'g';
+  else if (unit.startsWith('l')) unit = 'l';
+  else unit = 'ml';
   return { value: parseFloat(match[1]), unit };
 }
 
@@ -49,39 +52,161 @@ function normalizeToKgOrL(value, unit) {
   return value;
 }
 
-function parseMrp(text) {
-  const match = text.match(/(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)/i);
-  const inclusive = /inclusive|incl\.?\s*of\s*all\s*taxes/i.test(text);
-  return { value: match ? parseFloat(match[1]) : null, inclusiveOfTaxesStated: inclusive };
-}
+const DATE_REGEX = /\b(?:0?[1-9]|[12]\d|3[01])\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b|\b(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b/;
 
 function regexExtract(ocrResult, detection) {
   logger.info('stage6_declarationExtraction', 'Using deterministic regex extraction fallback');
-  const lines = (ocrResult.lines || []).map((l) => ({ ...l, fieldHint: l.fieldHint || classifyLine(l.text) }));
-  const get = (hint) => lines.find((l) => l.fieldHint === hint);
-  const mrpLine = get('mrp');
-  const qtyLine = get('netQuantity');
-  const mfgLine = get('mfgDate');
-  const mfrLine = get('manufacturer');
-  const packerLine = get('packer');
-  const importerLine = get('importer');
-  const careLine = get('consumerCare');
-  const nameLine = get('commodityName');
-  const qty = qtyLine ? parseNetQuantity(qtyLine.text) : { value: null, unit: null };
-  const mrp = mrpLine ? parseMrp(mrpLine.text) : { value: null, inclusiveOfTaxesStated: false };
-  const qualifiedWhenPacked = qtyLine ? /when\s+packed/i.test(qtyLine.text) : false;
+  const lines = (ocrResult.lines || []).map((l, idx) => ({
+    ...l,
+    index: idx,
+    fieldHint: l.fieldHint || classifyLine(l.text),
+  }));
+
+  const fullText = lines.map((l) => l.text).join('\n');
+  const getIndex = (hint) => lines.findIndex((l) => l.fieldHint === hint);
+
+  // 1. MRP
+  const mrpIdx = getIndex('mrp');
+  let mrpValue = null;
+  let mrpRaw = '';
+  if (mrpIdx !== -1) {
+    // Search current line and adjacent lines for price figures
+    for (let j = Math.max(0, mrpIdx - 1); j <= Math.min(lines.length - 1, mrpIdx + 2); j++) {
+      const match = lines[j].text.match(/(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d{1,2})?)/i);
+      if (match && parseFloat(match[1]) > 0) {
+        mrpValue = parseFloat(match[1]);
+        mrpRaw = lines[j].text;
+        break;
+      }
+    }
+  }
+  const inclusiveOfTaxesStated = /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(fullText);
+
+  // 2. Net Quantity
+  const qtyIdx = getIndex('netQuantity');
+  let qty = { value: null, unit: null };
+  let qtyRaw = '';
+  if (qtyIdx !== -1) {
+    for (let j = Math.max(0, qtyIdx - 1); j <= Math.min(lines.length - 1, qtyIdx + 2); j++) {
+      const parsed = parseNetQuantity(lines[j].text);
+      if (parsed.value != null) {
+        qty = parsed;
+        qtyRaw = lines[j].text;
+        break;
+      }
+    }
+  }
+  if (qty.value == null) {
+    // Global fallback across full text
+    const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|litre|liter)\b/i);
+    if (globalMatch) {
+      qty = parseNetQuantity(globalMatch[0]);
+      qtyRaw = globalMatch[0];
+    }
+  }
+
+  // 3. Manufacturing Date
+  const mfgIdx = getIndex('mfgDate');
+  let mfgDateVal = null;
+  let mfgRaw = '';
+  if (mfgIdx !== -1) {
+    for (let j = Math.max(0, mfgIdx - 2); j <= Math.min(lines.length - 1, mfgIdx + 2); j++) {
+      const dateMatch = lines[j].text.match(DATE_REGEX);
+      if (dateMatch) {
+        mfgDateVal = dateMatch[0];
+        mfgRaw = lines[j].text;
+        break;
+      }
+    }
+    if (!mfgDateVal) {
+      mfgDateVal = lines[mrpIdx]?.text || null;
+      mfgRaw = mfgDateVal || '';
+    }
+  } else {
+    const globalDate = fullText.match(DATE_REGEX);
+    if (globalDate) {
+      mfgDateVal = globalDate[0];
+      mfgRaw = globalDate[0];
+    }
+  }
+
+  // 4. Manufacturer
+  const mfrIdx = getIndex('manufacturer');
+  const mfrLine = mfrIdx !== -1 ? lines[mfrIdx] : null;
+  let mfrName = mfrLine?.text || null;
+  let mfrAddress = false;
+  if (mfrLine) {
+    const combinedMfrText = lines
+      .slice(mfrIdx, Math.min(lines.length, mfrIdx + 4))
+      .map((l) => l.text)
+      .join(' ');
+    mfrAddress = /\b[1-9]\d{5}\b/i.test(combinedMfrText) || /india|road|street|estate|sector|phase|nagar/i.test(combinedMfrText) || combinedMfrText.length > 35;
+  }
+
+  // 5. Commodity Name
+  const nameIdx = getIndex('commodityName');
+  const nameLine = nameIdx !== -1 ? lines[nameIdx] : null;
+
+  // 6. Consumer Care
+  const careIdx = getIndex('consumerCare');
+  let phone = null;
+  let email = null;
+  let careRaw = '';
+  if (careIdx !== -1) {
+    const careText = lines
+      .slice(Math.max(0, careIdx - 1), Math.min(lines.length, careIdx + 4))
+      .map((l) => l.text)
+      .join(' ');
+    careRaw = careText;
+    const phoneMatch = careText.match(/(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|\b\d{3,5}[- ]?\d{6,8}\b/);
+    if (phoneMatch) phone = phoneMatch[0];
+    const emailMatch = careText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
+    if (emailMatch) email = emailMatch[0];
+  }
+
+  const qualifiedWhenPacked = /when\s+packed/i.test(fullText);
   const standardLine = lines.find((l) => /non[\s-]?standard\s+size|not\s+a\s+standard\s+pack\s+size/i.test(l.text));
 
   return {
-    manufacturer: { present: !!mfrLine, name: mfrLine?.text || null, address: !!(mfrLine && (/\d{6}/.test(mfrLine.text) || mfrLine.text.length > 40)), mark: null },
-    packer: { present: !!packerLine, name: packerLine?.text || null, address: false, mark: null },
-    importer: { present: !!importerLine, name: importerLine?.text || null, address: false, mark: null },
+    manufacturer: { present: !!mfrLine, name: mfrName, address: mfrAddress, mark: null },
+    packer: { present: false, name: null, address: false, mark: null },
+    importer: { present: false, name: null, address: false, mark: null },
     commodityName: { present: !!nameLine, value: nameLine?.text || null, perProductBreakdown: false },
-    netQuantity: { present: !!qtyLine, value: qty.value, unit: qty.unit, qualifiedWhenPacked, unitKind: qty.unit === 'g' || qty.unit === 'kg' ? 'mass' : qty.unit === 'ml' || qty.unit === 'l' ? 'volume' : null, rawText: qtyLine?.text || '', onTagCardOrTapeDevice: false, symbolUsed: null },
-    mfgDate: { present: !!mfgLine, value: mfgLine?.text || null, rawText: mfgLine?.text || '', usedIndividualSticker: false, isMrpReductionSticker: false },
-    mrp: { present: !!mrpLine, value: mrp.value, currency: mrpLine ? 'INR' : null, rawText: mrpLine?.text || '', inclusiveOfTaxesStated: mrp.inclusiveOfTaxesStated, stickerReducedMrp: false, stickerCoversOriginalMrp: false },
-    dimensions: { present: false, rawText: '', perPieceDeclared: false, numberOfPiecesDeclared: false, perPieceDimensionAndRSP: false, numberOfBags: null, linearDimensions: null, numberOfContainers: null, lengthWidthDepth: null, diameter: null, standardCapacityReferenceIncluded: false },
-    consumerCare: { present: !!careLine, name: null, address: null, telephone: null, email: null, rawText: careLine?.text || '' },
+    netQuantity: {
+      present: qty.value != null,
+      value: qty.value,
+      unit: qty.unit,
+      qualifiedWhenPacked,
+      unitKind: qty.unit === 'g' || qty.unit === 'kg' ? 'mass' : qty.unit === 'ml' || qty.unit === 'l' ? 'volume' : null,
+      rawText: qtyRaw,
+      onTagCardOrTapeDevice: false,
+      symbolUsed: null,
+    },
+    mfgDate: {
+      present: !!mfgDateVal,
+      value: mfgDateVal,
+      rawText: mfgRaw,
+      usedIndividualSticker: false,
+      isMrpReductionSticker: false,
+    },
+    mrp: {
+      present: mrpValue != null,
+      value: mrpValue,
+      currency: 'INR',
+      rawText: mrpRaw,
+      inclusiveOfTaxesStated,
+      stickerReducedMrp: false,
+      stickerCoversOriginalMrp: false,
+    },
+    dimensions: { present: false, rawText: '' },
+    consumerCare: {
+      present: !!(phone || email || careRaw),
+      name: null,
+      address: null,
+      telephone: phone,
+      email: email,
+      rawText: careRaw,
+    },
     standardPackDeclaration: { present: !!standardLine, rawText: standardLine?.text || '' },
     sheetCount: { present: false, value: null, dimensionsPerSheet: null, rawText: '' },
     multiComponentDeclarationHandled: false,

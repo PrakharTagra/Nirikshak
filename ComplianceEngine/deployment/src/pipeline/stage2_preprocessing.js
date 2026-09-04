@@ -9,7 +9,7 @@
 
 const logger = require('../utils/logger');
 const config = require('../config');
-const { callStage2And4, savePreprocessedImage } = require('../integrations/stage2Stage4Client');
+const { callStage2And4, callStage2And4Batch, savePreprocessedImage } = require('../integrations/stage2Stage4Client');
 
 async function preprocessImage(imagePath) {
   logger.info('stage2_preprocessing', `Calling real Python preprocessing service: ${config.integration.preprocessorUrl}`);
@@ -27,4 +27,31 @@ async function preprocessImage(imagePath) {
   };
 }
 
-module.exports = { preprocessImage };
+async function preprocessImagesBatch(imagePaths) {
+  logger.info('stage2_preprocessing', `Calling concurrent Python batch preprocessing for ${imagePaths.length} image(s)`);
+  const batchResult = await callStage2And4Batch(imagePaths);
+
+  const itemsWithPaths = await Promise.all((batchResult.items || []).map(async (item, idx) => {
+    const origPath = imagePaths[idx] || item.filename;
+    let savedPath = null;
+    if (item.image_base64) {
+      savedPath = await savePreprocessedImage(item.image_base64, origPath, `panel_${idx + 1}`);
+    }
+    return {
+      ...item,
+      path: savedPath,
+      originalPath: origPath,
+    };
+  }));
+
+  return {
+    productId: batchResult.product_id ?? null,
+    items: itemsWithPaths,
+    combinedText: batchResult.combined_text || '',
+    combinedRegions: batchResult.combined_regions || [],
+    declarations: batchResult.declarations || {},
+    integrationResult: batchResult,
+  };
+}
+
+module.exports = { preprocessImage, preprocessImagesBatch };

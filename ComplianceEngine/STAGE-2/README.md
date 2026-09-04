@@ -68,16 +68,15 @@ same metadata JSON in the `X-Preprocess-Metadata` response header — use
 this to pipe straight into Stage 3 without a base64 round-trip.
 
 ### `POST /preprocess/ocr`
-Runs Stage 2 preprocessing and passes the processed image directly to the
-Stage 4 OCR package. Returns both `preprocess_metadata` and the Stage 4 OCR
-result in one JSON response. The processed PNG is stored in
-`outputs/preprocessed/` before OCR runs, and its path is returned as
-`preprocessed_image`. A formatted copy of the complete result is saved in
-`outputs/ocr_results/`, with its path returned as `result_json`. The response
-also exposes `extracted_text`, `metadata`, `declarations`, and `regions` at
-the top level; the original nested `ocr` object is retained for compatibility.
-Install the dependencies from this directory's `requirements.txt` before
-using this endpoint.
+Runs Stage 2 preprocessing and passes the processed image directly to Stage 4 RapidOCR.
+Returns `preprocess_metadata`, OCR regions, declarations, and preprocessed image.
+
+### `POST /preprocess/ocr/batch`
+Accepts multiple image files concurrently (`multipart/form-data`, multiple `images` fields,
+e.g. front PDP, back panel, crimp/bottom rubber stamp). Preprocesses and runs RapidOCR on all
+images concurrently via a thread pool. Returns per-image metadata, individual preprocessed
+PNGs, merged OCR text blocks, tagged regions (with `image_index` and `source_image`), and
+consolidated declarations under one unified `product_id`.
 
 ### `GET /health`
 Liveness check.

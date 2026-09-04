@@ -18,24 +18,26 @@ const fs = require('fs/promises');
 const path = require('path');
 const config = require('../config');
 
-async function callStage2And4(imagePath) {
-  const data = await fs.readFile(imagePath);
-  const ext = path.extname(imagePath).toLowerCase();
-
-const mimeTypes = {
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.png': 'image/png',
-  '.webp': 'image/webp',
-};
-
-const mimeType = mimeTypes[ext];
-
-if (!mimeType) {
-  throw new Error(`Unsupported image format: ${ext}`);
+function getMimeType(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  const mimeTypes = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+  };
+  const mimeType = mimeTypes[ext];
+  if (!mimeType) {
+    throw new Error(`Unsupported image format: ${ext}`);
+  }
+  return mimeType;
 }
 
-const blob = new Blob([data], { type: mimeType });
+async function callStage2And4(imagePath) {
+  const data = await fs.readFile(imagePath);
+  const mimeType = getMimeType(imagePath);
+
+  const blob = new Blob([data], { type: mimeType });
   const form = new FormData();
   form.append('image', blob, path.basename(imagePath));
 
@@ -70,13 +72,78 @@ const blob = new Blob([data], { type: mimeType });
   }
 }
 
-async function savePreprocessedImage(base64, originalImagePath) {
+async function callStage2And4Batch(imagePaths) {
+  if (!imagePaths || imagePaths.length === 0) {
+    throw new Error('No image paths provided for batch processing.');
+  }
+
+  const form = new FormData();
+  for (const imgPath of imagePaths) {
+    const data = await fs.readFile(imgPath);
+    const mimeType = getMimeType(imgPath);
+    const blob = new Blob([data], { type: mimeType });
+    form.append('images', blob, path.basename(imgPath));
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = config.integration.timeoutMs * Math.max(1, Math.ceil(imagePaths.length * 0.5));
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(`${config.integration.preprocessorUrl}/preprocess/ocr/batch`, {
+      method: 'POST',
+      body: form,
+      signal: controller.signal,
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    // Fallback: If the batch endpoint is not available, execute concurrent requests in parallel
+    if (response.status === 404) {
+      const singleResults = await Promise.all(imagePaths.map((p) => callStage2And4(p)));
+      const combined_regions = [];
+      const text_blocks = [];
+      singleResults.forEach((res, idx) => {
+        const fn = path.basename(imagePaths[idx]);
+        text_blocks.push(`--- [Panel/Image ${idx + 1}: ${fn}] ---\n${res.extracted_text || ''}`);
+        (res.regions || []).forEach((r) => {
+          combined_regions.push({ ...r, image_index: idx, source_image: fn });
+        });
+      });
+      return {
+        product_id: singleResults[0]?.product_id ?? null,
+        items: singleResults.map((r, i) => ({
+          image_index: i,
+          filename: path.basename(imagePaths[i]),
+          metadata: r.metadata,
+          extracted_text: r.extracted_text,
+          regions: r.regions,
+          image_base64: r.image_base64,
+          declarations: r.declarations,
+        })),
+        combined_text: text_blocks.join('\n\n'),
+        combined_regions,
+        declarations: singleResults[0]?.declarations || {},
+      };
+    }
+
+    const errText = await response.text();
+    throw new Error(`Batch preprocessing service returned HTTP ${response.status}: ${errText}`);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function savePreprocessedImage(base64, originalImagePath, suffix = '') {
   const outputDir = config.paths.preprocessed;
   await fs.mkdir(outputDir, { recursive: true });
   const stem = path.basename(originalImagePath, path.extname(originalImagePath));
-  const outputPath = path.join(outputDir, `${stem}_${Date.now()}_preprocessed.png`);
+  const sfx = suffix ? `_${suffix}` : '';
+  const outputPath = path.join(outputDir, `${stem}${sfx}_${Date.now()}_preprocessed.png`);
   await fs.writeFile(outputPath, Buffer.from(base64, 'base64'));
   return outputPath;
 }
 
-module.exports = { callStage2And4, savePreprocessedImage };
+module.exports = { callStage2And4, callStage2And4Batch, savePreprocessedImage, getMimeType };

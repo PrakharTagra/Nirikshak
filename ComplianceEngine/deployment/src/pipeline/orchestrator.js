@@ -10,7 +10,7 @@
  */
 'use strict';
 
-const { preprocessImage } = require('./stage2_preprocessing');
+const { preprocessImage, preprocessImagesBatch } = require('./stage2_preprocessing');
 const { extractText } = require('./stage4_ocr');
 const { analyzeFont } = require('./stage5_fontAnalysis');
 const { extract } = require('./stage5_extraction');
@@ -83,19 +83,39 @@ function buildPackageRecord(declarations, labelMetrics) {
   };
 }
 
-async function runPipelineForImage(imagePath) {
-  logger.info('orchestrator', `--- Starting pipeline for ${imagePath} ---`);
+/**
+ * Process multiple images/panels representing a single packaged commodity at a single time.
+ * Runs preprocessing and RapidOCR concurrently, combines text across panels,
+ * extracts declarations holistically, and produces a single unified compliance report.
+ */
+async function runPipelineForProduct(imagePaths = []) {
+  const paths = Array.isArray(imagePaths) ? imagePaths : [imagePaths];
+  if (paths.length === 0) {
+    throw new Error('No image paths provided for product inspection.');
+  }
 
-  const preprocessed = await preprocessImage(imagePath);
+  logger.info(
+    'orchestrator',
+    `--- Starting concurrent multi-panel pipeline for product (${paths.length} panel/image(s)) ---`
+  );
+
+  // 1. Run Stage 2 preprocessing and Stage 4 OCR on all images concurrently
+  const preprocessed = await preprocessImagesBatch(paths);
+
+  // 2. Convert combined Python OCR output to normalized OCR representation
   const ocrResult = await extractText(preprocessed);
+
+  // 3. Stage 5: Analyze font geometry across all extracted regions
   const labelMetrics = analyzeFont(ocrResult);
+
+  // 4. Stage 6: Unified declaration extraction (Groq / regex) across all panels
   const declarations = await extract(ocrResult, null);
+
+  // 5. Stage 7: Codified Legal Metrology rule engine
   const packageRecord = buildPackageRecord(declarations, labelMetrics);
   const complianceResult = runComplianceCheck(packageRecord);
 
-  // Reuse the product_<n> number STAGE-2 already allocated for this scan
-  // (so output/STAGE-2/product_<n>/ and output/deployment/product_<n>/
-  // line up), falling back to a fresh id if STAGE-2 didn't provide one.
+  // 6. Persistence in product_<n> directory
   const productId = preprocessed.productId ?? allocateProductId(config.paths.outputRoot);
   const productDir = path.join(config.paths.output, `product_${productId}`);
   ensureDirs(productDir);
@@ -104,27 +124,60 @@ async function runPipelineForImage(imagePath) {
 
   fs.writeFileSync(
     path.join(productDir, 'mapped.json'),
-    JSON.stringify({ declarations, packageRecord, complianceResult }, null, 2),
+    JSON.stringify(
+      {
+        productId,
+        sourceImages: paths.map((p) => path.basename(p)),
+        declarations,
+        packageRecord,
+        complianceResult,
+        panels: ocrResult.perImage || [],
+      },
+      null,
+      2
+    ),
     'utf8'
   );
 
-  const preprocessedImagePath = path.join(productDir, 'preprocessed.png');
-  fs.copyFileSync(preprocessed.path, preprocessedImagePath);
-  fs.rmSync(preprocessed.path, { force: true }); // drop the scratch copy in temp/
+  // Copy preprocessed images into product directory
+  const preprocessedImages = [];
+  (preprocessed.items || []).forEach((item, idx) => {
+    const destName = paths.length > 1 ? `preprocessed_${idx + 1}.png` : 'preprocessed.png';
+    const destPath = path.join(productDir, destName);
+    if (item.path && fs.existsSync(item.path)) {
+      fs.copyFileSync(item.path, destPath);
+      fs.rmSync(item.path, { force: true });
+    }
+    preprocessedImages.push(destPath);
+  });
 
-  const reportPath = await generateReport({ imagePath, packageRecord, complianceResult, productDir });
+  // 7. Generate unified PDF compliance report
+  const reportPath = await generateReport({
+    imagePath: paths[0],
+    imagePaths: paths,
+    packageRecord,
+    complianceResult,
+    productDir,
+  });
 
   logger.info(
     'orchestrator',
-    `--- Finished ${imagePath}: ${complianceResult.applicable ? (complianceResult.compliant ? 'COMPLIANT' : `NON-COMPLIANT (${complianceResult.summary.total} issues)`) : 'NOT APPLICABLE'} ---`
+    `--- Finished product_${productId} (${paths.length} panel(s)): ${
+      complianceResult.applicable
+        ? complianceResult.compliant
+          ? 'COMPLIANT'
+          : `NON-COMPLIANT (${complianceResult.summary.total} issues)`
+        : 'NOT APPLICABLE'
+    } ---`
   );
 
   return {
-    imagePath,
     productId,
+    imagePaths: paths,
+    imagePath: paths[0],
     productDir,
-    preprocessedImagePath,
-    preprocessMetadata: preprocessed.metadata,
+    preprocessedImages,
+    preprocessedImagePath: preprocessedImages[0] || null,
     ocrResult,
     reportPath,
     packageRecord,
@@ -132,13 +185,16 @@ async function runPipelineForImage(imagePath) {
   };
 }
 
-async function runPipelineForBatch(imagePaths) {
-  const results = [];
-  for (const imagePath of imagePaths) {
-    // eslint-disable-next-line no-await-in-loop
-    results.push(await runPipelineForImage(imagePath));
-  }
-  return results;
+async function runPipelineForImage(imagePath) {
+  return runPipelineForProduct([imagePath]);
 }
 
-module.exports = { runPipelineForImage, runPipelineForBatch };
+/**
+ * Process multiple independent products concurrently in parallel.
+ */
+async function runPipelineForBatch(imagePaths) {
+  logger.info('orchestrator', `Processing batch of ${imagePaths.length} products concurrently...`);
+  return Promise.all(imagePaths.map((imagePath) => runPipelineForImage(imagePath)));
+}
+
+module.exports = { runPipelineForProduct, runPipelineForImage, runPipelineForBatch };

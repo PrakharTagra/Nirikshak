@@ -85,7 +85,14 @@ GROQ_FALLBACK_TO_REGEX=true
 Then:
 
 ```bash
-node src/cli.js path/to/package.jpg
+# Multi-image product inspection (e.g. Front PDP + bottom rubber stamp):
+node src/cli.js path/to/front.jpg path/to/crimp_or_bottom.jpg
+
+# Or explicitly:
+node src/cli.js --product path/to/pdp.jpg path/to/stamp.jpg
+
+# Independent products in concurrent batch:
+node src/cli.js --batch productA.jpg productB.jpg
 ```
 
 ## Important calibration note

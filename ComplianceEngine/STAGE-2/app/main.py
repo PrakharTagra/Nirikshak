@@ -17,6 +17,7 @@ GET /health
     Basic liveness check.
 """
 
+import asyncio
 import base64
 import io
 import json
@@ -24,6 +25,7 @@ import logging
 import os
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import cv2
@@ -34,6 +36,8 @@ from .preprocessing import PreprocessingError, preprocess
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("stage2-preprocessing")
+
+_EXECUTOR = ThreadPoolExecutor(max_workers=min(32, (os.cpu_count() or 1) + 4))
 
 app = FastAPI(
     title="Legal Metrology — Stage 2 Image Preprocessing",
@@ -154,27 +158,44 @@ async def preprocess_image(image: UploadFile = File(...)):
     return StreamingResponse(io.BytesIO(buf.tobytes()), media_type="image/png", headers=headers)
 
 
+def _process_image_sync(data: bytes, filename: str, index: int) -> dict:
+    """Synchronous worker function to preprocess and run OCR on one image in thread pool."""
+    out_img, meta = preprocess(data)
+    ok, buf = cv2.imencode(".png", out_img)
+    if not ok:
+        raise RuntimeError(f"Failed to encode preprocessed image for {filename}.")
+
+    ocr_runner = _get_ocr_runner()
+    ocr_result = ocr_runner(out_img)
+
+    return {
+        "index": index,
+        "filename": filename,
+        "meta": meta.to_dict(),
+        "buf": buf.tobytes(),
+        "ocr_result": ocr_result,
+        "image_base64": base64.b64encode(buf.tobytes()).decode("ascii"),
+    }
+
+
 @app.post("/preprocess/ocr")
 async def preprocess_and_ocr(image: UploadFile = File(...)):
     """Store Stage 2 output, then pass the same image to Stage 4 OCR."""
     data = await _read_and_validate(image)
     try:
-        out_img, meta = preprocess(data)
-        ok, buf = cv2.imencode(".png", out_img)
-        if not ok:
-            raise RuntimeError("Failed to encode preprocessed image.")
+        loop = asyncio.get_running_loop()
+        res = await loop.run_in_executor(
+            _EXECUTOR, _process_image_sync, data, image.filename or "image.png", 0
+        )
 
-        ocr_result = _get_ocr_runner()(out_img)
-
-        # One product folder per scan, shared (by number) across every
-        # service's output: output/product_<n>/
         product_id = _allocate_product_id()
         product_dir = OUTPUT_ROOT / f"product_{product_id}"
         product_dir.mkdir(parents=True, exist_ok=True)
 
         output_path = product_dir / "preprocessed.png"
-        output_path.write_bytes(buf.tobytes())
+        output_path.write_bytes(res["buf"])
 
+        ocr_result = res["ocr_result"]
         (product_dir / "raw_extracted_text.txt").write_text(
             ocr_result.get("text", "") or "", encoding="utf-8"
         )
@@ -183,7 +204,7 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
         result_path.write_text(
             json.dumps(
                 {
-                    "metadata": meta.to_dict(),
+                    "metadata": res["meta"],
                     "declarations": ocr_result.get("declarations", {}),
                 },
                 indent=2,
@@ -201,15 +222,125 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
     return JSONResponse(
         {
             "extracted_text": ocr_result.get("text", ""),
-            "metadata": meta.to_dict(),
+            "metadata": res["meta"],
             "declarations": ocr_result.get("declarations", {}),
             "regions": ocr_result.get("regions", []),
             "product_id": product_id,
             "preprocessed_image": str(output_path),
             "result_json": str(result_path),
             "ocr": ocr_result,
-            # Base64 makes the service contract usable when the Node deployment
-            # engine runs in a different container/host from Stage 2/4.
-            "image_base64": base64.b64encode(buf.tobytes()).decode("ascii"),
+            "image_base64": res["image_base64"],
         }
     )
+
+
+@app.post("/preprocess/ocr/batch")
+async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
+    """Preprocess and OCR multiple images (multiple panels/stamps of a package) concurrently."""
+    if not images:
+        raise HTTPException(status_code=400, detail="No images uploaded.")
+
+    # Read and validate all incoming files
+    validated = []
+    for idx, img in enumerate(images):
+        data = await _read_and_validate(img)
+        validated.append((data, img.filename or f"panel_{idx + 1}.png", idx))
+
+    loop = asyncio.get_running_loop()
+    tasks = [
+        loop.run_in_executor(_EXECUTOR, _process_image_sync, data, fn, idx)
+        for data, fn, idx in validated
+    ]
+
+    try:
+        processed_items = await asyncio.gather(*tasks)
+    except PreprocessingError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception:
+        logger.exception("Unexpected failure during batch preprocessing/OCR")
+        raise HTTPException(status_code=500, detail="Internal batch preprocessing/OCR error.")
+
+    processed_items.sort(key=lambda x: x["index"])
+
+    # Allocate ONE product ID for the multi-panel product inspection
+    product_id = _allocate_product_id()
+    product_dir = OUTPUT_ROOT / f"product_{product_id}"
+    product_dir.mkdir(parents=True, exist_ok=True)
+
+    items_output = []
+    combined_regions = []
+    text_blocks = []
+    merged_declarations = {}
+
+    for item in processed_items:
+        idx = item["index"]
+        fn = item["filename"]
+        buf = item["buf"]
+        ocr_result = item["ocr_result"]
+        meta = item["meta"]
+
+        out_name = f"preprocessed_{idx + 1}.png" if len(processed_items) > 1 else "preprocessed.png"
+        output_path = product_dir / out_name
+        output_path.write_bytes(buf)
+
+        raw_txt = ocr_result.get("text", "") or ""
+        text_blocks.append(f"--- [Panel/Image {idx + 1}: {fn}] ---\n{raw_txt}")
+
+        for r in ocr_result.get("regions", []):
+            r_copy = dict(r)
+            r_copy["image_index"] = idx
+            r_copy["source_image"] = fn
+            combined_regions.append(r_copy)
+
+        decls = ocr_result.get("declarations", {})
+        for k, v in decls.items():
+            if k not in merged_declarations or (not merged_declarations[k].get("present") and v.get("present")):
+                merged_declarations[k] = v
+
+        items_output.append({
+            "image_index": idx,
+            "filename": fn,
+            "metadata": meta,
+            "extracted_text": raw_txt,
+            "regions": ocr_result.get("regions", []),
+            "preprocessed_image": str(output_path),
+            "declarations": decls,
+            "ocr": ocr_result,
+            "image_base64": item["image_base64"],
+        })
+
+    combined_text = "\n\n".join(text_blocks)
+    (product_dir / "raw_extracted_text.txt").write_text(combined_text, encoding="utf-8")
+
+    result_path = product_dir / "mapped.json"
+    result_path.write_text(
+        json.dumps(
+            {
+                "product_id": product_id,
+                "items": [
+                    {
+                        "image_index": it["image_index"],
+                        "filename": it["filename"],
+                        "metadata": it["metadata"],
+                        "extracted_text": it["extracted_text"],
+                        "declarations": it["declarations"],
+                    }
+                    for it in items_output
+                ],
+                "declarations": merged_declarations,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    return JSONResponse({
+        "product_id": product_id,
+        "items": items_output,
+        "combined_text": combined_text,
+        "combined_regions": combined_regions,
+        "declarations": merged_declarations,
+        "result_json": str(result_path),
+    })
