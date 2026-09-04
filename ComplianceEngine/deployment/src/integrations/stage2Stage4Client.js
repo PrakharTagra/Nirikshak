@@ -3,7 +3,7 @@
  *
  * Stage 3 (PDP detection) has intentionally been removed from the deployment
  * pipeline. The Python service receives the original image, runs the real
- * OpenCV preprocessing, then runs RapidOCR directly on the preprocessed image.
+ * OpenCV preprocessing, then runs PaddleOCR directly on the preprocessed image.
  *
  * Expected endpoint:
  *   POST ${PREPROCESSOR_URL}/preprocess/ocr

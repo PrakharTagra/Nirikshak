@@ -1,7 +1,7 @@
 /**
  * Stage 4 — OCR adapter.
  *
- * RapidOCR itself runs in the Python service immediately after Stage 2.
+ * PaddleOCR itself runs in the Python service immediately after Stage 2.
  * This adapter converts the Python Stage-4 result into the deployment engine's
  * canonical `{ lines: [...] }` contract used by Stage 5/6.
  */
@@ -53,7 +53,7 @@ function normalizePythonOcr(pythonResult) {
       lines: allLines,
       regions: combinedRegions,
       text: combinedText,
-      engine: 'RapidOCR',
+      engine: 'PaddleOCR',
       isMultiImage: pythonResult.items.length > 1,
       imageCount: pythonResult.items.length,
       perImage,
@@ -85,7 +85,7 @@ function normalizePythonOcr(pythonResult) {
     lines,
     regions,
     text: pythonResult?.ocr?.text || pythonResult?.extracted_text || lines.map((l) => l.text).join('\n'),
-    engine: pythonResult?.ocr?.engine || 'RapidOCR',
+    engine: pythonResult?.ocr?.engine || 'PaddleOCR',
     isMultiImage: false,
     imageCount: 1,
     perImage: [
@@ -106,7 +106,7 @@ function normalizePythonOcr(pythonResult) {
 }
 
 async function extractText(preprocessed) {
-  logger.info('stage4_ocr', 'Using RapidOCR output returned by the Python Stage 4 service');
+  logger.info('stage4_ocr', 'Using PaddleOCR output returned by the Python Stage 4 service');
   return normalizePythonOcr(preprocessed.integrationResult);
 }
 

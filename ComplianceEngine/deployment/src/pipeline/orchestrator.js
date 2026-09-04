@@ -2,7 +2,7 @@
  * Deployment pipeline after intentional removal of Stage 3 (PDP detection).
  *
  * Stage 2 -> real OpenCV preprocessing service
- * Stage 4 -> real RapidOCR running directly on Stage-2 output
+ * Stage 4 -> real PaddleOCR running directly on Stage-2 output
  * Stage 5 -> font/readability analysis
  * Stage 6 -> Groq structured declaration extraction
  * Stage 7 -> deterministic Legal Metrology rule engine
@@ -117,7 +117,7 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
 
 /**
  * Process multiple images/panels representing a single packaged commodity at a single time.
- * Runs preprocessing and RapidOCR concurrently, combines text across panels,
+ * Runs preprocessing and PaddleOCR concurrently, combines text across panels,
  * extracts declarations holistically, and produces a single unified compliance report.
  */
 async function runPipelineForProduct(imagePaths = [], options = {}) {

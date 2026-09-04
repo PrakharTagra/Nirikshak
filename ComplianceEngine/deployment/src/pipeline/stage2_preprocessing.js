@@ -2,7 +2,7 @@
  * Stage 2 — real preprocessing bridge.
  *
  * Calls the Python OpenCV service from ComplianceEngine/STAGE-2. The Python
- * service also invokes Stage 4 RapidOCR on the resulting image so no PDP/label
+ * service also invokes Stage 4 PaddleOCR on the resulting image so no PDP/label
  * detection stage sits between preprocessing and OCR.
  */
 'use strict';

@@ -1,6 +1,6 @@
 # Legal Metrology Compliance — Deployment Engine
 
-The deployment pipeline now uses the real Python **Stage 2 Image Preprocessing** and **Stage 4 RapidOCR** implementation from `ComplianceEngine`.
+The deployment pipeline now uses the real Python **Stage 2 Image Preprocessing** and **Stage 4 PaddleOCR** implementation from `ComplianceEngine`.
 
 ## Updated architecture
 
@@ -11,7 +11,7 @@ Original Image
 Stage 2 — OpenCV preprocessing (Python)
     |
     v
-Stage 4 — RapidOCR directly on preprocessed image (Python)
+Stage 4 — PaddleOCR directly on preprocessed image (Python)
     |
     +----------------------+
     |                      |
@@ -45,7 +45,7 @@ That endpoint:
 1. receives the original image;
 2. runs the real OpenCV preprocessing;
 3. stores the preprocessed PNG;
-4. passes the same OpenCV image directly to `ComplianceEngine/STAGE-4` RapidOCR;
+4. passes the same OpenCV image directly to `ComplianceEngine/STAGE-4` PaddleOCR;
 5. returns OCR regions including text, confidence, bounding boxes and pixel heights;
 6. returns the preprocessed image as base64 so the Node engine can save it even when the services run in different containers.
 

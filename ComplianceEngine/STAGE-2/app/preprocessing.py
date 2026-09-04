@@ -20,7 +20,7 @@ Optimized for inspector-captured, close-up packaging photographs:
      (dark on light, light on dark, and vibrant packaging).
    - Percentile dynamic range stretch ensures optimal exposure.
 5. OCR Resolution Normalization:
-   Scales images into RapidOCR's sweet spot (max dimension 2048px) so character
+   Scales images into PaddleOCR's sweet spot (max dimension 2048px) so character
    heights are optimal (~25-50px) without thick stroke distortion or inference lag.
 """
 
@@ -150,7 +150,7 @@ def _normalize_contrast_and_brightness(img: np.ndarray, cfg: PreprocessConfig) -
 
 def _scale_and_refine_for_ocr(img: np.ndarray, cfg: PreprocessConfig) -> np.ndarray:
     """
-    Scale image into RapidOCR sweet spot and apply subtle micro-contrast.
+    Scale image into PaddleOCR sweet spot and apply subtle micro-contrast.
     Avoids heavy unsharp masks that cause dark halos or ringing.
     """
     h, w = img.shape[:2]
@@ -198,7 +198,7 @@ def preprocess(
       - Authentic orientation preserved (NO accidental 90-degree rotations).
       - Authentic packaging colors preserved (CIELAB L-channel processing).
       - Text strokes protected (NO inpainting).
-      - Optimum contrast, exposure, and scale for RapidOCR.
+      - Optimum contrast, exposure, and scale for PaddleOCR.
     """
     cfg = cfg or PreprocessConfig()
     img = decode_image(image_bytes)

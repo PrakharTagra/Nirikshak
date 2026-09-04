@@ -68,12 +68,12 @@ same metadata JSON in the `X-Preprocess-Metadata` response header — use
 this to pipe straight into Stage 3 without a base64 round-trip.
 
 ### `POST /preprocess/ocr`
-Runs Stage 2 preprocessing and passes the processed image directly to Stage 4 RapidOCR.
+Runs Stage 2 preprocessing and passes the processed image directly to Stage 4 PaddleOCR.
 Returns `preprocess_metadata`, OCR regions, declarations, and preprocessed image.
 
 ### `POST /preprocess/ocr/batch`
 Accepts multiple image files concurrently (`multipart/form-data`, multiple `images` fields,
-e.g. front PDP, back panel, crimp/bottom rubber stamp). Preprocesses and runs RapidOCR on all
+e.g. front PDP, back panel, crimp/bottom rubber stamp). Preprocesses and runs PaddleOCR on all
 images concurrently via a thread pool. Returns per-image metadata, individual preprocessed
 PNGs, merged OCR text blocks, tagged regions (with `image_index` and `source_image`), and
 consolidated declarations under one unified `product_id`.

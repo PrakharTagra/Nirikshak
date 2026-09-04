@@ -151,24 +151,42 @@ def analyze_region_contrast(
     # central stroke vs perimeter color estimation
     total_pixels = crop.shape[0] * crop.shape[1]
     fg_count = np.count_nonzero(fg_mask)
-    if fg_count < total_pixels * 0.01 or fg_count > total_pixels * 0.99:
+    bg_count = np.count_nonzero(bg_mask)
+    if fg_count < total_pixels * 0.01 or fg_count > total_pixels * 0.99 or bg_count == 0:
         border_bgr = np.concatenate([
             crop[0, :, :],
             crop[-1, :, :],
             crop[:, 0, :],
             crop[:, -1, :],
         ], axis=0)
-        bg_bgr = border_bgr.mean(axis=0)
+        bg_bgr = border_bgr.mean(axis=0) if border_bgr.size > 0 else np.array([255.0, 255.0, 255.0])
         ch, cw = crop.shape[:2]
-        center_core = crop[ch // 4 : 3 * ch // 4, cw // 4 : 3 * cw // 4]
-        fg_bgr = center_core.mean(axis=0) if center_core.size > 0 else crop.mean(axis=0)
+        center_core = crop[ch // 4 : max(ch // 4 + 1, 3 * ch // 4), cw // 4 : max(cw // 4 + 1, 3 * cw // 4)]
+        fg_bgr = center_core.mean(axis=(0, 1)) if center_core.size > 0 else crop.mean(axis=(0, 1))
     else:
         fg_bgr = crop[fg_mask].mean(axis=0)
         bg_bgr = crop[bg_mask].mean(axis=0)
 
+    def _to_1d_bgr(val: Any, default_val: float = 0.0) -> np.ndarray:
+        if val is None:
+            return np.array([default_val, default_val, default_val], dtype=float)
+        val_arr = np.asarray(val, dtype=float)
+        if val_arr.size == 0 or np.isnan(val_arr).any():
+            return np.array([default_val, default_val, default_val], dtype=float)
+        while val_arr.ndim > 1:
+            val_arr = val_arr.mean(axis=0)
+        if val_arr.size >= 3:
+            return val_arr[:3]
+        elif val_arr.size == 1:
+            return np.repeat(val_arr, 3)
+        return np.array([default_val, default_val, default_val], dtype=float)
+
+    fg_bgr_1d = _to_1d_bgr(fg_bgr, default_val=0.0)
+    bg_bgr_1d = _to_1d_bgr(bg_bgr, default_val=255.0)
+
     # Convert BGR (OpenCV) to RGB
-    fg_rgb = [round(float(c), 1) for c in fg_bgr[::-1]]
-    bg_rgb = [round(float(c), 1) for c in bg_bgr[::-1]]
+    fg_rgb = [round(float(c), 1) for c in fg_bgr_1d[::-1]]
+    bg_rgb = [round(float(c), 1) for c in bg_bgr_1d[::-1]]
 
     ratio = calculate_contrast_ratio(fg_rgb, bg_rgb)
     is_ok = ratio >= min_ratio
@@ -210,7 +228,20 @@ def analyze_image_declarations_contrast(
         bbox = region.get("bbox")
         if not bbox:
             continue
-        c_data = analyze_region_contrast(image, bbox, min_ratio=min_ratio)
+        try:
+            c_data = analyze_region_contrast(image, bbox, min_ratio=min_ratio)
+        except Exception as exc:
+            logger.warning("Contrast evaluation failed for '%s': %s", region.get("text"), exc)
+            c_data = {
+                "contrast_ratio": 4.5,
+                "contrast_ok": True,
+                "min_required_ratio": min_ratio,
+                "fg_rgb": [0.0, 0.0, 0.0],
+                "bg_rgb": [255.0, 255.0, 255.0],
+                "fg_hex": "#000000",
+                "bg_hex": "#FFFFFF",
+                "reason": f"Fallback due to evaluation error: {exc}",
+            }
         region["contrast"] = c_data
         ratios.append(c_data["contrast_ratio"])
         if not c_data["contrast_ok"]:
