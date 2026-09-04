@@ -111,7 +111,7 @@ function buildPackageRecord(declarations, labelMetrics) {
  * Runs preprocessing and RapidOCR concurrently, combines text across panels,
  * extracts declarations holistically, and produces a single unified compliance report.
  */
-async function runPipelineForProduct(imagePaths = []) {
+async function runPipelineForProduct(imagePaths = [], options = {}) {
   const paths = Array.isArray(imagePaths) ? imagePaths : [imagePaths];
   if (paths.length === 0) {
     throw new Error('No image paths provided for product inspection.');
@@ -129,7 +129,7 @@ async function runPipelineForProduct(imagePaths = []) {
   const ocrResult = await extractText(preprocessed);
 
   // 3. Stage 5: Analyze font geometry across all extracted regions
-  const labelMetrics = analyzeFont(ocrResult);
+  const labelMetrics = analyzeFont(ocrResult, options);
 
   // 4. Stage 6: Unified declaration extraction (Groq / regex) across all panels
   const declarations = await extract(ocrResult, null);
@@ -210,16 +210,16 @@ async function runPipelineForProduct(imagePaths = []) {
   };
 }
 
-async function runPipelineForImage(imagePath) {
-  return runPipelineForProduct([imagePath]);
+async function runPipelineForImage(imagePath, options = {}) {
+  return runPipelineForProduct([imagePath], options);
 }
 
 /**
  * Process multiple independent products concurrently in parallel.
  */
-async function runPipelineForBatch(imagePaths) {
+async function runPipelineForBatch(imagePaths, options = {}) {
   logger.info('orchestrator', `Processing batch of ${imagePaths.length} products concurrently...`);
-  return Promise.all(imagePaths.map((imagePath) => runPipelineForImage(imagePath)));
+  return Promise.all(imagePaths.map((imagePath) => runPipelineForImage(imagePath, options)));
 }
 
 module.exports = { runPipelineForProduct, runPipelineForImage, runPipelineForBatch, buildPackageRecord };

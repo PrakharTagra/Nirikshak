@@ -17,7 +17,7 @@ const { extractDeclarationsWithGroq } = require('./groqDeclarationExtractor');
 const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
   netQuantity: /\bnet\s*(wt|weight|qty|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
-  mfgDate: /\bmfg\b|manufactured\s+on|packed\s+on|pkd\.?\s*on|month\s*&\s*year\s*of\s*manufacture|\b(?:0[1-9]|1[0-2])\/\d{4}\b/i,
+  mfgDate: /\b(?:mfd|mfg|pkd|packed|manufactured|imported)\b|\bdate\s+of\s+(?:mfg|manufacture|packing|import)\b|\b(?:manufactured|packing|import|mfg)\s+date\b|\bmonth\s*(?:&|and)\s*year\s*of\s*(?:manufacture|packing|import)\b/i,
   manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|packed\s+by/i,
   packer: /\bpacked\s+by\b|\bpacker\b/i,
   importer: /\bimported\s+by\b|\bimporter\b/i,
@@ -101,6 +101,19 @@ function regexExtract(ocrResult, detection) {
       }
     }
   }
+
+  // Global MRP fallback
+  if (mrpValue == null) {
+    const globalMrpMatch =
+      fullText.match(/(?:m\.?r\.?p\.?|maximum\s+retail\s+price|price)[\s:]*(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d{1,2})?)/i) ||
+      fullText.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i);
+    if (globalMrpMatch && parseFloat(globalMrpMatch[1]) > 0) {
+      mrpValue = parseFloat(globalMrpMatch[1]);
+      mrpRaw = globalMrpMatch[0];
+    }
+  }
+  if (mrpRaw.length > 250) mrpRaw = mrpRaw.slice(0, 250);
+
   const inclusiveOfTaxesStated = /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(fullText);
 
   // 2. Net Quantity
@@ -124,34 +137,44 @@ function regexExtract(ocrResult, detection) {
       qty = parseNetQuantity(globalCountMatch[0]);
       qtyRaw = globalCountMatch[0];
     } else {
-      const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|litre|liter)\b/i);
+      const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|milliliters?|litres?|liters?)\b/i);
       if (globalMatch) {
         qty = parseNetQuantity(globalMatch[0]);
         qtyRaw = globalMatch[0];
       }
     }
   }
+  if (qtyRaw.length > 250) qtyRaw = qtyRaw.slice(0, 250);
 
-  // 3. Manufacturing Date
+  // 3. Manufacturing Date (Legal Metrology Rule 6(1)(d) strictly requires statutory labeling)
+  const STATUTORY_MFG_LABELS = /\b(?:manufactur(?:ed\s+date|e\s+date|ed\s+on)|date\s+of\s+manufacture|mfg\.?\s*date|date\s+of\s+mfg|\bmfd\b|\bmfg\b|month\s*(?:&|and)\s*year\s*of\s*manufacture|packed\s+on|date\s+of\s+packing|\bpkd\b|pre-?packed\s+on|imported\s+on|date\s+of\s+import)\b/i;
+  const DISALLOWED_DATE_REGEX = /\b(?:date\s+first\s+available|delivery|get\s+it|order\s+within|best\s+before|expiry|exp\.?\s*date|use\s+by|validity|shelf\s+life)\b/i;
+
   const mfgIdx = getIndex('mfgDate');
   let mfgDateVal = null;
   let mfgRaw = '';
   if (mfgIdx !== -1) {
-    for (let j = Math.max(0, mfgIdx - 1); j <= Math.min(lines.length - 1, mfgIdx + 2); j++) {
-      const dateMatch = lines[j].text.match(DATE_REGEX);
+    const candidateLine = lines[mfgIdx].text;
+    if (STATUTORY_MFG_LABELS.test(candidateLine) && !DISALLOWED_DATE_REGEX.test(candidateLine)) {
+      const dateMatch = candidateLine.match(DATE_REGEX);
       if (dateMatch) {
         mfgDateVal = dateMatch[0];
-        mfgRaw = lines[j].text;
-        break;
+        mfgRaw = candidateLine;
+      } else {
+        for (let j = Math.max(0, mfgIdx - 1); j <= Math.min(lines.length - 1, mfgIdx + 2); j++) {
+          if (DISALLOWED_DATE_REGEX.test(lines[j].text)) continue;
+          const adjMatch = lines[j].text.match(DATE_REGEX);
+          if (adjMatch) {
+            mfgDateVal = adjMatch[0];
+            mfgRaw = `${candidateLine} ${lines[j].text}`.trim();
+            break;
+          }
+        }
       }
     }
-  } else {
-    const globalDate = fullText.match(DATE_REGEX);
-    if (globalDate) {
-      mfgDateVal = globalDate[0];
-      mfgRaw = globalDate[0];
-    }
   }
+  // NEVER fall back to bare dates or catalog dates without an explicit statutory manufacturing label!
+  if (mfgRaw.length > 250) mfgRaw = mfgRaw.slice(0, 250);
 
   // 4. Manufacturer
   const mfrIdx = getIndex('manufacturer');
@@ -165,19 +188,57 @@ function regexExtract(ocrResult, detection) {
       .join(' ');
     const hasAddressSignal =
       /\b[1-9]\d{5}\b/i.test(combinedMfrText) ||
-      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore/i.test(combinedMfrText) ||
+      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa/i.test(combinedMfrText) ||
       combinedMfrText.length > 35;
-    mfrAddress = hasAddressSignal ? combinedMfrText : false;
+    mfrAddress = hasAddressSignal ? combinedMfrText.slice(0, 300) : false;
   }
+  if (!mfrName) {
+    const globalMfr = fullText.match(/(?:manufacturer|mfd\.?\s*by|manufactured\s+by)[\s:]+([^\n\r]+)/i);
+    if (globalMfr) {
+      mfrName = globalMfr[1].slice(0, 150).trim();
+      mfrAddress = mfrName;
+    }
+  }
+
+  // Packer & Importer
+  let pkrName = null;
+  let pkrAddress = false;
+  const globalPkr = fullText.match(/(?:packer|packed\s+by|pkd\.?\s*by)[\s:]+([^\n\r]+)/i);
+  if (globalPkr) {
+    pkrName = globalPkr[1].slice(0, 150).trim();
+    pkrAddress = pkrName;
+  }
+
+  let impName = null;
+  let impAddress = false;
+  const globalImp = fullText.match(/(?:importer|imported\s+by)[\s:]+([^\n\r]+)/i);
+  if (globalImp) {
+    impName = globalImp[1].slice(0, 150).trim();
+    impAddress = impName;
+  }
+
+  // Country of Origin
+  const globalOrigin = fullText.match(/(?:country\s+of\s+origin|made\s+in)[\s:]+([A-Za-z\s]+)/i);
+  const countryOfOrigin = globalOrigin ? globalOrigin[1].slice(0, 50).trim() : null;
 
   // 5. Commodity Name
   const nameIdx = lines.findIndex((l) => /generic\s+name|item\s+name|product\s*name/i.test(l.text));
   let nameLine = nameIdx !== -1 ? lines[nameIdx] : null;
   let nameValue = nameLine ? nameLine.text.replace(/^(?:generic|item|product)\s+name[\s:]*/i, '').trim() : null;
   if (!nameValue) {
+    const globalGen = fullText.match(/generic\s+name[\s:]+([^\n\r,;|]+)/i);
+    if (globalGen) {
+      nameValue = globalGen[1].trim();
+    }
+  }
+  if (!nameValue) {
     const fallbackNameIdx = getIndex('commodityName');
     nameLine = fallbackNameIdx !== -1 ? lines[fallbackNameIdx] : null;
     nameValue = nameLine?.text || null;
+  }
+  if (nameValue && nameValue.length > 120) {
+    const genMatch = nameValue.match(/generic\s+name[\s:]+([^\n\r,;|]+)/i);
+    nameValue = genMatch ? genMatch[1].trim() : nameValue.slice(0, 80).trim();
   }
 
   // 6. Consumer Care
@@ -201,22 +262,25 @@ function regexExtract(ocrResult, detection) {
   const standardLine = lines.find((l) => /non[\s-]?standard\s+size|not\s+a\s+standard\s+pack\s+size/i.test(l.text));
   const dimLine = lines.find((l) => /\b\d+\s*x\s*\d+\s*(?:x\s*\d+)?\s*(?:mm|cm|m|inch|in)\b|box\s+size|dimensions?/i.test(l.text));
 
+  const brandMatch = fullText.match(/\bbrand[\s:]+([^\n\r,;|]+)/i);
+  const brandName = brandMatch ? brandMatch[1].trim() : null;
+
   return {
     commodityClassification: {
-      brandName: null,
+      brandName: brandName,
       genericName: nameValue,
       scheduleCategory: null,
       physicalForm: qty.unitKind === 'number' ? 'countable' : (qty.unit === 'g' || qty.unit === 'kg' ? 'solid' : (qty.unit === 'ml' || qty.unit === 'l' ? 'liquid' : null)),
       isFoodArticle: false,
       isIndustrialOrInstitutional: false,
-      isImported: false,
-      countryOfOrigin: null,
+      isImported: !!impName,
+      countryOfOrigin: countryOfOrigin,
       dimensionsRelevant: !!dimLine,
-      manufacturerIsNotPacker: false,
+      manufacturerIsNotPacker: !!(mfrName && pkrName && mfrName.toLowerCase() !== pkrName.toLowerCase()),
     },
-    manufacturer: { present: !!mfrLine, name: mfrName, address: mfrAddress, mark: null },
-    packer: { present: false, name: null, address: false, mark: null },
-    importer: { present: false, name: null, address: false, mark: null },
+    manufacturer: { present: !!mfrName, name: mfrName, address: mfrAddress, mark: null },
+    packer: { present: !!pkrName, name: pkrName, address: pkrAddress, mark: null },
+    importer: { present: !!impName, name: impName, address: impAddress, mark: null },
     commodityName: { present: !!nameValue, value: nameValue, perProductBreakdown: false },
     netQuantity: {
       present: qty.value != null,

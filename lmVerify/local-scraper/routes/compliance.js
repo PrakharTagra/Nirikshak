@@ -1,19 +1,18 @@
 import express from "express";
 import { crawlListing } from "../listing-crawler/index.js";
-import { runComplianceExtraction } from "../utils/llmCompliance.js";
+import { runCompliancePipeline } from "../services/compliancePipeline.js";
 
 const router = express.Router();
 
 /**
  * POST /api/compliance
  * Body: either
- *   { url }                          — crawl the listing fresh, then check it
- *   { url, text, platform }          — reuse raw text you already have
+ *   { url }                          — crawl the listing fresh, then run post-OCR mapping & rule engine
+ *   { url, text, platform }          — reuse raw text already available
  *     (e.g. from a prior POST /api/listing call) and skip re-crawling
  *
- * Response: { success, url, platform, crawledAt, compliance }
- * `compliance` is the structured report from utils/llmCompliance.js —
- * scope gates, all 7 Rule-6 declarations, format checks, overall status.
+ * Runs the identical Stage 5/6 mapping & Stage 6/7 rule engine flow
+ * from ComplianceEngine.
  */
 router.post("/", async (req, res) => {
   const { url, text, platform } = req.body;
@@ -33,20 +32,22 @@ router.post("/", async (req, res) => {
     let resolvedPlatform = platform;
     let crawledAt = new Date().toISOString();
     let finalUrl = url;
+    let listingData = null;
 
     if (!rawText || !rawText.trim()) {
       console.log(`\n🛒 [compliance] No text supplied — crawling listing: ${url}`);
-      const listing = await crawlListing(url);
-      rawText = listing.text;
-      resolvedPlatform = listing.platform;
-      crawledAt = listing.crawledAt;
-      finalUrl = listing.url;
+      listingData = await crawlListing(url);
+      rawText = listingData.text;
+      resolvedPlatform = listingData.platform;
+      crawledAt = listingData.crawledAt;
+      finalUrl = listingData.url;
     }
 
-    console.log(`⚖️  [compliance] Running Legal Metrology extraction for: ${finalUrl}`);
-    const compliance = await runComplianceExtraction(rawText, {
+    console.log(`⚖️  [compliance] Running ComplianceEngine post-OCR mapping & rule engine for: ${finalUrl}`);
+    const pipelineResult = await runCompliancePipeline(rawText, {
       url: finalUrl,
       platform: resolvedPlatform,
+      crawledAt,
     });
 
     return res.json({
@@ -54,7 +55,15 @@ router.post("/", async (req, res) => {
       url: finalUrl,
       platform: resolvedPlatform || null,
       crawledAt,
-      compliance,
+      declarations: pipelineResult.declarations,
+      packageRecord: pipelineResult.packageRecord,
+      compliance: pipelineResult.compliance,
+      summary: pipelineResult.summary,
+      listing: listingData ? {
+        title: listingData.metadata?.title || null,
+        images: listingData.images?.items || [],
+        imageCount: listingData.images?.count || 0,
+      } : null,
     });
   } catch (err) {
     console.error("Compliance check error:", err);

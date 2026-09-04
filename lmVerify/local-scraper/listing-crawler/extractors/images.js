@@ -42,6 +42,78 @@ export async function extractImages(page) {
         .filter((c) => c.url);
     }
 
+    const NOISE_SELECTORS = [
+      "header",
+      "nav",
+      "footer",
+      "#navbar",
+      "#nav-main",
+      "#nav-subnav",
+      "#navFooter",
+      "#footer",
+      "#reviewsMedley",
+      "#customerReviews",
+      "#cm_cr_dp_d_rating_histogram",
+      ".reviews",
+      "#cr-summarization-attributes-list",
+      "#rhf",
+      "#rhf-container",
+      "#rhf-shoveler",
+      "#similarities_feature_div",
+      "#sp_detail",
+      "#sp_detail2",
+      "#desktop-dp-sims_feature_div",
+      "#desktop-dp-sims_feature_div_2",
+      "#sims-consolidated-1_feature_div",
+      "#sims-consolidated-2_feature_div",
+      "#sims-consolidated-3_feature_div",
+      "#sims-consolidated-4_feature_div",
+      "#sims-consolidated-5_feature_div",
+      "#sims-consolidated-6_feature_div",
+      "#fbt_feature_div",
+      "#frequently-bought-together",
+      ".frequently-bought-together",
+      "#bundle-v2-atf",
+      "#bundle-v2-btf",
+      "#session-sims-feature",
+      "#purchase-sims-feature",
+      "#dp-ads-center-promo_feature_div",
+      "#HLCXComparisonWidget_feature_div",
+      "#comparison_table",
+      "#dpx-btf-hlcx-comparison_feature_div",
+      ".a-carousel",
+      ".a-carousel-container",
+      ".a-carousel-viewport",
+      ".a-carousel-card",
+      "div[data-component-type='s-carousel']",
+      "[data-a-carousel-options]",
+      "[data-cel-widget*='sims']",
+      "[data-cel-widget*='recs']",
+      "[data-cel-widget*='fbt']",
+      "[data-cel-widget*='sp_detail']",
+      "[data-cel-widget*='sponsored']",
+      "[data-cel-widget*='cross-sell']",
+      "[data-cel-widget*='fresh-cross-sell']",
+      "[data-cel-widget*='browse']",
+      "[data-cel-widget*='deals']",
+      ".sponsored-products",
+      "#ad-feedback-text",
+      ".a-popover-preload",
+      "#tellAFriendBox_feature_div",
+      "#quickPromoBucketContent",
+      ".__lm_noise_container__",
+    ].join(", ");
+
+    function isInsideNoise(el) {
+      if (!el || el === document.body) return false;
+      try {
+        if (el.closest(NOISE_SELECTORS)) return true;
+      } catch {
+        // Fallback
+      }
+      return false;
+    }
+
     const items = [];
     const seenUrls = new Set();
 
@@ -54,6 +126,7 @@ export async function extractImages(page) {
     }
 
     document.querySelectorAll("img").forEach((img) => {
+      if (isInsideNoise(img)) return;
       const alt = img.getAttribute("alt") || null;
 
       let sourceUrl = img.getAttribute("src");

@@ -368,12 +368,18 @@ function checkMannerAndPlacement(pkg) {
 
   // Rule 9(1)(b) — RSP & net quantity numerals must contrast with background
   if (m.contrastOk === false && !m.isBlownFormedMoldedOnGlassOrPlastic) {
+    const fieldsInfo = m.failingDeclarations && m.failingDeclarations.length > 0
+      ? ` for ${m.failingDeclarations.join(', ')}`
+      : '';
+    const ratioInfo = m.contrastRatio != null
+      ? ` (measured ratio: ${m.contrastRatio}:1, minimum required: ≥ ${m.minRequiredRatio || 2.5}:1)`
+      : '';
     v.push(
       violation(
         'Rule 9(1)(b)',
-        'RSP/net quantity numerals do not contrast conspicuously with the label background.',
-        'major',
-        'general'
+        `RSP/net quantity numerals do not contrast conspicuously with the label background${fieldsInfo}${ratioInfo}.`,
+        'critical',
+        'contrast'
       )
     );
   }

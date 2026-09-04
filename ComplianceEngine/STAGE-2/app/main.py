@@ -218,6 +218,7 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
                 {
                     "metadata": res["meta"],
                     "declarations": ocr_result.get("declarations", {}),
+                    "contrast_analysis": ocr_result.get("contrast_analysis", {}),
                 },
                 indent=2,
             ),
@@ -237,6 +238,7 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
             "metadata": res["meta"],
             "declarations": ocr_result.get("declarations", {}),
             "regions": ocr_result.get("regions", []),
+            "contrast_analysis": ocr_result.get("contrast_analysis", {}),
             "product_id": product_id,
             "preprocessed_image": str(output_path),
             "result_json": str(result_path),
@@ -317,6 +319,7 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
             "metadata": meta,
             "extracted_text": raw_txt,
             "regions": ocr_result.get("regions", []),
+            "contrast_analysis": ocr_result.get("contrast_analysis", {}),
             "preprocessed_image": str(output_path),
             "declarations": decls,
             "ocr": ocr_result,
@@ -325,6 +328,18 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
 
     combined_text = "\n\n".join(text_blocks)
     (product_dir / "raw_extracted_text.txt").write_text(combined_text, encoding="utf-8")
+
+    batch_contrast_summary = {
+        "overall_contrast_ok": all(
+            it.get("ocr", {}).get("contrast_analysis", {}).get("overall_contrast_ok", True)
+            for it in items_output
+        ),
+        "failing_regions": [
+            fail
+            for it in items_output
+            for fail in it.get("ocr", {}).get("contrast_analysis", {}).get("failing_regions", [])
+        ],
+    }
 
     result_path = product_dir / "mapped.json"
     result_path.write_text(
@@ -338,10 +353,12 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
                         "metadata": it["metadata"],
                         "extracted_text": it["extracted_text"],
                         "declarations": it["declarations"],
+                        "contrast_analysis": it["contrast_analysis"],
                     }
                     for it in items_output
                 ],
                 "declarations": merged_declarations,
+                "contrast_analysis": batch_contrast_summary,
             },
             indent=2,
         ),
@@ -354,5 +371,7 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
         "combined_text": combined_text,
         "combined_regions": combined_regions,
         "declarations": merged_declarations,
+        "contrast_analysis": batch_contrast_summary,
         "result_json": str(result_path),
     })
+

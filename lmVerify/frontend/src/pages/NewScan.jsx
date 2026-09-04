@@ -5,14 +5,16 @@ import ComplianceReport from "../components/ComplianceReport.jsx";
 
 export default function NewScan() {
   const [url, setUrl] = useState("");
+  const [autoVerify, setAutoVerify] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const [error, setError] = useState("");
-  const [result, setResult] = useState(null); // temporary — cleared on next scan
+  const [result, setResult] = useState(null); // RawListingData
 
   const [checking, setChecking] = useState(false);
   const [checkError, setCheckError] = useState("");
-  const [compliance, setCompliance] = useState(null); // { url, platform, crawledAt, compliance }
-  const [tab, setTab] = useState("raw"); // "raw" | "compliance"
+  const [compliance, setCompliance] = useState(null); // Full compliance result from rule engine
+  const [tab, setTab] = useState("compliance"); // "compliance" | "raw"
 
   const handleScan = async (e) => {
     e.preventDefault();
@@ -25,14 +27,35 @@ export default function NewScan() {
     setResult(null);
     setCompliance(null);
     setCheckError("");
-    setTab("raw");
+    setTab(autoVerify ? "compliance" : "raw");
+
     try {
+      setStatusMessage("Loading product listing in browser and capturing raw data…");
       const data = await crawlListing(url.trim());
       setResult(data);
+
+      if (autoVerify) {
+        setStatusMessage("Running ComplianceEngine Stage 5/6 mapping and codified rule engine…");
+        setChecking(true);
+        try {
+          const compData = await checkCompliance(data.url, {
+            text: data.text,
+            platform: data.platform,
+          });
+          setCompliance(compData);
+          setTab("compliance");
+        } catch (compErr) {
+          setCheckError(compErr.message || "Couldn't run rule engine compliance check.");
+          setTab("raw");
+        } finally {
+          setChecking(false);
+        }
+      }
     } catch (err) {
       setError(err.message || "Couldn't scan that listing. Check the URL and try again.");
     } finally {
       setLoading(false);
+      setStatusMessage("");
     }
   };
 
@@ -41,16 +64,14 @@ export default function NewScan() {
     setChecking(true);
     setCheckError("");
     try {
-      // Reuse the already-crawled raw text so the backend doesn't have to
-      // re-crawl the page — it goes straight to the LLM in one call.
-      const data = await checkCompliance(result.url, {
+      const compData = await checkCompliance(result.url, {
         text: result.text,
         platform: result.platform,
       });
-      setCompliance(data);
+      setCompliance(compData);
       setTab("compliance");
     } catch (err) {
-      setCheckError(err.message || "Couldn't run the compliance check.");
+      setCheckError(err.message || "Couldn't run rule engine compliance check.");
     } finally {
       setChecking(false);
     }
@@ -61,14 +82,14 @@ export default function NewScan() {
       <div>
         <h1 className="text-2xl font-semibold text-slate-900">New scan</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Load a product listing page, capture its raw HTML, text, images,
-          metadata, structured data and a full-page screenshot, then run a
-          Legal Metrology compliance check against the raw text.
+          Scan an e-commerce product listing, extract raw page data &amp; images, map
+          mandatory declarations, and verify statutory compliance against the codified
+          Legal Metrology (Packaged Commodities) Rules, 2011.
         </p>
       </div>
 
-      <form onSubmit={handleScan}>
-        <label htmlFor="listing-url" className="mb-1.5 block text-sm font-medium text-slate-700">
+      <form onSubmit={handleScan} className="space-y-3">
+        <label htmlFor="listing-url" className="block text-sm font-medium text-slate-700">
           Product listing URL
         </label>
         <div className="flex gap-3">
@@ -82,43 +103,52 @@ export default function NewScan() {
           />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || checking}
             className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Scanning…" : "Scan listing"}
+            {loading ? "Scanning…" : "Scan & Verify"}
           </button>
         </div>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="auto-verify"
+            checked={autoVerify}
+            onChange={(e) => setAutoVerify(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500"
+          />
+          <label htmlFor="auto-verify" className="text-xs text-slate-600">
+            Automatically run Stage 5/6 mapping &amp; rule engine verification right after crawling
+          </label>
+        </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
       </form>
 
       {loading && (
-        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-6 text-sm text-slate-500">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
-          Loading the page in a real browser, scrolling for lazy content, and capturing raw data…
+        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-6 text-sm text-slate-600 shadow-sm">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-800" />
+          <span>{statusMessage || "Processing scan..."}</span>
         </div>
       )}
 
       {!loading && !result && (
         <div className="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
           <p className="text-sm text-slate-500">
-            Paste a product page URL above and scan it to see the raw
-            crawled data, then run the Legal Metrology compliance check.
+            Paste an e-commerce product URL above and click <strong>Scan &amp; Verify</strong> to
+            crawl the listing, map declarations, and execute the Legal Metrology rule engine.
           </p>
         </div>
       )}
 
       {result && !loading && (
         <div className="space-y-4">
-          <div className="rounded-md bg-amber-50 px-4 py-2 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
-            This result is shown temporarily and is not yet saved to persistent history —
-            the backend doesn't have a storage layer wired up yet.
-          </div>
-
           <div className="border-b border-slate-200">
             <nav className="-mb-px flex gap-6">
               {[
-                { key: "raw", label: "Raw crawl data" },
-                { key: "compliance", label: "Compliance check" },
+                { key: "compliance", label: "Rule Engine & Compliance" },
+                { key: "raw", label: "Raw Crawl Data" },
               ].map((t) => (
                 <button
                   key={t.key}
@@ -143,24 +173,24 @@ export default function NewScan() {
               {!compliance && !checking && (
                 <div className="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
                   <p className="mb-4 text-sm text-slate-500">
-                    Send the complete raw text captured above to the LLM and extract the
-                    Legal Metrology Rule 6 declarations, scope gates, and format checks.
+                    Run the Stage 5/6 post-OCR declaration mapping and evaluate all statutory rules
+                    using the Legal Metrology rule engine.
                   </p>
                   <button
                     type="button"
                     onClick={handleCheckCompliance}
                     className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
                   >
-                    Run compliance check
+                    Run Rule Engine Verification
                   </button>
                   {checkError && <p className="mt-3 text-sm text-red-600">{checkError}</p>}
                 </div>
               )}
 
               {checking && (
-                <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-6 text-sm text-slate-500">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
-                  Sending the raw listing text to the LLM and extracting declarations…
+                <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-6 text-sm text-slate-600 shadow-sm">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-800" />
+                  Extracting declarations via Groq mapping and checking Legal Metrology rules…
                 </div>
               )}
 
@@ -168,17 +198,17 @@ export default function NewScan() {
                 <>
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-slate-400">
-                      Checked {new Date(compliance.crawledAt).toLocaleString()}
+                      Verified at {new Date(compliance.crawledAt || Date.now()).toLocaleString()}
                     </p>
                     <button
                       type="button"
                       onClick={handleCheckCompliance}
                       className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
                     >
-                      Re-run check
+                      Re-run Verification
                     </button>
                   </div>
-                  <ComplianceReport report={compliance.compliance} />
+                  <ComplianceReport report={compliance} />
                 </>
               )}
             </div>

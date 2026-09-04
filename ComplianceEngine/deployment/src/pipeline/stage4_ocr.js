@@ -29,6 +29,7 @@ function normalizePythonOcr(pythonResult) {
           heightPx: region.pixel_height ?? null,
           heightMm: null,
           language: region.language ?? null,
+          contrast: region.contrast ?? null,
         }))
         .filter((line) => line.text);
 
@@ -56,6 +57,7 @@ function normalizePythonOcr(pythonResult) {
       isMultiImage: pythonResult.items.length > 1,
       imageCount: pythonResult.items.length,
       perImage,
+      contrastAnalysis: pythonResult.contrast_analysis || null,
       metadata: pythonResult.items[0]?.metadata || {},
       raw: pythonResult,
     };
@@ -75,6 +77,7 @@ function normalizePythonOcr(pythonResult) {
       heightPx: region.pixel_height ?? null,
       heightMm: null,
       language: region.language ?? null,
+      contrast: region.contrast ?? null,
     }))
     .filter((line) => line.text);
 
@@ -95,6 +98,7 @@ function normalizePythonOcr(pythonResult) {
         metadata: pythonResult?.metadata || {},
       },
     ],
+    contrastAnalysis: pythonResult?.ocr?.contrast_analysis || pythonResult?.contrast_analysis || null,
     timing: pythonResult?.ocr?.timing || null,
     metadata: pythonResult?.metadata || {},
     raw: pythonResult?.ocr || null,

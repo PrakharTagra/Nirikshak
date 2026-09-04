@@ -1,24 +1,23 @@
-// Real client for the local-scraper backend (see /local-scraper/server.js and
-// /local-scraper/listing-crawler). Unlike lib/api.js (which still serves
-// mock data for auth and scan history), this file makes an actual network
-// call and returns a genuine RawListingData object — no mock fallback, so a
-// failure here always means "the scraper couldn't be reached or the crawl
-// failed," never silently-wrong data.
+// Client for the local-scraper backend connecting directly to
+// ComplianceEngine's post-OCR mapping & rule engine pipeline.
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 /**
  * Crawl a product listing URL via the local-scraper backend.
+ * Optionally runs compliance mapping & rule engine in the same roundtrip.
+ *
  * @param {string} url
- * @returns {Promise<object>} RawListingData — see local-scraper/listing-crawler/index.js
+ * @param {{ checkCompliance?: boolean }} [options]
+ * @returns {Promise<object>} RawListingData or { data, compliance }
  */
-export async function crawlListing(url) {
+export async function crawlListing(url, options = {}) {
   let response;
   try {
     response = await fetch(`${API_BASE_URL}/api/listing`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, checkCompliance: !!options.checkCompliance }),
     });
   } catch {
     throw new Error(
@@ -37,20 +36,27 @@ export async function crawlListing(url) {
     throw new Error(body.detail || body.error || "The scan failed.");
   }
 
+  if (options.checkCompliance && body.compliance) {
+    return {
+      ...body.data,
+      complianceReport: body.compliance,
+    };
+  }
+
   return body.data;
 }
 
 /**
- * Run the Legal Metrology compliance check for a listing via the
- * local-scraper backend (see /local-scraper/routes/compliance.js). The
- * whole raw listing text is sent to an LLM in a single call — no chunking
- * or vector search — and the LLM returns a structured report against the
- * Rule 6 checklist. Pass `text`/`platform` from an already-crawled
- * RawListingData object to skip re-crawling the page.
+ * Run the Legal Metrology post-OCR mapping and codified rule engine
+ * for a listing via the local-scraper backend.
+ *
+ * Sends the listing text to Stage 5/6 Groq structured extraction mapping,
+ * builds the canonical package record, and evaluates all rules with
+ * Stage 6/7 ruleEngine.
  *
  * @param {string} url
  * @param {{ text?: string, platform?: string }} [alreadyCrawled]
- * @returns {Promise<object>} { url, platform, crawledAt, compliance }
+ * @returns {Promise<object>} { success, url, platform, crawledAt, declarations, packageRecord, compliance, summary }
  */
 export async function checkCompliance(url, alreadyCrawled = {}) {
   let response;

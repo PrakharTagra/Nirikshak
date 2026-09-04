@@ -304,8 +304,18 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 - "rawText": Full raw text snippet.
 
 5. MONTH & YEAR OF MANUFACTURE / PACKING (Rule 6(1)(d)):
-- Look for "Month & Year of Manufacture", "MFD", "PKD", "MFG", "PACKED ON", "Date of Packing", "Mfg Date", or stamped dates.
-- Can be in English words (e.g., "February 2026", "Feb 2026") or numeric ("02/2026", "02/26").
+- STATUTORY REQUIREMENT: The date MUST strictly be accompanied by an explicit statutory label such as:
+  * "Manufactured date" / "Date of manufacture" / "Mfg Date" / "MFD" / "MFG" / "Manufactured on"
+  * "Month & Year of Manufacture" / "Month and Year of Manufacture"
+  * "Packed on" / "Date of Packing" / "PKD"
+  * "Imported on" / "Date of Import"
+- STRICT PROHIBITIONS:
+  * NEVER extract "Date First Available" (this is an Amazon web catalog listing date, NOT a manufacturing date under Legal Metrology Rules!).
+  * NEVER extract shipping/delivery estimates (e.g. "Get it Sep 8 - 10", "Delivery by Friday").
+  * NEVER extract "Best Before", "Expiry Date", "Use By", or warranty/shelf-life dates as manufacturing date.
+  * NEVER extract bare numbers or date stamps that lack an explicit statutory manufacturing/packing label.
+- If no explicit statutory manufacturing or packing label ("MFD", "Manufactured date", "PKD", etc.) is declared, you MUST return:
+  "mfgDate": { "present": false, "value": null, "rawText": null, "usedIndividualSticker": false, "isMrpReductionSticker": false }
 - "value": the extracted date string (e.g., "February 2026" or "02/2026").
 - "usedIndividualSticker": false by default. Only true if an actual adhesive paper sticker was affixed over the surface to alter the date. Direct inkjet coding or stamping is NOT a sticker.
 
@@ -519,24 +529,69 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     symbolUsed: symbolUsed,
   };
 
-  // 5. Manufacturing / Packing Date
+  // 5. Manufacturing / Packing Date (Rule 6(1)(d) strictly requires statutory labeling)
+  const STATUTORY_MFG_LABELS = /\b(?:manufactur(?:ed\s+date|e\s+date|ed\s+on)|date\s+of\s+manufacture|mfg\.?\s*date|date\s+of\s+mfg|\bmfd\b|\bmfg\b|month\s*(?:&|and)\s*year\s*of\s*manufacture|packed\s+on|date\s+of\s+packing|\bpkd\b|pre-?packed\s+on|imported\s+on|date\s+of\s+import)\b/i;
+  const DISALLOWED_DATE_CONTEXTS = /\b(?:date\s+first\s+available|delivery|get\s+it|order\s+within|best\s+before|expiry|exp\.?\s*date|use\s+by|validity|shelf\s+life)\b/i;
+
   let mfgVal = rawMfg.value || null;
   let mfgRaw = String(rawMfg.rawText || '');
-  if (!mfgVal && rawOcrText) {
-    const dateMatch = rawOcrText.match(
-      /(?:Month\s*&\s*Year\s*of\s*Manufacture|MFD|PKD|MFG|PACKED\s+ON|Date\s+of\s+Mfg)[\s:]*([A-Za-z]+\s+\d{4}|\d{1,2}[/-]\d{2,4})/i
-    );
-    if (dateMatch) {
-      mfgVal = dateMatch[1].trim();
-      if (!mfgRaw) mfgRaw = dateMatch[0].trim();
+
+  // Reject delivery windows or bare number ranges (e.g. "8 - 10")
+  if (typeof mfgVal === 'string') {
+    const cleanMfg = mfgVal.trim();
+    if (/^\d{1,2}\s*-\s*\d{1,2}$/.test(cleanMfg) || !/\d{4}|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b/i.test(cleanMfg)) {
+      mfgVal = null;
+      mfgRaw = '';
     }
   }
+
+  // Reject if from disallowed context without a genuine statutory label
+  if (mfgRaw && DISALLOWED_DATE_CONTEXTS.test(mfgRaw) && !STATUTORY_MFG_LABELS.test(mfgRaw)) {
+    mfgVal = null;
+    mfgRaw = '';
+  }
+
+  // Enforce that candidate value/rawText actually has statutory labeling
+  if (mfgVal) {
+    const hasStatutoryLabel = STATUTORY_MFG_LABELS.test(mfgRaw) || STATUTORY_MFG_LABELS.test(mfgVal);
+    if (!hasStatutoryLabel) {
+      if (rawOcrText && STATUTORY_MFG_LABELS.test(rawOcrText)) {
+        const statutoryMatch = rawOcrText.match(
+          new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{2,4})', 'i')
+        );
+        if (statutoryMatch) {
+          mfgVal = statutoryMatch[1].trim();
+          mfgRaw = statutoryMatch[0].trim();
+        } else {
+          mfgVal = null;
+          mfgRaw = '';
+        }
+      } else {
+        mfgVal = null;
+        mfgRaw = '';
+      }
+    }
+  }
+
+  // Fallback only if rawOcrText explicitly has a statutory label
+  if (!mfgVal && rawOcrText && STATUTORY_MFG_LABELS.test(rawOcrText)) {
+    const statutoryMatch = rawOcrText.match(
+      new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{2,4})', 'i')
+    );
+    if (statutoryMatch) {
+      mfgVal = statutoryMatch[1].trim();
+      if (!mfgRaw) mfgRaw = statutoryMatch[0].trim();
+    }
+  }
+
+  const isMfgValid = !!(mfgVal && STATUTORY_MFG_LABELS.test(mfgRaw || mfgVal));
+
   d.mfgDate = {
-    present: !!(mfgVal || rawMfg.present),
-    value: mfgVal,
-    rawText: mfgRaw,
-    usedIndividualSticker: !!rawMfg.usedIndividualSticker,
-    isMrpReductionSticker: !!rawMfg.isMrpReductionSticker,
+    present: isMfgValid,
+    value: isMfgValid ? mfgVal : null,
+    rawText: isMfgValid ? mfgRaw : '',
+    usedIndividualSticker: isMfgValid ? !!rawMfg.usedIndividualSticker : false,
+    isMrpReductionSticker: isMfgValid ? !!rawMfg.isMrpReductionSticker : false,
   };
 
   // 6. MRP: Safeguard against unit-count confusion (e.g. "for 1 Unit: 999.00" -> value: 1)

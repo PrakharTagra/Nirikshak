@@ -17,7 +17,28 @@ const path = require('path');
 const config = require('./config');
 const logger = require('./utils/logger');
 const { ensureDirs, listImageFiles } = require('./utils/fileHelpers');
+const readline = require('readline');
 const { runPipelineForProduct, runPipelineForBatch } = require('./pipeline/orchestrator');
+
+function promptForDimensions() {
+  return new Promise((resolve) => {
+    if (!process.stdin.isTTY) {
+      return resolve(null);
+    }
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    rl.question(
+      '\nEnter packaging/box dimensions (e.g., "120x80x40 mm" or "10x5x15 cm") [Press Enter to auto-detect from label]: ',
+      (answer) => {
+        rl.close();
+        const trimmed = answer.trim();
+        resolve(trimmed || null);
+      }
+    );
+  });
+}
 
 async function main() {
   ensureDirs(config.paths.input, config.paths.output, config.paths.temp);
@@ -25,7 +46,30 @@ async function main() {
   const rawArgs = process.argv.slice(2);
   const isBatchMode = rawArgs.includes('--batch');
   const isProductMode = rawArgs.includes('--product');
-  const fileArgs = rawArgs.filter((a) => !a.startsWith('--'));
+
+  // Check for explicit --pkg-dimensions argument
+  const pkgDimIdx = rawArgs.findIndex((a) => a === '--pkg-dimensions' || a.startsWith('--pkg-dimensions='));
+  let packageDimensions = null;
+  if (pkgDimIdx !== -1) {
+    const arg = rawArgs[pkgDimIdx];
+    if (arg.includes('=')) {
+      packageDimensions = arg.split('=')[1];
+    } else if (rawArgs[pkgDimIdx + 1] && !rawArgs[pkgDimIdx + 1].startsWith('--')) {
+      packageDimensions = rawArgs[pkgDimIdx + 1];
+    }
+  }
+
+  const fileArgs = rawArgs.filter((a, idx) => {
+    if (a.startsWith('--')) return false;
+    if (idx > 0 && rawArgs[idx - 1] === '--pkg-dimensions') return false;
+    return true;
+  });
+
+  if (!packageDimensions && process.stdin.isTTY) {
+    packageDimensions = await promptForDimensions();
+  }
+
+  const pipelineOptions = { packageDimensions };
 
   const targetDir = fileArgs.length === 1 && fs.existsSync(fileArgs[0]) && fs.statSync(fileArgs[0]).isDirectory()
     ? fileArgs[0]
@@ -48,10 +92,11 @@ async function main() {
       const results = await Promise.all(
         productGroups.map(async (g) => {
           logger.info('cli', `Processing product "${g.name}" with ${g.images.length} panel(s)...`);
-          const res = await runPipelineForProduct(g.images);
+          const res = await runPipelineForProduct(g.images, pipelineOptions);
           return { name: g.name, ...res };
         })
       );
+
 
       console.log('\n=== Multi-Product Inspection Summary ===');
       results.forEach((r) => {
@@ -109,7 +154,7 @@ async function main() {
   if (treatAsSingleProduct) {
     const productName = isDirectFolder ? path.basename(fileArgs[0]) : 'package';
     logger.info('cli', `Processing ${images.length} image(s) as ONE product package ("${productName}") concurrently...`);
-    const r = await runPipelineForProduct(images);
+    const r = await runPipelineForProduct(images, pipelineOptions);
 
     console.log('\n=== Multi-Panel Product Inspection Summary ===');
     const status = !r.complianceResult.applicable
@@ -131,7 +176,7 @@ async function main() {
     }
   } else {
     logger.info('cli', `Processing ${images.length} independent product image(s) concurrently in batch...`);
-    const results = await runPipelineForBatch(images);
+    const results = await runPipelineForBatch(images, pipelineOptions);
 
     console.log('\n=== Batch Run Summary ===');
     results.forEach((r) => {

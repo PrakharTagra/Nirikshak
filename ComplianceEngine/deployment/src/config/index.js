@@ -47,6 +47,7 @@ module.exports = {
   },
   fontAnalysis: {
     pixelsPerMm: process.env.PIXELS_PER_MM ? Number(process.env.PIXELS_PER_MM) : null,
+    minContrastRatio: process.env.MIN_CONTRAST_RATIO ? Number(process.env.MIN_CONTRAST_RATIO) : 2.5,
   },
   groq: {
     model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
