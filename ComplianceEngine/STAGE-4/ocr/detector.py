@@ -37,16 +37,16 @@ def _load_engine(use_medium: bool = False) -> Any:
     # Tuned parameters specifically calibrated for fine-print, tiny numeral/date/batch detection,
     # and packaging labels under Legal Metrology standards without aggressive downscaling.
     tuned_params = {
-        "Global.text_score": 0.35,      # keep subtle/light font strokes
-        "Global.min_height": 6,          # allow tiny text (default was 30px, which drops small text!)
-        "Global.min_side_len": 6,        # allow small bounding boxes
+        "Global.text_score": 0.30,      # keep subtle/light font strokes
+        "Global.min_height": 4,          # allow tiny text (dates, batch numbers, net wt)
+        "Global.min_side_len": 4,        # allow small bounding boxes
         "Global.max_side_len": 3200,     # support high-resolution inputs
-        "Det.limit_side_len": 2048,      # prevent downsampling tiny text (default 736)
+        "Det.limit_side_len": 2048,      # prevent downsampling tiny text
         "Det.limit_type": "max",
         "Det.thresh": 0.20,              # sensitive threshold for small/faint text
-        "Det.box_thresh": 0.35,          # retain small candidate bounding boxes
-        "Det.unclip_ratio": 1.85,        # expand box to include full letter ascenders/descenders
-        "Det.use_dilation": True,
+        "Det.box_thresh": 0.30,          # retain small candidate bounding boxes
+        "Det.unclip_ratio": 1.50,        # optimal expansion without merging adjacent lines
+        "Det.use_dilation": False,       # prevent merging close-by fine print lines
     }
 
     if use_medium:
