@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif']);
 
 function ensureDirs(...dirs) {
   dirs.forEach((dir) => {

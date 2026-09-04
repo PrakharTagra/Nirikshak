@@ -47,7 +47,18 @@ app = FastAPI(
 )
 
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024  # 15 MB
-ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+ALLOWED_CONTENT_TYPES = {
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/jpg",
+    "image/heic",
+    "image/heif",
+    "image/heic-sequence",
+    "image/heif-sequence",
+    "application/octet-stream",
+}
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
 
 # All services (STAGE-2, STAGE-4, deployment) share one flat output root:
 # ComplianceEngine/output/product_<n>/ -- no per-service subfolders.
@@ -94,11 +105,12 @@ def _get_ocr_runner():
 
 
 async def _read_and_validate(image: UploadFile) -> bytes:
-    if image.content_type not in ALLOWED_CONTENT_TYPES:
+    ext = Path(image.filename or "").suffix.lower()
+    if image.content_type not in ALLOWED_CONTENT_TYPES and ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=415,
-            detail=f"Unsupported content type '{image.content_type}'. "
-                   f"Allowed: {sorted(ALLOWED_CONTENT_TYPES)}",
+            detail=f"Unsupported content type '{image.content_type}' and extension '{ext}'. "
+                   f"Allowed: {sorted(ALLOWED_CONTENT_TYPES)} or extensions {sorted(ALLOWED_EXTENSIONS)}",
         )
     data = await image.read()
     if not data:

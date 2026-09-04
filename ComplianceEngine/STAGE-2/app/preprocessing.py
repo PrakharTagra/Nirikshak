@@ -76,6 +76,23 @@ def decode_image(image_bytes: bytes) -> np.ndarray:
     arr = np.frombuffer(image_bytes, dtype=np.uint8)
     img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None:
+        # Fallback to PIL with pillow-heif for HEIC/HEIF and formats OpenCV doesn't natively decode
+        try:
+            import io
+            from PIL import Image, ImageOps
+            import pillow_heif
+
+            pillow_heif.register_heif_opener()
+            pil_img = Image.open(io.BytesIO(image_bytes))
+            pil_img = ImageOps.exif_transpose(pil_img)
+            if pil_img.mode != "RGB":
+                pil_img = pil_img.convert("RGB")
+            img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+        except Exception as exc:
+            raise PreprocessingError(
+                f"Could not decode image — unsupported format or corrupt file: {exc}"
+            )
+    if img is None:
         raise PreprocessingError("Could not decode image — unsupported format or corrupt file.")
     return img
 
@@ -150,71 +167,54 @@ def _segment_and_crop(img: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
     h, w = img.shape[:2]
     total_area = float(h * w)
 
-    # 1. Downscale for fast segmentation
+    # 1. Downscale for fast and robust segmentation
     scale = 800.0 / max(h, w)
     small_w = max(1, int(w * scale))
     small_h = max(1, int(h * scale))
     small = cv2.resize(img, (small_w, small_h), interpolation=cv2.INTER_AREA)
+    small_lab = cv2.cvtColor(small, cv2.COLOR_BGR2LAB)
 
-    # 2. Border background estimation
-    bw = max(4, int(min(small_h, small_w) * 0.035))
+    # 2. Border background estimation in CIELAB color space
+    bw = max(4, int(min(small_h, small_w) * 0.04))
     borders = np.concatenate([
-        small[:bw, :].reshape(-1, 3),
-        small[-bw:, :].reshape(-1, 3),
-        small[:, :bw].reshape(-1, 3),
-        small[:, -bw:].reshape(-1, 3)
+        small_lab[:bw, :].reshape(-1, 3),
+        small_lab[-bw:, :].reshape(-1, 3),
+        small_lab[:, :bw].reshape(-1, 3),
+        small_lab[:, -bw:].reshape(-1, 3)
     ])
     bg_median = np.median(borders, axis=0)
-    bg_std = np.std(borders, axis=0)
-    diff = np.linalg.norm(small.astype(np.float32) - bg_median.astype(np.float32), axis=2)
-    thresh = max(20.0, float(np.mean(bg_std)) * 1.8)
-    bg_diff_mask = (diff > thresh).astype(np.uint8) * 255
+    diff = np.linalg.norm(small_lab.astype(np.float32) - bg_median.astype(np.float32), axis=2)
 
-    # 3. High-gradient text and edge saliency
-    gray_small = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
-    grad_x = cv2.Sobel(gray_small, cv2.CV_32F, 1, 0)
-    grad_y = cv2.Sobel(gray_small, cv2.CV_32F, 0, 1)
-    mag = cv2.magnitude(grad_x, grad_y)
-    grad_mask = (mag > 32).astype(np.uint8) * 255
-    grad_closed = cv2.morphologyEx(grad_mask, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (25, 25)))
+    # 3. Two-tier foreground isolation: Otsu thresholding with adaptive delta fallback
+    diff_u8 = cv2.normalize(diff, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+    _, otsu = cv2.threshold(diff_u8, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    opened = cv2.morphologyEx(otsu, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7)))
+    closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15)))
 
-    combined = cv2.bitwise_or(bg_diff_mask, grad_closed)
-    combined = cv2.morphologyEx(combined, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21)))
-    combined = cv2.morphologyEx(combined, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)))
+    cnts, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    valid = [c for c in cnts if cv2.contourArea(c) > 0.10 * (small_w * small_h)]
 
-    # 4. Text activity envelope to prevent slicing text
-    text_envelope = None
-    cnts_grad, _ = cv2.findContours(grad_closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if cnts_grad:
-        text_pts = [c for c in cnts_grad if cv2.contourArea(c) > 100]
-        if text_pts:
-            text_envelope = cv2.boundingRect(np.vstack(text_pts))
+    if valid:
+        c_max = max(valid, key=cv2.contourArea)
+        chosen_cnts = valid
+    else:
+        # Fallback to fixed distance threshold for low-contrast backgrounds
+        m_delta = (diff > 22.0).astype(np.uint8) * 255
+        op_d = cv2.morphologyEx(m_delta, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7)))
+        cl_d = cv2.morphologyEx(op_d, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (25, 25)))
+        cnts_d, _ = cv2.findContours(cl_d, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        valid_d = [c for c in cnts_d if cv2.contourArea(c) > 0.10 * (small_w * small_h)]
+        if valid_d:
+            c_max = max(valid_d, key=cv2.contourArea)
+            chosen_cnts = valid_d
+        else:
+            return img, False, "full_frame"
 
-    # 5. Extract dominant foreground contours
-    cnts, _ = cv2.findContours(combined, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not cnts:
-        return img, False, "full_frame"
-
-    min_area = 0.05 * (small_w * small_h)
-    valid_cnts = [c for c in cnts if cv2.contourArea(c) >= min_area]
-
-    if not valid_cnts:
-        return img, False, "full_frame"
-
-    largest_cnt = max(valid_cnts, key=cv2.contourArea)
-    largest_area = cv2.contourArea(largest_cnt)
-    perimeter = cv2.arcLength(largest_cnt, True)
-    approx = cv2.approxPolyDP(largest_cnt, 0.03 * perimeter, True)
-
+    # 4. Check for perspective warp on clean quadrilateral packaging
+    perimeter = cv2.arcLength(c_max, True)
+    approx = cv2.approxPolyDP(c_max, 0.03 * perimeter, True)
+    largest_area = cv2.contourArea(c_max)
     is_clean_quad = (len(approx) == 4 and cv2.isContourConvex(approx) and largest_area > 0.35 * (small_w * small_h))
-
-    if is_clean_quad and text_envelope is not None:
-        quad_pts = approx.reshape(4, 2)
-        q_xmin, q_ymin = quad_pts[:, 0].min(), quad_pts[:, 1].min()
-        q_xmax, q_ymax = quad_pts[:, 0].max(), quad_pts[:, 1].max()
-        tx, ty, tw_e, th_e = text_envelope
-        if q_xmin > tx + 30 or q_ymin > ty + 30 or q_xmax < tx + tw_e - 30 or q_ymax < ty + th_e - 30:
-            is_clean_quad = False
 
     if is_clean_quad:
         pts = approx.reshape(4, 2).astype(np.float32) / scale
@@ -233,22 +233,14 @@ def _segment_and_crop(img: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
             warped = cv2.warpPerspective(img, M, (max_w, max_h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
             return warped, True, "perspective_warp"
 
-    all_fg_pts = np.vstack(valid_cnts)
+    # 5. Extract bounding box with safety margin
+    all_fg_pts = np.vstack(chosen_cnts)
     x, y, bw_c, bh_c = cv2.boundingRect(all_fg_pts)
 
-    if text_envelope is not None:
-        tx, ty, tw_e, th_e = text_envelope
-        x0 = min(x, tx)
-        y0 = min(y, ty)
-        x1 = max(x + bw_c, tx + tw_e)
-        y1 = max(y + bh_c, ty + th_e)
-    else:
-        x0, y0, x1, y1 = x, y, x + bw_c, y + bh_c
-
-    orig_x0 = int(x0 / scale)
-    orig_y0 = int(y0 / scale)
-    orig_x1 = int(x1 / scale)
-    orig_y1 = int(y1 / scale)
+    orig_x0 = int(x / scale)
+    orig_y0 = int(y / scale)
+    orig_x1 = int((x + bw_c) / scale)
+    orig_y1 = int((y + bh_c) / scale)
 
     pad_w = int((orig_x1 - orig_x0) * 0.035)
     pad_h = int((orig_y1 - orig_y0) * 0.035)
@@ -259,9 +251,9 @@ def _segment_and_crop(img: np.ndarray, cfg: PreprocessConfig) -> Tuple[np.ndarra
     final_y1 = min(h, orig_y1 + pad_h)
 
     crop_area = (final_x1 - final_x0) * (final_y1 - final_y0)
-    if crop_area >= 0.88 * total_area:
+    if crop_area >= 0.90 * total_area:
         return img, True, "full_frame"
-    elif crop_area >= 0.25 * total_area:
+    elif crop_area >= 0.08 * total_area:
         cropped = img[final_y0:final_y1, final_x0:final_x1]
         return cropped, True, "foreground_crop"
 
@@ -293,14 +285,19 @@ def _normalize_contrast_and_brightness(img: np.ndarray, cfg: PreprocessConfig) -
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
 
-    l_float = l.astype(np.float32)
     h, w = img.shape[:2]
-    sigma = max(25.0, min(h, w) * 0.18)
-    bg = cv2.GaussianBlur(l_float, (0, 0), sigmaX=sigma, sigmaY=sigma)
+    # Fast multi-scale illumination estimation: downscale to ~400px, blur with moderate sigma, upscale back
+    scale = 400.0 / max(h, w)
+    small_w = max(1, int(w * scale))
+    small_h = max(1, int(h * scale))
+    small_l = cv2.resize(l.astype(np.float32), (small_w, small_h), interpolation=cv2.INTER_AREA)
+    small_bg = cv2.GaussianBlur(small_l, (0, 0), sigmaX=20.0, sigmaY=20.0)
+    bg = cv2.resize(small_bg, (w, h), interpolation=cv2.INTER_LINEAR)
     bg = np.maximum(bg, 25.0)
-    ref = float(np.median(bg))
+    ref = float(np.median(small_bg))
 
     strength = cfg.illumination_strength
+    l_float = l.astype(np.float32)
     l_leveled = (1.0 - strength) * l_float + strength * np.clip((l_float / bg) * ref, 0, 255)
     l_leveled = np.clip(l_leveled, 0, 255).astype(np.uint8)
 
@@ -315,11 +312,18 @@ def _scale_and_sharpen_for_tiny_text(img: np.ndarray, cfg: PreprocessConfig) -> 
     h, w = img.shape[:2]
     long_dim = max(h, w)
 
+    # If image dimension is below target density, upscale using Lanczos-4
     if long_dim < cfg.target_ocr_dim:
         up_ratio = float(cfg.target_ocr_dim) / float(long_dim)
         target_w = int(round(w * up_ratio))
         target_h = int(round(h * up_ratio))
         img = cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    elif long_dim > 2400:
+        # Cap giant phone images (e.g. 4032px) to 2400px so PNG encoding and OCR run at peak efficiency
+        down_ratio = 2400.0 / float(long_dim)
+        target_w = int(round(w * down_ratio))
+        target_h = int(round(h * down_ratio))
+        img = cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_AREA)
 
     blur = cv2.GaussianBlur(img, (0, 0), 1.0)
     sharpened = cv2.addWeighted(img, 1.4, blur, -0.4, 0)

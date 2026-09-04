@@ -1,0 +1,7429 @@
+{
+  "productId": 3,
+  "sourceImages": [
+    "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+    "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+    "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+    "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+    "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+    "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg"
+  ],
+  "declarations": {
+    "commodityClassification": {
+      "brandName": "All Out",
+      "genericName": "Liquid Vaporiser Refill",
+      "scheduleCategory": null,
+      "physicalForm": "liquid",
+      "isFoodArticle": false,
+      "isIndustrialOrInstitutional": false,
+      "isImported": false,
+      "countryOfOrigin": "India",
+      "dimensionsRelevant": false,
+      "manufacturerIsNotPacker": false
+    },
+    "commodityName": {
+      "present": true,
+      "value": "Liquid Vaporiser Refill",
+      "perProductBreakdown": false,
+      "rawText": ""
+    },
+    "manufacturer": {
+      "present": true,
+      "name": "Brllon Consumer Products Pvt. Ltd",
+      "address": "Regd. Office: 10th Floor, Tower 2, AIPL Business Club, Golf Course Ext. Road, Sector 62, Gurugram, Haryana – 122 018, India",
+      "mark": null,
+      "rawText": ""
+    },
+    "packer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null,
+      "rawText": ""
+    },
+    "importer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null,
+      "rawText": ""
+    },
+    "netQuantity": {
+      "present": true,
+      "value": 90,
+      "unit": "ml",
+      "unitKind": "volume",
+      "rawText": "",
+      "qualifiedWhenPacked": false,
+      "onTagCardOrTapeDevice": false,
+      "symbolUsed": "ml"
+    },
+    "mfgDate": {
+      "present": true,
+      "value": "09107126 12:36",
+      "rawText": "",
+      "usedIndividualSticker": false,
+      "isMrpReductionSticker": false
+    },
+    "mrp": {
+      "present": true,
+      "value": 190,
+      "currency": "Rs.",
+      "rawText": "Rs.190.00 175.00 (Incl. of all taxes)",
+      "inclusiveOfTaxesStated": true,
+      "stickerReducedMrp": false,
+      "stickerCoversOriginalMrp": false
+    },
+    "dimensions": {
+      "present": false,
+      "rawText": "",
+      "perPieceDeclared": false,
+      "numberOfPiecesDeclared": false,
+      "perPieceDimensionAndRSP": false,
+      "numberOfBags": null,
+      "linearDimensions": null,
+      "numberOfContainers": null,
+      "lengthWidthDepth": null,
+      "diameter": null,
+      "standardCapacityReferenceIncluded": false
+    },
+    "consumerCare": {
+      "present": true,
+      "name": "Manager, Complaints at Regd. Office of Marketer",
+      "address": null,
+      "telephone": "011-4170499",
+      "email": "care@brillnconsumer.com",
+      "website": null,
+      "rawText": "Contactus: Manager, Complaints at Regd. Oice of Marketer Ph: 011- 4170499, Email: care@brillnconsumer.com"
+    },
+    "standardPackDeclaration": {
+      "present": false,
+      "rawText": ""
+    },
+    "sheetCount": {
+      "present": false,
+      "value": null,
+      "dimensionsPerSheet": null,
+      "rawText": ""
+    },
+    "multiComponentDeclarationHandled": false
+  },
+  "packageRecord": {
+    "commodity": {
+      "category": "Liquid Vaporiser Refill",
+      "genericName": "Liquid Vaporiser Refill",
+      "brandName": "All Out",
+      "physicalForm": "liquid",
+      "netQuantityValue": 90,
+      "netQuantityUnit": "ml",
+      "weightOrVolumeKgOrL": 0.09,
+      "isCementOrFertilizerBag": false,
+      "isIndustrialConsumer": false,
+      "isInstitutionalConsumer": false,
+      "isFoodArticle": false,
+      "isMultiProductPackage": false,
+      "manufacturerIsNotPacker": false,
+      "isImportedPackage": false,
+      "countryOfOrigin": "India",
+      "manufacturedOutsideIndiaButPackedInIndia": false,
+      "isBidiOrIncenseStick": false,
+      "isBidiPackage": false,
+      "isLPGCylinder": false,
+      "lpgWeightKg": null,
+      "isPublicSectorUndertaking": false,
+      "priceUnderAdministrativePriceMechanism": false,
+      "isReturnableBeverageBottle": false,
+      "isAlcoholicBeverage": false,
+      "isExportPackage": false,
+      "soldInIndia": true,
+      "repackedOrRelabeledPerChapterII": false,
+      "isWholesalePackage": false,
+      "similarDeclarationRequiredByOtherLaw": false,
+      "isFastFoodByRestaurantOrHotel": false,
+      "isDrugsPriceControlFormulation": false,
+      "isAgriculturalProduceOver50kg": false,
+      "packageCapacityCC": 90,
+      "dimensionsAreRelevant": false,
+      "hasMultiplePiecesDifferentDimensions": false,
+      "isMultiComponentInSeparateUnits": false,
+      "hasOutsideContainerOrWrapper": false,
+      "declarationGovernedByOtherLaw": false,
+      "weightAloneInsufficientForConsumerInfo": false,
+      "isSheetTypeCommodity": false,
+      "isContainerTypeCommodity": false,
+      "containerShape": null,
+      "containerCapacityLinkedToLabelReference": false,
+      "priceRelatedToDimensionsOrWeight": false,
+      "netQuantityQualifiedWhenPacked": false,
+      "deficiencyDueToEnvironmentalConditions": false,
+      "isBlownFormedMoldedEmbossedOrPerforated": false
+    },
+    "declarations": {
+      "commodityClassification": {
+        "brandName": "All Out",
+        "genericName": "Liquid Vaporiser Refill",
+        "scheduleCategory": null,
+        "physicalForm": "liquid",
+        "isFoodArticle": false,
+        "isIndustrialOrInstitutional": false,
+        "isImported": false,
+        "countryOfOrigin": "India",
+        "dimensionsRelevant": false,
+        "manufacturerIsNotPacker": false
+      },
+      "commodityName": {
+        "present": true,
+        "value": "Liquid Vaporiser Refill",
+        "perProductBreakdown": false,
+        "rawText": ""
+      },
+      "manufacturer": {
+        "present": true,
+        "name": "Brllon Consumer Products Pvt. Ltd",
+        "address": "Regd. Office: 10th Floor, Tower 2, AIPL Business Club, Golf Course Ext. Road, Sector 62, Gurugram, Haryana – 122 018, India",
+        "mark": null,
+        "rawText": ""
+      },
+      "packer": {
+        "present": false,
+        "name": null,
+        "address": false,
+        "mark": null,
+        "rawText": ""
+      },
+      "importer": {
+        "present": false,
+        "name": null,
+        "address": false,
+        "mark": null,
+        "rawText": ""
+      },
+      "netQuantity": {
+        "present": true,
+        "value": 90,
+        "unit": "ml",
+        "unitKind": "volume",
+        "rawText": "",
+        "qualifiedWhenPacked": false,
+        "onTagCardOrTapeDevice": false,
+        "symbolUsed": "ml"
+      },
+      "mfgDate": {
+        "present": true,
+        "value": "09107126 12:36",
+        "rawText": "",
+        "usedIndividualSticker": false,
+        "isMrpReductionSticker": false
+      },
+      "mrp": {
+        "present": true,
+        "value": 190,
+        "currency": "Rs.",
+        "rawText": "Rs.190.00 175.00 (Incl. of all taxes)",
+        "inclusiveOfTaxesStated": true,
+        "stickerReducedMrp": false,
+        "stickerCoversOriginalMrp": false
+      },
+      "dimensions": {
+        "present": false,
+        "rawText": "",
+        "perPieceDeclared": false,
+        "numberOfPiecesDeclared": false,
+        "perPieceDimensionAndRSP": false,
+        "numberOfBags": null,
+        "linearDimensions": null,
+        "numberOfContainers": null,
+        "lengthWidthDepth": null,
+        "diameter": null,
+        "standardCapacityReferenceIncluded": false
+      },
+      "consumerCare": {
+        "present": true,
+        "name": "Manager, Complaints at Regd. Office of Marketer",
+        "address": null,
+        "telephone": "011-4170499",
+        "email": "care@brillnconsumer.com",
+        "website": null,
+        "rawText": "Contactus: Manager, Complaints at Regd. Oice of Marketer Ph: 011- 4170499, Email: care@brillnconsumer.com"
+      },
+      "standardPackDeclaration": {
+        "present": false,
+        "rawText": ""
+      },
+      "sheetCount": {
+        "present": false,
+        "value": null,
+        "dimensionsPerSheet": null,
+        "rawText": ""
+      },
+      "multiComponentDeclarationHandled": false
+    },
+    "labelMetrics": {
+      "numeralHeightMm": {
+        "rsp": null,
+        "netQty": null
+      },
+      "numeralWidthMm": {
+        "rsp": null,
+        "netQty": null
+      },
+      "calibrationAvailable": false,
+      "pixelsPerMm": null,
+      "pdpAreaCm2": null,
+      "contrastOk": true,
+      "isBlownFormedMoldedEmbossedOrPerforated": false,
+      "isExemptCharacterShape": false,
+      "isBlownFormedMoldedOnGlassOrPlastic": false,
+      "isHandwrittenOrHandScript": false,
+      "handwritingIsClearUnambiguousLegible": false,
+      "legibilityIssue": false,
+      "declarationOnlyReadableThroughLiquid": false,
+      "quantityDeclarationSurroundingAreaHasPrintedInfo": false,
+      "rspOnCrownCapOrBottle": false,
+      "wrapperTransparentAndDeclarationsReadableThrough": false,
+      "innerPackageHasNoOuterCoverDeclaration": false,
+      "outerContainerHasAllDeclarations": false,
+      "languageUsed": [
+        "English"
+      ]
+    },
+    "quantitySamples": [],
+    "wholesale": {
+      "retailPackageCount": null,
+      "netQuantity": null
+    }
+  },
+  "complianceResult": {
+    "applicable": true,
+    "exemptionReason": null,
+    "violations": [],
+    "compliant": true,
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "major": 0,
+      "minor": 0
+    }
+  },
+  "panels": [
+    {
+      "imageIndex": 0,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+      "text": "All Out\nULTRA\n1\nAnOut\nRecommended by\nx2\nIndian Medical Association\nNet Quantity: 90 ml\nRefills\n(2 Numbers x 45 ml)",
+      "lines": [
+        {
+          "id": 0,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "All Out",
+          "confidence": 0.9451,
+          "bbox": [
+            [
+              533,
+              434
+            ],
+            [
+              981,
+              362
+            ],
+            [
+              1022,
+              610
+            ],
+            [
+              574,
+              682
+            ]
+          ],
+          "heightPx": 251.37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 1,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              608,
+              630
+            ],
+            [
+              934,
+              572
+            ],
+            [
+              952,
+              670
+            ],
+            [
+              625,
+              727
+            ]
+          ],
+          "heightPx": 99.06,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 2,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "1",
+          "confidence": 0.4421,
+          "bbox": [
+            [
+              650,
+              594
+            ],
+            [
+              656,
+              594
+            ],
+            [
+              656,
+              599
+            ],
+            [
+              650,
+              599
+            ]
+          ],
+          "heightPx": 5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 3,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "AnOut",
+          "confidence": 0.8839,
+          "bbox": [
+            [
+              1077,
+              725
+            ],
+            [
+              1168,
+              714
+            ],
+            [
+              1174,
+              758
+            ],
+            [
+              1083,
+              769
+            ]
+          ],
+          "heightPx": 44.41,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 4,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "Recommended by",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              252,
+              716
+            ],
+            [
+              471,
+              722
+            ],
+            [
+              470,
+              763
+            ],
+            [
+              251,
+              758
+            ]
+          ],
+          "heightPx": 41.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 5,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "x2",
+          "confidence": 0.9748,
+          "bbox": [
+            [
+              1477,
+              737
+            ],
+            [
+              1591,
+              740
+            ],
+            [
+              1588,
+              834
+            ],
+            [
+              1474,
+              830
+            ]
+          ],
+          "heightPx": 93.55,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 6,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "Indian Medical Association",
+          "confidence": 0.9968,
+          "bbox": [
+            [
+              201,
+              755
+            ],
+            [
+              526,
+              761
+            ],
+            [
+              525,
+              799
+            ],
+            [
+              201,
+              792
+            ]
+          ],
+          "heightPx": 37.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 7,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "Net Quantity: 90 ml",
+          "confidence": 0.9691,
+          "bbox": [
+            [
+              183,
+              820
+            ],
+            [
+              565,
+              825
+            ],
+            [
+              564,
+              874
+            ],
+            [
+              183,
+              868
+            ]
+          ],
+          "heightPx": 48.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 8,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "Refills",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              1472,
+              823
+            ],
+            [
+              1590,
+              823
+            ],
+            [
+              1590,
+              863
+            ],
+            [
+              1472,
+              863
+            ]
+          ],
+          "heightPx": 40,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 9,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.53 PM.jpeg",
+          "text": "(2 Numbers x 45 ml)",
+          "confidence": 0.9808,
+          "bbox": [
+            [
+              599,
+              826
+            ],
+            [
+              946,
+              833
+            ],
+            [
+              944,
+              880
+            ],
+            [
+              598,
+              872
+            ]
+          ],
+          "heightPx": 46.53,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "All Out",
+          "confidence": 0.9451,
+          "bbox": [
+            [
+              533,
+              434
+            ],
+            [
+              981,
+              362
+            ],
+            [
+              1022,
+              610
+            ],
+            [
+              574,
+              682
+            ]
+          ],
+          "pixel_height": 251.37
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              608,
+              630
+            ],
+            [
+              934,
+              572
+            ],
+            [
+              952,
+              670
+            ],
+            [
+              625,
+              727
+            ]
+          ],
+          "pixel_height": 99.06
+        },
+        {
+          "text": "1",
+          "confidence": 0.4421,
+          "bbox": [
+            [
+              650,
+              594
+            ],
+            [
+              656,
+              594
+            ],
+            [
+              656,
+              599
+            ],
+            [
+              650,
+              599
+            ]
+          ],
+          "pixel_height": 5
+        },
+        {
+          "text": "AnOut",
+          "confidence": 0.8839,
+          "bbox": [
+            [
+              1077,
+              725
+            ],
+            [
+              1168,
+              714
+            ],
+            [
+              1174,
+              758
+            ],
+            [
+              1083,
+              769
+            ]
+          ],
+          "pixel_height": 44.41
+        },
+        {
+          "text": "Recommended by",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              252,
+              716
+            ],
+            [
+              471,
+              722
+            ],
+            [
+              470,
+              763
+            ],
+            [
+              251,
+              758
+            ]
+          ],
+          "pixel_height": 41.51
+        },
+        {
+          "text": "x2",
+          "confidence": 0.9748,
+          "bbox": [
+            [
+              1477,
+              737
+            ],
+            [
+              1591,
+              740
+            ],
+            [
+              1588,
+              834
+            ],
+            [
+              1474,
+              830
+            ]
+          ],
+          "pixel_height": 93.55
+        },
+        {
+          "text": "Indian Medical Association",
+          "confidence": 0.9968,
+          "bbox": [
+            [
+              201,
+              755
+            ],
+            [
+              526,
+              761
+            ],
+            [
+              525,
+              799
+            ],
+            [
+              201,
+              792
+            ]
+          ],
+          "pixel_height": 37.51
+        },
+        {
+          "text": "Net Quantity: 90 ml",
+          "confidence": 0.9691,
+          "bbox": [
+            [
+              183,
+              820
+            ],
+            [
+              565,
+              825
+            ],
+            [
+              564,
+              874
+            ],
+            [
+              183,
+              868
+            ]
+          ],
+          "pixel_height": 48.51
+        },
+        {
+          "text": "Refills",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              1472,
+              823
+            ],
+            [
+              1590,
+              823
+            ],
+            [
+              1590,
+              863
+            ],
+            [
+              1472,
+              863
+            ]
+          ],
+          "pixel_height": 40
+        },
+        {
+          "text": "(2 Numbers x 45 ml)",
+          "confidence": 0.9808,
+          "bbox": [
+            [
+              599,
+              826
+            ],
+            [
+              946,
+              833
+            ],
+            [
+              944,
+              880
+            ],
+            [
+              598,
+              872
+            ]
+          ],
+          "pixel_height": 46.53
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1800,
+        "output_height": 979,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 98.46,
+        "glare_area_fraction": 0.0009,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 1,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+      "text": "NeW All Out® Ultra Kills Dengue,\nMalaria & Chikungunya - 30% Faster\nHIGH\n++\nNORMAL\nMODE\nMODE\nALL OUTº is recommended by\nINDIANMEDICALASSOCIATION\nProtect your family against\nDengue, Malaria & Chikungunya\nUse All Out®\nAvoid litter\nCover arms\nLiquid Vaporiser\n& legs when\nor stagnant\noutside.\nfor in-home\nwater around\nprotection.\nyour home.\nFor best results, always use\nAll Out® Refill with All Out® Machine.\nFor more information.visit- www.allout.in\nCAUTION GUIDELINE\n^Compared to All Out* 0,88% TFT LV, tested at CIB-approved lab.\n*Spreading mosquitoes, tested at CIB-approved lab.\n**When compared to the total of actual price of two units of Single\nAll Out* Ültra 45ml Refill packs. Offer valid till stocks last,\nin select cities and outlets only.",
+      "lines": [
+        {
+          "id": 10,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "NeW All Out® Ultra Kills Dengue,",
+          "confidence": 0.9879,
+          "bbox": [
+            [
+              722,
+              189
+            ],
+            [
+              1331,
+              179
+            ],
+            [
+              1332,
+              230
+            ],
+            [
+              723,
+              240
+            ]
+          ],
+          "heightPx": 51.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 11,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Malaria & Chikungunya - 30% Faster",
+          "confidence": 0.985,
+          "bbox": [
+            [
+              632,
+              249
+            ],
+            [
+              1396,
+              210
+            ],
+            [
+              1400,
+              281
+            ],
+            [
+              636,
+              320
+            ]
+          ],
+          "heightPx": 71.11,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 12,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "HIGH",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              1282,
+              324
+            ],
+            [
+              1389,
+              320
+            ],
+            [
+              1391,
+              365
+            ],
+            [
+              1284,
+              369
+            ]
+          ],
+          "heightPx": 45.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 13,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "++",
+          "confidence": 0.9349,
+          "bbox": [
+            [
+              1178,
+              340
+            ],
+            [
+              1270,
+              337
+            ],
+            [
+              1272,
+              392
+            ],
+            [
+              1180,
+              395
+            ]
+          ],
+          "heightPx": 55.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 14,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "NORMAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              654,
+              348
+            ],
+            [
+              820,
+              345
+            ],
+            [
+              821,
+              388
+            ],
+            [
+              654,
+              390
+            ]
+          ],
+          "heightPx": 42.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 15,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "MODE",
+          "confidence": 0.9971,
+          "bbox": [
+            [
+              1282,
+              361
+            ],
+            [
+              1391,
+              358
+            ],
+            [
+              1392,
+              399
+            ],
+            [
+              1283,
+              401
+            ]
+          ],
+          "heightPx": 40.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 16,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "MODE",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              691,
+              384
+            ],
+            [
+              788,
+              384
+            ],
+            [
+              788,
+              421
+            ],
+            [
+              691,
+              421
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 17,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "ALL OUTº is recommended by",
+          "confidence": 0.9636,
+          "bbox": [
+            [
+              667,
+              468
+            ],
+            [
+              1372,
+              452
+            ],
+            [
+              1374,
+              516
+            ],
+            [
+              669,
+              532
+            ]
+          ],
+          "heightPx": 64.03,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 18,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "INDIANMEDICALASSOCIATION",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              656,
+              532
+            ],
+            [
+              1388,
+              512
+            ],
+            [
+              1390,
+              563
+            ],
+            [
+              658,
+              583
+            ]
+          ],
+          "heightPx": 51.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 19,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Protect your family against",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              756,
+              611
+            ],
+            [
+              1317,
+              601
+            ],
+            [
+              1318,
+              656
+            ],
+            [
+              757,
+              665
+            ]
+          ],
+          "heightPx": 54.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 20,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Dengue, Malaria & Chikungunya",
+          "confidence": 0.9953,
+          "bbox": [
+            [
+              708,
+              664
+            ],
+            [
+              1370,
+              654
+            ],
+            [
+              1371,
+              711
+            ],
+            [
+              709,
+              721
+            ]
+          ],
+          "heightPx": 57.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 21,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Use All Out®",
+          "confidence": 0.9947,
+          "bbox": [
+            [
+              1166,
+              873
+            ],
+            [
+              1361,
+              873
+            ],
+            [
+              1361,
+              918
+            ],
+            [
+              1166,
+              918
+            ]
+          ],
+          "heightPx": 45,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 22,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Avoid litter",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              689,
+              881
+            ],
+            [
+              861,
+              881
+            ],
+            [
+              861,
+              923
+            ],
+            [
+              689,
+              923
+            ]
+          ],
+          "heightPx": 42,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 23,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Cover arms",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              914,
+              881
+            ],
+            [
+              1094,
+              881
+            ],
+            [
+              1094,
+              919
+            ],
+            [
+              914,
+              919
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 24,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "Liquid Vaporiser",
+          "confidence": 0.9981,
+          "bbox": [
+            [
+              1135,
+              915
+            ],
+            [
+              1392,
+              915
+            ],
+            [
+              1392,
+              956
+            ],
+            [
+              1135,
+              956
+            ]
+          ],
+          "heightPx": 41,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 25,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "& legs when",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              907,
+              917
+            ],
+            [
+              1101,
+              917
+            ],
+            [
+              1101,
+              959
+            ],
+            [
+              907,
+              959
+            ]
+          ],
+          "heightPx": 42,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 26,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "or stagnant",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              685,
+              920
+            ],
+            [
+              864,
+              918
+            ],
+            [
+              864,
+              960
+            ],
+            [
+              686,
+              962
+            ]
+          ],
+          "heightPx": 42.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 27,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "outside.",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              939,
+              955
+            ],
+            [
+              1067,
+              953
+            ],
+            [
+              1068,
+              992
+            ],
+            [
+              940,
+              995
+            ]
+          ],
+          "heightPx": 39.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 28,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "for in-home",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              1169,
+              953
+            ],
+            [
+              1358,
+              953
+            ],
+            [
+              1358,
+              991
+            ],
+            [
+              1169,
+              991
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 29,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "water around",
+          "confidence": 0.9932,
+          "bbox": [
+            [
+              672,
+              956
+            ],
+            [
+              876,
+              954
+            ],
+            [
+              876,
+              993
+            ],
+            [
+              672,
+              996
+            ]
+          ],
+          "heightPx": 39.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 30,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "protection.",
+          "confidence": 1,
+          "bbox": [
+            [
+              1176,
+              989
+            ],
+            [
+              1356,
+              989
+            ],
+            [
+              1356,
+              1035
+            ],
+            [
+              1176,
+              1035
+            ]
+          ],
+          "heightPx": 46,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 31,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "your home.",
+          "confidence": 0.9957,
+          "bbox": [
+            [
+              683,
+              993
+            ],
+            [
+              864,
+              990
+            ],
+            [
+              864,
+              1035
+            ],
+            [
+              684,
+              1038
+            ]
+          ],
+          "heightPx": 45.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 32,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "For best results, always use",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              750,
+              1069
+            ],
+            [
+              1265,
+              1073
+            ],
+            [
+              1264,
+              1117
+            ],
+            [
+              749,
+              1113
+            ]
+          ],
+          "heightPx": 44.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 33,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "All Out® Refill with All Out® Machine.",
+          "confidence": 0.9811,
+          "bbox": [
+            [
+              678,
+              1119
+            ],
+            [
+              1341,
+              1119
+            ],
+            [
+              1341,
+              1160
+            ],
+            [
+              678,
+              1160
+            ]
+          ],
+          "heightPx": 41,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 34,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "For more information.visit- www.allout.in",
+          "confidence": 0.9674,
+          "bbox": [
+            [
+              664,
+              1189
+            ],
+            [
+              1402,
+              1191
+            ],
+            [
+              1402,
+              1236
+            ],
+            [
+              664,
+              1233
+            ]
+          ],
+          "heightPx": 44.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 35,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "CAUTION GUIDELINE",
+          "confidence": 0.9978,
+          "bbox": [
+            [
+              839,
+              1255
+            ],
+            [
+              1220,
+              1255
+            ],
+            [
+              1220,
+              1296
+            ],
+            [
+              839,
+              1296
+            ]
+          ],
+          "heightPx": 41,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 36,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "^Compared to All Out* 0,88% TFT LV, tested at CIB-approved lab.",
+          "confidence": 0.9816,
+          "bbox": [
+            [
+              654,
+              1503
+            ],
+            [
+              1420,
+              1514
+            ],
+            [
+              1420,
+              1551
+            ],
+            [
+              654,
+              1540
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 37,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "*Spreading mosquitoes, tested at CIB-approved lab.",
+          "confidence": 0.9818,
+          "bbox": [
+            [
+              729,
+              1538
+            ],
+            [
+              1341,
+              1547
+            ],
+            [
+              1340,
+              1584
+            ],
+            [
+              728,
+              1575
+            ]
+          ],
+          "heightPx": 37.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 38,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "**When compared to the total of actual price of two units of Single",
+          "confidence": 0.9846,
+          "bbox": [
+            [
+              648,
+              1564
+            ],
+            [
+              1430,
+              1581
+            ],
+            [
+              1430,
+              1621
+            ],
+            [
+              647,
+              1604
+            ]
+          ],
+          "heightPx": 40.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 39,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "All Out* Ültra 45ml Refill packs. Offer valid till stocks last,",
+          "confidence": 0.9744,
+          "bbox": [
+            [
+              695,
+              1600
+            ],
+            [
+              1385,
+              1614
+            ],
+            [
+              1384,
+              1652
+            ],
+            [
+              694,
+              1637
+            ]
+          ],
+          "heightPx": 37.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 40,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (1).jpeg",
+          "text": "in select cities and outlets only.",
+          "confidence": 0.9902,
+          "bbox": [
+            [
+              846,
+              1636
+            ],
+            [
+              1224,
+              1646
+            ],
+            [
+              1223,
+              1684
+            ],
+            [
+              845,
+              1674
+            ]
+          ],
+          "heightPx": 38.01,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "NeW All Out® Ultra Kills Dengue,",
+          "confidence": 0.9879,
+          "bbox": [
+            [
+              722,
+              189
+            ],
+            [
+              1331,
+              179
+            ],
+            [
+              1332,
+              230
+            ],
+            [
+              723,
+              240
+            ]
+          ],
+          "pixel_height": 51.01
+        },
+        {
+          "text": "Malaria & Chikungunya - 30% Faster",
+          "confidence": 0.985,
+          "bbox": [
+            [
+              632,
+              249
+            ],
+            [
+              1396,
+              210
+            ],
+            [
+              1400,
+              281
+            ],
+            [
+              636,
+              320
+            ]
+          ],
+          "pixel_height": 71.11
+        },
+        {
+          "text": "HIGH",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              1282,
+              324
+            ],
+            [
+              1389,
+              320
+            ],
+            [
+              1391,
+              365
+            ],
+            [
+              1284,
+              369
+            ]
+          ],
+          "pixel_height": 45.04
+        },
+        {
+          "text": "++",
+          "confidence": 0.9349,
+          "bbox": [
+            [
+              1178,
+              340
+            ],
+            [
+              1270,
+              337
+            ],
+            [
+              1272,
+              392
+            ],
+            [
+              1180,
+              395
+            ]
+          ],
+          "pixel_height": 55.04
+        },
+        {
+          "text": "NORMAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              654,
+              348
+            ],
+            [
+              820,
+              345
+            ],
+            [
+              821,
+              388
+            ],
+            [
+              654,
+              390
+            ]
+          ],
+          "pixel_height": 42.51
+        },
+        {
+          "text": "MODE",
+          "confidence": 0.9971,
+          "bbox": [
+            [
+              1282,
+              361
+            ],
+            [
+              1391,
+              358
+            ],
+            [
+              1392,
+              399
+            ],
+            [
+              1283,
+              401
+            ]
+          ],
+          "pixel_height": 40.51
+        },
+        {
+          "text": "MODE",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              691,
+              384
+            ],
+            [
+              788,
+              384
+            ],
+            [
+              788,
+              421
+            ],
+            [
+              691,
+              421
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "ALL OUTº is recommended by",
+          "confidence": 0.9636,
+          "bbox": [
+            [
+              667,
+              468
+            ],
+            [
+              1372,
+              452
+            ],
+            [
+              1374,
+              516
+            ],
+            [
+              669,
+              532
+            ]
+          ],
+          "pixel_height": 64.03
+        },
+        {
+          "text": "INDIANMEDICALASSOCIATION",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              656,
+              532
+            ],
+            [
+              1388,
+              512
+            ],
+            [
+              1390,
+              563
+            ],
+            [
+              658,
+              583
+            ]
+          ],
+          "pixel_height": 51.04
+        },
+        {
+          "text": "Protect your family against",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              756,
+              611
+            ],
+            [
+              1317,
+              601
+            ],
+            [
+              1318,
+              656
+            ],
+            [
+              757,
+              665
+            ]
+          ],
+          "pixel_height": 54.51
+        },
+        {
+          "text": "Dengue, Malaria & Chikungunya",
+          "confidence": 0.9953,
+          "bbox": [
+            [
+              708,
+              664
+            ],
+            [
+              1370,
+              654
+            ],
+            [
+              1371,
+              711
+            ],
+            [
+              709,
+              721
+            ]
+          ],
+          "pixel_height": 57.01
+        },
+        {
+          "text": "Use All Out®",
+          "confidence": 0.9947,
+          "bbox": [
+            [
+              1166,
+              873
+            ],
+            [
+              1361,
+              873
+            ],
+            [
+              1361,
+              918
+            ],
+            [
+              1166,
+              918
+            ]
+          ],
+          "pixel_height": 45
+        },
+        {
+          "text": "Avoid litter",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              689,
+              881
+            ],
+            [
+              861,
+              881
+            ],
+            [
+              861,
+              923
+            ],
+            [
+              689,
+              923
+            ]
+          ],
+          "pixel_height": 42
+        },
+        {
+          "text": "Cover arms",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              914,
+              881
+            ],
+            [
+              1094,
+              881
+            ],
+            [
+              1094,
+              919
+            ],
+            [
+              914,
+              919
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "Liquid Vaporiser",
+          "confidence": 0.9981,
+          "bbox": [
+            [
+              1135,
+              915
+            ],
+            [
+              1392,
+              915
+            ],
+            [
+              1392,
+              956
+            ],
+            [
+              1135,
+              956
+            ]
+          ],
+          "pixel_height": 41
+        },
+        {
+          "text": "& legs when",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              907,
+              917
+            ],
+            [
+              1101,
+              917
+            ],
+            [
+              1101,
+              959
+            ],
+            [
+              907,
+              959
+            ]
+          ],
+          "pixel_height": 42
+        },
+        {
+          "text": "or stagnant",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              685,
+              920
+            ],
+            [
+              864,
+              918
+            ],
+            [
+              864,
+              960
+            ],
+            [
+              686,
+              962
+            ]
+          ],
+          "pixel_height": 42.01
+        },
+        {
+          "text": "outside.",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              939,
+              955
+            ],
+            [
+              1067,
+              953
+            ],
+            [
+              1068,
+              992
+            ],
+            [
+              940,
+              995
+            ]
+          ],
+          "pixel_height": 39.51
+        },
+        {
+          "text": "for in-home",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              1169,
+              953
+            ],
+            [
+              1358,
+              953
+            ],
+            [
+              1358,
+              991
+            ],
+            [
+              1169,
+              991
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "water around",
+          "confidence": 0.9932,
+          "bbox": [
+            [
+              672,
+              956
+            ],
+            [
+              876,
+              954
+            ],
+            [
+              876,
+              993
+            ],
+            [
+              672,
+              996
+            ]
+          ],
+          "pixel_height": 39.5
+        },
+        {
+          "text": "protection.",
+          "confidence": 1,
+          "bbox": [
+            [
+              1176,
+              989
+            ],
+            [
+              1356,
+              989
+            ],
+            [
+              1356,
+              1035
+            ],
+            [
+              1176,
+              1035
+            ]
+          ],
+          "pixel_height": 46
+        },
+        {
+          "text": "your home.",
+          "confidence": 0.9957,
+          "bbox": [
+            [
+              683,
+              993
+            ],
+            [
+              864,
+              990
+            ],
+            [
+              864,
+              1035
+            ],
+            [
+              684,
+              1038
+            ]
+          ],
+          "pixel_height": 45.01
+        },
+        {
+          "text": "For best results, always use",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              750,
+              1069
+            ],
+            [
+              1265,
+              1073
+            ],
+            [
+              1264,
+              1117
+            ],
+            [
+              749,
+              1113
+            ]
+          ],
+          "pixel_height": 44.01
+        },
+        {
+          "text": "All Out® Refill with All Out® Machine.",
+          "confidence": 0.9811,
+          "bbox": [
+            [
+              678,
+              1119
+            ],
+            [
+              1341,
+              1119
+            ],
+            [
+              1341,
+              1160
+            ],
+            [
+              678,
+              1160
+            ]
+          ],
+          "pixel_height": 41
+        },
+        {
+          "text": "For more information.visit- www.allout.in",
+          "confidence": 0.9674,
+          "bbox": [
+            [
+              664,
+              1189
+            ],
+            [
+              1402,
+              1191
+            ],
+            [
+              1402,
+              1236
+            ],
+            [
+              664,
+              1233
+            ]
+          ],
+          "pixel_height": 44.5
+        },
+        {
+          "text": "CAUTION GUIDELINE",
+          "confidence": 0.9978,
+          "bbox": [
+            [
+              839,
+              1255
+            ],
+            [
+              1220,
+              1255
+            ],
+            [
+              1220,
+              1296
+            ],
+            [
+              839,
+              1296
+            ]
+          ],
+          "pixel_height": 41
+        },
+        {
+          "text": "^Compared to All Out* 0,88% TFT LV, tested at CIB-approved lab.",
+          "confidence": 0.9816,
+          "bbox": [
+            [
+              654,
+              1503
+            ],
+            [
+              1420,
+              1514
+            ],
+            [
+              1420,
+              1551
+            ],
+            [
+              654,
+              1540
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "*Spreading mosquitoes, tested at CIB-approved lab.",
+          "confidence": 0.9818,
+          "bbox": [
+            [
+              729,
+              1538
+            ],
+            [
+              1341,
+              1547
+            ],
+            [
+              1340,
+              1584
+            ],
+            [
+              728,
+              1575
+            ]
+          ],
+          "pixel_height": 37.01
+        },
+        {
+          "text": "**When compared to the total of actual price of two units of Single",
+          "confidence": 0.9846,
+          "bbox": [
+            [
+              648,
+              1564
+            ],
+            [
+              1430,
+              1581
+            ],
+            [
+              1430,
+              1621
+            ],
+            [
+              647,
+              1604
+            ]
+          ],
+          "pixel_height": 40.01
+        },
+        {
+          "text": "All Out* Ültra 45ml Refill packs. Offer valid till stocks last,",
+          "confidence": 0.9744,
+          "bbox": [
+            [
+              695,
+              1600
+            ],
+            [
+              1385,
+              1614
+            ],
+            [
+              1384,
+              1652
+            ],
+            [
+              694,
+              1637
+            ]
+          ],
+          "pixel_height": 37.51
+        },
+        {
+          "text": "in select cities and outlets only.",
+          "confidence": 0.9902,
+          "bbox": [
+            [
+              846,
+              1636
+            ],
+            [
+              1224,
+              1646
+            ],
+            [
+              1223,
+              1684
+            ],
+            [
+              845,
+              1674
+            ]
+          ],
+          "pixel_height": 38.01
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1533,
+        "output_height": 1800,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 1.233,
+        "sharpness_score": 159.88,
+        "glare_area_fraction": 0.0006,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 2,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+      "text": "ALL OUT Liquid Vaporiser\nAll Out® Ultra Transfluthrin 1.2% (w/w) Liquid Vaporiser Refill\n(Household Insecticide).\nAll Out Ultra çiae 12% (aR/R) fafas RisuR (g cRT)\nAll OutUrar 1.2% (/)\nBaev ( On  Gane).\nChemical Composition: Active Ingredient: Transfluthrin (a.i.) 1.20%\n(w/w). Butylated Hydroxytoulene (BHT) - Stabliser 1.00% (w/w), F&I\nK705/A (Mixture of a number of aroma chemicals like Benzyl Acetate,\nGeraniol etc.) - Perfume - 1.00% (w/w), Deodorised Kerosene - Solvent -\nQS%, Total: 100.0% (w/w). Direction to use: See leaflet. Cautions:\nDOORS AND WINDOWS SHOULD BE KEPT OPEN WHILE USING. Antidote: No\nspecific antidote is known. Treat symptomatically. Recommendations:\nRecommended for use to control/repel adult mosquitoes in house.\nSee first two characters of Batch No. for manufacturer address.\nWorks: U2, Unit No. 2, Plot No. 70,\nHPSIDC IndL. Area, Baddi – 173205,\nDist. Solan, Himachal Pradesh, India.\nMfg. Lic No. H.P.PML-008 (old SLN-21)\nCAUTION\ndated 14.11.2005.\nKEEP OUT OF REACH OF CHILDREN\nWorks: U6, Unit No. 6, Dag No. 13 KA,\nBamunimaidan Industrial Area, Guwahati,\nAssam – 781021, India. Mfg. Lic No.\nwana\nAGRI/DEV/PP/MF/2019-20/009.\nInflammable, keep in cool, dry place away from heat and open flame.\nRRT3m3\nALL OUT* used under authority from S.C. Johnson & Sons., Inc., Racine, Wisconsin, USA.\nCPCB Plastic EPR Regn. No.:B0-03-000-06-AAACL3128M-22\nFor MRP and other details, see bottom of the pack.\nSCAN TO KNOW MORE\n8190427112004301",
+      "lines": [
+        {
+          "id": 41,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "ALL OUT Liquid Vaporiser",
+          "confidence": 0.9666,
+          "bbox": [
+            [
+              642,
+              197
+            ],
+            [
+              939,
+              196
+            ],
+            [
+              939,
+              231
+            ],
+            [
+              642,
+              232
+            ]
+          ],
+          "heightPx": 35,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 42,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "All Out® Ultra Transfluthrin 1.2% (w/w) Liquid Vaporiser Refill",
+          "confidence": 0.9798,
+          "bbox": [
+            [
+              640,
+              233
+            ],
+            [
+              1384,
+              230
+            ],
+            [
+              1384,
+              270
+            ],
+            [
+              640,
+              273
+            ]
+          ],
+          "heightPx": 40,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 43,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "(Household Insecticide).",
+          "confidence": 0.9936,
+          "bbox": [
+            [
+              640,
+              271
+            ],
+            [
+              919,
+              268
+            ],
+            [
+              920,
+              305
+            ],
+            [
+              640,
+              309
+            ]
+          ],
+          "heightPx": 37.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 44,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "All Out Ultra çiae 12% (aR/R) fafas RisuR (g cRT)",
+          "confidence": 0.7254,
+          "bbox": [
+            [
+              639,
+              310
+            ],
+            [
+              1346,
+              308
+            ],
+            [
+              1346,
+              347
+            ],
+            [
+              639,
+              349
+            ]
+          ],
+          "heightPx": 39,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 45,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "All OutUrar 1.2% (/)",
+          "confidence": 0.8025,
+          "bbox": [
+            [
+              639,
+              354
+            ],
+            [
+              1236,
+              352
+            ],
+            [
+              1236,
+              385
+            ],
+            [
+              639,
+              387
+            ]
+          ],
+          "heightPx": 33,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 46,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Baev ( On  Gane).",
+          "confidence": 0.6444,
+          "bbox": [
+            [
+              641,
+              390
+            ],
+            [
+              1217,
+              388
+            ],
+            [
+              1217,
+              422
+            ],
+            [
+              641,
+              424
+            ]
+          ],
+          "heightPx": 34,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 47,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Chemical Composition: Active Ingredient: Transfluthrin (a.i.) 1.20%",
+          "confidence": 0.9852,
+          "bbox": [
+            [
+              640,
+              426
+            ],
+            [
+              1382,
+              424
+            ],
+            [
+              1382,
+              462
+            ],
+            [
+              640,
+              464
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 48,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "(w/w). Butylated Hydroxytoulene (BHT) - Stabliser 1.00% (w/w), F&I",
+          "confidence": 0.9765,
+          "bbox": [
+            [
+              641,
+              463
+            ],
+            [
+              1383,
+              460
+            ],
+            [
+              1383,
+              498
+            ],
+            [
+              641,
+              501
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 49,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "K705/A (Mixture of a number of aroma chemicals like Benzyl Acetate,",
+          "confidence": 0.9934,
+          "bbox": [
+            [
+              640,
+              500
+            ],
+            [
+              1380,
+              498
+            ],
+            [
+              1380,
+              533
+            ],
+            [
+              640,
+              535
+            ]
+          ],
+          "heightPx": 35,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 50,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Geraniol etc.) - Perfume - 1.00% (w/w), Deodorised Kerosene - Solvent -",
+          "confidence": 0.9847,
+          "bbox": [
+            [
+              639,
+              534
+            ],
+            [
+              1381,
+              532
+            ],
+            [
+              1381,
+              570
+            ],
+            [
+              639,
+              572
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 51,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "QS%, Total: 100.0% (w/w). Direction to use: See leaflet. Cautions:",
+          "confidence": 0.9877,
+          "bbox": [
+            [
+              640,
+              571
+            ],
+            [
+              1385,
+              568
+            ],
+            [
+              1385,
+              606
+            ],
+            [
+              640,
+              608
+            ]
+          ],
+          "heightPx": 37.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 52,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "DOORS AND WINDOWS SHOULD BE KEPT OPEN WHILE USING. Antidote: No",
+          "confidence": 0.9872,
+          "bbox": [
+            [
+              639,
+              606
+            ],
+            [
+              1382,
+              604
+            ],
+            [
+              1382,
+              641
+            ],
+            [
+              639,
+              643
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 53,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "specific antidote is known. Treat symptomatically. Recommendations:",
+          "confidence": 0.9912,
+          "bbox": [
+            [
+              637,
+              644
+            ],
+            [
+              1384,
+              641
+            ],
+            [
+              1384,
+              679
+            ],
+            [
+              637,
+              682
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 54,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Recommended for use to control/repel adult mosquitoes in house.",
+          "confidence": 0.9898,
+          "bbox": [
+            [
+              638,
+              681
+            ],
+            [
+              1316,
+              681
+            ],
+            [
+              1316,
+              715
+            ],
+            [
+              638,
+              715
+            ]
+          ],
+          "heightPx": 34,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 55,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "See first two characters of Batch No. for manufacturer address.",
+          "confidence": 0.9917,
+          "bbox": [
+            [
+              639,
+              722
+            ],
+            [
+              1320,
+              722
+            ],
+            [
+              1320,
+              756
+            ],
+            [
+              639,
+              756
+            ]
+          ],
+          "heightPx": 34,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 56,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Works: U2, Unit No. 2, Plot No. 70,",
+          "confidence": 0.9714,
+          "bbox": [
+            [
+              639,
+              764
+            ],
+            [
+              1077,
+              764
+            ],
+            [
+              1077,
+              799
+            ],
+            [
+              639,
+              799
+            ]
+          ],
+          "heightPx": 35,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 57,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "HPSIDC IndL. Area, Baddi – 173205,",
+          "confidence": 0.9714,
+          "bbox": [
+            [
+              637,
+              799
+            ],
+            [
+              1076,
+              799
+            ],
+            [
+              1076,
+              836
+            ],
+            [
+              637,
+              836
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 58,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Dist. Solan, Himachal Pradesh, India.",
+          "confidence": 0.9966,
+          "bbox": [
+            [
+              639,
+              837
+            ],
+            [
+              1076,
+              837
+            ],
+            [
+              1076,
+              871
+            ],
+            [
+              639,
+              871
+            ]
+          ],
+          "heightPx": 34,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 59,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Mfg. Lic No. H.P.PML-008 (old SLN-21)",
+          "confidence": 0.9754,
+          "bbox": [
+            [
+              638,
+              872
+            ],
+            [
+              1076,
+              872
+            ],
+            [
+              1076,
+              909
+            ],
+            [
+              638,
+              909
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 60,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "CAUTION",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              1177,
+              889
+            ],
+            [
+              1285,
+              889
+            ],
+            [
+              1285,
+              924
+            ],
+            [
+              1177,
+              924
+            ]
+          ],
+          "heightPx": 35,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 61,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "dated 14.11.2005.",
+          "confidence": 0.9755,
+          "bbox": [
+            [
+              638,
+              909
+            ],
+            [
+              834,
+              909
+            ],
+            [
+              834,
+              943
+            ],
+            [
+              638,
+              943
+            ]
+          ],
+          "heightPx": 34,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 62,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "KEEP OUT OF REACH OF CHILDREN",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              1084,
+              919
+            ],
+            [
+              1238,
+              1068
+            ],
+            [
+              1218,
+              1088
+            ],
+            [
+              1065,
+              939
+            ]
+          ],
+          "heightPx": 27.94,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 63,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Works: U6, Unit No. 6, Dag No. 13 KA,",
+          "confidence": 0.9866,
+          "bbox": [
+            [
+              636,
+              948
+            ],
+            [
+              1075,
+              950
+            ],
+            [
+              1075,
+              987
+            ],
+            [
+              636,
+              985
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 64,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Bamunimaidan Industrial Area, Guwahati,",
+          "confidence": 0.999,
+          "bbox": [
+            [
+              639,
+              989
+            ],
+            [
+              1072,
+              989
+            ],
+            [
+              1072,
+              1021
+            ],
+            [
+              639,
+              1021
+            ]
+          ],
+          "heightPx": 32,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 65,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Assam – 781021, India. Mfg. Lic No.",
+          "confidence": 0.9868,
+          "bbox": [
+            [
+              636,
+              1023
+            ],
+            [
+              1076,
+              1023
+            ],
+            [
+              1076,
+              1060
+            ],
+            [
+              636,
+              1060
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 66,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "wana",
+          "confidence": 0.4042,
+          "bbox": [
+            [
+              1248,
+              1055
+            ],
+            [
+              1279,
+              1024
+            ],
+            [
+              1291,
+              1035
+            ],
+            [
+              1260,
+              1067
+            ]
+          ],
+          "heightPx": 16.62,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 67,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "AGRI/DEV/PP/MF/2019-20/009.",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              638,
+              1061
+            ],
+            [
+              974,
+              1061
+            ],
+            [
+              974,
+              1092
+            ],
+            [
+              638,
+              1092
+            ]
+          ],
+          "heightPx": 31,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 68,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "Inflammable, keep in cool, dry place away from heat and open flame.",
+          "confidence": 0.9962,
+          "bbox": [
+            [
+              636,
+              1102
+            ],
+            [
+              1381,
+              1104
+            ],
+            [
+              1381,
+              1141
+            ],
+            [
+              636,
+              1139
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 69,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "RRT3m3",
+          "confidence": 0.5374,
+          "bbox": [
+            [
+              635,
+              1143
+            ],
+            [
+              1302,
+              1146
+            ],
+            [
+              1301,
+              1187
+            ],
+            [
+              635,
+              1184
+            ]
+          ],
+          "heightPx": 41.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 70,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "ALL OUT* used under authority from S.C. Johnson & Sons., Inc., Racine, Wisconsin, USA.",
+          "confidence": 0.977,
+          "bbox": [
+            [
+              635,
+              1190
+            ],
+            [
+              1359,
+              1193
+            ],
+            [
+              1359,
+              1231
+            ],
+            [
+              635,
+              1227
+            ]
+          ],
+          "heightPx": 37.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 71,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "CPCB Plastic EPR Regn. No.:B0-03-000-06-AAACL3128M-22",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              635,
+              1234
+            ],
+            [
+              1126,
+              1237
+            ],
+            [
+              1126,
+              1271
+            ],
+            [
+              635,
+              1269
+            ]
+          ],
+          "heightPx": 34.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 72,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "For MRP and other details, see bottom of the pack.",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              634,
+              1274
+            ],
+            [
+              1197,
+              1279
+            ],
+            [
+              1196,
+              1316
+            ],
+            [
+              634,
+              1311
+            ]
+          ],
+          "heightPx": 37.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 73,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "SCAN TO KNOW MORE",
+          "confidence": 0.9862,
+          "bbox": [
+            [
+              1102,
+              1331
+            ],
+            [
+              1380,
+              1331
+            ],
+            [
+              1380,
+              1372
+            ],
+            [
+              1102,
+              1372
+            ]
+          ],
+          "heightPx": 41,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 74,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM (2).jpeg",
+          "text": "8190427112004301",
+          "confidence": 0.9807,
+          "bbox": [
+            [
+              637,
+              1611
+            ],
+            [
+              1051,
+              1616
+            ],
+            [
+              1050,
+              1658
+            ],
+            [
+              636,
+              1652
+            ]
+          ],
+          "heightPx": 41.51,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "ALL OUT Liquid Vaporiser",
+          "confidence": 0.9666,
+          "bbox": [
+            [
+              642,
+              197
+            ],
+            [
+              939,
+              196
+            ],
+            [
+              939,
+              231
+            ],
+            [
+              642,
+              232
+            ]
+          ],
+          "pixel_height": 35
+        },
+        {
+          "text": "All Out® Ultra Transfluthrin 1.2% (w/w) Liquid Vaporiser Refill",
+          "confidence": 0.9798,
+          "bbox": [
+            [
+              640,
+              233
+            ],
+            [
+              1384,
+              230
+            ],
+            [
+              1384,
+              270
+            ],
+            [
+              640,
+              273
+            ]
+          ],
+          "pixel_height": 40
+        },
+        {
+          "text": "(Household Insecticide).",
+          "confidence": 0.9936,
+          "bbox": [
+            [
+              640,
+              271
+            ],
+            [
+              919,
+              268
+            ],
+            [
+              920,
+              305
+            ],
+            [
+              640,
+              309
+            ]
+          ],
+          "pixel_height": 37.51
+        },
+        {
+          "text": "All Out Ultra çiae 12% (aR/R) fafas RisuR (g cRT)",
+          "confidence": 0.7254,
+          "bbox": [
+            [
+              639,
+              310
+            ],
+            [
+              1346,
+              308
+            ],
+            [
+              1346,
+              347
+            ],
+            [
+              639,
+              349
+            ]
+          ],
+          "pixel_height": 39
+        },
+        {
+          "text": "All OutUrar 1.2% (/)",
+          "confidence": 0.8025,
+          "bbox": [
+            [
+              639,
+              354
+            ],
+            [
+              1236,
+              352
+            ],
+            [
+              1236,
+              385
+            ],
+            [
+              639,
+              387
+            ]
+          ],
+          "pixel_height": 33
+        },
+        {
+          "text": "Baev ( On  Gane).",
+          "confidence": 0.6444,
+          "bbox": [
+            [
+              641,
+              390
+            ],
+            [
+              1217,
+              388
+            ],
+            [
+              1217,
+              422
+            ],
+            [
+              641,
+              424
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "Chemical Composition: Active Ingredient: Transfluthrin (a.i.) 1.20%",
+          "confidence": 0.9852,
+          "bbox": [
+            [
+              640,
+              426
+            ],
+            [
+              1382,
+              424
+            ],
+            [
+              1382,
+              462
+            ],
+            [
+              640,
+              464
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "(w/w). Butylated Hydroxytoulene (BHT) - Stabliser 1.00% (w/w), F&I",
+          "confidence": 0.9765,
+          "bbox": [
+            [
+              641,
+              463
+            ],
+            [
+              1383,
+              460
+            ],
+            [
+              1383,
+              498
+            ],
+            [
+              641,
+              501
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "K705/A (Mixture of a number of aroma chemicals like Benzyl Acetate,",
+          "confidence": 0.9934,
+          "bbox": [
+            [
+              640,
+              500
+            ],
+            [
+              1380,
+              498
+            ],
+            [
+              1380,
+              533
+            ],
+            [
+              640,
+              535
+            ]
+          ],
+          "pixel_height": 35
+        },
+        {
+          "text": "Geraniol etc.) - Perfume - 1.00% (w/w), Deodorised Kerosene - Solvent -",
+          "confidence": 0.9847,
+          "bbox": [
+            [
+              639,
+              534
+            ],
+            [
+              1381,
+              532
+            ],
+            [
+              1381,
+              570
+            ],
+            [
+              639,
+              572
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "QS%, Total: 100.0% (w/w). Direction to use: See leaflet. Cautions:",
+          "confidence": 0.9877,
+          "bbox": [
+            [
+              640,
+              571
+            ],
+            [
+              1385,
+              568
+            ],
+            [
+              1385,
+              606
+            ],
+            [
+              640,
+              608
+            ]
+          ],
+          "pixel_height": 37.5
+        },
+        {
+          "text": "DOORS AND WINDOWS SHOULD BE KEPT OPEN WHILE USING. Antidote: No",
+          "confidence": 0.9872,
+          "bbox": [
+            [
+              639,
+              606
+            ],
+            [
+              1382,
+              604
+            ],
+            [
+              1382,
+              641
+            ],
+            [
+              639,
+              643
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "specific antidote is known. Treat symptomatically. Recommendations:",
+          "confidence": 0.9912,
+          "bbox": [
+            [
+              637,
+              644
+            ],
+            [
+              1384,
+              641
+            ],
+            [
+              1384,
+              679
+            ],
+            [
+              637,
+              682
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "Recommended for use to control/repel adult mosquitoes in house.",
+          "confidence": 0.9898,
+          "bbox": [
+            [
+              638,
+              681
+            ],
+            [
+              1316,
+              681
+            ],
+            [
+              1316,
+              715
+            ],
+            [
+              638,
+              715
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "See first two characters of Batch No. for manufacturer address.",
+          "confidence": 0.9917,
+          "bbox": [
+            [
+              639,
+              722
+            ],
+            [
+              1320,
+              722
+            ],
+            [
+              1320,
+              756
+            ],
+            [
+              639,
+              756
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "Works: U2, Unit No. 2, Plot No. 70,",
+          "confidence": 0.9714,
+          "bbox": [
+            [
+              639,
+              764
+            ],
+            [
+              1077,
+              764
+            ],
+            [
+              1077,
+              799
+            ],
+            [
+              639,
+              799
+            ]
+          ],
+          "pixel_height": 35
+        },
+        {
+          "text": "HPSIDC IndL. Area, Baddi – 173205,",
+          "confidence": 0.9714,
+          "bbox": [
+            [
+              637,
+              799
+            ],
+            [
+              1076,
+              799
+            ],
+            [
+              1076,
+              836
+            ],
+            [
+              637,
+              836
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "Dist. Solan, Himachal Pradesh, India.",
+          "confidence": 0.9966,
+          "bbox": [
+            [
+              639,
+              837
+            ],
+            [
+              1076,
+              837
+            ],
+            [
+              1076,
+              871
+            ],
+            [
+              639,
+              871
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "Mfg. Lic No. H.P.PML-008 (old SLN-21)",
+          "confidence": 0.9754,
+          "bbox": [
+            [
+              638,
+              872
+            ],
+            [
+              1076,
+              872
+            ],
+            [
+              1076,
+              909
+            ],
+            [
+              638,
+              909
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "CAUTION",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              1177,
+              889
+            ],
+            [
+              1285,
+              889
+            ],
+            [
+              1285,
+              924
+            ],
+            [
+              1177,
+              924
+            ]
+          ],
+          "pixel_height": 35
+        },
+        {
+          "text": "dated 14.11.2005.",
+          "confidence": 0.9755,
+          "bbox": [
+            [
+              638,
+              909
+            ],
+            [
+              834,
+              909
+            ],
+            [
+              834,
+              943
+            ],
+            [
+              638,
+              943
+            ]
+          ],
+          "pixel_height": 34
+        },
+        {
+          "text": "KEEP OUT OF REACH OF CHILDREN",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              1084,
+              919
+            ],
+            [
+              1238,
+              1068
+            ],
+            [
+              1218,
+              1088
+            ],
+            [
+              1065,
+              939
+            ]
+          ],
+          "pixel_height": 27.94
+        },
+        {
+          "text": "Works: U6, Unit No. 6, Dag No. 13 KA,",
+          "confidence": 0.9866,
+          "bbox": [
+            [
+              636,
+              948
+            ],
+            [
+              1075,
+              950
+            ],
+            [
+              1075,
+              987
+            ],
+            [
+              636,
+              985
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "Bamunimaidan Industrial Area, Guwahati,",
+          "confidence": 0.999,
+          "bbox": [
+            [
+              639,
+              989
+            ],
+            [
+              1072,
+              989
+            ],
+            [
+              1072,
+              1021
+            ],
+            [
+              639,
+              1021
+            ]
+          ],
+          "pixel_height": 32
+        },
+        {
+          "text": "Assam – 781021, India. Mfg. Lic No.",
+          "confidence": 0.9868,
+          "bbox": [
+            [
+              636,
+              1023
+            ],
+            [
+              1076,
+              1023
+            ],
+            [
+              1076,
+              1060
+            ],
+            [
+              636,
+              1060
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "wana",
+          "confidence": 0.4042,
+          "bbox": [
+            [
+              1248,
+              1055
+            ],
+            [
+              1279,
+              1024
+            ],
+            [
+              1291,
+              1035
+            ],
+            [
+              1260,
+              1067
+            ]
+          ],
+          "pixel_height": 16.62
+        },
+        {
+          "text": "AGRI/DEV/PP/MF/2019-20/009.",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              638,
+              1061
+            ],
+            [
+              974,
+              1061
+            ],
+            [
+              974,
+              1092
+            ],
+            [
+              638,
+              1092
+            ]
+          ],
+          "pixel_height": 31
+        },
+        {
+          "text": "Inflammable, keep in cool, dry place away from heat and open flame.",
+          "confidence": 0.9962,
+          "bbox": [
+            [
+              636,
+              1102
+            ],
+            [
+              1381,
+              1104
+            ],
+            [
+              1381,
+              1141
+            ],
+            [
+              636,
+              1139
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "RRT3m3",
+          "confidence": 0.5374,
+          "bbox": [
+            [
+              635,
+              1143
+            ],
+            [
+              1302,
+              1146
+            ],
+            [
+              1301,
+              1187
+            ],
+            [
+              635,
+              1184
+            ]
+          ],
+          "pixel_height": 41.01
+        },
+        {
+          "text": "ALL OUT* used under authority from S.C. Johnson & Sons., Inc., Racine, Wisconsin, USA.",
+          "confidence": 0.977,
+          "bbox": [
+            [
+              635,
+              1190
+            ],
+            [
+              1359,
+              1193
+            ],
+            [
+              1359,
+              1231
+            ],
+            [
+              635,
+              1227
+            ]
+          ],
+          "pixel_height": 37.5
+        },
+        {
+          "text": "CPCB Plastic EPR Regn. No.:B0-03-000-06-AAACL3128M-22",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              635,
+              1234
+            ],
+            [
+              1126,
+              1237
+            ],
+            [
+              1126,
+              1271
+            ],
+            [
+              635,
+              1269
+            ]
+          ],
+          "pixel_height": 34.5
+        },
+        {
+          "text": "For MRP and other details, see bottom of the pack.",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              634,
+              1274
+            ],
+            [
+              1197,
+              1279
+            ],
+            [
+              1196,
+              1316
+            ],
+            [
+              634,
+              1311
+            ]
+          ],
+          "pixel_height": 37.01
+        },
+        {
+          "text": "SCAN TO KNOW MORE",
+          "confidence": 0.9862,
+          "bbox": [
+            [
+              1102,
+              1331
+            ],
+            [
+              1380,
+              1331
+            ],
+            [
+              1380,
+              1372
+            ],
+            [
+              1102,
+              1372
+            ]
+          ],
+          "pixel_height": 41
+        },
+        {
+          "text": "8190427112004301",
+          "confidence": 0.9807,
+          "bbox": [
+            [
+              637,
+              1611
+            ],
+            [
+              1051,
+              1616
+            ],
+            [
+              1050,
+              1658
+            ],
+            [
+              636,
+              1652
+            ]
+          ],
+          "pixel_height": 41.51
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1484,
+        "output_height": 1800,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 0.659,
+        "sharpness_score": 424.47,
+        "glare_area_fraction": 0.0041,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 3,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+      "text": "Batch No.\nU6EG564T N\nMfg. Date\n09107126 12:36\nMRPRs.\nRs.190.00 175.00\n(Incl. of all taxes)\nR s.1.9 4 /ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR–131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by: Brllon Consumer Products Pvt. Ltd, Regd. Office: 10th Floor, Tower 2, AIPL Business Club, Golf Course Ext. Road, Sector 62,\nGurugram, Haryana – 122 018, India. Contactus: Manager, Complaints at Regd. Oice of Marketer Ph: 011- 4170499, Email: care@brillnconsumer.com\nNet Quantity\n90ml\n(2 Numbers x 45 ml)",
+      "lines": [
+        {
+          "id": 75,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Batch No.",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              274,
+              85
+            ],
+            [
+              397,
+              85
+            ],
+            [
+              397,
+              124
+            ],
+            [
+              274,
+              124
+            ]
+          ],
+          "heightPx": 39,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 76,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "U6EG564T N",
+          "confidence": 0.9587,
+          "bbox": [
+            [
+              507,
+              121
+            ],
+            [
+              877,
+              116
+            ],
+            [
+              878,
+              166
+            ],
+            [
+              508,
+              172
+            ]
+          ],
+          "heightPx": 50.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 77,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Mfg. Date",
+          "confidence": 0.9609,
+          "bbox": [
+            [
+              273,
+              140
+            ],
+            [
+              397,
+              140
+            ],
+            [
+              397,
+              183
+            ],
+            [
+              273,
+              183
+            ]
+          ],
+          "heightPx": 43,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 78,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "09107126 12:36",
+          "confidence": 0.9793,
+          "bbox": [
+            [
+              508,
+              168
+            ],
+            [
+              977,
+              157
+            ],
+            [
+              978,
+              208
+            ],
+            [
+              509,
+              219
+            ]
+          ],
+          "heightPx": 51.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 79,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "MRPRs.",
+          "confidence": 0.9939,
+          "bbox": [
+            [
+              275,
+              195
+            ],
+            [
+              378,
+              195
+            ],
+            [
+              378,
+              235
+            ],
+            [
+              275,
+              235
+            ]
+          ],
+          "heightPx": 40,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 80,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Rs.190.00 175.00",
+          "confidence": 0.9622,
+          "bbox": [
+            [
+              508,
+              215
+            ],
+            [
+              1010,
+              205
+            ],
+            [
+              1011,
+              252
+            ],
+            [
+              509,
+              262
+            ]
+          ],
+          "heightPx": 47.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 81,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "(Incl. of all taxes)",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              276,
+              228
+            ],
+            [
+              446,
+              231
+            ],
+            [
+              446,
+              267
+            ],
+            [
+              275,
+              264
+            ]
+          ],
+          "heightPx": 36.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 82,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "R s.1.9 4 /ml",
+          "confidence": 0.932,
+          "bbox": [
+            [
+              507,
+              256
+            ],
+            [
+              824,
+              252
+            ],
+            [
+              825,
+              300
+            ],
+            [
+              508,
+              304
+            ]
+          ],
+          "heightPx": 48.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 83,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "USP Rs./ml",
+          "confidence": 0.9792,
+          "bbox": [
+            [
+              273,
+              280
+            ],
+            [
+              417,
+              283
+            ],
+            [
+              416,
+              323
+            ],
+            [
+              272,
+              320
+            ]
+          ],
+          "heightPx": 40.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 84,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "For works address, refer first 2 characters of the batch number",
+          "confidence": 0.9961,
+          "bbox": [
+            [
+              272,
+              355
+            ],
+            [
+              983,
+              360
+            ],
+            [
+              983,
+              397
+            ],
+            [
+              272,
+              392
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 85,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+          "confidence": 0.9903,
+          "bbox": [
+            [
+              273,
+              392
+            ],
+            [
+              1005,
+              399
+            ],
+            [
+              1004,
+              439
+            ],
+            [
+              273,
+              432
+            ]
+          ],
+          "heightPx": 40.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 86,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR–131142/2015 - Transfluthrin (LV) (355)-108",
+          "confidence": 0.9857,
+          "bbox": [
+            [
+              272,
+              430
+            ],
+            [
+              1388,
+              439
+            ],
+            [
+              1388,
+              483
+            ],
+            [
+              272,
+              474
+            ]
+          ],
+          "heightPx": 44,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 87,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Manufactured & Marketed by: Brllon Consumer Products Pvt. Ltd, Regd. Office: 10th Floor, Tower 2, AIPL Business Club, Golf Course Ext. Road, Sector 62,",
+          "confidence": 0.9727,
+          "bbox": [
+            [
+              272,
+              472
+            ],
+            [
+              1535,
+              482
+            ],
+            [
+              1535,
+              520
+            ],
+            [
+              272,
+              510
+            ]
+          ],
+          "heightPx": 38,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 88,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Gurugram, Haryana – 122 018, India. Contactus: Manager, Complaints at Regd. Oice of Marketer Ph: 011- 4170499, Email: care@brillnconsumer.com",
+          "confidence": 0.9507,
+          "bbox": [
+            [
+              272,
+              505
+            ],
+            [
+              1487,
+              516
+            ],
+            [
+              1486,
+              556
+            ],
+            [
+              272,
+              545
+            ]
+          ],
+          "heightPx": 40.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 89,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "Net Quantity",
+          "confidence": 0.9909,
+          "bbox": [
+            [
+              270,
+              560
+            ],
+            [
+              436,
+              560
+            ],
+            [
+              436,
+              599
+            ],
+            [
+              270,
+              599
+            ]
+          ],
+          "heightPx": 39,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 90,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "90ml",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              502,
+              562
+            ],
+            [
+              586,
+              562
+            ],
+            [
+              586,
+              599
+            ],
+            [
+              502,
+              599
+            ]
+          ],
+          "heightPx": 37,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 91,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.54 PM.jpeg",
+          "text": "(2 Numbers x 45 ml)",
+          "confidence": 0.9976,
+          "bbox": [
+            [
+              627,
+              562
+            ],
+            [
+              876,
+              565
+            ],
+            [
+              876,
+              604
+            ],
+            [
+              627,
+              601
+            ]
+          ],
+          "heightPx": 39,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "Batch No.",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              274,
+              85
+            ],
+            [
+              397,
+              85
+            ],
+            [
+              397,
+              124
+            ],
+            [
+              274,
+              124
+            ]
+          ],
+          "pixel_height": 39
+        },
+        {
+          "text": "U6EG564T N",
+          "confidence": 0.9587,
+          "bbox": [
+            [
+              507,
+              121
+            ],
+            [
+              877,
+              116
+            ],
+            [
+              878,
+              166
+            ],
+            [
+              508,
+              172
+            ]
+          ],
+          "pixel_height": 50.51
+        },
+        {
+          "text": "Mfg. Date",
+          "confidence": 0.9609,
+          "bbox": [
+            [
+              273,
+              140
+            ],
+            [
+              397,
+              140
+            ],
+            [
+              397,
+              183
+            ],
+            [
+              273,
+              183
+            ]
+          ],
+          "pixel_height": 43
+        },
+        {
+          "text": "09107126 12:36",
+          "confidence": 0.9793,
+          "bbox": [
+            [
+              508,
+              168
+            ],
+            [
+              977,
+              157
+            ],
+            [
+              978,
+              208
+            ],
+            [
+              509,
+              219
+            ]
+          ],
+          "pixel_height": 51.01
+        },
+        {
+          "text": "MRPRs.",
+          "confidence": 0.9939,
+          "bbox": [
+            [
+              275,
+              195
+            ],
+            [
+              378,
+              195
+            ],
+            [
+              378,
+              235
+            ],
+            [
+              275,
+              235
+            ]
+          ],
+          "pixel_height": 40
+        },
+        {
+          "text": "Rs.190.00 175.00",
+          "confidence": 0.9622,
+          "bbox": [
+            [
+              508,
+              215
+            ],
+            [
+              1010,
+              205
+            ],
+            [
+              1011,
+              252
+            ],
+            [
+              509,
+              262
+            ]
+          ],
+          "pixel_height": 47.01
+        },
+        {
+          "text": "(Incl. of all taxes)",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              276,
+              228
+            ],
+            [
+              446,
+              231
+            ],
+            [
+              446,
+              267
+            ],
+            [
+              275,
+              264
+            ]
+          ],
+          "pixel_height": 36.01
+        },
+        {
+          "text": "R s.1.9 4 /ml",
+          "confidence": 0.932,
+          "bbox": [
+            [
+              507,
+              256
+            ],
+            [
+              824,
+              252
+            ],
+            [
+              825,
+              300
+            ],
+            [
+              508,
+              304
+            ]
+          ],
+          "pixel_height": 48.01
+        },
+        {
+          "text": "USP Rs./ml",
+          "confidence": 0.9792,
+          "bbox": [
+            [
+              273,
+              280
+            ],
+            [
+              417,
+              283
+            ],
+            [
+              416,
+              323
+            ],
+            [
+              272,
+              320
+            ]
+          ],
+          "pixel_height": 40.01
+        },
+        {
+          "text": "For works address, refer first 2 characters of the batch number",
+          "confidence": 0.9961,
+          "bbox": [
+            [
+              272,
+              355
+            ],
+            [
+              983,
+              360
+            ],
+            [
+              983,
+              397
+            ],
+            [
+              272,
+              392
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+          "confidence": 0.9903,
+          "bbox": [
+            [
+              273,
+              392
+            ],
+            [
+              1005,
+              399
+            ],
+            [
+              1004,
+              439
+            ],
+            [
+              273,
+              432
+            ]
+          ],
+          "pixel_height": 40.01
+        },
+        {
+          "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR–131142/2015 - Transfluthrin (LV) (355)-108",
+          "confidence": 0.9857,
+          "bbox": [
+            [
+              272,
+              430
+            ],
+            [
+              1388,
+              439
+            ],
+            [
+              1388,
+              483
+            ],
+            [
+              272,
+              474
+            ]
+          ],
+          "pixel_height": 44
+        },
+        {
+          "text": "Manufactured & Marketed by: Brllon Consumer Products Pvt. Ltd, Regd. Office: 10th Floor, Tower 2, AIPL Business Club, Golf Course Ext. Road, Sector 62,",
+          "confidence": 0.9727,
+          "bbox": [
+            [
+              272,
+              472
+            ],
+            [
+              1535,
+              482
+            ],
+            [
+              1535,
+              520
+            ],
+            [
+              272,
+              510
+            ]
+          ],
+          "pixel_height": 38
+        },
+        {
+          "text": "Gurugram, Haryana – 122 018, India. Contactus: Manager, Complaints at Regd. Oice of Marketer Ph: 011- 4170499, Email: care@brillnconsumer.com",
+          "confidence": 0.9507,
+          "bbox": [
+            [
+              272,
+              505
+            ],
+            [
+              1487,
+              516
+            ],
+            [
+              1486,
+              556
+            ],
+            [
+              272,
+              545
+            ]
+          ],
+          "pixel_height": 40.01
+        },
+        {
+          "text": "Net Quantity",
+          "confidence": 0.9909,
+          "bbox": [
+            [
+              270,
+              560
+            ],
+            [
+              436,
+              560
+            ],
+            [
+              436,
+              599
+            ],
+            [
+              270,
+              599
+            ]
+          ],
+          "pixel_height": 39
+        },
+        {
+          "text": "90ml",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              502,
+              562
+            ],
+            [
+              586,
+              562
+            ],
+            [
+              586,
+              599
+            ],
+            [
+              502,
+              599
+            ]
+          ],
+          "pixel_height": 37
+        },
+        {
+          "text": "(2 Numbers x 45 ml)",
+          "confidence": 0.9976,
+          "bbox": [
+            [
+              627,
+              562
+            ],
+            [
+              876,
+              565
+            ],
+            [
+              876,
+              604
+            ],
+            [
+              627,
+              601
+            ]
+          ],
+          "pixel_height": 39
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1800,
+        "output_height": 958,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 312.39,
+        "glare_area_fraction": 0.0016,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 4,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+      "text": "30%FASTER\nKILLS\nSAVER PACK\n水水\nAll Out\nULTRA\nAIt\nULTRA\nRecommended by\nAllOut\nIndian Medical Association\nLIQUIDVAPORISER\nFLORAL\nULTFLA\nFLORAL\nLIOUID VAPORISER\nFLORAL\nFITS ALL MACHINES\nx2\nKILLS DENGUE,\nRefills\nMALARIA & CHIKUNGUNYA",
+      "lines": [
+        {
+          "id": 92,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "30%FASTER",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              917,
+              57
+            ],
+            [
+              1703,
+              42
+            ],
+            [
+              1706,
+              199
+            ],
+            [
+              920,
+              213
+            ]
+          ],
+          "heightPx": 156.53,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 93,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "KILLS",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              374,
+              61
+            ],
+            [
+              836,
+              55
+            ],
+            [
+              838,
+              215
+            ],
+            [
+              376,
+              221
+            ]
+          ],
+          "heightPx": 160.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 94,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "SAVER PACK",
+          "confidence": 0.9522,
+          "bbox": [
+            [
+              1161,
+              229
+            ],
+            [
+              1664,
+              222
+            ],
+            [
+              1665,
+              310
+            ],
+            [
+              1162,
+              317
+            ]
+          ],
+          "heightPx": 88.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 95,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "水水",
+          "confidence": 0.588,
+          "bbox": [
+            [
+              1653,
+              227
+            ],
+            [
+              1695,
+              227
+            ],
+            [
+              1695,
+              250
+            ],
+            [
+              1653,
+              250
+            ]
+          ],
+          "heightPx": 23,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 96,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "All Out",
+          "confidence": 0.923,
+          "bbox": [
+            [
+              416,
+              346
+            ],
+            [
+              899,
+              270
+            ],
+            [
+              941,
+              537
+            ],
+            [
+              458,
+              614
+            ]
+          ],
+          "heightPx": 270.78,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 97,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              509,
+              558
+            ],
+            [
+              849,
+              491
+            ],
+            [
+              870,
+              595
+            ],
+            [
+              530,
+              662
+            ]
+          ],
+          "heightPx": 106.1,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 98,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "AIt",
+          "confidence": 0.6084,
+          "bbox": [
+            [
+              1461,
+              847
+            ],
+            [
+              1576,
+              835
+            ],
+            [
+              1582,
+              891
+            ],
+            [
+              1467,
+              904
+            ]
+          ],
+          "heightPx": 56.82,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 99,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9894,
+          "bbox": [
+            [
+              1474,
+              889
+            ],
+            [
+              1570,
+              878
+            ],
+            [
+              1574,
+              911
+            ],
+            [
+              1477,
+              922
+            ]
+          ],
+          "heightPx": 33.19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 100,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "Recommended by",
+          "confidence": 0.9801,
+          "bbox": [
+            [
+              441,
+              895
+            ],
+            [
+              642,
+              897
+            ],
+            [
+              642,
+              927
+            ],
+            [
+              441,
+              925
+            ]
+          ],
+          "heightPx": 30,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 101,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "AllOut",
+          "confidence": 0.9764,
+          "bbox": [
+            [
+              1151,
+              921
+            ],
+            [
+              1290,
+              901
+            ],
+            [
+              1299,
+              968
+            ],
+            [
+              1161,
+              987
+            ]
+          ],
+          "heightPx": 67.18,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 102,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "Indian Medical Association",
+          "confidence": 0.9805,
+          "bbox": [
+            [
+              394,
+              922
+            ],
+            [
+              690,
+              925
+            ],
+            [
+              690,
+              956
+            ],
+            [
+              394,
+              953
+            ]
+          ],
+          "heightPx": 31,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 103,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "LIQUIDVAPORISER",
+          "confidence": 0.9923,
+          "bbox": [
+            [
+              1425,
+              922
+            ],
+            [
+              1614,
+              922
+            ],
+            [
+              1614,
+              946
+            ],
+            [
+              1425,
+              946
+            ]
+          ],
+          "heightPx": 24,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 104,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "FLORAL",
+          "confidence": 0.9987,
+          "bbox": [
+            [
+              1475,
+              947
+            ],
+            [
+              1563,
+              947
+            ],
+            [
+              1563,
+              972
+            ],
+            [
+              1475,
+              972
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 105,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "ULTFLA",
+          "confidence": 0.8224,
+          "bbox": [
+            [
+              1168,
+              959
+            ],
+            [
+              1286,
+              954
+            ],
+            [
+              1288,
+              1002
+            ],
+            [
+              1170,
+              1007
+            ]
+          ],
+          "heightPx": 48.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 106,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "FLORAL",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              387,
+              967
+            ],
+            [
+              792,
+              972
+            ],
+            [
+              791,
+              1074
+            ],
+            [
+              385,
+              1070
+            ]
+          ],
+          "heightPx": 102.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 107,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "LIOUID VAPORISER",
+          "confidence": 0.948,
+          "bbox": [
+            [
+              1117,
+              1007
+            ],
+            [
+              1337,
+              1010
+            ],
+            [
+              1337,
+              1037
+            ],
+            [
+              1117,
+              1034
+            ]
+          ],
+          "heightPx": 27,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 108,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "FLORAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              1175,
+              1037
+            ],
+            [
+              1277,
+              1040
+            ],
+            [
+              1276,
+              1068
+            ],
+            [
+              1174,
+              1065
+            ]
+          ],
+          "heightPx": 28.02,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 109,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "FITS ALL MACHINES",
+          "confidence": 0.9959,
+          "bbox": [
+            [
+              390,
+              1079
+            ],
+            [
+              1000,
+              1088
+            ],
+            [
+              999,
+              1150
+            ],
+            [
+              389,
+              1141
+            ]
+          ],
+          "heightPx": 62.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 110,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "x2",
+          "confidence": 0.9957,
+          "bbox": [
+            [
+              1487,
+              1107
+            ],
+            [
+              1648,
+              1107
+            ],
+            [
+              1648,
+              1242
+            ],
+            [
+              1487,
+              1242
+            ]
+          ],
+          "heightPx": 135,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 111,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "KILLS DENGUE,",
+          "confidence": 0.9988,
+          "bbox": [
+            [
+              384,
+              1156
+            ],
+            [
+              979,
+              1177
+            ],
+            [
+              974,
+              1293
+            ],
+            [
+              380,
+              1271
+            ]
+          ],
+          "heightPx": 115.59,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 112,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "Refills",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              1485,
+              1232
+            ],
+            [
+              1649,
+              1232
+            ],
+            [
+              1649,
+              1283
+            ],
+            [
+              1485,
+              1283
+            ]
+          ],
+          "heightPx": 51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 113,
+          "imageIndex": 4,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM (1).jpeg",
+          "text": "MALARIA & CHIKUNGUNYA",
+          "confidence": 0.9897,
+          "bbox": [
+            [
+              393,
+              1268
+            ],
+            [
+              1189,
+              1283
+            ],
+            [
+              1187,
+              1348
+            ],
+            [
+              391,
+              1333
+            ]
+          ],
+          "heightPx": 65.03,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "30%FASTER",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              917,
+              57
+            ],
+            [
+              1703,
+              42
+            ],
+            [
+              1706,
+              199
+            ],
+            [
+              920,
+              213
+            ]
+          ],
+          "pixel_height": 156.53
+        },
+        {
+          "text": "KILLS",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              374,
+              61
+            ],
+            [
+              836,
+              55
+            ],
+            [
+              838,
+              215
+            ],
+            [
+              376,
+              221
+            ]
+          ],
+          "pixel_height": 160.01
+        },
+        {
+          "text": "SAVER PACK",
+          "confidence": 0.9522,
+          "bbox": [
+            [
+              1161,
+              229
+            ],
+            [
+              1664,
+              222
+            ],
+            [
+              1665,
+              310
+            ],
+            [
+              1162,
+              317
+            ]
+          ],
+          "pixel_height": 88.01
+        },
+        {
+          "text": "水水",
+          "confidence": 0.588,
+          "bbox": [
+            [
+              1653,
+              227
+            ],
+            [
+              1695,
+              227
+            ],
+            [
+              1695,
+              250
+            ],
+            [
+              1653,
+              250
+            ]
+          ],
+          "pixel_height": 23
+        },
+        {
+          "text": "All Out",
+          "confidence": 0.923,
+          "bbox": [
+            [
+              416,
+              346
+            ],
+            [
+              899,
+              270
+            ],
+            [
+              941,
+              537
+            ],
+            [
+              458,
+              614
+            ]
+          ],
+          "pixel_height": 270.78
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              509,
+              558
+            ],
+            [
+              849,
+              491
+            ],
+            [
+              870,
+              595
+            ],
+            [
+              530,
+              662
+            ]
+          ],
+          "pixel_height": 106.1
+        },
+        {
+          "text": "AIt",
+          "confidence": 0.6084,
+          "bbox": [
+            [
+              1461,
+              847
+            ],
+            [
+              1576,
+              835
+            ],
+            [
+              1582,
+              891
+            ],
+            [
+              1467,
+              904
+            ]
+          ],
+          "pixel_height": 56.82
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9894,
+          "bbox": [
+            [
+              1474,
+              889
+            ],
+            [
+              1570,
+              878
+            ],
+            [
+              1574,
+              911
+            ],
+            [
+              1477,
+              922
+            ]
+          ],
+          "pixel_height": 33.19
+        },
+        {
+          "text": "Recommended by",
+          "confidence": 0.9801,
+          "bbox": [
+            [
+              441,
+              895
+            ],
+            [
+              642,
+              897
+            ],
+            [
+              642,
+              927
+            ],
+            [
+              441,
+              925
+            ]
+          ],
+          "pixel_height": 30
+        },
+        {
+          "text": "AllOut",
+          "confidence": 0.9764,
+          "bbox": [
+            [
+              1151,
+              921
+            ],
+            [
+              1290,
+              901
+            ],
+            [
+              1299,
+              968
+            ],
+            [
+              1161,
+              987
+            ]
+          ],
+          "pixel_height": 67.18
+        },
+        {
+          "text": "Indian Medical Association",
+          "confidence": 0.9805,
+          "bbox": [
+            [
+              394,
+              922
+            ],
+            [
+              690,
+              925
+            ],
+            [
+              690,
+              956
+            ],
+            [
+              394,
+              953
+            ]
+          ],
+          "pixel_height": 31
+        },
+        {
+          "text": "LIQUIDVAPORISER",
+          "confidence": 0.9923,
+          "bbox": [
+            [
+              1425,
+              922
+            ],
+            [
+              1614,
+              922
+            ],
+            [
+              1614,
+              946
+            ],
+            [
+              1425,
+              946
+            ]
+          ],
+          "pixel_height": 24
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.9987,
+          "bbox": [
+            [
+              1475,
+              947
+            ],
+            [
+              1563,
+              947
+            ],
+            [
+              1563,
+              972
+            ],
+            [
+              1475,
+              972
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "ULTFLA",
+          "confidence": 0.8224,
+          "bbox": [
+            [
+              1168,
+              959
+            ],
+            [
+              1286,
+              954
+            ],
+            [
+              1288,
+              1002
+            ],
+            [
+              1170,
+              1007
+            ]
+          ],
+          "pixel_height": 48.04
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              387,
+              967
+            ],
+            [
+              792,
+              972
+            ],
+            [
+              791,
+              1074
+            ],
+            [
+              385,
+              1070
+            ]
+          ],
+          "pixel_height": 102.51
+        },
+        {
+          "text": "LIOUID VAPORISER",
+          "confidence": 0.948,
+          "bbox": [
+            [
+              1117,
+              1007
+            ],
+            [
+              1337,
+              1010
+            ],
+            [
+              1337,
+              1037
+            ],
+            [
+              1117,
+              1034
+            ]
+          ],
+          "pixel_height": 27
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              1175,
+              1037
+            ],
+            [
+              1277,
+              1040
+            ],
+            [
+              1276,
+              1068
+            ],
+            [
+              1174,
+              1065
+            ]
+          ],
+          "pixel_height": 28.02
+        },
+        {
+          "text": "FITS ALL MACHINES",
+          "confidence": 0.9959,
+          "bbox": [
+            [
+              390,
+              1079
+            ],
+            [
+              1000,
+              1088
+            ],
+            [
+              999,
+              1150
+            ],
+            [
+              389,
+              1141
+            ]
+          ],
+          "pixel_height": 62.01
+        },
+        {
+          "text": "x2",
+          "confidence": 0.9957,
+          "bbox": [
+            [
+              1487,
+              1107
+            ],
+            [
+              1648,
+              1107
+            ],
+            [
+              1648,
+              1242
+            ],
+            [
+              1487,
+              1242
+            ]
+          ],
+          "pixel_height": 135
+        },
+        {
+          "text": "KILLS DENGUE,",
+          "confidence": 0.9988,
+          "bbox": [
+            [
+              384,
+              1156
+            ],
+            [
+              979,
+              1177
+            ],
+            [
+              974,
+              1293
+            ],
+            [
+              380,
+              1271
+            ]
+          ],
+          "pixel_height": 115.59
+        },
+        {
+          "text": "Refills",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              1485,
+              1232
+            ],
+            [
+              1649,
+              1232
+            ],
+            [
+              1649,
+              1283
+            ],
+            [
+              1485,
+              1283
+            ]
+          ],
+          "pixel_height": 51
+        },
+        {
+          "text": "MALARIA & CHIKUNGUNYA",
+          "confidence": 0.9897,
+          "bbox": [
+            [
+              393,
+              1268
+            ],
+            [
+              1189,
+              1283
+            ],
+            [
+              1187,
+              1348
+            ],
+            [
+              391,
+              1333
+            ]
+          ],
+          "pixel_height": 65.03
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1800,
+        "output_height": 1451,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 0.628,
+        "sharpness_score": 153.73,
+        "glare_area_fraction": 0.0005,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 5,
+      "filename": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+      "text": "KILLS\n30% FASTER\nS\nSAVER PACK\n本本\nAIlut\nULTRA\nAllOut\nULTRA\nRecommended by\nAllOut\nIndian Medical Association\nLIQUID VAPORISER\nFLORAL\nULTRA\nFLORAL\nLIQUID VAPORISER\nFLORAL\nFITS ALL MACHINES\nx2\nKILLS DENGUE,\nRefills\nMALARIA & CHIKUNGUNYA",
+      "lines": [
+        {
+          "id": 114,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "KILLS",
+          "confidence": 0.9142,
+          "bbox": [
+            [
+              440,
+              129
+            ],
+            [
+              800,
+              133
+            ],
+            [
+              799,
+              267
+            ],
+            [
+              439,
+              263
+            ]
+          ],
+          "heightPx": 134,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 115,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "30% FASTER",
+          "confidence": 0.9558,
+          "bbox": [
+            [
+              960,
+              129
+            ],
+            [
+              1697,
+              132
+            ],
+            [
+              1696,
+              279
+            ],
+            [
+              959,
+              276
+            ]
+          ],
+          "heightPx": 147,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 116,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "S",
+          "confidence": 0.5384,
+          "bbox": [
+            [
+              745,
+              147
+            ],
+            [
+              861,
+              147
+            ],
+            [
+              861,
+              243
+            ],
+            [
+              745,
+              243
+            ]
+          ],
+          "heightPx": 96,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 117,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "SAVER PACK",
+          "confidence": 0.97,
+          "bbox": [
+            [
+              1186,
+              298
+            ],
+            [
+              1657,
+              296
+            ],
+            [
+              1657,
+              379
+            ],
+            [
+              1187,
+              381
+            ]
+          ],
+          "heightPx": 83,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 118,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "本本",
+          "confidence": 0.7625,
+          "bbox": [
+            [
+              1645,
+              302
+            ],
+            [
+              1684,
+              302
+            ],
+            [
+              1684,
+              325
+            ],
+            [
+              1645,
+              325
+            ]
+          ],
+          "heightPx": 23,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 119,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "AIlut",
+          "confidence": 0.5231,
+          "bbox": [
+            [
+              479,
+              382
+            ],
+            [
+              947,
+              335
+            ],
+            [
+              972,
+              593
+            ],
+            [
+              505,
+              640
+            ]
+          ],
+          "heightPx": 259.26,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 120,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              566,
+              583
+            ],
+            [
+              895,
+              534
+            ],
+            [
+              912,
+              643
+            ],
+            [
+              582,
+              692
+            ]
+          ],
+          "heightPx": 110.24,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 121,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "AllOut",
+          "confidence": 0.9913,
+          "bbox": [
+            [
+              1466,
+              874
+            ],
+            [
+              1571,
+              863
+            ],
+            [
+              1577,
+              915
+            ],
+            [
+              1471,
+              926
+            ]
+          ],
+          "heightPx": 52.29,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 122,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9405,
+          "bbox": [
+            [
+              1477,
+              907
+            ],
+            [
+              1567,
+              903
+            ],
+            [
+              1568,
+              935
+            ],
+            [
+              1479,
+              939
+            ]
+          ],
+          "heightPx": 32.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 123,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "Recommended by",
+          "confidence": 0.9869,
+          "bbox": [
+            [
+              494,
+              910
+            ],
+            [
+              691,
+              915
+            ],
+            [
+              691,
+              946
+            ],
+            [
+              493,
+              942
+            ]
+          ],
+          "heightPx": 31.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 124,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "AllOut",
+          "confidence": 0.9903,
+          "bbox": [
+            [
+              1175,
+              940
+            ],
+            [
+              1306,
+              924
+            ],
+            [
+              1313,
+              986
+            ],
+            [
+              1183,
+              1002
+            ]
+          ],
+          "heightPx": 62.45,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 125,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "Indian Medical Association",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              447,
+              938
+            ],
+            [
+              736,
+              942
+            ],
+            [
+              736,
+              972
+            ],
+            [
+              447,
+              968
+            ]
+          ],
+          "heightPx": 30,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 126,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "LIQUID VAPORISER",
+          "confidence": 0.9687,
+          "bbox": [
+            [
+              1432,
+              940
+            ],
+            [
+              1611,
+              945
+            ],
+            [
+              1611,
+              972
+            ],
+            [
+              1431,
+              967
+            ]
+          ],
+          "heightPx": 27.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 127,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "FLORAL",
+          "confidence": 0.9682,
+          "bbox": [
+            [
+              1478,
+              966
+            ],
+            [
+              1560,
+              968
+            ],
+            [
+              1559,
+              993
+            ],
+            [
+              1477,
+              991
+            ]
+          ],
+          "heightPx": 25.02,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 128,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "ULTRA",
+          "confidence": 0.9835,
+          "bbox": [
+            [
+              1189,
+              986
+            ],
+            [
+              1298,
+              972
+            ],
+            [
+              1303,
+              1011
+            ],
+            [
+              1194,
+              1025
+            ]
+          ],
+          "heightPx": 39.32,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 129,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "FLORAL",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              437,
+              981
+            ],
+            [
+              833,
+              985
+            ],
+            [
+              832,
+              1084
+            ],
+            [
+              436,
+              1079
+            ]
+          ],
+          "heightPx": 98.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 130,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "LIQUID VAPORISER",
+          "confidence": 0.9829,
+          "bbox": [
+            [
+              1141,
+              1020
+            ],
+            [
+              1350,
+              1025
+            ],
+            [
+              1350,
+              1052
+            ],
+            [
+              1141,
+              1047
+            ]
+          ],
+          "heightPx": 27,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 131,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "FLORAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              1195,
+              1050
+            ],
+            [
+              1291,
+              1054
+            ],
+            [
+              1290,
+              1082
+            ],
+            [
+              1194,
+              1078
+            ]
+          ],
+          "heightPx": 28.02,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 132,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "FITS ALL MACHINES",
+          "confidence": 0.9709,
+          "bbox": [
+            [
+              441,
+              1090
+            ],
+            [
+              1030,
+              1097
+            ],
+            [
+              1029,
+              1155
+            ],
+            [
+              441,
+              1148
+            ]
+          ],
+          "heightPx": 58,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 133,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "x2",
+          "confidence": 0.9944,
+          "bbox": [
+            [
+              1489,
+              1118
+            ],
+            [
+              1634,
+              1120
+            ],
+            [
+              1632,
+              1243
+            ],
+            [
+              1487,
+              1241
+            ]
+          ],
+          "heightPx": 123.02,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 134,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "KILLS DENGUE,",
+          "confidence": 0.9758,
+          "bbox": [
+            [
+              430,
+              1157
+            ],
+            [
+              1012,
+              1178
+            ],
+            [
+              1008,
+              1296
+            ],
+            [
+              426,
+              1276
+            ]
+          ],
+          "heightPx": 118.57,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 135,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "Refills",
+          "confidence": 0.9994,
+          "bbox": [
+            [
+              1486,
+              1235
+            ],
+            [
+              1636,
+              1235
+            ],
+            [
+              1636,
+              1282
+            ],
+            [
+              1486,
+              1282
+            ]
+          ],
+          "heightPx": 47,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 136,
+          "imageIndex": 5,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 6.43.55 PM.jpeg",
+          "text": "MALARIA & CHIKUNGUNYA",
+          "confidence": 0.9891,
+          "bbox": [
+            [
+              440,
+              1270
+            ],
+            [
+              1209,
+              1283
+            ],
+            [
+              1208,
+              1345
+            ],
+            [
+              439,
+              1331
+            ]
+          ],
+          "heightPx": 61.51,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "KILLS",
+          "confidence": 0.9142,
+          "bbox": [
+            [
+              440,
+              129
+            ],
+            [
+              800,
+              133
+            ],
+            [
+              799,
+              267
+            ],
+            [
+              439,
+              263
+            ]
+          ],
+          "pixel_height": 134
+        },
+        {
+          "text": "30% FASTER",
+          "confidence": 0.9558,
+          "bbox": [
+            [
+              960,
+              129
+            ],
+            [
+              1697,
+              132
+            ],
+            [
+              1696,
+              279
+            ],
+            [
+              959,
+              276
+            ]
+          ],
+          "pixel_height": 147
+        },
+        {
+          "text": "S",
+          "confidence": 0.5384,
+          "bbox": [
+            [
+              745,
+              147
+            ],
+            [
+              861,
+              147
+            ],
+            [
+              861,
+              243
+            ],
+            [
+              745,
+              243
+            ]
+          ],
+          "pixel_height": 96
+        },
+        {
+          "text": "SAVER PACK",
+          "confidence": 0.97,
+          "bbox": [
+            [
+              1186,
+              298
+            ],
+            [
+              1657,
+              296
+            ],
+            [
+              1657,
+              379
+            ],
+            [
+              1187,
+              381
+            ]
+          ],
+          "pixel_height": 83
+        },
+        {
+          "text": "本本",
+          "confidence": 0.7625,
+          "bbox": [
+            [
+              1645,
+              302
+            ],
+            [
+              1684,
+              302
+            ],
+            [
+              1684,
+              325
+            ],
+            [
+              1645,
+              325
+            ]
+          ],
+          "pixel_height": 23
+        },
+        {
+          "text": "AIlut",
+          "confidence": 0.5231,
+          "bbox": [
+            [
+              479,
+              382
+            ],
+            [
+              947,
+              335
+            ],
+            [
+              972,
+              593
+            ],
+            [
+              505,
+              640
+            ]
+          ],
+          "pixel_height": 259.26
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              566,
+              583
+            ],
+            [
+              895,
+              534
+            ],
+            [
+              912,
+              643
+            ],
+            [
+              582,
+              692
+            ]
+          ],
+          "pixel_height": 110.24
+        },
+        {
+          "text": "AllOut",
+          "confidence": 0.9913,
+          "bbox": [
+            [
+              1466,
+              874
+            ],
+            [
+              1571,
+              863
+            ],
+            [
+              1577,
+              915
+            ],
+            [
+              1471,
+              926
+            ]
+          ],
+          "pixel_height": 52.29
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9405,
+          "bbox": [
+            [
+              1477,
+              907
+            ],
+            [
+              1567,
+              903
+            ],
+            [
+              1568,
+              935
+            ],
+            [
+              1479,
+              939
+            ]
+          ],
+          "pixel_height": 32.04
+        },
+        {
+          "text": "Recommended by",
+          "confidence": 0.9869,
+          "bbox": [
+            [
+              494,
+              910
+            ],
+            [
+              691,
+              915
+            ],
+            [
+              691,
+              946
+            ],
+            [
+              493,
+              942
+            ]
+          ],
+          "pixel_height": 31.51
+        },
+        {
+          "text": "AllOut",
+          "confidence": 0.9903,
+          "bbox": [
+            [
+              1175,
+              940
+            ],
+            [
+              1306,
+              924
+            ],
+            [
+              1313,
+              986
+            ],
+            [
+              1183,
+              1002
+            ]
+          ],
+          "pixel_height": 62.45
+        },
+        {
+          "text": "Indian Medical Association",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              447,
+              938
+            ],
+            [
+              736,
+              942
+            ],
+            [
+              736,
+              972
+            ],
+            [
+              447,
+              968
+            ]
+          ],
+          "pixel_height": 30
+        },
+        {
+          "text": "LIQUID VAPORISER",
+          "confidence": 0.9687,
+          "bbox": [
+            [
+              1432,
+              940
+            ],
+            [
+              1611,
+              945
+            ],
+            [
+              1611,
+              972
+            ],
+            [
+              1431,
+              967
+            ]
+          ],
+          "pixel_height": 27.01
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.9682,
+          "bbox": [
+            [
+              1478,
+              966
+            ],
+            [
+              1560,
+              968
+            ],
+            [
+              1559,
+              993
+            ],
+            [
+              1477,
+              991
+            ]
+          ],
+          "pixel_height": 25.02
+        },
+        {
+          "text": "ULTRA",
+          "confidence": 0.9835,
+          "bbox": [
+            [
+              1189,
+              986
+            ],
+            [
+              1298,
+              972
+            ],
+            [
+              1303,
+              1011
+            ],
+            [
+              1194,
+              1025
+            ]
+          ],
+          "pixel_height": 39.32
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.9993,
+          "bbox": [
+            [
+              437,
+              981
+            ],
+            [
+              833,
+              985
+            ],
+            [
+              832,
+              1084
+            ],
+            [
+              436,
+              1079
+            ]
+          ],
+          "pixel_height": 98.51
+        },
+        {
+          "text": "LIQUID VAPORISER",
+          "confidence": 0.9829,
+          "bbox": [
+            [
+              1141,
+              1020
+            ],
+            [
+              1350,
+              1025
+            ],
+            [
+              1350,
+              1052
+            ],
+            [
+              1141,
+              1047
+            ]
+          ],
+          "pixel_height": 27
+        },
+        {
+          "text": "FLORAL",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              1195,
+              1050
+            ],
+            [
+              1291,
+              1054
+            ],
+            [
+              1290,
+              1082
+            ],
+            [
+              1194,
+              1078
+            ]
+          ],
+          "pixel_height": 28.02
+        },
+        {
+          "text": "FITS ALL MACHINES",
+          "confidence": 0.9709,
+          "bbox": [
+            [
+              441,
+              1090
+            ],
+            [
+              1030,
+              1097
+            ],
+            [
+              1029,
+              1155
+            ],
+            [
+              441,
+              1148
+            ]
+          ],
+          "pixel_height": 58
+        },
+        {
+          "text": "x2",
+          "confidence": 0.9944,
+          "bbox": [
+            [
+              1489,
+              1118
+            ],
+            [
+              1634,
+              1120
+            ],
+            [
+              1632,
+              1243
+            ],
+            [
+              1487,
+              1241
+            ]
+          ],
+          "pixel_height": 123.02
+        },
+        {
+          "text": "KILLS DENGUE,",
+          "confidence": 0.9758,
+          "bbox": [
+            [
+              430,
+              1157
+            ],
+            [
+              1012,
+              1178
+            ],
+            [
+              1008,
+              1296
+            ],
+            [
+              426,
+              1276
+            ]
+          ],
+          "pixel_height": 118.57
+        },
+        {
+          "text": "Refills",
+          "confidence": 0.9994,
+          "bbox": [
+            [
+              1486,
+              1235
+            ],
+            [
+              1636,
+              1235
+            ],
+            [
+              1636,
+              1282
+            ],
+            [
+              1486,
+              1282
+            ]
+          ],
+          "pixel_height": 47
+        },
+        {
+          "text": "MALARIA & CHIKUNGUNYA",
+          "confidence": 0.9891,
+          "bbox": [
+            [
+              440,
+              1270
+            ],
+            [
+              1209,
+              1283
+            ],
+            [
+              1208,
+              1345
+            ],
+            [
+              439,
+              1331
+            ]
+          ],
+          "pixel_height": 61.51
+        }
+      ],
+      "metadata": {
+        "original_width": 1200,
+        "original_height": 1600,
+        "output_width": 1800,
+        "output_height": 1449,
+        "boundary_detected": true,
+        "deskew_method": "foreground_crop",
+        "rotation_angle_deg": 0.887,
+        "sharpness_score": 197.06,
+        "glare_area_fraction": 0.0013,
+        "usable": true,
+        "reject_reasons": []
+      }
+    }
+  ]
+}

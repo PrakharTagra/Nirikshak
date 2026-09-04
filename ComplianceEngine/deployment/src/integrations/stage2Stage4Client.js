@@ -25,6 +25,8 @@ function getMimeType(filePath) {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.webp': 'image/webp',
+    '.heic': 'image/heic',
+    '.heif': 'image/heif',
   };
   const mimeType = mimeTypes[ext];
   if (!mimeType) {
