@@ -27,22 +27,45 @@ function buildPackageRecord(declarations, labelMetrics) {
   const qty = declarations.netQuantity || {};
   const unit = qty.unit || null;
   const value = qty.value ?? null;
-  const normalized = value == null ? null : (unit === 'g' || unit === 'ml' ? value / 1000 : value);
+  const isWeightOrVolume = unit === 'g' || unit === 'ml' || unit === 'kg' || unit === 'l';
+  const normalized = value == null ? null : (unit === 'g' || unit === 'ml' ? value / 1000 : isWeightOrVolume ? value : null);
+  const classification = declarations.commodityClassification || {};
+
+  // Infer physicalForm if not provided
+  let physicalForm = classification.physicalForm || null;
+  if (!physicalForm) {
+    if (qty.unitKind === 'number' || ['unit', 'units', 'n', 'u', 'piece', 'pieces', 'nos'].includes((unit || '').toLowerCase())) {
+      physicalForm = 'countable';
+    } else if (unit === 'g' || unit === 'kg') {
+      physicalForm = 'solid';
+    } else if (unit === 'ml' || unit === 'l') {
+      physicalForm = 'liquid';
+    }
+  }
+
+  // Manufacturer is not packer check
+  const mfrName = declarations.manufacturer?.name;
+  const pkrName = declarations.packer?.name;
+  const mfrNotPacker = !!classification.manufacturerIsNotPacker ||
+    (declarations.manufacturer?.present && declarations.packer?.present && mfrName && pkrName && mfrName.toLowerCase() !== pkrName.toLowerCase());
 
   return {
     commodity: {
-      category: declarations.commodityName?.value || 'unknown',
-      physicalForm: null,
+      category: classification.scheduleCategory || declarations.commodityName?.value || 'unknown',
+      genericName: declarations.commodityName?.value || null,
+      brandName: classification.brandName || null,
+      physicalForm: physicalForm,
       netQuantityValue: value,
       netQuantityUnit: unit,
       weightOrVolumeKgOrL: normalized,
       isCementOrFertilizerBag: false,
-      isIndustrialConsumer: false,
-      isInstitutionalConsumer: false,
-      isFoodArticle: false,
-      isMultiProductPackage: false,
-      manufacturerIsNotPacker: false,
-      isImportedPackage: !!declarations.importer?.present,
+      isIndustrialConsumer: !!classification.isIndustrialOrInstitutional,
+      isInstitutionalConsumer: !!classification.isIndustrialOrInstitutional,
+      isFoodArticle: !!classification.isFoodArticle,
+      isMultiProductPackage: !!declarations.commodityName?.perProductBreakdown,
+      manufacturerIsNotPacker: mfrNotPacker,
+      isImportedPackage: !!declarations.importer?.present || !!classification.isImported,
+      countryOfOrigin: classification.countryOfOrigin || null,
       manufacturedOutsideIndiaButPackedInIndia: false,
       isBidiOrIncenseStick: false,
       isBidiPackage: false,
@@ -61,7 +84,7 @@ function buildPackageRecord(declarations, labelMetrics) {
       isDrugsPriceControlFormulation: false,
       isAgriculturalProduceOver50kg: false,
       packageCapacityCC: unit === 'ml' ? value : null,
-      dimensionsAreRelevant: !!declarations.dimensions?.present,
+      dimensionsAreRelevant: !!declarations.dimensions?.present || !!classification.dimensionsRelevant,
       hasMultiplePiecesDifferentDimensions: false,
       isMultiComponentInSeparateUnits: false,
       hasOutsideContainerOrWrapper: false,
@@ -199,4 +222,4 @@ async function runPipelineForBatch(imagePaths) {
   return Promise.all(imagePaths.map((imagePath) => runPipelineForImage(imagePath)));
 }
 
-module.exports = { runPipelineForProduct, runPipelineForImage, runPipelineForBatch };
+module.exports = { runPipelineForProduct, runPipelineForImage, runPipelineForBatch, buildPackageRecord };

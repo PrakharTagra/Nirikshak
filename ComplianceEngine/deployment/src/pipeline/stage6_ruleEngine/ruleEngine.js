@@ -58,15 +58,18 @@ function checkApplicability(pkg) {
     };
   }
 
-  // Rule 26 — blanket exemptions from the entire Rules
-  if (c.netQuantityValue != null && c.netQuantityUnit) {
-    const norm = normalizeToGramsOrMl(c.netQuantityValue, c.netQuantityUnit);
+  // Rule 26 — blanket exemptions from the entire Rules (applies only "if sold by weight or measure")
+  const isCountable = c.physicalForm === 'countable' || ['unit', 'units', 'n', 'u', 'piece', 'pieces', 'nos', 'no'].includes((c.netQuantityUnit || '').toLowerCase());
+  if (!isCountable && c.netQuantityValue != null && c.netQuantityUnit) {
     const isWeightOrVolume = ['g', 'kg', 'ml', 'l'].includes((c.netQuantityUnit || '').toLowerCase());
-    if (isWeightOrVolume && norm <= 10) {
-      return {
-        applicable: false,
-        exemptionReason: 'Rule 26(a) — net weight/measure is 10g/10ml or less.',
-      };
+    if (isWeightOrVolume) {
+      const norm = normalizeToGramsOrMl(c.netQuantityValue, c.netQuantityUnit);
+      if (norm <= 10) {
+        return {
+          applicable: false,
+          exemptionReason: 'Rule 26(a) — net weight/measure is 10g/10ml or less (sold by weight or measure).',
+        };
+      }
     }
   }
   if (c.isFastFoodByRestaurantOrHotel) {

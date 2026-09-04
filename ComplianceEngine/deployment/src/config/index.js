@@ -4,11 +4,27 @@
  * .env.example) with sane defaults so the engine runs out of the box.
  */
 
-'use strict';
-
+const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
 
 const ROOT = path.resolve(__dirname, '..', '..');
+
+// Multi-path dotenv resolution so env vars load regardless of execution directory
+const candidateEnvPaths = [
+  path.join(ROOT, '.env'),
+  path.resolve(ROOT, '..', '.env'),
+  path.resolve(ROOT, '..', '..', '.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), 'ComplianceEngine', 'deployment', '.env'),
+  path.resolve(process.cwd(), 'deployment', '.env'),
+];
+
+for (const envPath of candidateEnvPaths) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: false });
+  }
+}
 
 // Single flat output root shared with the STAGE-2 (Python) service:
 // ComplianceEngine/output/product_<n>/ -- no per-service subfolders.
