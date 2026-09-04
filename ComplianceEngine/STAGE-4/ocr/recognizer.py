@@ -50,6 +50,9 @@ def normalize_ocr_result(result: Any) -> List[Dict[str, Any]]:
         text = str(text).strip()
         if not text:
             continue
+        # Drop isolated single CJK glyph hallucinations caused by noisy packaging texture
+        if len(text) == 1 and '\u4e00' <= text <= '\u9fff':
+            continue
 
         box_list = _box_to_list(box)
         regions.append(

@@ -1,0 +1,4241 @@
+{
+  "productId": 2,
+  "sourceImages": [
+    "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+    "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+    "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+    "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+    "WhatsApp Image 2026-09-04 at 3.58.27 PM.jpeg"
+  ],
+  "declarations": {
+    "manufacturer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null
+    },
+    "packer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null
+    },
+    "importer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null
+    },
+    "commodityName": {
+      "present": true,
+      "value": "INTEX",
+      "perProductBreakdown": false
+    },
+    "netQuantity": {
+      "present": true,
+      "value": 6,
+      "unit": "g",
+      "qualifiedWhenPacked": false,
+      "unitKind": "mass",
+      "rawText": "6 gm",
+      "onTagCardOrTapeDevice": false,
+      "symbolUsed": null
+    },
+    "mfgDate": {
+      "present": false,
+      "value": null,
+      "rawText": "",
+      "usedIndividualSticker": false,
+      "isMrpReductionSticker": false
+    },
+    "mrp": {
+      "present": true,
+      "value": 1,
+      "currency": "INR",
+      "rawText": "Maximum Retail Price for 1 Unit: 999.00/-",
+      "inclusiveOfTaxesStated": true,
+      "stickerReducedMrp": false,
+      "stickerCoversOriginalMrp": false
+    },
+    "dimensions": {
+      "present": false,
+      "rawText": ""
+    },
+    "consumerCare": {
+      "present": true,
+      "name": null,
+      "address": null,
+      "telephone": null,
+      "email": null,
+      "rawText": "Plug & Play For Consumer Complaints, Contact: Customer Care Cell, Intex Technologies (India) Ltd. Address: A-61, Okhla Ind. Area, Phase-Il, New Delhi-110020 (India)"
+    },
+    "standardPackDeclaration": {
+      "present": false,
+      "rawText": ""
+    },
+    "sheetCount": {
+      "present": false,
+      "value": null,
+      "dimensionsPerSheet": null,
+      "rawText": ""
+    },
+    "multiComponentDeclarationHandled": false
+  },
+  "packageRecord": {
+    "commodity": {
+      "category": "INTEX",
+      "physicalForm": null,
+      "netQuantityValue": 6,
+      "netQuantityUnit": "g",
+      "weightOrVolumeKgOrL": 0.006,
+      "isCementOrFertilizerBag": false,
+      "isIndustrialConsumer": false,
+      "isInstitutionalConsumer": false,
+      "isFoodArticle": false,
+      "isMultiProductPackage": false,
+      "manufacturerIsNotPacker": false,
+      "isImportedPackage": false,
+      "manufacturedOutsideIndiaButPackedInIndia": false,
+      "isBidiOrIncenseStick": false,
+      "isBidiPackage": false,
+      "isLPGCylinder": false,
+      "lpgWeightKg": null,
+      "isPublicSectorUndertaking": false,
+      "priceUnderAdministrativePriceMechanism": false,
+      "isReturnableBeverageBottle": false,
+      "isAlcoholicBeverage": false,
+      "isExportPackage": false,
+      "soldInIndia": true,
+      "repackedOrRelabeledPerChapterII": false,
+      "isWholesalePackage": false,
+      "similarDeclarationRequiredByOtherLaw": false,
+      "isFastFoodByRestaurantOrHotel": false,
+      "isDrugsPriceControlFormulation": false,
+      "isAgriculturalProduceOver50kg": false,
+      "packageCapacityCC": null,
+      "dimensionsAreRelevant": false,
+      "hasMultiplePiecesDifferentDimensions": false,
+      "isMultiComponentInSeparateUnits": false,
+      "hasOutsideContainerOrWrapper": false,
+      "declarationGovernedByOtherLaw": false,
+      "weightAloneInsufficientForConsumerInfo": false,
+      "isSheetTypeCommodity": false,
+      "isContainerTypeCommodity": false,
+      "containerShape": null,
+      "containerCapacityLinkedToLabelReference": false,
+      "priceRelatedToDimensionsOrWeight": false,
+      "netQuantityQualifiedWhenPacked": false,
+      "deficiencyDueToEnvironmentalConditions": false,
+      "isBlownFormedMoldedEmbossedOrPerforated": false
+    },
+    "declarations": {
+      "manufacturer": {
+        "present": false,
+        "name": null,
+        "address": false,
+        "mark": null
+      },
+      "packer": {
+        "present": false,
+        "name": null,
+        "address": false,
+        "mark": null
+      },
+      "importer": {
+        "present": false,
+        "name": null,
+        "address": false,
+        "mark": null
+      },
+      "commodityName": {
+        "present": true,
+        "value": "INTEX",
+        "perProductBreakdown": false
+      },
+      "netQuantity": {
+        "present": true,
+        "value": 6,
+        "unit": "g",
+        "qualifiedWhenPacked": false,
+        "unitKind": "mass",
+        "rawText": "6 gm",
+        "onTagCardOrTapeDevice": false,
+        "symbolUsed": null
+      },
+      "mfgDate": {
+        "present": false,
+        "value": null,
+        "rawText": "",
+        "usedIndividualSticker": false,
+        "isMrpReductionSticker": false
+      },
+      "mrp": {
+        "present": true,
+        "value": 1,
+        "currency": "INR",
+        "rawText": "Maximum Retail Price for 1 Unit: 999.00/-",
+        "inclusiveOfTaxesStated": true,
+        "stickerReducedMrp": false,
+        "stickerCoversOriginalMrp": false
+      },
+      "dimensions": {
+        "present": false,
+        "rawText": ""
+      },
+      "consumerCare": {
+        "present": true,
+        "name": null,
+        "address": null,
+        "telephone": null,
+        "email": null,
+        "rawText": "Plug & Play For Consumer Complaints, Contact: Customer Care Cell, Intex Technologies (India) Ltd. Address: A-61, Okhla Ind. Area, Phase-Il, New Delhi-110020 (India)"
+      },
+      "standardPackDeclaration": {
+        "present": false,
+        "rawText": ""
+      },
+      "sheetCount": {
+        "present": false,
+        "value": null,
+        "dimensionsPerSheet": null,
+        "rawText": ""
+      },
+      "multiComponentDeclarationHandled": false
+    },
+    "labelMetrics": {
+      "numeralHeightMm": {
+        "rsp": null,
+        "netQty": null
+      },
+      "numeralWidthMm": {
+        "rsp": null,
+        "netQty": null
+      },
+      "calibrationAvailable": false,
+      "pixelsPerMm": null,
+      "pdpAreaCm2": null,
+      "contrastOk": true,
+      "isBlownFormedMoldedEmbossedOrPerforated": false,
+      "isExemptCharacterShape": false,
+      "isBlownFormedMoldedOnGlassOrPlastic": false,
+      "isHandwrittenOrHandScript": false,
+      "handwritingIsClearUnambiguousLegible": false,
+      "legibilityIssue": false,
+      "declarationOnlyReadableThroughLiquid": false,
+      "quantityDeclarationSurroundingAreaHasPrintedInfo": false,
+      "rspOnCrownCapOrBottle": false,
+      "wrapperTransparentAndDeclarationsReadableThrough": false,
+      "innerPackageHasNoOuterCoverDeclaration": false,
+      "outerContainerHasAllDeclarations": false,
+      "languageUsed": [
+        "English"
+      ]
+    },
+    "quantitySamples": [],
+    "wholesale": {
+      "retailPackageCount": null,
+      "netQuantity": null
+    }
+  },
+  "complianceResult": {
+    "applicable": false,
+    "exemptionReason": "Rule 26(a) — net weight/measure is 10g/10ml or less.",
+    "violations": [],
+    "compliant": true
+  },
+  "panels": [
+    {
+      "imageIndex": 0,
+      "filename": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+      "text": "INTEX\nWindow & Mac\nCompatible\nO\nRTL8188FTV\nChipset\nPlug &\nPlay\n2.0 USB\nEasy\nSetup",
+      "lines": [
+        {
+          "id": 0,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "INTEX",
+          "confidence": 0.9808,
+          "bbox": [
+            [
+              0,
+              198
+            ],
+            [
+              127,
+              162
+            ],
+            [
+              138,
+              201
+            ],
+            [
+              9,
+              237
+            ]
+          ],
+          "heightPx": 40.27,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 1,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Window & Mac",
+          "confidence": 0.996,
+          "bbox": [
+            [
+              0,
+              348
+            ],
+            [
+              133,
+              317
+            ],
+            [
+              140,
+              346
+            ],
+            [
+              2,
+              377
+            ]
+          ],
+          "heightPx": 29.45,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 2,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Compatible",
+          "confidence": 0.9978,
+          "bbox": [
+            [
+              8,
+              364
+            ],
+            [
+              121,
+              338
+            ],
+            [
+              128,
+              367
+            ],
+            [
+              14,
+              393
+            ]
+          ],
+          "heightPx": 29.72,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 3,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "O",
+          "confidence": 0.5231,
+          "bbox": [
+            [
+              26,
+              424
+            ],
+            [
+              93,
+              418
+            ],
+            [
+              98,
+              461
+            ],
+            [
+              31,
+              468
+            ]
+          ],
+          "heightPx": 43.79,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 4,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "RTL8188FTV",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              8,
+              490
+            ],
+            [
+              125,
+              469
+            ],
+            [
+              130,
+              495
+            ],
+            [
+              13,
+              516
+            ]
+          ],
+          "heightPx": 26.48,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 5,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Chipset",
+          "confidence": 0.9912,
+          "bbox": [
+            [
+              27,
+              506
+            ],
+            [
+              105,
+              493
+            ],
+            [
+              109,
+              519
+            ],
+            [
+              32,
+              532
+            ]
+          ],
+          "heightPx": 26.39,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 6,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Plug &",
+          "confidence": 0.9677,
+          "bbox": [
+            [
+              32,
+              628
+            ],
+            [
+              101,
+              622
+            ],
+            [
+              104,
+              651
+            ],
+            [
+              35,
+              658
+            ]
+          ],
+          "heightPx": 29.65,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 7,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Play",
+          "confidence": 0.825,
+          "bbox": [
+            [
+              41,
+              648
+            ],
+            [
+              91,
+              644
+            ],
+            [
+              93,
+              672
+            ],
+            [
+              44,
+              676
+            ]
+          ],
+          "heightPx": 28.12,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 8,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "2.0 USB",
+          "confidence": 0.9728,
+          "bbox": [
+            [
+              28,
+              772
+            ],
+            [
+              108,
+              765
+            ],
+            [
+              111,
+              792
+            ],
+            [
+              30,
+              800
+            ]
+          ],
+          "heightPx": 27.62,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 9,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Easy",
+          "confidence": 0.9995,
+          "bbox": [
+            [
+              46,
+              894
+            ],
+            [
+              98,
+              894
+            ],
+            [
+              98,
+              923
+            ],
+            [
+              46,
+              923
+            ]
+          ],
+          "heightPx": 29,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 10,
+          "imageIndex": 0,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (1).jpeg",
+          "text": "Setup",
+          "confidence": 0.9918,
+          "bbox": [
+            [
+              41,
+              914
+            ],
+            [
+              103,
+              911
+            ],
+            [
+              104,
+              939
+            ],
+            [
+              42,
+              942
+            ]
+          ],
+          "heightPx": 28.02,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "INTEX",
+          "confidence": 0.9808,
+          "bbox": [
+            [
+              0,
+              198
+            ],
+            [
+              127,
+              162
+            ],
+            [
+              138,
+              201
+            ],
+            [
+              9,
+              237
+            ]
+          ],
+          "pixel_height": 40.27
+        },
+        {
+          "text": "Window & Mac",
+          "confidence": 0.996,
+          "bbox": [
+            [
+              0,
+              348
+            ],
+            [
+              133,
+              317
+            ],
+            [
+              140,
+              346
+            ],
+            [
+              2,
+              377
+            ]
+          ],
+          "pixel_height": 29.45
+        },
+        {
+          "text": "Compatible",
+          "confidence": 0.9978,
+          "bbox": [
+            [
+              8,
+              364
+            ],
+            [
+              121,
+              338
+            ],
+            [
+              128,
+              367
+            ],
+            [
+              14,
+              393
+            ]
+          ],
+          "pixel_height": 29.72
+        },
+        {
+          "text": "O",
+          "confidence": 0.5231,
+          "bbox": [
+            [
+              26,
+              424
+            ],
+            [
+              93,
+              418
+            ],
+            [
+              98,
+              461
+            ],
+            [
+              31,
+              468
+            ]
+          ],
+          "pixel_height": 43.79
+        },
+        {
+          "text": "RTL8188FTV",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              8,
+              490
+            ],
+            [
+              125,
+              469
+            ],
+            [
+              130,
+              495
+            ],
+            [
+              13,
+              516
+            ]
+          ],
+          "pixel_height": 26.48
+        },
+        {
+          "text": "Chipset",
+          "confidence": 0.9912,
+          "bbox": [
+            [
+              27,
+              506
+            ],
+            [
+              105,
+              493
+            ],
+            [
+              109,
+              519
+            ],
+            [
+              32,
+              532
+            ]
+          ],
+          "pixel_height": 26.39
+        },
+        {
+          "text": "Plug &",
+          "confidence": 0.9677,
+          "bbox": [
+            [
+              32,
+              628
+            ],
+            [
+              101,
+              622
+            ],
+            [
+              104,
+              651
+            ],
+            [
+              35,
+              658
+            ]
+          ],
+          "pixel_height": 29.65
+        },
+        {
+          "text": "Play",
+          "confidence": 0.825,
+          "bbox": [
+            [
+              41,
+              648
+            ],
+            [
+              91,
+              644
+            ],
+            [
+              93,
+              672
+            ],
+            [
+              44,
+              676
+            ]
+          ],
+          "pixel_height": 28.12
+        },
+        {
+          "text": "2.0 USB",
+          "confidence": 0.9728,
+          "bbox": [
+            [
+              28,
+              772
+            ],
+            [
+              108,
+              765
+            ],
+            [
+              111,
+              792
+            ],
+            [
+              30,
+              800
+            ]
+          ],
+          "pixel_height": 27.62
+        },
+        {
+          "text": "Easy",
+          "confidence": 0.9995,
+          "bbox": [
+            [
+              46,
+              894
+            ],
+            [
+              98,
+              894
+            ],
+            [
+              98,
+              923
+            ],
+            [
+              46,
+              923
+            ]
+          ],
+          "pixel_height": 29
+        },
+        {
+          "text": "Setup",
+          "confidence": 0.9918,
+          "bbox": [
+            [
+              41,
+              914
+            ],
+            [
+              103,
+              911
+            ],
+            [
+              104,
+              939
+            ],
+            [
+              42,
+              942
+            ]
+          ],
+          "pixel_height": 28.02
+        }
+      ],
+      "metadata": {
+        "original_width": 717,
+        "original_height": 1050,
+        "output_width": 164,
+        "output_height": 967,
+        "boundary_detected": true,
+        "deskew_method": "perspective_warp",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 293.41,
+        "glare_area_fraction": 0.002,
+        "usable": false,
+        "reject_reasons": [
+          "Resolution too low (164x967); minimum is 600x400. Re-capture closer to the label."
+        ]
+      }
+    },
+    {
+      "imageIndex": 1,
+      "filename": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+      "text": "2114760713260605039\nINTEX\nMarketed, Supported By and Manufactured For:\nIntex Technologies (India) Ltd.\nAddress: A-61, Okhla Ind. Area, Phase II,\nNew Delhi-110020 (India)\nItem Name: 150M Wireless Mini USB Adapter\nGeneric Name: Wireless Mini USB Adapter\nWireless Data\nModel No.: INT WiAD 150\nTransmission\nNet Quantity: 1 Unit\nAdvanced\nMonth & Year of Manufacture: February 2026\nSecurity\nMaximum Retail Price for 1 Unit: 999.00/-\n(Inclusive of all taxes)\nPlug & Play\nFor Consumer Complaints, Contact:\nCustomer Care Cell, Intex Technologies (India) Ltd.\nAddress: A-61, Okhla Ind. Area, Phase-Il,\nNew Delhi-110020 (India)\nE-mail: info@intex.in | Website: www.intex.in\nCustomer Care No.: 0120-489-5555\n*The above information is in compliance with Section 2 of Legal Metrology\no e ne e  in\nAct, 2009 and Rule 2 of Legal Metrology (Packaged Commodities) Rules,\nsome operating systems\n2011 and Amendments thereto.\nyou can download & install\nliro  r v aty\n@IntexBrand\nScan and Discover\nAN ISO 9001: 2015 COMPANY\n@intextechnologies\nWorld-Class Products\n@IntexTechnologies\nfrom Intex\n@IntexIndia\nBox Size: 85 x 14 x 85 mm, Net Weight: 6 gm, Gross Weight: 18 gm\nCATEGORY RANGE\nLIFESTYLE RLECTRONICS\nIT ACCESSORIES\nCONSUMER DURABLEN\nSPEANERS\nBECURITY & SURVEILLANCE\nIFPO & DISPLAY SOLUTIONS",
+      "lines": [
+        {
+          "id": 11,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "2114760713260605039",
+          "confidence": 0.9526,
+          "bbox": [
+            [
+              461,
+              95
+            ],
+            [
+              633,
+              84
+            ],
+            [
+              636,
+              129
+            ],
+            [
+              464,
+              140
+            ]
+          ],
+          "heightPx": 45.1,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 12,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "INTEX",
+          "confidence": 0.9851,
+          "bbox": [
+            [
+              444,
+              209
+            ],
+            [
+              636,
+              206
+            ],
+            [
+              636,
+              266
+            ],
+            [
+              445,
+              268
+            ]
+          ],
+          "heightPx": 59.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 13,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Marketed, Supported By and Manufactured For:",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              0,
+              224
+            ],
+            [
+              338,
+              221
+            ],
+            [
+              339,
+              246
+            ],
+            [
+              0,
+              249
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 14,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Intex Technologies (India) Ltd.",
+          "confidence": 0.9984,
+          "bbox": [
+            [
+              0,
+              245
+            ],
+            [
+              226,
+              242
+            ],
+            [
+              227,
+              267
+            ],
+            [
+              0,
+              270
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 15,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Address: A-61, Okhla Ind. Area, Phase II,",
+          "confidence": 0.9708,
+          "bbox": [
+            [
+              0,
+              264
+            ],
+            [
+              282,
+              262
+            ],
+            [
+              283,
+              287
+            ],
+            [
+              0,
+              289
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 16,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "New Delhi-110020 (India)",
+          "confidence": 0.999,
+          "bbox": [
+            [
+              0,
+              284
+            ],
+            [
+              185,
+              282
+            ],
+            [
+              185,
+              307
+            ],
+            [
+              0,
+              310
+            ]
+          ],
+          "heightPx": 25.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 17,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Item Name: 150M Wireless Mini USB Adapter",
+          "confidence": 0.9981,
+          "bbox": [
+            [
+              0,
+              305
+            ],
+            [
+              324,
+              301
+            ],
+            [
+              324,
+              327
+            ],
+            [
+              0,
+              330
+            ]
+          ],
+          "heightPx": 25.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 18,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Generic Name: Wireless Mini USB Adapter",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              1,
+              325
+            ],
+            [
+              305,
+              321
+            ],
+            [
+              305,
+              346
+            ],
+            [
+              1,
+              349
+            ]
+          ],
+          "heightPx": 24.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 19,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Wireless Data",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              455,
+              329
+            ],
+            [
+              537,
+              329
+            ],
+            [
+              537,
+              348
+            ],
+            [
+              455,
+              348
+            ]
+          ],
+          "heightPx": 19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 20,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Model No.: INT WiAD 150",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              0,
+              344
+            ],
+            [
+              187,
+              342
+            ],
+            [
+              187,
+              367
+            ],
+            [
+              0,
+              369
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 21,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Transmission",
+          "confidence": 0.9863,
+          "bbox": [
+            [
+              456,
+              342
+            ],
+            [
+              536,
+              342
+            ],
+            [
+              536,
+              361
+            ],
+            [
+              456,
+              361
+            ]
+          ],
+          "heightPx": 19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 22,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Net Quantity: 1 Unit",
+          "confidence": 0.9718,
+          "bbox": [
+            [
+              0,
+              364
+            ],
+            [
+              147,
+              362
+            ],
+            [
+              148,
+              387
+            ],
+            [
+              0,
+              389
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 23,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Advanced",
+          "confidence": 1,
+          "bbox": [
+            [
+              558,
+              377
+            ],
+            [
+              627,
+              377
+            ],
+            [
+              627,
+              397
+            ],
+            [
+              558,
+              397
+            ]
+          ],
+          "heightPx": 20,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 24,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Month & Year of Manufacture: February 2026",
+          "confidence": 0.9788,
+          "bbox": [
+            [
+              1,
+              383
+            ],
+            [
+              319,
+              380
+            ],
+            [
+              319,
+              405
+            ],
+            [
+              1,
+              408
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 25,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Security",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              560,
+              391
+            ],
+            [
+              623,
+              391
+            ],
+            [
+              623,
+              414
+            ],
+            [
+              560,
+              414
+            ]
+          ],
+          "heightPx": 23,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 26,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Maximum Retail Price for 1 Unit: 999.00/-",
+          "confidence": 0.9815,
+          "bbox": [
+            [
+              1,
+              403
+            ],
+            [
+              305,
+              399
+            ],
+            [
+              305,
+              424
+            ],
+            [
+              1,
+              429
+            ]
+          ],
+          "heightPx": 25.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 27,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "(Inclusive of all taxes)",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              262,
+              420
+            ],
+            [
+              420,
+              418
+            ],
+            [
+              420,
+              443
+            ],
+            [
+              262,
+              446
+            ]
+          ],
+          "heightPx": 25.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 28,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Plug & Play",
+          "confidence": 0.9909,
+          "bbox": [
+            [
+              461,
+              430
+            ],
+            [
+              531,
+              430
+            ],
+            [
+              531,
+              451
+            ],
+            [
+              461,
+              451
+            ]
+          ],
+          "heightPx": 21,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 29,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "For Consumer Complaints, Contact:",
+          "confidence": 0.9874,
+          "bbox": [
+            [
+              4,
+              444
+            ],
+            [
+              257,
+              440
+            ],
+            [
+              257,
+              465
+            ],
+            [
+              4,
+              468
+            ]
+          ],
+          "heightPx": 24.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 30,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Customer Care Cell, Intex Technologies (India) Ltd.",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              4,
+              463
+            ],
+            [
+              367,
+              458
+            ],
+            [
+              367,
+              483
+            ],
+            [
+              4,
+              488
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 31,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Address: A-61, Okhla Ind. Area, Phase-Il,",
+          "confidence": 0.9762,
+          "bbox": [
+            [
+              4,
+              482
+            ],
+            [
+              287,
+              479
+            ],
+            [
+              288,
+              504
+            ],
+            [
+              4,
+              507
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 32,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "New Delhi-110020 (India)",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              4,
+              502
+            ],
+            [
+              188,
+              500
+            ],
+            [
+              188,
+              525
+            ],
+            [
+              4,
+              527
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 33,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "E-mail: info@intex.in | Website: www.intex.in",
+          "confidence": 0.9815,
+          "bbox": [
+            [
+              5,
+              521
+            ],
+            [
+              322,
+              518
+            ],
+            [
+              322,
+              543
+            ],
+            [
+              5,
+              546
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 34,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Customer Care No.: 0120-489-5555",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              6,
+              543
+            ],
+            [
+              258,
+              539
+            ],
+            [
+              258,
+              561
+            ],
+            [
+              6,
+              566
+            ]
+          ],
+          "heightPx": 22.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 35,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "*The above information is in compliance with Section 2 of Legal Metrology",
+          "confidence": 0.9839,
+          "bbox": [
+            [
+              0,
+              567
+            ],
+            [
+              424,
+              561
+            ],
+            [
+              424,
+              584
+            ],
+            [
+              0,
+              589
+            ]
+          ],
+          "heightPx": 22.5,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 36,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "o e ne e  in",
+          "confidence": 0.364,
+          "bbox": [
+            [
+              473,
+              577
+            ],
+            [
+              606,
+              576
+            ],
+            [
+              606,
+              595
+            ],
+            [
+              473,
+              596
+            ]
+          ],
+          "heightPx": 19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 37,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Act, 2009 and Rule 2 of Legal Metrology (Packaged Commodities) Rules,",
+          "confidence": 0.9892,
+          "bbox": [
+            [
+              0,
+              583
+            ],
+            [
+              419,
+              578
+            ],
+            [
+              419,
+              600
+            ],
+            [
+              0,
+              605
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 38,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "some operating systems",
+          "confidence": 0.9511,
+          "bbox": [
+            [
+              477,
+              588
+            ],
+            [
+              604,
+              587
+            ],
+            [
+              604,
+              606
+            ],
+            [
+              477,
+              607
+            ]
+          ],
+          "heightPx": 19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 39,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "2011 and Amendments thereto.",
+          "confidence": 0.9873,
+          "bbox": [
+            [
+              0,
+              599
+            ],
+            [
+              181,
+              597
+            ],
+            [
+              181,
+              619
+            ],
+            [
+              0,
+              621
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 40,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "you can download & install",
+          "confidence": 0.9696,
+          "bbox": [
+            [
+              471,
+              600
+            ],
+            [
+              607,
+              597
+            ],
+            [
+              608,
+              616
+            ],
+            [
+              472,
+              619
+            ]
+          ],
+          "heightPx": 19.03,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 41,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "liro  r v aty",
+          "confidence": 0.3818,
+          "bbox": [
+            [
+              480,
+              610
+            ],
+            [
+              597,
+              608
+            ],
+            [
+              598,
+              627
+            ],
+            [
+              480,
+              629
+            ]
+          ],
+          "heightPx": 19.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 42,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "@IntexBrand",
+          "confidence": 0.9945,
+          "bbox": [
+            [
+              217,
+              657
+            ],
+            [
+              318,
+              655
+            ],
+            [
+              318,
+              680
+            ],
+            [
+              218,
+              683
+            ]
+          ],
+          "heightPx": 25.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 43,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Scan and Discover",
+          "confidence": 0.9856,
+          "bbox": [
+            [
+              464,
+              657
+            ],
+            [
+              604,
+              655
+            ],
+            [
+              605,
+              678
+            ],
+            [
+              465,
+              681
+            ]
+          ],
+          "heightPx": 23.52,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 44,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "AN ISO 9001: 2015 COMPANY",
+          "confidence": 0.9915,
+          "bbox": [
+            [
+              640,
+              655
+            ],
+            [
+              660,
+              655
+            ],
+            [
+              660,
+              825
+            ],
+            [
+              640,
+              825
+            ]
+          ],
+          "heightPx": 170,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 45,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "@intextechnologies",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              46,
+              658
+            ],
+            [
+              189,
+              658
+            ],
+            [
+              189,
+              680
+            ],
+            [
+              46,
+              680
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 46,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "World-Class Products",
+          "confidence": 0.9991,
+          "bbox": [
+            [
+              464,
+              677
+            ],
+            [
+              627,
+              674
+            ],
+            [
+              627,
+              696
+            ],
+            [
+              465,
+              699
+            ]
+          ],
+          "heightPx": 22.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 47,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "@IntexTechnologies",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              221,
+              694
+            ],
+            [
+              368,
+              694
+            ],
+            [
+              368,
+              719
+            ],
+            [
+              221,
+              719
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 48,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "from Intex",
+          "confidence": 0.9937,
+          "bbox": [
+            [
+              465,
+              694
+            ],
+            [
+              550,
+              694
+            ],
+            [
+              550,
+              717
+            ],
+            [
+              465,
+              717
+            ]
+          ],
+          "heightPx": 23,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 49,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "@IntexIndia",
+          "confidence": 0.9702,
+          "bbox": [
+            [
+              47,
+              697
+            ],
+            [
+              136,
+              697
+            ],
+            [
+              136,
+              719
+            ],
+            [
+              47,
+              719
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 50,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "Box Size: 85 x 14 x 85 mm, Net Weight: 6 gm, Gross Weight: 18 gm",
+          "confidence": 0.9762,
+          "bbox": [
+            [
+              90,
+              744
+            ],
+            [
+              552,
+              739
+            ],
+            [
+              552,
+              764
+            ],
+            [
+              91,
+              769
+            ]
+          ],
+          "heightPx": 25.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 51,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "CATEGORY RANGE",
+          "confidence": 0.9951,
+          "bbox": [
+            [
+              243,
+              772
+            ],
+            [
+              398,
+              770
+            ],
+            [
+              399,
+              789
+            ],
+            [
+              243,
+              791
+            ]
+          ],
+          "heightPx": 19.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 52,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "LIFESTYLE RLECTRONICS",
+          "confidence": 0.8463,
+          "bbox": [
+            [
+              418,
+              793
+            ],
+            [
+              520,
+              790
+            ],
+            [
+              521,
+              809
+            ],
+            [
+              418,
+              812
+            ]
+          ],
+          "heightPx": 19.01,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 53,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "IT ACCESSORIES",
+          "confidence": 0.9248,
+          "bbox": [
+            [
+              329,
+              794
+            ],
+            [
+              395,
+              794
+            ],
+            [
+              395,
+              811
+            ],
+            [
+              329,
+              811
+            ]
+          ],
+          "heightPx": 17,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 54,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "CONSUMER DURABLEN",
+          "confidence": 0.9568,
+          "bbox": [
+            [
+              151,
+              796
+            ],
+            [
+              235,
+              796
+            ],
+            [
+              235,
+              813
+            ],
+            [
+              151,
+              813
+            ]
+          ],
+          "heightPx": 17,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 55,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "SPEANERS",
+          "confidence": 0.8649,
+          "bbox": [
+            [
+              259,
+              796
+            ],
+            [
+              306,
+              796
+            ],
+            [
+              306,
+              814
+            ],
+            [
+              259,
+              814
+            ]
+          ],
+          "heightPx": 18,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 56,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "BECURITY & SURVEILLANCE",
+          "confidence": 0.9474,
+          "bbox": [
+            [
+              359,
+              819
+            ],
+            [
+              469,
+              816
+            ],
+            [
+              470,
+              833
+            ],
+            [
+              359,
+              835
+            ]
+          ],
+          "heightPx": 16.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 57,
+          "imageIndex": 1,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM (2).jpeg",
+          "text": "IFPO & DISPLAY SOLUTIONS",
+          "confidence": 0.9448,
+          "bbox": [
+            [
+              228,
+              822
+            ],
+            [
+              332,
+              822
+            ],
+            [
+              332,
+              835
+            ],
+            [
+              228,
+              835
+            ]
+          ],
+          "heightPx": 13,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "2114760713260605039",
+          "confidence": 0.9526,
+          "bbox": [
+            [
+              461,
+              95
+            ],
+            [
+              633,
+              84
+            ],
+            [
+              636,
+              129
+            ],
+            [
+              464,
+              140
+            ]
+          ],
+          "pixel_height": 45.1
+        },
+        {
+          "text": "INTEX",
+          "confidence": 0.9851,
+          "bbox": [
+            [
+              444,
+              209
+            ],
+            [
+              636,
+              206
+            ],
+            [
+              636,
+              266
+            ],
+            [
+              445,
+              268
+            ]
+          ],
+          "pixel_height": 59.5
+        },
+        {
+          "text": "Marketed, Supported By and Manufactured For:",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              0,
+              224
+            ],
+            [
+              338,
+              221
+            ],
+            [
+              339,
+              246
+            ],
+            [
+              0,
+              249
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "Intex Technologies (India) Ltd.",
+          "confidence": 0.9984,
+          "bbox": [
+            [
+              0,
+              245
+            ],
+            [
+              226,
+              242
+            ],
+            [
+              227,
+              267
+            ],
+            [
+              0,
+              270
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "Address: A-61, Okhla Ind. Area, Phase II,",
+          "confidence": 0.9708,
+          "bbox": [
+            [
+              0,
+              264
+            ],
+            [
+              282,
+              262
+            ],
+            [
+              283,
+              287
+            ],
+            [
+              0,
+              289
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "New Delhi-110020 (India)",
+          "confidence": 0.999,
+          "bbox": [
+            [
+              0,
+              284
+            ],
+            [
+              185,
+              282
+            ],
+            [
+              185,
+              307
+            ],
+            [
+              0,
+              310
+            ]
+          ],
+          "pixel_height": 25.5
+        },
+        {
+          "text": "Item Name: 150M Wireless Mini USB Adapter",
+          "confidence": 0.9981,
+          "bbox": [
+            [
+              0,
+              305
+            ],
+            [
+              324,
+              301
+            ],
+            [
+              324,
+              327
+            ],
+            [
+              0,
+              330
+            ]
+          ],
+          "pixel_height": 25.5
+        },
+        {
+          "text": "Generic Name: Wireless Mini USB Adapter",
+          "confidence": 0.9977,
+          "bbox": [
+            [
+              1,
+              325
+            ],
+            [
+              305,
+              321
+            ],
+            [
+              305,
+              346
+            ],
+            [
+              1,
+              349
+            ]
+          ],
+          "pixel_height": 24.5
+        },
+        {
+          "text": "Wireless Data",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              455,
+              329
+            ],
+            [
+              537,
+              329
+            ],
+            [
+              537,
+              348
+            ],
+            [
+              455,
+              348
+            ]
+          ],
+          "pixel_height": 19
+        },
+        {
+          "text": "Model No.: INT WiAD 150",
+          "confidence": 0.998,
+          "bbox": [
+            [
+              0,
+              344
+            ],
+            [
+              187,
+              342
+            ],
+            [
+              187,
+              367
+            ],
+            [
+              0,
+              369
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "Transmission",
+          "confidence": 0.9863,
+          "bbox": [
+            [
+              456,
+              342
+            ],
+            [
+              536,
+              342
+            ],
+            [
+              536,
+              361
+            ],
+            [
+              456,
+              361
+            ]
+          ],
+          "pixel_height": 19
+        },
+        {
+          "text": "Net Quantity: 1 Unit",
+          "confidence": 0.9718,
+          "bbox": [
+            [
+              0,
+              364
+            ],
+            [
+              147,
+              362
+            ],
+            [
+              148,
+              387
+            ],
+            [
+              0,
+              389
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "Advanced",
+          "confidence": 1,
+          "bbox": [
+            [
+              558,
+              377
+            ],
+            [
+              627,
+              377
+            ],
+            [
+              627,
+              397
+            ],
+            [
+              558,
+              397
+            ]
+          ],
+          "pixel_height": 20
+        },
+        {
+          "text": "Month & Year of Manufacture: February 2026",
+          "confidence": 0.9788,
+          "bbox": [
+            [
+              1,
+              383
+            ],
+            [
+              319,
+              380
+            ],
+            [
+              319,
+              405
+            ],
+            [
+              1,
+              408
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "Security",
+          "confidence": 0.9999,
+          "bbox": [
+            [
+              560,
+              391
+            ],
+            [
+              623,
+              391
+            ],
+            [
+              623,
+              414
+            ],
+            [
+              560,
+              414
+            ]
+          ],
+          "pixel_height": 23
+        },
+        {
+          "text": "Maximum Retail Price for 1 Unit: 999.00/-",
+          "confidence": 0.9815,
+          "bbox": [
+            [
+              1,
+              403
+            ],
+            [
+              305,
+              399
+            ],
+            [
+              305,
+              424
+            ],
+            [
+              1,
+              429
+            ]
+          ],
+          "pixel_height": 25.5
+        },
+        {
+          "text": "(Inclusive of all taxes)",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              262,
+              420
+            ],
+            [
+              420,
+              418
+            ],
+            [
+              420,
+              443
+            ],
+            [
+              262,
+              446
+            ]
+          ],
+          "pixel_height": 25.5
+        },
+        {
+          "text": "Plug & Play",
+          "confidence": 0.9909,
+          "bbox": [
+            [
+              461,
+              430
+            ],
+            [
+              531,
+              430
+            ],
+            [
+              531,
+              451
+            ],
+            [
+              461,
+              451
+            ]
+          ],
+          "pixel_height": 21
+        },
+        {
+          "text": "For Consumer Complaints, Contact:",
+          "confidence": 0.9874,
+          "bbox": [
+            [
+              4,
+              444
+            ],
+            [
+              257,
+              440
+            ],
+            [
+              257,
+              465
+            ],
+            [
+              4,
+              468
+            ]
+          ],
+          "pixel_height": 24.5
+        },
+        {
+          "text": "Customer Care Cell, Intex Technologies (India) Ltd.",
+          "confidence": 0.9985,
+          "bbox": [
+            [
+              4,
+              463
+            ],
+            [
+              367,
+              458
+            ],
+            [
+              367,
+              483
+            ],
+            [
+              4,
+              488
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "Address: A-61, Okhla Ind. Area, Phase-Il,",
+          "confidence": 0.9762,
+          "bbox": [
+            [
+              4,
+              482
+            ],
+            [
+              287,
+              479
+            ],
+            [
+              288,
+              504
+            ],
+            [
+              4,
+              507
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "New Delhi-110020 (India)",
+          "confidence": 0.9963,
+          "bbox": [
+            [
+              4,
+              502
+            ],
+            [
+              188,
+              500
+            ],
+            [
+              188,
+              525
+            ],
+            [
+              4,
+              527
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "E-mail: info@intex.in | Website: www.intex.in",
+          "confidence": 0.9815,
+          "bbox": [
+            [
+              5,
+              521
+            ],
+            [
+              322,
+              518
+            ],
+            [
+              322,
+              543
+            ],
+            [
+              5,
+              546
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "Customer Care No.: 0120-489-5555",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              6,
+              543
+            ],
+            [
+              258,
+              539
+            ],
+            [
+              258,
+              561
+            ],
+            [
+              6,
+              566
+            ]
+          ],
+          "pixel_height": 22.5
+        },
+        {
+          "text": "*The above information is in compliance with Section 2 of Legal Metrology",
+          "confidence": 0.9839,
+          "bbox": [
+            [
+              0,
+              567
+            ],
+            [
+              424,
+              561
+            ],
+            [
+              424,
+              584
+            ],
+            [
+              0,
+              589
+            ]
+          ],
+          "pixel_height": 22.5
+        },
+        {
+          "text": "o e ne e  in",
+          "confidence": 0.364,
+          "bbox": [
+            [
+              473,
+              577
+            ],
+            [
+              606,
+              576
+            ],
+            [
+              606,
+              595
+            ],
+            [
+              473,
+              596
+            ]
+          ],
+          "pixel_height": 19
+        },
+        {
+          "text": "Act, 2009 and Rule 2 of Legal Metrology (Packaged Commodities) Rules,",
+          "confidence": 0.9892,
+          "bbox": [
+            [
+              0,
+              583
+            ],
+            [
+              419,
+              578
+            ],
+            [
+              419,
+              600
+            ],
+            [
+              0,
+              605
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "some operating systems",
+          "confidence": 0.9511,
+          "bbox": [
+            [
+              477,
+              588
+            ],
+            [
+              604,
+              587
+            ],
+            [
+              604,
+              606
+            ],
+            [
+              477,
+              607
+            ]
+          ],
+          "pixel_height": 19
+        },
+        {
+          "text": "2011 and Amendments thereto.",
+          "confidence": 0.9873,
+          "bbox": [
+            [
+              0,
+              599
+            ],
+            [
+              181,
+              597
+            ],
+            [
+              181,
+              619
+            ],
+            [
+              0,
+              621
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "you can download & install",
+          "confidence": 0.9696,
+          "bbox": [
+            [
+              471,
+              600
+            ],
+            [
+              607,
+              597
+            ],
+            [
+              608,
+              616
+            ],
+            [
+              472,
+              619
+            ]
+          ],
+          "pixel_height": 19.03
+        },
+        {
+          "text": "liro  r v aty",
+          "confidence": 0.3818,
+          "bbox": [
+            [
+              480,
+              610
+            ],
+            [
+              597,
+              608
+            ],
+            [
+              598,
+              627
+            ],
+            [
+              480,
+              629
+            ]
+          ],
+          "pixel_height": 19.01
+        },
+        {
+          "text": "@IntexBrand",
+          "confidence": 0.9945,
+          "bbox": [
+            [
+              217,
+              657
+            ],
+            [
+              318,
+              655
+            ],
+            [
+              318,
+              680
+            ],
+            [
+              218,
+              683
+            ]
+          ],
+          "pixel_height": 25.51
+        },
+        {
+          "text": "Scan and Discover",
+          "confidence": 0.9856,
+          "bbox": [
+            [
+              464,
+              657
+            ],
+            [
+              604,
+              655
+            ],
+            [
+              605,
+              678
+            ],
+            [
+              465,
+              681
+            ]
+          ],
+          "pixel_height": 23.52
+        },
+        {
+          "text": "AN ISO 9001: 2015 COMPANY",
+          "confidence": 0.9915,
+          "bbox": [
+            [
+              640,
+              655
+            ],
+            [
+              660,
+              655
+            ],
+            [
+              660,
+              825
+            ],
+            [
+              640,
+              825
+            ]
+          ],
+          "pixel_height": 170
+        },
+        {
+          "text": "@intextechnologies",
+          "confidence": 0.9786,
+          "bbox": [
+            [
+              46,
+              658
+            ],
+            [
+              189,
+              658
+            ],
+            [
+              189,
+              680
+            ],
+            [
+              46,
+              680
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "World-Class Products",
+          "confidence": 0.9991,
+          "bbox": [
+            [
+              464,
+              677
+            ],
+            [
+              627,
+              674
+            ],
+            [
+              627,
+              696
+            ],
+            [
+              465,
+              699
+            ]
+          ],
+          "pixel_height": 22.01
+        },
+        {
+          "text": "@IntexTechnologies",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              221,
+              694
+            ],
+            [
+              368,
+              694
+            ],
+            [
+              368,
+              719
+            ],
+            [
+              221,
+              719
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "from Intex",
+          "confidence": 0.9937,
+          "bbox": [
+            [
+              465,
+              694
+            ],
+            [
+              550,
+              694
+            ],
+            [
+              550,
+              717
+            ],
+            [
+              465,
+              717
+            ]
+          ],
+          "pixel_height": 23
+        },
+        {
+          "text": "@IntexIndia",
+          "confidence": 0.9702,
+          "bbox": [
+            [
+              47,
+              697
+            ],
+            [
+              136,
+              697
+            ],
+            [
+              136,
+              719
+            ],
+            [
+              47,
+              719
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "Box Size: 85 x 14 x 85 mm, Net Weight: 6 gm, Gross Weight: 18 gm",
+          "confidence": 0.9762,
+          "bbox": [
+            [
+              90,
+              744
+            ],
+            [
+              552,
+              739
+            ],
+            [
+              552,
+              764
+            ],
+            [
+              91,
+              769
+            ]
+          ],
+          "pixel_height": 25.01
+        },
+        {
+          "text": "CATEGORY RANGE",
+          "confidence": 0.9951,
+          "bbox": [
+            [
+              243,
+              772
+            ],
+            [
+              398,
+              770
+            ],
+            [
+              399,
+              789
+            ],
+            [
+              243,
+              791
+            ]
+          ],
+          "pixel_height": 19.01
+        },
+        {
+          "text": "LIFESTYLE RLECTRONICS",
+          "confidence": 0.8463,
+          "bbox": [
+            [
+              418,
+              793
+            ],
+            [
+              520,
+              790
+            ],
+            [
+              521,
+              809
+            ],
+            [
+              418,
+              812
+            ]
+          ],
+          "pixel_height": 19.01
+        },
+        {
+          "text": "IT ACCESSORIES",
+          "confidence": 0.9248,
+          "bbox": [
+            [
+              329,
+              794
+            ],
+            [
+              395,
+              794
+            ],
+            [
+              395,
+              811
+            ],
+            [
+              329,
+              811
+            ]
+          ],
+          "pixel_height": 17
+        },
+        {
+          "text": "CONSUMER DURABLEN",
+          "confidence": 0.9568,
+          "bbox": [
+            [
+              151,
+              796
+            ],
+            [
+              235,
+              796
+            ],
+            [
+              235,
+              813
+            ],
+            [
+              151,
+              813
+            ]
+          ],
+          "pixel_height": 17
+        },
+        {
+          "text": "SPEANERS",
+          "confidence": 0.8649,
+          "bbox": [
+            [
+              259,
+              796
+            ],
+            [
+              306,
+              796
+            ],
+            [
+              306,
+              814
+            ],
+            [
+              259,
+              814
+            ]
+          ],
+          "pixel_height": 18
+        },
+        {
+          "text": "BECURITY & SURVEILLANCE",
+          "confidence": 0.9474,
+          "bbox": [
+            [
+              359,
+              819
+            ],
+            [
+              469,
+              816
+            ],
+            [
+              470,
+              833
+            ],
+            [
+              359,
+              835
+            ]
+          ],
+          "pixel_height": 16.51
+        },
+        {
+          "text": "IFPO & DISPLAY SOLUTIONS",
+          "confidence": 0.9448,
+          "bbox": [
+            [
+              228,
+              822
+            ],
+            [
+              332,
+              822
+            ],
+            [
+              332,
+              835
+            ],
+            [
+              228,
+              835
+            ]
+          ],
+          "pixel_height": 13
+        }
+      ],
+      "metadata": {
+        "original_width": 963,
+        "original_height": 1280,
+        "output_width": 683,
+        "output_height": 871,
+        "boundary_detected": true,
+        "deskew_method": "perspective_warp",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 654.14,
+        "glare_area_fraction": 0,
+        "usable": true,
+        "reject_reasons": []
+      }
+    },
+    {
+      "imageIndex": 2,
+      "filename": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+      "text": "Images shown are for representational purposes only.\nRcHS\nThe colour of the actual product may differ from that shown herein.\nUATIAMICO\nSpecifications are subject to change without notice.\nAll brand names and trademarks are the property of their respective owners.\nThis product falls under E-Waste (Management) Rules, 2016. For proper disposal method, visit our website.",
+      "lines": [
+        {
+          "id": 58,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "Images shown are for representational purposes only.",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              22,
+              5
+            ],
+            [
+              482,
+              6
+            ],
+            [
+              482,
+              34
+            ],
+            [
+              22,
+              33
+            ]
+          ],
+          "heightPx": 28,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 59,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "RcHS",
+          "confidence": 0.976,
+          "bbox": [
+            [
+              830,
+              19
+            ],
+            [
+              922,
+              19
+            ],
+            [
+              922,
+              59
+            ],
+            [
+              830,
+              59
+            ]
+          ],
+          "heightPx": 40,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 60,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "The colour of the actual product may differ from that shown herein.",
+          "confidence": 0.9943,
+          "bbox": [
+            [
+              25,
+              31
+            ],
+            [
+              591,
+              31
+            ],
+            [
+              591,
+              56
+            ],
+            [
+              25,
+              56
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 61,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "UATIAMICO",
+          "confidence": 0.5682,
+          "bbox": [
+            [
+              837,
+              46
+            ],
+            [
+              913,
+              46
+            ],
+            [
+              913,
+              65
+            ],
+            [
+              837,
+              65
+            ]
+          ],
+          "heightPx": 19,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 62,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "Specifications are subject to change without notice.",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              26,
+              56
+            ],
+            [
+              458,
+              56
+            ],
+            [
+              458,
+              78
+            ],
+            [
+              26,
+              78
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 63,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "All brand names and trademarks are the property of their respective owners.",
+          "confidence": 0.9896,
+          "bbox": [
+            [
+              26,
+              78
+            ],
+            [
+              653,
+              78
+            ],
+            [
+              653,
+              100
+            ],
+            [
+              26,
+              100
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 64,
+          "imageIndex": 2,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.26 PM.jpeg",
+          "text": "This product falls under E-Waste (Management) Rules, 2016. For proper disposal method, visit our website.",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              25,
+              99
+            ],
+            [
+              886,
+              97
+            ],
+            [
+              886,
+              122
+            ],
+            [
+              25,
+              124
+            ]
+          ],
+          "heightPx": 25,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "Images shown are for representational purposes only.",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              22,
+              5
+            ],
+            [
+              482,
+              6
+            ],
+            [
+              482,
+              34
+            ],
+            [
+              22,
+              33
+            ]
+          ],
+          "pixel_height": 28
+        },
+        {
+          "text": "RcHS",
+          "confidence": 0.976,
+          "bbox": [
+            [
+              830,
+              19
+            ],
+            [
+              922,
+              19
+            ],
+            [
+              922,
+              59
+            ],
+            [
+              830,
+              59
+            ]
+          ],
+          "pixel_height": 40
+        },
+        {
+          "text": "The colour of the actual product may differ from that shown herein.",
+          "confidence": 0.9943,
+          "bbox": [
+            [
+              25,
+              31
+            ],
+            [
+              591,
+              31
+            ],
+            [
+              591,
+              56
+            ],
+            [
+              25,
+              56
+            ]
+          ],
+          "pixel_height": 25
+        },
+        {
+          "text": "UATIAMICO",
+          "confidence": 0.5682,
+          "bbox": [
+            [
+              837,
+              46
+            ],
+            [
+              913,
+              46
+            ],
+            [
+              913,
+              65
+            ],
+            [
+              837,
+              65
+            ]
+          ],
+          "pixel_height": 19
+        },
+        {
+          "text": "Specifications are subject to change without notice.",
+          "confidence": 0.9832,
+          "bbox": [
+            [
+              26,
+              56
+            ],
+            [
+              458,
+              56
+            ],
+            [
+              458,
+              78
+            ],
+            [
+              26,
+              78
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "All brand names and trademarks are the property of their respective owners.",
+          "confidence": 0.9896,
+          "bbox": [
+            [
+              26,
+              78
+            ],
+            [
+              653,
+              78
+            ],
+            [
+              653,
+              100
+            ],
+            [
+              26,
+              100
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "This product falls under E-Waste (Management) Rules, 2016. For proper disposal method, visit our website.",
+          "confidence": 0.9885,
+          "bbox": [
+            [
+              25,
+              99
+            ],
+            [
+              886,
+              97
+            ],
+            [
+              886,
+              122
+            ],
+            [
+              25,
+              124
+            ]
+          ],
+          "pixel_height": 25
+        }
+      ],
+      "metadata": {
+        "original_width": 963,
+        "original_height": 1280,
+        "output_width": 923,
+        "output_height": 160,
+        "boundary_detected": true,
+        "deskew_method": "perspective_warp",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 763.33,
+        "glare_area_fraction": 0.0021,
+        "usable": false,
+        "reject_reasons": [
+          "Resolution too low (923x160); minimum is 600x400. Re-capture closer to the label."
+        ]
+      }
+    },
+    {
+      "imageIndex": 3,
+      "filename": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+      "text": "SERVING\nINTEX\n0199\nMMAIN\nWIRELESS 2.4Ghz\nINTEX\nINT WiAD150\nUSB Adapter\n150Mbps\nHigh Speed\n802.1b/g/n",
+      "lines": [
+        {
+          "id": 65,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "SERVING",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              48,
+              123
+            ],
+            [
+              96,
+              127
+            ],
+            [
+              94,
+              147
+            ],
+            [
+              46,
+              143
+            ]
+          ],
+          "heightPx": 20.1,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 66,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "INTEX",
+          "confidence": 0.9866,
+          "bbox": [
+            [
+              331,
+              135
+            ],
+            [
+              508,
+              132
+            ],
+            [
+              509,
+              186
+            ],
+            [
+              332,
+              190
+            ]
+          ],
+          "heightPx": 54.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 67,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "0199",
+          "confidence": 0.8922,
+          "bbox": [
+            [
+              14,
+              188
+            ],
+            [
+              72,
+              154
+            ],
+            [
+              90,
+              180
+            ],
+            [
+              32,
+              215
+            ]
+          ],
+          "heightPx": 32.04,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 68,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "MMAIN",
+          "confidence": 0.5329,
+          "bbox": [
+            [
+              54,
+              204
+            ],
+            [
+              98,
+              196
+            ],
+            [
+              102,
+              216
+            ],
+            [
+              59,
+              224
+            ]
+          ],
+          "heightPx": 20.51,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 69,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "WIRELESS 2.4Ghz",
+          "confidence": 0.9952,
+          "bbox": [
+            [
+              73,
+              344
+            ],
+            [
+              96,
+              344
+            ],
+            [
+              96,
+              485
+            ],
+            [
+              73,
+              485
+            ]
+          ],
+          "heightPx": 141,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 70,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "INTEX",
+          "confidence": 0.9836,
+          "bbox": [
+            [
+              204,
+              358
+            ],
+            [
+              332,
+              450
+            ],
+            [
+              296,
+              496
+            ],
+            [
+              168,
+              403
+            ]
+          ],
+          "heightPx": 58.02,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 71,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "INT WiAD150",
+          "confidence": 0.9897,
+          "bbox": [
+            [
+              145,
+              453
+            ],
+            [
+              294,
+              563
+            ],
+            [
+              270,
+              592
+            ],
+            [
+              122,
+              482
+            ]
+          ],
+          "heightPx": 37.33,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 72,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "USB Adapter",
+          "confidence": 0.9926,
+          "bbox": [
+            [
+              391,
+              594
+            ],
+            [
+              511,
+              594
+            ],
+            [
+              511,
+              618
+            ],
+            [
+              391,
+              618
+            ]
+          ],
+          "heightPx": 24,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 73,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "150Mbps",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              81,
+              595
+            ],
+            [
+              165,
+              595
+            ],
+            [
+              165,
+              617
+            ],
+            [
+              81,
+              617
+            ]
+          ],
+          "heightPx": 22,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 74,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "High Speed",
+          "confidence": 0.9959,
+          "bbox": [
+            [
+              80,
+              613
+            ],
+            [
+              188,
+              613
+            ],
+            [
+              188,
+              630
+            ],
+            [
+              80,
+              630
+            ]
+          ],
+          "heightPx": 17,
+          "heightMm": null,
+          "language": null
+        },
+        {
+          "id": 75,
+          "imageIndex": 3,
+          "sourceImage": "WhatsApp Image 2026-09-04 at 3.58.27 PM (1).jpeg",
+          "text": "802.1b/g/n",
+          "confidence": 0.9741,
+          "bbox": [
+            [
+              388,
+              613
+            ],
+            [
+              507,
+              613
+            ],
+            [
+              507,
+              630
+            ],
+            [
+              388,
+              630
+            ]
+          ],
+          "heightPx": 17,
+          "heightMm": null,
+          "language": null
+        }
+      ],
+      "regions": [
+        {
+          "text": "SERVING",
+          "confidence": 0.9997,
+          "bbox": [
+            [
+              48,
+              123
+            ],
+            [
+              96,
+              127
+            ],
+            [
+              94,
+              147
+            ],
+            [
+              46,
+              143
+            ]
+          ],
+          "pixel_height": 20.1
+        },
+        {
+          "text": "INTEX",
+          "confidence": 0.9866,
+          "bbox": [
+            [
+              331,
+              135
+            ],
+            [
+              508,
+              132
+            ],
+            [
+              509,
+              186
+            ],
+            [
+              332,
+              190
+            ]
+          ],
+          "pixel_height": 54.51
+        },
+        {
+          "text": "0199",
+          "confidence": 0.8922,
+          "bbox": [
+            [
+              14,
+              188
+            ],
+            [
+              72,
+              154
+            ],
+            [
+              90,
+              180
+            ],
+            [
+              32,
+              215
+            ]
+          ],
+          "pixel_height": 32.04
+        },
+        {
+          "text": "MMAIN",
+          "confidence": 0.5329,
+          "bbox": [
+            [
+              54,
+              204
+            ],
+            [
+              98,
+              196
+            ],
+            [
+              102,
+              216
+            ],
+            [
+              59,
+              224
+            ]
+          ],
+          "pixel_height": 20.51
+        },
+        {
+          "text": "WIRELESS 2.4Ghz",
+          "confidence": 0.9952,
+          "bbox": [
+            [
+              73,
+              344
+            ],
+            [
+              96,
+              344
+            ],
+            [
+              96,
+              485
+            ],
+            [
+              73,
+              485
+            ]
+          ],
+          "pixel_height": 141
+        },
+        {
+          "text": "INTEX",
+          "confidence": 0.9836,
+          "bbox": [
+            [
+              204,
+              358
+            ],
+            [
+              332,
+              450
+            ],
+            [
+              296,
+              496
+            ],
+            [
+              168,
+              403
+            ]
+          ],
+          "pixel_height": 58.02
+        },
+        {
+          "text": "INT WiAD150",
+          "confidence": 0.9897,
+          "bbox": [
+            [
+              145,
+              453
+            ],
+            [
+              294,
+              563
+            ],
+            [
+              270,
+              592
+            ],
+            [
+              122,
+              482
+            ]
+          ],
+          "pixel_height": 37.33
+        },
+        {
+          "text": "USB Adapter",
+          "confidence": 0.9926,
+          "bbox": [
+            [
+              391,
+              594
+            ],
+            [
+              511,
+              594
+            ],
+            [
+              511,
+              618
+            ],
+            [
+              391,
+              618
+            ]
+          ],
+          "pixel_height": 24
+        },
+        {
+          "text": "150Mbps",
+          "confidence": 0.9998,
+          "bbox": [
+            [
+              81,
+              595
+            ],
+            [
+              165,
+              595
+            ],
+            [
+              165,
+              617
+            ],
+            [
+              81,
+              617
+            ]
+          ],
+          "pixel_height": 22
+        },
+        {
+          "text": "High Speed",
+          "confidence": 0.9959,
+          "bbox": [
+            [
+              80,
+              613
+            ],
+            [
+              188,
+              613
+            ],
+            [
+              188,
+              630
+            ],
+            [
+              80,
+              630
+            ]
+          ],
+          "pixel_height": 17
+        },
+        {
+          "text": "802.1b/g/n",
+          "confidence": 0.9741,
+          "bbox": [
+            [
+              388,
+              613
+            ],
+            [
+              507,
+              613
+            ],
+            [
+              507,
+              630
+            ],
+            [
+              388,
+              630
+            ]
+          ],
+          "pixel_height": 17
+        }
+      ],
+      "metadata": {
+        "original_width": 963,
+        "original_height": 1280,
+        "output_width": 527,
+        "output_height": 631,
+        "boundary_detected": true,
+        "deskew_method": "perspective_warp",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 182.47,
+        "glare_area_fraction": 0,
+        "usable": false,
+        "reject_reasons": [
+          "Resolution too low (527x631); minimum is 600x400. Re-capture closer to the label."
+        ]
+      }
+    },
+    {
+      "imageIndex": 4,
+      "filename": "WhatsApp Image 2026-09-04 at 3.58.27 PM.jpeg",
+      "text": "",
+      "lines": [],
+      "regions": [],
+      "metadata": {
+        "original_width": 1134,
+        "original_height": 790,
+        "output_width": 920,
+        "output_height": 114,
+        "boundary_detected": true,
+        "deskew_method": "perspective_warp",
+        "rotation_angle_deg": 0,
+        "sharpness_score": 1.22,
+        "glare_area_fraction": 0,
+        "usable": false,
+        "reject_reasons": [
+          "Resolution too low (920x114); minimum is 600x400. Re-capture closer to the label.",
+          "Image too blurry (sharpness=1.2, minimum=60.0). Hold the camera steady and re-capture."
+        ]
+      }
+    }
+  ]
+}

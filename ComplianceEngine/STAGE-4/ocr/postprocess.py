@@ -10,9 +10,13 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 
 
+MONTH_NAMES = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
+
 DATE_RE = re.compile(
-    r"\b(?:0?[1-9]|[12]\d|3[01])\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b"
-    r"|\b(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b",
+    rf"\b(?:0?[1-9]|[12]\d|3[01])\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{{2}}|\d{{4}})\b"
+    rf"|\b(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{{2}}|\d{{4}})\b"
+    rf"|\b{MONTH_NAMES}\s*[-/.]?,?\s*(?:\d{{2}}|\d{{4}})\b"
+    rf"|\b(?:0?[1-9]|[12]\d|3[01])\s+{MONTH_NAMES}\s+(?:\d{{2}}|\d{{4}})\b",
     re.I,
 )
 
@@ -24,7 +28,7 @@ MONEY_RE = re.compile(
 )
 
 QUANTITY_RE = re.compile(
-    r"\b(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|gms|grams?|l|litres?|liters?|ml|millilit(?:re|er)s?)\b",
+    r"\b(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|gms|grams?|l|litres?|liters?|ml|millilit(?:re|er)s?|u|unit|units|n|no|nos|number|numbers|pc|pcs|piece|pieces)\b",
     re.I,
 )
 
@@ -79,8 +83,12 @@ def _extract_quantity(line: Optional[Dict[str, Any]]) -> Tuple[Optional[float], 
         unit = "g"
     elif unit_raw.startswith("l") or unit_raw.startswith("lit"):
         unit = "l"
-    else:
+    elif unit_raw.startswith("ml"):
         unit = "ml"
+    elif unit_raw in {"unit", "units", "u", "n", "no", "nos", "pc", "pcs", "piece", "pieces", "number", "numbers"}:
+        unit = "unit"
+    else:
+        unit = unit_raw
     return value, unit, line["text"]
 
 
@@ -116,21 +124,27 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
         [
             r"\bmanufactur(?:ed|er)\b",
             r"\bmfg\.?\s*(?:by|at)\b",
-            r"\bmarketed\s+by\b",
+            r"\bmarketed\s+(?:and\s+supported\s+by|by)\b",
             r"\bmanufactured\s*&?\s*marketed\s+by\b",
+            r"\bimported\s+by\b",
+            r"\bpacked\s+by\b",
         ],
     )
 
-    name_line = None
-    # A product-name candidate is deliberately conservative: a short/medium
-    # line near the top containing a product-type word, while avoiding generic
-    # declaration labels. This is a candidate, not a final classification.
-    name_words = r"bottle|cream|lotion|shampoo|oil|soap|detergent|powder|spray|liquid|food|drink|juice|snack|biscuits?|tablet|capsule|charger|adapter|paste|gel|tube|pack"
-    for line in clean_lines[: max(8, len(clean_lines) // 3)]:
-        text = line["text"]
-        if 2 <= len(text.split()) <= 10 and re.search(name_words, text, re.I):
-            name_line = line
-            break
+    name_line = _first_match(
+        clean_lines,
+        [
+            r"\b(?:item|generic|product)\s*name\s*:\s*(.+)",
+            r"\bmodel\s*no\.?\s*:\s*(.+)",
+        ],
+    )
+    if name_line is None:
+        name_words = r"bottle|cream|lotion|shampoo|oil|soap|detergent|powder|spray|liquid|food|drink|juice|snack|biscuits?|tablet|capsule|charger|adapter|paste|gel|tube|pack"
+        for line in clean_lines[: max(8, len(clean_lines) // 3)]:
+            text = line["text"]
+            if 2 <= len(text.split()) <= 10 and re.search(name_words, text, re.I):
+                name_line = line
+                break
 
     quantity_line = _first_match(clean_lines, [r"\bnet\s*(?:qty|quantity|weight|wt)\b", r"\bcontents?\b"])
     if quantity_line is None:
@@ -139,10 +153,22 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
                 quantity_line = line
                 break
 
-    mfg_line = _first_match(clean_lines, [r"\bmfg\.?\s*(?:date|dt)\b", r"\bmanufactur(?:ed|ing)\s+date\b"])
+    mfg_line = _first_match(
+        clean_lines,
+        [
+            r"\bmonth\s*(&|and)?\s*year\s+of\s+manufactur\w*",
+            r"\bdate\s+of\s+manufactur\w*",
+            r"\bmfg\.?\s*(?:date|dt)\b",
+            r"\bmanufactur(?:ed|ing)\s+date\b",
+            r"\bmfg\b",
+            r"\bpkd\b",
+            r"\bpacked\b",
+            r"\bpacking\s+date\b",
+        ],
+    )
     if mfg_line is None:
         for line in clean_lines:
-            if re.search(r"\bmfg\b|\bmanufacturing\b", line["text"], re.I) and DATE_RE.search(line["text"]):
+            if re.search(r"\bmfg\b|\bmanufacturing\b|\bpacked\b|\bpkd\b", line["text"], re.I) and DATE_RE.search(line["text"]):
                 mfg_line = line
                 break
 
@@ -154,13 +180,19 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     if manufacturer_line:
         idx = _line_index(clean_lines, manufacturer_line)
-        address_line = manufacturer_line
-        if not PIN_RE.search(address_line["text"]):
-            nearby = _find_nearby(clean_lines, idx, [r"\b\d{6}\b", r"\broad\b", r"\broad\.?\b", r"\bsector\b", r"\bindia\b"], window=2)
-            if nearby:
-                address_line = nearby
-        manufacturer_address = bool(PIN_RE.search(address_line["text"]) or len(address_line["text"]) > 40)
+        has_address = False
+        mfg_display_text = manufacturer_line["text"]
+        if idx + 1 < len(clean_lines) and re.match(r"^(?:marketed|manufactured|supported|imported|packed)\b.*:$", mfg_display_text, re.I):
+            mfg_display_text = clean_lines[idx + 1]["text"]
+
+        for j in range(idx, min(len(clean_lines), idx + 6)):
+            ltext = clean_lines[j]["text"]
+            if PIN_RE.search(ltext) or re.search(r"address\s*:|\bindia\b|\broad\b|\bsector\b|\barea\b|\bphase\b|\bdelhi\b|\bmumbai\b|\bchennai\b|\bkolkata\b", ltext, re.I):
+                has_address = True
+                break
+        manufacturer_address = has_address
     else:
+        mfg_display_text = None
         manufacturer_address = False
 
     mfg_date = None
@@ -170,15 +202,18 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     mrp_value = _extract_money(mrp_line)
     mrp_text = mrp_line["text"] if mrp_line else ""
-    inclusive = bool(re.search(r"incl\.?\s*(?:of\s*)?all\s*tax|inclusive\s+of\s+all\s+tax", mrp_text, re.I))
+    tax_pattern = r"incl\.?\s*(?:of\s*)?(?:all\s*)?tax|inclusive\s+of\s+(?:all\s+)?tax"
+    inclusive = bool(re.search(tax_pattern, mrp_text, re.I))
     if not inclusive and mrp_line:
         idx = _line_index(clean_lines, mrp_line)
-        nearby = _find_nearby(clean_lines, idx, [r"incl\.?\s*(?:of\s*)?all\s*tax", r"inclusive\s+of\s+tax"], window=1)
+        nearby = _find_nearby(clean_lines, idx, [tax_pattern], window=2)
         inclusive = nearby is not None
 
     qualified = None
     if quantity_line:
         qualified = bool(re.search(r"when\s+packed|at\s+the\s+time\s+of\s+packing|packed\s+on", quantity_line["text"], re.I))
+
+    unit_kind = "mass" if qty_unit in {"g", "kg"} else "volume" if qty_unit in {"ml", "l"} else "number" if qty_unit == "unit" else None
 
     return {
         "commodityName": {
@@ -189,7 +224,7 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
         },
         "manufacturer": {
             "present": manufacturer_line is not None,
-            "text": manufacturer_line["text"] if manufacturer_line else None,
+            "text": mfg_display_text if manufacturer_line else None,
             "address": manufacturer_address,
             "bbox": manufacturer_line["bbox"] if manufacturer_line else None,
             "confidence": manufacturer_line["confidence"] if manufacturer_line else None,
@@ -199,7 +234,7 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
             "rawText": qty_raw if quantity_line else "",
             "value": qty_value,
             "unit": qty_unit,
-            "unitKind": "mass" if qty_unit in {"g", "kg"} else "volume" if qty_unit in {"ml", "l"} else None,
+            "unitKind": unit_kind,
             "qualifiedWhenPacked": qualified,
             "bbox": quantity_line["bbox"] if quantity_line else None,
             "pixel_height": quantity_line["pixel_height"] if quantity_line else None,
