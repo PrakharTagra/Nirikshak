@@ -28,6 +28,8 @@ router.post("/", async (req, res) => {
         url: data.url,
         platform: data.platform,
         crawledAt: data.crawledAt,
+        structuredData: data.structuredData,
+        metadata: data.metadata,
       });
     }
 

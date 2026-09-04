@@ -42,6 +42,71 @@ async function autoScroll(page) {
 }
 
 /**
+ * Detects and clicks on expanders like "See more product details", technical specifications
+ * toggles, product overview expanders, and unhides collapsed specification tables so
+ * that all product declarations become fully accessible to extractors.
+ */
+async function expandCollapsibleSections(page) {
+  try {
+    await page.evaluate(() => {
+      // 1. Click all standard expandable buttons/links
+      const clickSelectors = [
+        '#seeMoreDetailsLink',
+        'a[href*="#productDetails"]',
+        'a[href*="#technicalSpecifications"]',
+        'a[href*="#detailBullets"]',
+        '[data-action="a-expander-toggle"]',
+        '.a-expander-header',
+        '.a-expander-prompt',
+        '#poExpander',
+        '#poExpander a',
+        'button[aria-expanded="false"]',
+        'div[aria-expanded="false"]',
+        'summary',
+      ];
+
+      document.querySelectorAll(clickSelectors.join(', ')).forEach((el) => {
+        try {
+          if (el.closest('#reviewsMedley, #customerReviews, footer, nav, header, .reviews, .__lm_noise_container__')) return;
+          el.click();
+        } catch {}
+      });
+
+      // 2. Click any element with text matching "See more product details", "Show more", etc.
+      const EXPAND_TEXT_REGEX = /^(?:[›»\s]*see\s+more(?:\s+product\s+details)?|[›»\s]*show\s+more|[›»\s]*read\s+more|[›»\s]*view\s+more\s+details)$/i;
+      document.querySelectorAll('a, button, span.a-declarative, span.a-expander-prompt').forEach((el) => {
+        try {
+          if (el.closest('#reviewsMedley, #customerReviews, footer, nav, header, .reviews, .__lm_noise_container__')) return;
+          const text = (el.textContent || '').trim();
+          if (EXPAND_TEXT_REGEX.test(text)) {
+            el.click();
+          }
+        } catch {}
+      });
+
+      // 3. Force expand and un-collapse any hidden expander content in product detail sections
+      const detailContainers = document.querySelectorAll(
+        '#prodDetails, #productDetails_techSpec_section_1, #productDetails_db_sections, #detailBullets_feature_div, #technicalSpecifications_section_1, #productDescription_feature_div, .product-specs, .product-details, #productOverview_feature_div'
+      );
+      detailContainers.forEach((container) => {
+        container.querySelectorAll('.a-expander-content, .a-expander-collapsed, [aria-hidden="true"]').forEach((content) => {
+          content.classList.remove('a-expander-collapsed');
+          content.setAttribute('aria-hidden', 'false');
+          content.style.display = 'block';
+          content.style.maxHeight = 'none';
+          content.style.overflow = 'visible';
+          content.style.visibility = 'visible';
+        });
+      });
+    });
+
+    await page.waitForTimeout(600);
+  } catch {
+    // Graceful fallback
+  }
+}
+
+/**
  * Loads a single product URL with PlaywrightCrawler, waits until the page
  * is "fully rendered" (DOM ready, network mostly idle, lazy content
  * triggered via a full-page scroll pass), then extracts the raw data
@@ -129,7 +194,11 @@ export async function loadProductPage(url) {
         log.warning(`[listing-crawler] autoScroll failed: ${err.message}`);
       });
 
-      // Small settle delay after scrolling for any lazy-triggered fetches/animations.
+      await expandCollapsibleSections(page).catch((err) => {
+        log.warning(`[listing-crawler] expandCollapsibleSections failed: ${err.message}`);
+      });
+
+      // Small settle delay after scrolling and expanding for any lazy-triggered fetches/animations.
       await page.waitForTimeout(500);
 
       const finalUrl = page.url();

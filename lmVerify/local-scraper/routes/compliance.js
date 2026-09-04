@@ -15,7 +15,7 @@ const router = express.Router();
  * from ComplianceEngine.
  */
 router.post("/", async (req, res) => {
-  const { url, text, platform } = req.body;
+  const { url, text, platform, structuredData, metadata } = req.body;
 
   if (!url) {
     return res.status(400).json({ error: "url is required." });
@@ -43,11 +43,16 @@ router.post("/", async (req, res) => {
       finalUrl = listingData.url;
     }
 
+    const resolvedStructuredData = structuredData || listingData?.structuredData || null;
+    const resolvedMetadata = metadata || listingData?.metadata || null;
+
     console.log(`⚖️  [compliance] Running ComplianceEngine post-OCR mapping & rule engine for: ${finalUrl}`);
     const pipelineResult = await runCompliancePipeline(rawText, {
       url: finalUrl,
       platform: resolvedPlatform,
       crawledAt,
+      structuredData: resolvedStructuredData,
+      metadata: resolvedMetadata,
     });
 
     return res.json({

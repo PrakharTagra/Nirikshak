@@ -94,15 +94,92 @@ const BOILERPLATE_PATTERNS = [
 const LM_KEYWORDS = /manufacturer|packer|importer|mfd|pkd|mrp|maximum retail price|inclusive of all taxes|incl\. of|net quantity|net wt|volume|weight|generic name|country of origin|dimensions|customer care|helpline|complaint|phone|email|conditioner|detergent|salt|food|pouch|refill|liquid|solid|size|brand|model|item dimensions|product dimensions/i;
 
 /**
+ * Extracts high-value packaging declaration lines from JSON-LD blocks,
+ * schema.org Product structures, or raw JSON.
+ */
+export function extractStructuredDeclarations(structuredDataOrJson) {
+  if (!structuredDataOrJson) return [];
+  const lines = [];
+
+  let data = structuredDataOrJson;
+  if (typeof data === "string") {
+    try {
+      data = JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+
+  const blocks = Array.isArray(data.jsonLd)
+    ? data.jsonLd
+    : Array.isArray(data)
+    ? data
+    : [data];
+
+  for (const block of blocks) {
+    if (!block || typeof block !== "object") continue;
+
+    if (block.name) lines.push(`Product Name: ${block.name}`);
+    if (block.brand) {
+      const b = typeof block.brand === "object" ? block.brand.name : block.brand;
+      if (b) lines.push(`Brand: ${b}`);
+    }
+    if (block.manufacturer) {
+      const m = typeof block.manufacturer === "object" ? (block.manufacturer.name || block.manufacturer.legalName) : block.manufacturer;
+      if (m) lines.push(`Manufacturer: ${m}`);
+    }
+    if (block.offers) {
+      const offers = Array.isArray(block.offers) ? block.offers : [block.offers];
+      for (const off of offers) {
+        if (off.price) {
+          const cur = off.priceCurrency || "INR";
+          lines.push(`M.R.P. / Price: ${cur} ${off.price} (Inclusive of all taxes)`);
+        }
+      }
+    }
+    if (block.netQuantity || block.weight || block.volume) {
+      lines.push(`Net Quantity: ${block.netQuantity || block.weight || block.volume}`);
+    }
+    if (block.countryOfOrigin) {
+      lines.push(`Country of Origin: ${block.countryOfOrigin}`);
+    }
+    if (block.model || block.mpn || block.sku) {
+      lines.push(`Model / SKU: ${block.model || block.mpn || block.sku}`);
+    }
+    if (block.category) {
+      lines.push(`Category: ${block.category}`);
+    }
+  }
+
+  return lines;
+}
+
+/**
  * Cleans, segments, and prioritizes raw web listing text so that
  * extraction services (Groq or regex) receive dense, high-relevance
  * packaging declarations and stay comfortably within token limits.
  *
  * @param {string} rawText
+ * @param {object|string} [structuredData] - Optional JSON-LD or structured payload
  * @returns {{ lines: Array<{ id: number, text: string }>, text: string }}
  */
-export function prepareOcrResultFromText(rawText) {
+export function prepareOcrResultFromText(rawText, structuredData = null) {
   let text = String(rawText || "").trim();
+
+  // If rawText is itself a JSON payload, parse it
+  let directJsonLines = [];
+  if (text.startsWith("{") || text.startsWith("[")) {
+    try {
+      directJsonLines = extractStructuredDeclarations(JSON.parse(text));
+    } catch {
+      // Treat as regular text
+    }
+  }
+
+  const structuredLines = [
+    ...directJsonLines,
+    ...extractStructuredDeclarations(structuredData),
+  ];
 
   // If text is flat (e.g. joined by spaces or ||), split on key boundaries
   if (text.split("\n").length < 10 && text.length > 300) {
@@ -113,7 +190,10 @@ export function prepareOcrResultFromText(rawText) {
     );
   }
 
-  const rawLines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const rawLines = [
+    ...structuredLines,
+    ...text.split("\n").map((l) => l.trim()).filter(Boolean),
+  ];
   const seen = new Set();
   const highPriority = [];
   const normalPriority = [];
@@ -180,7 +260,7 @@ export async function runCompliancePipeline(rawText, context = {}) {
     throw new Error("runCompliancePipeline: rawText is required.");
   }
 
-  const ocrResult = prepareOcrResultFromText(rawText);
+  const ocrResult = prepareOcrResultFromText(rawText, context.structuredData);
 
   // 1. Stage 5/6: Declaration Extraction / Mapping (Groq or regex fallback)
   const declarations = await extract(ocrResult, null);

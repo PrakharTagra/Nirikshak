@@ -122,10 +122,19 @@ export async function extractVisibleText(page) {
       "#centerCol",
       "#feature-bullets",
       "#prodDetails",
+      "#productDetails_feature_div",
       "#productDetails_techSpec_section_1",
+      "#productDetails_techSpec_section_2",
       "#productDetails_db_sections",
       "#detailBullets_feature_div",
+      "#detailBulletsWrapper_feature_div",
       "#technicalSpecifications_section_1",
+      "#technicalSpecifications_section_2",
+      "#productDescription_feature_div",
+      "#productOverview_feature_div",
+      "#poExpander",
+      ".po-expander-content",
+      "table.a-keyvalue",
       ".product-specs",
       ".product-details",
       "#corePrice_feature_div",
@@ -136,7 +145,7 @@ export async function extractVisibleText(page) {
 
     const priorityContainers = document.querySelectorAll(prioritySelectors.join(", "));
     priorityContainers.forEach((container) => {
-      if (!isVisible(container) || isInsideNoise(container)) return;
+      if (isInsideNoise(container)) return;
       const text = (container.innerText || container.textContent || "").trim();
       if (!text) return;
       text.split("\n").forEach((line) => {

@@ -41,6 +41,8 @@ export default function NewScan() {
           const compData = await checkCompliance(data.url, {
             text: data.text,
             platform: data.platform,
+            structuredData: data.structuredData,
+            metadata: data.metadata,
           });
           setCompliance(compData);
           setTab("compliance");
@@ -67,6 +69,8 @@ export default function NewScan() {
       const compData = await checkCompliance(result.url, {
         text: result.text,
         platform: result.platform,
+        structuredData: result.structuredData,
+        metadata: result.metadata,
       });
       setCompliance(compData);
       setTab("compliance");
