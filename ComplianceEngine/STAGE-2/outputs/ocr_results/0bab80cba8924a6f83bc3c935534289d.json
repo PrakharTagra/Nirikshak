@@ -1,0 +1,1048 @@
+{
+  "extracted_text": "Batch No.\nU6EG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. of all taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out\u00ae ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.\nGurugram, Haryana 122018, India. Contact us: Manager, Complaints at Regd.Ofie of Marketer Ph:011-4170499 Email:cCare@brlloconsumer.com\nNet Quantity :\n90ml\n(2 Numbers x 45 ml)",
+  "metadata": {
+    "original_width": 1280,
+    "original_height": 1028,
+    "output_width": 985,
+    "output_height": 506,
+    "boundary_detected": true,
+    "deskew_method": "perspective_warp",
+    "rotation_angle_deg": 0.0,
+    "sharpness_score": 1202.67,
+    "glare_area_fraction": 0.0,
+    "usable": true,
+    "reject_reasons": []
+  },
+  "declarations": {
+    "commodityName": {
+      "present": false,
+      "text": null,
+      "bbox": null,
+      "confidence": null
+    },
+    "manufacturer": {
+      "present": true,
+      "text": "Manufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.",
+      "address": true,
+      "bbox": [
+        [
+          120.0,
+          238.0
+        ],
+        [
+          870.0,
+          257.0
+        ],
+        [
+          870.0,
+          281.0
+        ],
+        [
+          120.0,
+          263.0
+        ]
+      ],
+      "confidence": 0.8426
+    },
+    "netQuantity": {
+      "present": true,
+      "rawText": "Net Quantity :",
+      "value": null,
+      "unit": null,
+      "unitKind": null,
+      "qualifiedWhenPacked": false,
+      "bbox": [
+        [
+          119.0,
+          291.0
+        ],
+        [
+          261.0,
+          293.0
+        ],
+        [
+          261.0,
+          318.0
+        ],
+        [
+          119.0,
+          316.0
+        ]
+      ],
+      "pixel_height": 25.0
+    },
+    "mfgDate": {
+      "present": true,
+      "rawText": "Mfg. Date",
+      "date": "Mfg. Date",
+      "bbox": [
+        [
+          124.0,
+          42.0
+        ],
+        [
+          199.0,
+          43.0
+        ],
+        [
+          199.0,
+          70.0
+        ],
+        [
+          123.0,
+          69.0
+        ]
+      ]
+    },
+    "mrp": {
+      "present": true,
+      "rawText": "MRP Rs.",
+      "value": null,
+      "inclusiveOfTaxesStated": false,
+      "bbox": [
+        [
+          124.0,
+          74.0
+        ],
+        [
+          189.0,
+          77.0
+        ],
+        [
+          188.0,
+          101.0
+        ],
+        [
+          123.0,
+          98.0
+        ]
+      ]
+    },
+    "consumerCare": {
+      "present": false,
+      "rawText": "",
+      "bbox": null
+    },
+    "standardPackDeclaration": {
+      "present": false,
+      "rawText": "",
+      "bbox": null
+    }
+  },
+  "regions": [
+    {
+      "text": "Batch No.",
+      "confidence": 0.9998,
+      "bbox": [
+        [
+          124.0,
+          9.0
+        ],
+        [
+          200.0,
+          11.0
+        ],
+        [
+          199.0,
+          37.0
+        ],
+        [
+          124.0,
+          36.0
+        ]
+      ],
+      "pixel_height": 26.51
+    },
+    {
+      "text": "U6EG564TN",
+      "confidence": 0.8557,
+      "bbox": [
+        [
+          263.0,
+          37.0
+        ],
+        [
+          481.0,
+          39.0
+        ],
+        [
+          481.0,
+          67.0
+        ],
+        [
+          263.0,
+          65.0
+        ]
+      ],
+      "pixel_height": 28.0
+    },
+    {
+      "text": "Mfg. Date",
+      "confidence": 0.9523,
+      "bbox": [
+        [
+          124.0,
+          42.0
+        ],
+        [
+          199.0,
+          43.0
+        ],
+        [
+          199.0,
+          70.0
+        ],
+        [
+          123.0,
+          69.0
+        ]
+      ],
+      "pixel_height": 27.01
+    },
+    {
+      "text": "09/07126 12:36",
+      "confidence": 0.9614,
+      "bbox": [
+        [
+          265.0,
+          65.0
+        ],
+        [
+          540.0,
+          65.0
+        ],
+        [
+          540.0,
+          92.0
+        ],
+        [
+          265.0,
+          92.0
+        ]
+      ],
+      "pixel_height": 27.0
+    },
+    {
+      "text": "MRP Rs.",
+      "confidence": 0.9807,
+      "bbox": [
+        [
+          124.0,
+          74.0
+        ],
+        [
+          189.0,
+          77.0
+        ],
+        [
+          188.0,
+          101.0
+        ],
+        [
+          123.0,
+          98.0
+        ]
+      ],
+      "pixel_height": 24.02
+    },
+    {
+      "text": "Rs.190.00 175.00",
+      "confidence": 0.9695,
+      "bbox": [
+        [
+          265.0,
+          90.0
+        ],
+        [
+          558.0,
+          90.0
+        ],
+        [
+          558.0,
+          118.0
+        ],
+        [
+          265.0,
+          118.0
+        ]
+      ],
+      "pixel_height": 28.0
+    },
+    {
+      "text": "(Incl. of all taxes)",
+      "confidence": 0.9891,
+      "bbox": [
+        [
+          123.0,
+          94.0
+        ],
+        [
+          230.0,
+          96.0
+        ],
+        [
+          229.0,
+          120.0
+        ],
+        [
+          123.0,
+          117.0
+        ]
+      ],
+      "pixel_height": 23.51
+    },
+    {
+      "text": "Rs.1.9 4/ml",
+      "confidence": 0.9647,
+      "bbox": [
+        [
+          266.0,
+          115.0
+        ],
+        [
+          450.0,
+          116.0
+        ],
+        [
+          450.0,
+          144.0
+        ],
+        [
+          265.0,
+          142.0
+        ]
+      ],
+      "pixel_height": 27.51
+    },
+    {
+      "text": "USP Rs./ml",
+      "confidence": 0.9981,
+      "bbox": [
+        [
+          122.0,
+          124.0
+        ],
+        [
+          211.0,
+          127.0
+        ],
+        [
+          210.0,
+          154.0
+        ],
+        [
+          121.0,
+          150.0
+        ]
+      ],
+      "pixel_height": 26.52
+    },
+    {
+      "text": "For works address, refer first 2 characters of the batch number",
+      "confidence": 0.9898,
+      "bbox": [
+        [
+          121.0,
+          169.0
+        ],
+        [
+          543.0,
+          180.0
+        ],
+        [
+          542.0,
+          204.0
+        ],
+        [
+          120.0,
+          194.0
+        ]
+      ],
+      "pixel_height": 24.52
+    },
+    {
+      "text": "All Out\u00ae ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+      "confidence": 0.9876,
+      "bbox": [
+        [
+          121.0,
+          192.0
+        ],
+        [
+          558.0,
+          202.0
+        ],
+        [
+          558.0,
+          227.0
+        ],
+        [
+          121.0,
+          216.0
+        ]
+      ],
+      "pixel_height": 24.5
+    },
+    {
+      "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
+      "confidence": 0.993,
+      "bbox": [
+        [
+          120.0,
+          214.0
+        ],
+        [
+          781.0,
+          230.0
+        ],
+        [
+          780.0,
+          257.0
+        ],
+        [
+          120.0,
+          241.0
+        ]
+      ],
+      "pixel_height": 27.01
+    },
+    {
+      "text": "Manufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.",
+      "confidence": 0.8426,
+      "bbox": [
+        [
+          120.0,
+          238.0
+        ],
+        [
+          870.0,
+          257.0
+        ],
+        [
+          870.0,
+          281.0
+        ],
+        [
+          120.0,
+          263.0
+        ]
+      ],
+      "pixel_height": 24.5
+    },
+    {
+      "text": "Gurugram, Haryana 122018, India. Contact us: Manager, Complaints at Regd.Ofie of Marketer Ph:011-4170499 Email:cCare@brlloconsumer.com",
+      "confidence": 0.8958,
+      "bbox": [
+        [
+          120.0,
+          259.0
+        ],
+        [
+          835.0,
+          275.0
+        ],
+        [
+          835.0,
+          300.0
+        ],
+        [
+          120.0,
+          284.0
+        ]
+      ],
+      "pixel_height": 25.0
+    },
+    {
+      "text": "Net Quantity :",
+      "confidence": 0.9683,
+      "bbox": [
+        [
+          119.0,
+          291.0
+        ],
+        [
+          261.0,
+          293.0
+        ],
+        [
+          261.0,
+          318.0
+        ],
+        [
+          119.0,
+          316.0
+        ]
+      ],
+      "pixel_height": 25.0
+    },
+    {
+      "text": "90ml",
+      "confidence": 0.9874,
+      "bbox": [
+        [
+          258.0,
+          293.0
+        ],
+        [
+          312.0,
+          295.0
+        ],
+        [
+          311.0,
+          319.0
+        ],
+        [
+          257.0,
+          317.0
+        ]
+      ],
+      "pixel_height": 24.02
+    },
+    {
+      "text": "(2 Numbers x 45 ml)",
+      "confidence": 0.9957,
+      "bbox": [
+        [
+          333.0,
+          294.0
+        ],
+        [
+          482.0,
+          298.0
+        ],
+        [
+          481.0,
+          323.0
+        ],
+        [
+          332.0,
+          319.0
+        ]
+      ],
+      "pixel_height": 25.02
+    }
+  ],
+  "ocr": {
+    "success": true,
+    "text": "Batch No.\nU6EG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. of all taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out\u00ae ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.\nGurugram, Haryana 122018, India. Contact us: Manager, Complaints at Regd.Ofie of Marketer Ph:011-4170499 Email:cCare@brlloconsumer.com\nNet Quantity :\n90ml\n(2 Numbers x 45 ml)",
+    "regions": [
+      {
+        "text": "Batch No.",
+        "confidence": 0.9998,
+        "bbox": [
+          [
+            124.0,
+            9.0
+          ],
+          [
+            200.0,
+            11.0
+          ],
+          [
+            199.0,
+            37.0
+          ],
+          [
+            124.0,
+            36.0
+          ]
+        ],
+        "pixel_height": 26.51
+      },
+      {
+        "text": "U6EG564TN",
+        "confidence": 0.8557,
+        "bbox": [
+          [
+            263.0,
+            37.0
+          ],
+          [
+            481.0,
+            39.0
+          ],
+          [
+            481.0,
+            67.0
+          ],
+          [
+            263.0,
+            65.0
+          ]
+        ],
+        "pixel_height": 28.0
+      },
+      {
+        "text": "Mfg. Date",
+        "confidence": 0.9523,
+        "bbox": [
+          [
+            124.0,
+            42.0
+          ],
+          [
+            199.0,
+            43.0
+          ],
+          [
+            199.0,
+            70.0
+          ],
+          [
+            123.0,
+            69.0
+          ]
+        ],
+        "pixel_height": 27.01
+      },
+      {
+        "text": "09/07126 12:36",
+        "confidence": 0.9614,
+        "bbox": [
+          [
+            265.0,
+            65.0
+          ],
+          [
+            540.0,
+            65.0
+          ],
+          [
+            540.0,
+            92.0
+          ],
+          [
+            265.0,
+            92.0
+          ]
+        ],
+        "pixel_height": 27.0
+      },
+      {
+        "text": "MRP Rs.",
+        "confidence": 0.9807,
+        "bbox": [
+          [
+            124.0,
+            74.0
+          ],
+          [
+            189.0,
+            77.0
+          ],
+          [
+            188.0,
+            101.0
+          ],
+          [
+            123.0,
+            98.0
+          ]
+        ],
+        "pixel_height": 24.02
+      },
+      {
+        "text": "Rs.190.00 175.00",
+        "confidence": 0.9695,
+        "bbox": [
+          [
+            265.0,
+            90.0
+          ],
+          [
+            558.0,
+            90.0
+          ],
+          [
+            558.0,
+            118.0
+          ],
+          [
+            265.0,
+            118.0
+          ]
+        ],
+        "pixel_height": 28.0
+      },
+      {
+        "text": "(Incl. of all taxes)",
+        "confidence": 0.9891,
+        "bbox": [
+          [
+            123.0,
+            94.0
+          ],
+          [
+            230.0,
+            96.0
+          ],
+          [
+            229.0,
+            120.0
+          ],
+          [
+            123.0,
+            117.0
+          ]
+        ],
+        "pixel_height": 23.51
+      },
+      {
+        "text": "Rs.1.9 4/ml",
+        "confidence": 0.9647,
+        "bbox": [
+          [
+            266.0,
+            115.0
+          ],
+          [
+            450.0,
+            116.0
+          ],
+          [
+            450.0,
+            144.0
+          ],
+          [
+            265.0,
+            142.0
+          ]
+        ],
+        "pixel_height": 27.51
+      },
+      {
+        "text": "USP Rs./ml",
+        "confidence": 0.9981,
+        "bbox": [
+          [
+            122.0,
+            124.0
+          ],
+          [
+            211.0,
+            127.0
+          ],
+          [
+            210.0,
+            154.0
+          ],
+          [
+            121.0,
+            150.0
+          ]
+        ],
+        "pixel_height": 26.52
+      },
+      {
+        "text": "For works address, refer first 2 characters of the batch number",
+        "confidence": 0.9898,
+        "bbox": [
+          [
+            121.0,
+            169.0
+          ],
+          [
+            543.0,
+            180.0
+          ],
+          [
+            542.0,
+            204.0
+          ],
+          [
+            120.0,
+            194.0
+          ]
+        ],
+        "pixel_height": 24.52
+      },
+      {
+        "text": "All Out\u00ae ULTRA Refill Liquid Vaporiser (Household Insecticide).",
+        "confidence": 0.9876,
+        "bbox": [
+          [
+            121.0,
+            192.0
+          ],
+          [
+            558.0,
+            202.0
+          ],
+          [
+            558.0,
+            227.0
+          ],
+          [
+            121.0,
+            216.0
+          ]
+        ],
+        "pixel_height": 24.5
+      },
+      {
+        "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
+        "confidence": 0.993,
+        "bbox": [
+          [
+            120.0,
+            214.0
+          ],
+          [
+            781.0,
+            230.0
+          ],
+          [
+            780.0,
+            257.0
+          ],
+          [
+            120.0,
+            241.0
+          ]
+        ],
+        "pixel_height": 27.01
+      },
+      {
+        "text": "Manufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.",
+        "confidence": 0.8426,
+        "bbox": [
+          [
+            120.0,
+            238.0
+          ],
+          [
+            870.0,
+            257.0
+          ],
+          [
+            870.0,
+            281.0
+          ],
+          [
+            120.0,
+            263.0
+          ]
+        ],
+        "pixel_height": 24.5
+      },
+      {
+        "text": "Gurugram, Haryana 122018, India. Contact us: Manager, Complaints at Regd.Ofie of Marketer Ph:011-4170499 Email:cCare@brlloconsumer.com",
+        "confidence": 0.8958,
+        "bbox": [
+          [
+            120.0,
+            259.0
+          ],
+          [
+            835.0,
+            275.0
+          ],
+          [
+            835.0,
+            300.0
+          ],
+          [
+            120.0,
+            284.0
+          ]
+        ],
+        "pixel_height": 25.0
+      },
+      {
+        "text": "Net Quantity :",
+        "confidence": 0.9683,
+        "bbox": [
+          [
+            119.0,
+            291.0
+          ],
+          [
+            261.0,
+            293.0
+          ],
+          [
+            261.0,
+            318.0
+          ],
+          [
+            119.0,
+            316.0
+          ]
+        ],
+        "pixel_height": 25.0
+      },
+      {
+        "text": "90ml",
+        "confidence": 0.9874,
+        "bbox": [
+          [
+            258.0,
+            293.0
+          ],
+          [
+            312.0,
+            295.0
+          ],
+          [
+            311.0,
+            319.0
+          ],
+          [
+            257.0,
+            317.0
+          ]
+        ],
+        "pixel_height": 24.02
+      },
+      {
+        "text": "(2 Numbers x 45 ml)",
+        "confidence": 0.9957,
+        "bbox": [
+          [
+            333.0,
+            294.0
+          ],
+          [
+            482.0,
+            298.0
+          ],
+          [
+            481.0,
+            323.0
+          ],
+          [
+            332.0,
+            319.0
+          ]
+        ],
+        "pixel_height": 25.02
+      }
+    ],
+    "declarations": {
+      "commodityName": {
+        "present": false,
+        "text": null,
+        "bbox": null,
+        "confidence": null
+      },
+      "manufacturer": {
+        "present": true,
+        "text": "Manufactured & Marketed by: Brilon COonsumer Products PYt. Ltd., Regd. Ofice: 10th Flor, Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.",
+        "address": true,
+        "bbox": [
+          [
+            120.0,
+            238.0
+          ],
+          [
+            870.0,
+            257.0
+          ],
+          [
+            870.0,
+            281.0
+          ],
+          [
+            120.0,
+            263.0
+          ]
+        ],
+        "confidence": 0.8426
+      },
+      "netQuantity": {
+        "present": true,
+        "rawText": "Net Quantity :",
+        "value": null,
+        "unit": null,
+        "unitKind": null,
+        "qualifiedWhenPacked": false,
+        "bbox": [
+          [
+            119.0,
+            291.0
+          ],
+          [
+            261.0,
+            293.0
+          ],
+          [
+            261.0,
+            318.0
+          ],
+          [
+            119.0,
+            316.0
+          ]
+        ],
+        "pixel_height": 25.0
+      },
+      "mfgDate": {
+        "present": true,
+        "rawText": "Mfg. Date",
+        "date": "Mfg. Date",
+        "bbox": [
+          [
+            124.0,
+            42.0
+          ],
+          [
+            199.0,
+            43.0
+          ],
+          [
+            199.0,
+            70.0
+          ],
+          [
+            123.0,
+            69.0
+          ]
+        ]
+      },
+      "mrp": {
+        "present": true,
+        "rawText": "MRP Rs.",
+        "value": null,
+        "inclusiveOfTaxesStated": false,
+        "bbox": [
+          [
+            124.0,
+            74.0
+          ],
+          [
+            189.0,
+            77.0
+          ],
+          [
+            188.0,
+            101.0
+          ],
+          [
+            123.0,
+            98.0
+          ]
+        ]
+      },
+      "consumerCare": {
+        "present": false,
+        "rawText": "",
+        "bbox": null
+      },
+      "standardPackDeclaration": {
+        "present": false,
+        "rawText": "",
+        "bbox": null
+      }
+    },
+    "engine": "RapidOCR",
+    "timing": {
+      "total_seconds": 2.2656706000561826,
+      "stages_seconds": [
+        0.9010817999951541,
+        0.04034470004262403,
+        1.3242441000184044
+      ]
+    }
+  },
+  "preprocessed_image": "C:\\Users\\prakh\\Desktop\\GIthub\\Nirikshak\\ComplianceEngine\\STAGE-2\\outputs\\preprocessed\\0bab80cba8924a6f83bc3c935534289d.png"
+}
