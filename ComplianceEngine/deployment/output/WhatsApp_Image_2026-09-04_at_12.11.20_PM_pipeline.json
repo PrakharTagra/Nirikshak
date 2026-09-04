@@ -1,6 +1,6 @@
 {
   "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-04 at 12.11.20 PM.jpeg",
-  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506147945_preprocessed.png",
+  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506558874_preprocessed.png",
   "ocrResult": {
     "lines": [
       {
@@ -31,34 +31,34 @@
       },
       {
         "id": 1,
-        "text": "Ｕ6EG564TN",
-        "confidence": 0.8445,
+        "text": "Ｕ6ＥG564TN",
+        "confidence": 0.7905,
         "bbox": [
           [
             261,
-            46
+            45
           ],
           [
-            478,
+            479,
             44
           ],
           [
-            478,
-            73
+            479,
+            74
           ],
           [
-            262,
+            261,
             75
           ]
         ],
-        "heightPx": 29.01,
+        "heightPx": 30,
         "heightMm": null,
         "language": null
       },
       {
         "id": 2,
         "text": "Mfg. Date",
-        "confidence": 0.9948,
+        "confidence": 0.9957,
         "bbox": [
           [
             126,
@@ -84,7 +84,7 @@
       {
         "id": 3,
         "text": "09/07126 12:36",
-        "confidence": 0.9756,
+        "confidence": 0.9423,
         "bbox": [
           [
             261,
@@ -110,7 +110,7 @@
       {
         "id": 4,
         "text": "MRP Rs.",
-        "confidence": 0.9843,
+        "confidence": 0.9817,
         "bbox": [
           [
             125,
@@ -136,7 +136,7 @@
       {
         "id": 5,
         "text": "Rs.190.00 175.00",
-        "confidence": 0.987,
+        "confidence": 0.9887,
         "bbox": [
           [
             262,
@@ -162,7 +162,7 @@
       {
         "id": 6,
         "text": "(Incl. ofall taxes)",
-        "confidence": 0.9577,
+        "confidence": 0.9347,
         "bbox": [
           [
             125,
@@ -188,7 +188,7 @@
       {
         "id": 7,
         "text": "Rs.1.9 4/ml",
-        "confidence": 0.9745,
+        "confidence": 0.9752,
         "bbox": [
           [
             264,
@@ -214,7 +214,7 @@
       {
         "id": 8,
         "text": "USP Rs./ml",
-        "confidence": 0.9969,
+        "confidence": 0.9971,
         "bbox": [
           [
             123,
@@ -240,7 +240,7 @@
       {
         "id": 9,
         "text": "For works address, refer first 2 characters of the batch number",
-        "confidence": 0.9913,
+        "confidence": 0.9918,
         "bbox": [
           [
             124,
@@ -266,7 +266,7 @@
       {
         "id": 10,
         "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
-        "confidence": 0.9893,
+        "confidence": 0.9902,
         "bbox": [
           [
             123,
@@ -292,11 +292,11 @@
       {
         "id": 11,
         "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
-        "confidence": 0.9925,
+        "confidence": 0.9884,
         "bbox": [
           [
             123,
-            226
+            227
           ],
           [
             782,
@@ -304,29 +304,29 @@
           ],
           [
             782,
-            264
+            263
           ],
           [
             123,
-            254
+            253
           ]
         ],
-        "heightPx": 28,
+        "heightPx": 26.5,
         "heightMm": null,
         "language": null
       },
       {
         "id": 12,
-        "text": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
-        "confidence": 0.8692,
+        "text": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
+        "confidence": 0.9267,
         "bbox": [
           [
             123,
             252
           ],
           [
-            874,
-            262
+            873,
+            263
           ],
           [
             873,
@@ -337,14 +337,14 @@
             276
           ]
         ],
-        "heightPx": 24.51,
+        "heightPx": 24,
         "heightMm": null,
         "language": null
       },
       {
         "id": 13,
-        "text": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com",
-        "confidence": 0.8654,
+        "text": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com",
+        "confidence": 0.8577,
         "bbox": [
           [
             122,
@@ -370,18 +370,18 @@
       {
         "id": 14,
         "text": "Net Quantity :",
-        "confidence": 0.9853,
+        "confidence": 0.9824,
         "bbox": [
           [
             122,
             304
           ],
           [
-            246,
+            243,
             304
           ],
           [
-            246,
+            243,
             330
           ],
           [
@@ -395,8 +395,8 @@
       },
       {
         "id": 15,
-        "text": "90ml",
-        "confidence": 0.9967,
+        "text": "90 ml",
+        "confidence": 0.8988,
         "bbox": [
           [
             258,
@@ -422,7 +422,7 @@
       {
         "id": 16,
         "text": "(2 Numbers x 45 ml)",
-        "confidence": 0.9893,
+        "confidence": 0.9891,
         "bbox": [
           [
             332,
@@ -471,31 +471,31 @@
         "pixel_height": 27.02
       },
       {
-        "text": "Ｕ6EG564TN",
-        "confidence": 0.8445,
+        "text": "Ｕ6ＥG564TN",
+        "confidence": 0.7905,
         "bbox": [
           [
             261,
-            46
+            45
           ],
           [
-            478,
+            479,
             44
           ],
           [
-            478,
-            73
+            479,
+            74
           ],
           [
-            262,
+            261,
             75
           ]
         ],
-        "pixel_height": 29.01
+        "pixel_height": 30
       },
       {
         "text": "Mfg. Date",
-        "confidence": 0.9948,
+        "confidence": 0.9957,
         "bbox": [
           [
             126,
@@ -518,7 +518,7 @@
       },
       {
         "text": "09/07126 12:36",
-        "confidence": 0.9756,
+        "confidence": 0.9423,
         "bbox": [
           [
             261,
@@ -541,7 +541,7 @@
       },
       {
         "text": "MRP Rs.",
-        "confidence": 0.9843,
+        "confidence": 0.9817,
         "bbox": [
           [
             125,
@@ -564,7 +564,7 @@
       },
       {
         "text": "Rs.190.00 175.00",
-        "confidence": 0.987,
+        "confidence": 0.9887,
         "bbox": [
           [
             262,
@@ -587,7 +587,7 @@
       },
       {
         "text": "(Incl. ofall taxes)",
-        "confidence": 0.9577,
+        "confidence": 0.9347,
         "bbox": [
           [
             125,
@@ -610,7 +610,7 @@
       },
       {
         "text": "Rs.1.9 4/ml",
-        "confidence": 0.9745,
+        "confidence": 0.9752,
         "bbox": [
           [
             264,
@@ -633,7 +633,7 @@
       },
       {
         "text": "USP Rs./ml",
-        "confidence": 0.9969,
+        "confidence": 0.9971,
         "bbox": [
           [
             123,
@@ -656,7 +656,7 @@
       },
       {
         "text": "For works address, refer first 2 characters of the batch number",
-        "confidence": 0.9913,
+        "confidence": 0.9918,
         "bbox": [
           [
             124,
@@ -679,7 +679,7 @@
       },
       {
         "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
-        "confidence": 0.9893,
+        "confidence": 0.9902,
         "bbox": [
           [
             123,
@@ -702,11 +702,11 @@
       },
       {
         "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
-        "confidence": 0.9925,
+        "confidence": 0.9884,
         "bbox": [
           [
             123,
-            226
+            227
           ],
           [
             782,
@@ -714,26 +714,26 @@
           ],
           [
             782,
-            264
+            263
           ],
           [
             123,
-            254
+            253
           ]
         ],
-        "pixel_height": 28
+        "pixel_height": 26.5
       },
       {
-        "text": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
-        "confidence": 0.8692,
+        "text": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
+        "confidence": 0.9267,
         "bbox": [
           [
             123,
             252
           ],
           [
-            874,
-            262
+            873,
+            263
           ],
           [
             873,
@@ -744,11 +744,11 @@
             276
           ]
         ],
-        "pixel_height": 24.51
+        "pixel_height": 24
       },
       {
-        "text": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com",
-        "confidence": 0.8654,
+        "text": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com",
+        "confidence": 0.8577,
         "bbox": [
           [
             122,
@@ -771,18 +771,18 @@
       },
       {
         "text": "Net Quantity :",
-        "confidence": 0.9853,
+        "confidence": 0.9824,
         "bbox": [
           [
             122,
             304
           ],
           [
-            246,
+            243,
             304
           ],
           [
-            246,
+            243,
             330
           ],
           [
@@ -793,8 +793,8 @@
         "pixel_height": 26
       },
       {
-        "text": "90ml",
-        "confidence": 0.9967,
+        "text": "90 ml",
+        "confidence": 0.8988,
         "bbox": [
           [
             258,
@@ -817,7 +817,7 @@
       },
       {
         "text": "(2 Numbers x 45 ml)",
-        "confidence": 0.9893,
+        "confidence": 0.9891,
         "bbox": [
           [
             332,
@@ -839,14 +839,14 @@
         "pixel_height": 25.5
       }
     ],
-    "text": "Batch No.\nＵ6EG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. ofall taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.\nGurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com\nNet Quantity :\n90ml\n(2 Numbers x 45 ml)",
+    "text": "Batch No.\nＵ6ＥG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. ofall taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.\nGurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com\nNet Quantity :\n90 ml\n(2 Numbers x 45 ml)",
     "engine": "RapidOCR",
     "timing": {
-      "total_seconds": 2.1216641000355594,
+      "total_seconds": 2.1529001999879256,
       "stages_seconds": [
-        0.8269428000203334,
-        0.026887200016062707,
-        1.2678340999991633
+        0.7766181000042707,
+        0.025344999972730875,
+        1.350937100010924
       ]
     },
     "metadata": {
@@ -857,14 +857,14 @@
       "boundary_detected": true,
       "deskew_method": "perspective_warp",
       "rotation_angle_deg": 0,
-      "sharpness_score": 1143.99,
-      "glare_area_fraction": 0.0003,
+      "sharpness_score": 1479.33,
+      "glare_area_fraction": 0.0006,
       "usable": true,
       "reject_reasons": []
     },
     "raw": {
       "success": true,
-      "text": "Batch No.\nＵ6EG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. ofall taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.\nGurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com\nNet Quantity :\n90ml\n(2 Numbers x 45 ml)",
+      "text": "Batch No.\nＵ6ＥG564TN\nMfg. Date\n09/07126 12:36\nMRP Rs.\nRs.190.00 175.00\n(Incl. ofall taxes)\nRs.1.9 4/ml\nUSP Rs./ml\nFor works address, refer first 2 characters of the batch number\nAll Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).\nExpiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108\nManufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.\nGurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com\nNet Quantity :\n90 ml\n(2 Numbers x 45 ml)",
       "regions": [
         {
           "text": "Batch No.",
@@ -890,31 +890,31 @@
           "pixel_height": 27.02
         },
         {
-          "text": "Ｕ6EG564TN",
-          "confidence": 0.8445,
+          "text": "Ｕ6ＥG564TN",
+          "confidence": 0.7905,
           "bbox": [
             [
               261,
-              46
+              45
             ],
             [
-              478,
+              479,
               44
             ],
             [
-              478,
-              73
+              479,
+              74
             ],
             [
-              262,
+              261,
               75
             ]
           ],
-          "pixel_height": 29.01
+          "pixel_height": 30
         },
         {
           "text": "Mfg. Date",
-          "confidence": 0.9948,
+          "confidence": 0.9957,
           "bbox": [
             [
               126,
@@ -937,7 +937,7 @@
         },
         {
           "text": "09/07126 12:36",
-          "confidence": 0.9756,
+          "confidence": 0.9423,
           "bbox": [
             [
               261,
@@ -960,7 +960,7 @@
         },
         {
           "text": "MRP Rs.",
-          "confidence": 0.9843,
+          "confidence": 0.9817,
           "bbox": [
             [
               125,
@@ -983,7 +983,7 @@
         },
         {
           "text": "Rs.190.00 175.00",
-          "confidence": 0.987,
+          "confidence": 0.9887,
           "bbox": [
             [
               262,
@@ -1006,7 +1006,7 @@
         },
         {
           "text": "(Incl. ofall taxes)",
-          "confidence": 0.9577,
+          "confidence": 0.9347,
           "bbox": [
             [
               125,
@@ -1029,7 +1029,7 @@
         },
         {
           "text": "Rs.1.9 4/ml",
-          "confidence": 0.9745,
+          "confidence": 0.9752,
           "bbox": [
             [
               264,
@@ -1052,7 +1052,7 @@
         },
         {
           "text": "USP Rs./ml",
-          "confidence": 0.9969,
+          "confidence": 0.9971,
           "bbox": [
             [
               123,
@@ -1075,7 +1075,7 @@
         },
         {
           "text": "For works address, refer first 2 characters of the batch number",
-          "confidence": 0.9913,
+          "confidence": 0.9918,
           "bbox": [
             [
               124,
@@ -1098,7 +1098,7 @@
         },
         {
           "text": "All Out® ULTRA Refill Liquid Vaporiser (Household Insecticide).",
-          "confidence": 0.9893,
+          "confidence": 0.9902,
           "bbox": [
             [
               123,
@@ -1121,11 +1121,11 @@
         },
         {
           "text": "Expiry Date : 2 Yrs. from Mfg. Date, Regn. No. : CIR-131142/2015 - Transfluthrin (LV) (355)-108",
-          "confidence": 0.9925,
+          "confidence": 0.9884,
           "bbox": [
             [
               123,
-              226
+              227
             ],
             [
               782,
@@ -1133,26 +1133,26 @@
             ],
             [
               782,
-              264
+              263
             ],
             [
               123,
-              254
+              253
             ]
           ],
-          "pixel_height": 28
+          "pixel_height": 26.5
         },
         {
-          "text": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
-          "confidence": 0.8692,
+          "text": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
+          "confidence": 0.9267,
           "bbox": [
             [
               123,
               252
             ],
             [
-              874,
-              262
+              873,
+              263
             ],
             [
               873,
@@ -1163,11 +1163,11 @@
               276
             ]
           ],
-          "pixel_height": 24.51
+          "pixel_height": 24
         },
         {
-          "text": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com",
-          "confidence": 0.8654,
+          "text": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com",
+          "confidence": 0.8577,
           "bbox": [
             [
               122,
@@ -1190,18 +1190,18 @@
         },
         {
           "text": "Net Quantity :",
-          "confidence": 0.9853,
+          "confidence": 0.9824,
           "bbox": [
             [
               122,
               304
             ],
             [
-              246,
+              243,
               304
             ],
             [
-              246,
+              243,
               330
             ],
             [
@@ -1212,8 +1212,8 @@
           "pixel_height": 26
         },
         {
-          "text": "90ml",
-          "confidence": 0.9967,
+          "text": "90 ml",
+          "confidence": 0.8988,
           "bbox": [
             [
               258,
@@ -1236,7 +1236,7 @@
         },
         {
           "text": "(2 Numbers x 45 ml)",
-          "confidence": 0.9893,
+          "confidence": 0.9891,
           "bbox": [
             [
               332,
@@ -1267,7 +1267,7 @@
         },
         "manufacturer": {
           "present": true,
-          "text": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
+          "text": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
           "address": true,
           "bbox": [
             [
@@ -1275,8 +1275,8 @@
               252
             ],
             [
-              874,
-              262
+              873,
+              263
             ],
             [
               873,
@@ -1287,7 +1287,7 @@
               276
             ]
           ],
-          "confidence": 0.8692
+          "confidence": 0.9267
         },
         "netQuantity": {
           "present": true,
@@ -1302,11 +1302,11 @@
               304
             ],
             [
-              246,
+              243,
               304
             ],
             [
-              246,
+              243,
               330
             ],
             [
@@ -1376,11 +1376,11 @@
       },
       "engine": "RapidOCR",
       "timing": {
-        "total_seconds": 2.1216641000355594,
+        "total_seconds": 2.1529001999879256,
         "stages_seconds": [
-          0.8269428000203334,
-          0.026887200016062707,
-          1.2678340999991633
+          0.7766181000042707,
+          0.025344999972730875,
+          1.350937100010924
         ]
       }
     }
@@ -1417,7 +1417,7 @@
   "declarations": {
     "manufacturer": {
       "present": true,
-      "name": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
+      "name": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
       "address": true,
       "mark": null
     },
@@ -1483,7 +1483,7 @@
       "address": null,
       "telephone": null,
       "email": null,
-      "rawText": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com"
+      "rawText": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com"
     },
     "standardPackDeclaration": {
       "present": false,
@@ -1547,7 +1547,7 @@
     "declarations": {
       "manufacturer": {
         "present": true,
-        "name": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
+        "name": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
         "address": true,
         "mark": null
       },
@@ -1613,7 +1613,7 @@
         "address": null,
         "telephone": null,
         "email": null,
-        "rawText": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com"
+        "rawText": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com"
       },
       "standardPackDeclaration": {
         "present": false,
