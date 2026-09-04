@@ -11,15 +11,17 @@ from typing import Any
 
 
 def preprocess_for_ocr(image: Any) -> Any:
-    """Sharpen and optimize packaging image for fine print detection."""
+    """Safe pre-OCR check. Keeps text strokes clean and uncorrupted."""
     if image is None:
         return None
     try:
         import cv2
-        # Unsharp mask: enhances micro-contrast of tiny characters against noisy packaging backgrounds
-        blurred = cv2.GaussianBlur(image, (0, 0), 1.0)
-        sharpened = cv2.addWeighted(image, 1.6, blurred, -0.6, 0)
-        return sharpened
+        h, w = image.shape[:2]
+        # Cap excessively giant images (e.g. > 2400px) so CNN detection runs at optimal receptive field
+        if max(h, w) > 2400:
+            scale = 2048.0 / float(max(h, w))
+            image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+        return image
     except Exception:
         return image
 

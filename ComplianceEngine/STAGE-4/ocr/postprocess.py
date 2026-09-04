@@ -95,6 +95,17 @@ def _extract_quantity(line: Optional[Dict[str, Any]]) -> Tuple[Optional[float], 
 def _extract_money(line: Optional[Dict[str, Any]]) -> Optional[float]:
     if not line:
         return None
+    # 1. Direct match on MRP with amount (handles fused rupee symbols like MRPF149900 or MRP Rs.150)
+    m_direct = re.search(
+        r"\bm\.?r\.?p\.?(?:\s*[:\-.]?\s*|\s*)(?:[₹f]|rs\.?|inr)?\s*(\d+(?:,\d{3})*(?:\.\d{1,2})?)",
+        line["text"],
+        re.I,
+    )
+    if m_direct:
+        try:
+            return float(m_direct.group(1).replace(",", ""))
+        except ValueError:
+            pass
     matches = MONEY_RE.findall(line["text"])
     if not matches:
         return None
@@ -102,7 +113,7 @@ def _extract_money(line: Optional[Dict[str, Any]]) -> Optional[float]:
     # followed by the current printed MRP.
     raw = matches[-1]
     # Remove currency text without removing the decimal point.
-    raw = re.sub(r"(?:₹|rs\.?|inr)\s*", "", raw, flags=re.I)
+    raw = re.sub(r"(?:₹|rs\.?|inr|[f])\s*", "", raw, flags=re.I)
     raw = raw.replace(",", "").strip()
     try:
         return float(raw)
@@ -172,7 +183,7 @@ def extract_declarations(lines: List[Dict[str, Any]]) -> Dict[str, Any]:
                 mfg_line = line
                 break
 
-    mrp_line = _first_match(clean_lines, [r"\bmrp\b", r"maximum\s+retail\s+price"])
+    mrp_line = _first_match(clean_lines, [r"\bm\.?r\.?p\b", r"\bm\.?r\.?p", r"maximum\s+retail\s+price"])
     care_line = _first_match(clean_lines, [r"consumer\s*care", r"customer\s*care", r"customer\s*service", r"helpline", r"toll[- ]?free"])
     standard_line = _first_match(clean_lines, [r"standard\s+pack", r"std\.?\s+pack"])
 
