@@ -3588,12 +3588,12 @@ class PreprocessConfig:
 
     resize_width_for_detection: int = 1000
 
-    canny_low: int = 50
-    canny_high: int = 150
+    canny_low: int = 30
+    canny_high: int = 100
 
     dilate_kernel: int = 5
 
-    min_contour_area_frac: float = 0.15
+    min_contour_area_frac: float = 0.05
 
     approx_poly_epsilon_frac: float = 0.02
 
@@ -3927,37 +3927,46 @@ def _find_boundary_quad(img: np.ndarray, cfg: PreprocessConfig) -> Optional[np.n
 
     edges = cv2.Canny(gray, cfg.canny_low, cfg.canny_high)
 
-    kernel = np.ones((cfg.dilate_kernel, cfg.dilate_kernel), dtype=np.uint8)
+    close_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
+    closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, close_kernel)
 
-    edges = cv2.dilate(edges, kernel, iterations=1)
-
-    contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if not contours:
         return None
 
     small_area = small.shape[0] * small.shape[1]
-
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]
 
+    min_area = cfg.min_contour_area_frac * small_area
+    target_contour = None
+
     for contour in contours:
-
         area = cv2.contourArea(contour)
-
-        if area < (cfg.min_contour_area_frac * small_area):
+        if area < min_area:
             continue
 
         perimeter = cv2.arcLength(contour, True)
-
         approx = cv2.approxPolyDP(contour, cfg.approx_poly_epsilon_frac * perimeter, True)
-
         if len(approx) == 4 and cv2.isContourConvex(approx):
-
-            points = approx.reshape(4, 2).astype(np.float32)
-
-            points /= scale
-
+            points = approx.reshape(4, 2).astype(np.float32) / scale
             return _order_points(points)
+
+        hull = cv2.convexHull(contour)
+        hull_peri = cv2.arcLength(hull, True)
+        hull_approx = cv2.approxPolyDP(hull, 0.025 * hull_peri, True)
+        if len(hull_approx) == 4 and cv2.isContourConvex(hull_approx):
+            points = hull_approx.reshape(4, 2).astype(np.float32) / scale
+            return _order_points(points)
+
+        if target_contour is None:
+            target_contour = contour
+
+    if target_contour is not None:
+        rect = cv2.minAreaRect(target_contour)
+        box = cv2.boxPoints(rect)
+        points = box.astype(np.float32) / scale
+        return _order_points(points)
 
     return None
 

@@ -120,6 +120,7 @@ async function main() {
     console.log(`Product Name: ${productName}`);
     console.log(`Product ID  : product_${r.productId}`);
     console.log(`Panels (${images.length}): ${images.map((p) => path.basename(p)).join(', ')}`);
+    console.log(`Preprocessed: ${r.preprocessedImages.map((p) => path.basename(p)).join(', ')} (in ${r.productDir})`);
     console.log(`Status      : ${status}`);
     console.log(`Report PDF  : ${r.reportPath}`);
     if (!r.complianceResult.compliant) {

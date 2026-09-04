@@ -145,8 +145,10 @@ async function runPipelineForProduct(imagePaths = []) {
     const destName = paths.length > 1 ? `preprocessed_${idx + 1}.png` : 'preprocessed.png';
     const destPath = path.join(productDir, destName);
     if (item.path && fs.existsSync(item.path)) {
-      fs.copyFileSync(item.path, destPath);
-      fs.rmSync(item.path, { force: true });
+      if (path.resolve(item.path) !== path.resolve(destPath)) {
+        fs.copyFileSync(item.path, destPath);
+        fs.rmSync(item.path, { force: true });
+      }
     }
     preprocessedImages.push(destPath);
   });
