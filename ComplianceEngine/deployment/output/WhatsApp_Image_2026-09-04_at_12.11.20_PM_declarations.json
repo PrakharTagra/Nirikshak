@@ -1,10 +1,10 @@
 {
   "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-04 at 12.11.20 PM.jpeg",
-  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506147945_preprocessed.png",
+  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506558874_preprocessed.png",
   "declarations": {
     "manufacturer": {
       "present": true,
-      "name": "Manufactured & Marketed by:Brllon Consume Products PYt. Ltd, Regd.Office: 10th Floor, Tower 2, AIP Business Club GOolf Course Ext. Road, SEector 62.",
+      "name": "Manufactured & Marketed by: Brillo Consumer Products Pvt. Ltd., Rgd. Office: 10th Floor, Tower 2, IPL Business Club. Golf Course Ext. Road, Sector 62.",
       "address": true,
       "mark": null
     },
@@ -70,7 +70,7 @@
       "address": null,
       "telephone": null,
       "email": null,
-      "rawText": "Gurugram, Haryana - 122 018, India. Contact us: Manager Complaints at Regd.Offie of Marketer Ph: 011-417049, Email: care@brillonconsumer.com"
+      "rawText": "Gurugram, Haryan - 122 018, India. Cotact us: Manager, Complaints t Regd.Offie of Marketer Ph: 011- 417049, Email: care@brillonconsumer.com"
     },
     "standardPackDeclaration": {
       "present": false,

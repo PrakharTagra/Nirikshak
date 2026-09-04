@@ -1,6 +1,6 @@
 {
   "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-04 at 12.11.20 PM.jpeg",
-  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506147945_preprocessed.png",
+  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788506558874_preprocessed.png",
   "metadata": {
     "original_width": 1280,
     "original_height": 1028,
@@ -9,8 +9,8 @@
     "boundary_detected": true,
     "deskew_method": "perspective_warp",
     "rotation_angle_deg": 0,
-    "sharpness_score": 1143.99,
-    "glare_area_fraction": 0.0003,
+    "sharpness_score": 1479.33,
+    "glare_area_fraction": 0.0006,
     "usable": true,
     "reject_reasons": []
   }
