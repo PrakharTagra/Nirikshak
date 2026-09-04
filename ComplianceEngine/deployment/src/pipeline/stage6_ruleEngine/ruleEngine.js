@@ -162,7 +162,10 @@ function checkMandatoryDeclarations(pkg) {
   }
 
   // 6(1)(d) — month & year of manufacture/pre-packing/import
+  // Per Rule 6(10), e-commerce entities / digital marketplaces are exempt from mandatory display of month & year of manufacture or packing on the digital network.
   const exemptFromDateDeclaration =
+    c.isDigitalMarketplace ||
+    c.isEcommerce ||
     c.isBidiOrIncenseStick ||
     (c.isLPGCylinder && (c.lpgWeightKg === 14.2 || c.lpgWeightKg === 5) && c.isPublicSectorUndertaking) ||
     c.isFoodArticle || // PFA Act applies instead
@@ -180,6 +183,15 @@ function checkMandatoryDeclarations(pkg) {
         )
       );
     }
+  } else if (d.mfgDate && d.mfgDate.present && d.mfgDate.usedIndividualSticker && !d.mfgDate.isMrpReductionSticker) {
+    v.push(
+      violation(
+        'Rule 6(3)',
+        'Individual stickers may not be used to alter/make the date declaration.',
+        'critical',
+        'mfgDate'
+      )
+    );
   }
 
   // 6(1)(e) — retail sale price (MRP)

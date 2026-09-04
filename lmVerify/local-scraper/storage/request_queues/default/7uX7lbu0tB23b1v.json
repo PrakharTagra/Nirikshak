@@ -1,9 +1,0 @@
-{
-	"id": "7uX7lbu0tB23b1v",
-	"json": "{\"id\":\"7uX7lbu0tB23b1v\",\"url\":\"https://amzn.in/d/0f0n4sxh\",\"loadedUrl\":\"https://www.amazon.in/dp/B07F8H9NYY?ref=cm_sw_r_cp_ud_dp_1RFF4ENJN1PG4W33MWW2&ref_=cm_sw_r_cp_ud_dp_1RFF4ENJN1PG4W33MWW2&social_share=cm_sw_r_cp_ud_dp_1RFF4ENJN1PG4W33MWW2\",\"uniqueKey\":\"https://amzn.in/d/0f0n4sxh\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-09-04T18:03:53.565Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://amzn.in/d/0f0n4sxh",
-	"url": "https://amzn.in/d/0f0n4sxh"
-}

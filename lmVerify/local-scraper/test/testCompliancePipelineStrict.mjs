@@ -37,14 +37,14 @@ async function runTests() {
   }
   console.log("✓ Cross-sell and catalog date filtering test: PASS");
 
-  // 2. Test compliance pipeline on listing without statutory mfg date
+  // 2. Test compliance pipeline on digital marketplace listing without mfg date
   const resultWithoutMfg = await runCompliancePipeline(noisyListingText);
   assert.strictEqual(resultWithoutMfg.declarations.mfgDate.present, false, "mfgDate should NOT be present without statutory label");
   assert.strictEqual(resultWithoutMfg.declarations.mfgDate.value, null, "mfgDate value should be null");
 
   const rule6dViolation = resultWithoutMfg.compliance.violations.find((v) => v.rule === "Rule 6(1)(d)");
-  assert.ok(rule6dViolation, "Should have Rule 6(1)(d) violation for missing manufacturing date");
-  console.log("✓ Non-statutory listing triggers Rule 6(1)(d) without false date: PASS");
+  assert.strictEqual(rule6dViolation, undefined, "Digital marketplace listing must NOT have Rule 6(1)(d) violation (exempt per Rule 6(10))");
+  console.log("✓ Digital marketplace listing correctly exempt from missing MFD per Rule 6(10): PASS");
 
   // 3. Test compliance pipeline on listing with explicit statutory label
   const textWithMfg = `

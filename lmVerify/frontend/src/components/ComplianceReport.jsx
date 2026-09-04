@@ -112,10 +112,13 @@ export default function ComplianceReport({ report }) {
     {
       id: 7,
       name: "Month & Year of Manufacture / Packing",
-      rule: "Rule 6(1)(d)",
+      rule: commodity.isDigitalMarketplace ? "Rule 6(10) (Exempt)" : "Rule 6(1)(d)",
       value: declarations.mfgDate?.value || null,
-      present: !!declarations.mfgDate?.present,
-      detail: declarations.mfgDate?.usedIndividualSticker ? "Uses individual sticker" : null,
+      present: !!declarations.mfgDate?.present || !!commodity.isDigitalMarketplace,
+      na: !declarations.mfgDate?.present && !!commodity.isDigitalMarketplace,
+      detail: declarations.mfgDate?.present
+        ? (declarations.mfgDate?.usedIndividualSticker ? "Uses individual sticker" : "Declared")
+        : (commodity.isDigitalMarketplace ? "Exempt on digital marketplace (Rule 6(10))" : "Missing"),
     },
     {
       id: 8,

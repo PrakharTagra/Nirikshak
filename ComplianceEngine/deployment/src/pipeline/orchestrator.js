@@ -23,13 +23,20 @@ const config = require('../config');
 const { allocateProductId } = require('../utils/productId');
 const { ensureDirs } = require('../utils/fileHelpers');
 
-function buildPackageRecord(declarations, labelMetrics) {
+function buildPackageRecord(declarations, labelMetrics, options = {}) {
   const qty = declarations.netQuantity || {};
   const unit = qty.unit || null;
   const value = qty.value ?? null;
   const isWeightOrVolume = unit === 'g' || unit === 'ml' || unit === 'kg' || unit === 'l';
   const normalized = value == null ? null : (unit === 'g' || unit === 'ml' ? value / 1000 : isWeightOrVolume ? value : null);
   const classification = declarations.commodityClassification || {};
+
+  const isDigitalMarketplace = !!(
+    options.isDigitalMarketplace ||
+    options.isEcommerce ||
+    classification.isDigitalMarketplace ||
+    classification.isEcommerce
+  );
 
   // Infer physicalForm if not provided
   let physicalForm = classification.physicalForm || null;
@@ -66,6 +73,8 @@ function buildPackageRecord(declarations, labelMetrics) {
       manufacturerIsNotPacker: mfrNotPacker,
       isImportedPackage: !!declarations.importer?.present || !!classification.isImported,
       countryOfOrigin: classification.countryOfOrigin || null,
+      isDigitalMarketplace: isDigitalMarketplace,
+      isEcommerce: isDigitalMarketplace,
       manufacturedOutsideIndiaButPackedInIndia: false,
       isBidiOrIncenseStick: false,
       isBidiPackage: false,

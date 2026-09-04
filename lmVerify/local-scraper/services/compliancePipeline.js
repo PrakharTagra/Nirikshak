@@ -188,8 +188,17 @@ export async function runCompliancePipeline(rawText, context = {}) {
   // 2. Stage 5: Font & Label Metrics
   const labelMetrics = analyzeFont(ocrResult);
 
-  // 3. Package Record Construction
-  const packageRecord = buildPackageRecord(declarations, labelMetrics);
+  // 3. Package Record Construction (Marked as digital marketplace per Legal Metrology Rule 6(10))
+  const packageRecord = buildPackageRecord(declarations, labelMetrics, {
+    isDigitalMarketplace: true,
+    isEcommerce: true,
+    platform: context.platform,
+    url: context.url,
+  });
+  if (packageRecord && packageRecord.commodity) {
+    packageRecord.commodity.isDigitalMarketplace = true;
+    packageRecord.commodity.isEcommerce = true;
+  }
 
   // 4. Stage 6/7: Codified Legal Metrology Rule Engine
   const compliance = runComplianceCheck(packageRecord);

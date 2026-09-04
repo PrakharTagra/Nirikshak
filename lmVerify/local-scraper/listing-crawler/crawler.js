@@ -1,4 +1,5 @@
-import { PlaywrightCrawler } from "crawlee";
+import crypto from "crypto";
+import { PlaywrightCrawler, RequestQueue } from "crawlee";
 import { detectPlatform } from "./platforms/index.js";
 import { extractHtml } from "./extractors/html.js";
 import { extractVisibleText } from "./extractors/text.js";
@@ -9,6 +10,8 @@ import { captureScreenshot } from "./extractors/screenshot.js";
 
 const REQUEST_HANDLER_TIMEOUT_SECS = 60;
 const NETWORK_IDLE_TIMEOUT_MS = 15000;
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
 /**
  * Scrolls the page to the bottom in small steps so that lazy-loaded content
@@ -54,31 +57,65 @@ export async function loadProductPage(url) {
   let crawlError = null;
 
   const launchOptions = {
-    // Harmless on a normal desktop/CI setup; required in some sandboxed/
-    // containerized environments where the default Chromium sandbox can't
-    // initialize.
-    args: ["--no-sandbox"],
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-blink-features=AutomationControlled",
+      "--disable-infobars",
+    ],
   };
-  // Optional escape hatch for local environments where the installed
-  // Playwright browser build doesn't match what Playwright expects
-  // (e.g. after a partial `npx playwright install`). Not needed on a
-  // normal local setup.
+
   if (process.env.PLAYWRIGHT_CHROMIUM_PATH) {
     launchOptions.executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
   }
 
+  // Open an ephemeral queue so scans never hit cached/stale request states on disk
+  const queueName = `crawl-${crypto.randomUUID()}`;
+  const requestQueue = await RequestQueue.open(queueName);
+  await requestQueue.addRequest({
+    url,
+    uniqueKey: `${url}-${Date.now()}-${Math.random()}`,
+  });
+
   const crawler = new PlaywrightCrawler({
+    requestQueue,
     maxRequestsPerCrawl: 1,
     maxConcurrency: 1,
     requestHandlerTimeoutSecs: REQUEST_HANDLER_TIMEOUT_SECS,
     launchContext: {
       launchOptions,
+      userAgent: USER_AGENT,
     },
+    preNavigationHooks: [
+      async ({ page }) => {
+        // Strip automation indicators
+        await page.addInitScript(() => {
+          Object.defineProperty(navigator, "webdriver", {
+            get: () => undefined,
+          });
+        });
+        await page.setViewportSize({ width: 1366, height: 900 });
+        await page.setExtraHTTPHeaders({
+          "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+          "Upgrade-Insecure-Requests": "1",
+        });
+      },
+    ],
 
     async requestHandler({ request, page, response, log }) {
       log.info(`[listing-crawler] Loading product page: ${request.url}`);
 
       await page.waitForLoadState("domcontentloaded");
+
+      // If intercepted by anti-bot challenge or redirected to root homepage, reload once
+      let title = await page.title();
+      if (title === "Robot Check" || title === "Amazon.in") {
+        log.warning(`[listing-crawler] Anti-bot or homepage redirect detected ("${title}"), re-attempting navigation...`);
+        await page.waitForTimeout(1500);
+        await page.goto(request.url, { waitUntil: "domcontentloaded", timeout: 30000 }).catch(() => {});
+        title = await page.title();
+      }
 
       try {
         await page.waitForLoadState("networkidle", { timeout: NETWORK_IDLE_TIMEOUT_MS });
@@ -129,8 +166,12 @@ export async function loadProductPage(url) {
     },
   });
 
-  await crawler.run([url]);
-  await crawler.teardown();
+  try {
+    await crawler.run();
+    await crawler.teardown();
+  } finally {
+    await requestQueue.drop().catch(() => {});
+  }
 
   if (!captured) {
     throw new Error(
