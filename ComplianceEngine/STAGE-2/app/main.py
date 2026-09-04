@@ -45,10 +45,9 @@ app = FastAPI(
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024  # 15 MB
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
 
-# All services (STAGE-2, STAGE-4, deployment) share a single output root at
-# the project level: ComplianceEngine/output/<service>/product_<n>/
+# All services (STAGE-2, STAGE-4, deployment) share one flat output root:
+# ComplianceEngine/output/product_<n>/ -- no per-service subfolders.
 OUTPUT_ROOT = Path(__file__).resolve().parents[2] / "output"
-STAGE2_OUTPUT_DIR = OUTPUT_ROOT / "STAGE-2"
 
 
 def _allocate_product_id() -> int:
@@ -168,9 +167,9 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
         ocr_result = _get_ocr_runner()(out_img)
 
         # One product folder per scan, shared (by number) across every
-        # service's output: output/STAGE-2/product_<n>/
+        # service's output: output/product_<n>/
         product_id = _allocate_product_id()
-        product_dir = STAGE2_OUTPUT_DIR / f"product_{product_id}"
+        product_dir = OUTPUT_ROOT / f"product_{product_id}"
         product_dir.mkdir(parents=True, exist_ok=True)
 
         output_path = product_dir / "preprocessed.png"

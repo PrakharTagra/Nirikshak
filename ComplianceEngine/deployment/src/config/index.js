@@ -10,15 +10,15 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 
-// Single output root shared with the STAGE-2 (Python) and STAGE-4 services:
-// ComplianceEngine/output/<STAGE-2|STAGE-4|deployment>/product_<n>/
+// Single flat output root shared with the STAGE-2 (Python) service:
+// ComplianceEngine/output/product_<n>/ -- no per-service subfolders.
 const OUTPUT_ROOT = process.env.SHARED_OUTPUT_DIR || path.join(ROOT, '..', 'output');
 
 module.exports = {
   paths: {
     input: process.env.INPUT_DIR || path.join(ROOT, 'input'),
     outputRoot: OUTPUT_ROOT,
-    output: process.env.OUTPUT_DIR || path.join(OUTPUT_ROOT, 'deployment'),
+    output: process.env.OUTPUT_DIR || OUTPUT_ROOT,
     temp: process.env.TEMP_DIR || path.join(ROOT, 'temp'),
     preprocessed: process.env.PREPROCESSED_DIR || path.join(ROOT, 'temp', 'preprocessed'),
   },
