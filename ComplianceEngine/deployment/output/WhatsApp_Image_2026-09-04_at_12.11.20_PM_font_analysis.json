@@ -1,0 +1,33 @@
+{
+  "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-04 at 12.11.20 PM.jpeg",
+  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788504867102_preprocessed.png",
+  "labelMetrics": {
+    "numeralHeightMm": {
+      "rsp": null,
+      "netQty": null
+    },
+    "numeralWidthMm": {
+      "rsp": null,
+      "netQty": null
+    },
+    "calibrationAvailable": false,
+    "pixelsPerMm": null,
+    "pdpAreaCm2": null,
+    "contrastOk": true,
+    "isBlownFormedMoldedEmbossedOrPerforated": false,
+    "isExemptCharacterShape": false,
+    "isBlownFormedMoldedOnGlassOrPlastic": false,
+    "isHandwrittenOrHandScript": false,
+    "handwritingIsClearUnambiguousLegible": false,
+    "legibilityIssue": false,
+    "declarationOnlyReadableThroughLiquid": false,
+    "quantityDeclarationSurroundingAreaHasPrintedInfo": false,
+    "rspOnCrownCapOrBottle": false,
+    "wrapperTransparentAndDeclarationsReadableThrough": false,
+    "innerPackageHasNoOuterCoverDeclaration": false,
+    "outerContainerHasAllDeclarations": false,
+    "languageUsed": [
+      "English"
+    ]
+  }
+}

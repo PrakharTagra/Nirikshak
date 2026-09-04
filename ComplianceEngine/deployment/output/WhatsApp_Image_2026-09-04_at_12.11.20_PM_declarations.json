@@ -1,0 +1,87 @@
+{
+  "imagePath": "C:\\Users\\prakh\\Downloads\\WhatsApp Image 2026-09-04 at 12.11.20 PM.jpeg",
+  "preprocessedImagePath": "temp\\preprocessed\\WhatsApp Image 2026-09-04 at 12.11.20 PM_1788504867102_preprocessed.png",
+  "declarations": {
+    "manufacturer": {
+      "present": true,
+      "name": "Manufactured & Marketed by: Brion COonsumer Products PYt. Ltd Red. Ofice: 10th Flor Tower 2, AIPL Business Club Oolf Course Ext. Rad Sector 62.",
+      "address": true,
+      "mark": null
+    },
+    "packer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null
+    },
+    "importer": {
+      "present": false,
+      "name": null,
+      "address": false,
+      "mark": null
+    },
+    "commodityName": {
+      "present": true,
+      "value": "Batch No.",
+      "perProductBreakdown": false
+    },
+    "netQuantity": {
+      "present": true,
+      "value": null,
+      "unit": null,
+      "qualifiedWhenPacked": false,
+      "unitKind": null,
+      "rawText": "Net Quantity :",
+      "onTagCardOrTapeDevice": false,
+      "symbolUsed": null
+    },
+    "mfgDate": {
+      "present": true,
+      "value": "Mfg. Date",
+      "rawText": "Mfg. Date",
+      "usedIndividualSticker": false,
+      "isMrpReductionSticker": false
+    },
+    "mrp": {
+      "present": true,
+      "value": null,
+      "currency": "INR",
+      "rawText": "MRP Rs.",
+      "inclusiveOfTaxesStated": false,
+      "stickerReducedMrp": false,
+      "stickerCoversOriginalMrp": false
+    },
+    "dimensions": {
+      "present": false,
+      "rawText": "",
+      "perPieceDeclared": false,
+      "numberOfPiecesDeclared": false,
+      "perPieceDimensionAndRSP": false,
+      "numberOfBags": null,
+      "linearDimensions": null,
+      "numberOfContainers": null,
+      "lengthWidthDepth": null,
+      "diameter": null,
+      "standardCapacityReferenceIncluded": false
+    },
+    "consumerCare": {
+      "present": true,
+      "name": null,
+      "address": null,
+      "telephone": null,
+      "email": null,
+      "rawText": "Gurugram, Haryana - 122018, India. Contactus: Manager, Complaints at Regd.Ofie of Marketer Ph:011-4170499 Email:cCare@brlloconsumer.com"
+    },
+    "standardPackDeclaration": {
+      "present": false,
+      "rawText": ""
+    },
+    "sheetCount": {
+      "present": false,
+      "value": null,
+      "dimensionsPerSheet": null,
+      "rawText": ""
+    },
+    "multiComponentDeclarationHandled": false
+  }
+}
