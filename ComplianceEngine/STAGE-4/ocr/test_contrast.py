@@ -7,6 +7,7 @@ import cv2
 from .contrast import (
     calculate_relative_luminance,
     calculate_contrast_ratio,
+    calculate_delta_e,
     rgb_to_hex,
     analyze_region_contrast,
     analyze_image_declarations_contrast,
@@ -36,6 +37,19 @@ class TestContrastAnalysis(unittest.TestCase):
         low_ratio = calculate_contrast_ratio([136, 136, 136], [170, 170, 170])
         self.assertLess(low_ratio, 2.0)
 
+    def test_delta_e_chromatic_contrast(self):
+        # Black vs White Delta E is ~100
+        de_bw = calculate_delta_e([0, 0, 0], [255, 255, 255])
+        self.assertGreater(de_bw, 90.0)
+
+        # Identical colors has Delta E == 0
+        de_zero = calculate_delta_e([200, 100, 50], [200, 100, 50])
+        self.assertAlmostEqual(de_zero, 0.0, places=1)
+
+        # Saturated red on dark green (common on Indian spice packaging): strong chromatic difference
+        de_spice = calculate_delta_e([230, 20, 20], [20, 100, 20])
+        self.assertGreater(de_spice, 40.0)
+
     def test_rgb_to_hex(self):
         self.assertEqual(rgb_to_hex([255, 0, 0]), "#FF0000")
         self.assertEqual(rgb_to_hex([0, 255, 0]), "#00FF00")
@@ -64,3 +78,4 @@ class TestContrastAnalysis(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

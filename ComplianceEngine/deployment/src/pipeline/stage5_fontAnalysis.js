@@ -11,6 +11,7 @@
 
 const logger = require('../utils/logger');
 const config = require('../config');
+const { analyzeNetQuantityWithClearance } = require('./netQuantityClearanceLayer');
 
 // Inner product keywords to reject (only outer packaging/box dimensions are allowed)
 const INNER_PRODUCT_RE = /\b(?:sheets?|wipes?|tissues?|napkins?|tablets?|capsules?|tiles?|biscuits?|inner|each piece|per piece)\b/i;
@@ -87,9 +88,14 @@ function evaluateClearance(qtyLine, allLines) {
   const exY1 = qy1 - 1.0 * h;
   const exY2 = qy2 + 1.0 * h;
 
+  const targetPanel = qtyLine.imageIndex != null ? qtyLine.imageIndex : qtyLine.sourceImage;
   const overlapping = [];
   for (const line of allLines) {
     if (!line.bbox || line.id === qtyLine.id || line.text === qtyLine.text) continue;
+    // Multi-panel isolation: clearance check applies strictly to the same packaging surface/panel
+    if (targetPanel != null && line.imageIndex != null && line.imageIndex !== targetPanel) continue;
+    if (targetPanel != null && line.sourceImage && line.sourceImage !== targetPanel) continue;
+
     const lxs = line.bbox.map((p) => p[0]);
     const lys = line.bbox.map((p) => p[1]);
     const lx1 = Math.min(...lxs);
@@ -99,7 +105,7 @@ function evaluateClearance(qtyLine, allLines) {
 
     const intersectX = Math.max(0, Math.min(exX2, lx2) - Math.max(exX1, lx1));
     const intersectY = Math.max(0, Math.min(exY2, ly2) - Math.max(exY1, ly1));
-    if (intersectX > 2 && intersectY > 2) {
+    if (intersectX > 4 && intersectY > 4) {
       overlapping.push(line.text);
     }
   }
@@ -150,8 +156,12 @@ function analyzeFont(ocrResult, options = {}) {
     }
   }
 
+  // 3. Multi-Piece Net Quantity Layer & Rule 8(1) Composite Clearance Analysis
+  const netQtyAnalysis = analyzeNetQuantityWithClearance(ocrResult);
+
   const mrpLine = findLine(lines, (l) => /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price/i.test(l.text));
-  const qtyLine = findLine(lines, (l) => /\bnet\s*(wt|weight|qty|quantity)\b|\b\d+(?:\.\d+)?\s*(g|kg|ml|l|litre|liter|unit|units|n\b|u\b)\b/i.test(l.text));
+  const qtyLine = netQtyAnalysis.primaryQtyLine ||
+    findLine(lines, (l) => /\bnet\s*(wt|weight|qty|quantity)\b|\b\d+(?:\.\d+)?\s*(g|kg|ml|l|litre|liter|unit|units|n\b|u\b)\b/i.test(l.text));
 
   const toMm = (line) => {
     if (!line || line.heightPx == null || !pixelsPerMm) return null;
@@ -164,14 +174,22 @@ function analyzeFont(ocrResult, options = {}) {
     netQty: heightMm.netQty == null ? null : +(heightMm.netQty * 0.45).toFixed(2),
   };
 
-  // Rule 8(1) clearance zone
-  const clearance = evaluateClearance(qtyLine, lines);
+  // Rule 8(1) clearance zone from the intermediate layer
+  // If a multi-piece declaration cluster was found, use its composite box and same-panel clearance
+  let clearanceOk = netQtyAnalysis.clearanceOk;
+  let overlappingTexts = netQtyAnalysis.overlappingTexts;
+
+  // Fallback if no cluster was resolved: evaluate legacy single line clearance
+  if (!netQtyAnalysis.clusterFound && qtyLine) {
+    const legacyClearance = evaluateClearance(qtyLine, lines);
+    clearanceOk = legacyClearance.clearanceOk;
+    overlappingTexts = legacyClearance.overlappingTexts;
+  }
 
   const languageUsed = [...new Set(lines.map((l) => l.language).filter(Boolean))];
   if (!languageUsed.some((x) => /english/i.test(x))) languageUsed.push('English');
 
-
-  // Contrast analysis: check Net Quantity and MRP numerals, plus overall package declarations
+  // 4. Contrast analysis: strictly evaluate Rule 9(1)(b) on RSP and Net Quantity numerals
   const minRequiredRatio = config.fontAnalysis.minContrastRatio || 2.5;
   const contrastSummary = ocrResult.contrastAnalysis || null;
 
@@ -182,27 +200,41 @@ function analyzeFont(ocrResult, options = {}) {
   const failingLines = lines.filter((l) => l.contrast && l.contrast.contrast_ok === false);
   const qtyContrastOk = qtyContrast ? qtyContrast.contrast_ok : true;
   const mrpContrastOk = mrpContrast ? mrpContrast.contrast_ok : true;
-  const overallContrastOk = contrastSummary ? contrastSummary.overall_contrast_ok : (failingLines.length === 0);
+  const hasStatutoryContrastData = !!(qtyContrast || mrpContrast);
 
-  // Overall contrast check: Net Quantity or MRP failing contrast, or overall packaging text failing
-  const hasContrastData = !!(qtyContrast || mrpContrast || contrastSummary || lines.some((l) => l.contrast));
-  const contrastOk = hasContrastData ? (qtyContrastOk && mrpContrastOk && overallContrastOk) : true;
+  // Statutory Rule 9(1)(b) requires that RSP and Net Quantity numerals contrast conspicuously with background
+  const statutoryContrastOk = (qtyContrastOk && mrpContrastOk);
 
-  // Determine the most critical / lowest contrast ratio observed
-  const evaluatedRatios = [
-    qtyContrast?.contrast_ratio,
-    mrpContrast?.contrast_ratio,
-    contrastSummary?.min_contrast_ratio,
-    ...failingLines.map((l) => l.contrast?.contrast_ratio),
-  ].filter((r) => r != null);
-
-  const lowestContrastRatio = evaluatedRatios.length > 0 ? Math.min(...evaluatedRatios) : null;
+  // If explicit statutory numeral contrast data is present, evaluate statutory compliance.
+  // If neither qty nor mrp contrast is available, fall back to checking if general packaging declarations failed.
+  const contrastOk = hasStatutoryContrastData
+    ? statutoryContrastOk
+    : (failingLines.length === 0);
 
   const failingFields = [];
   if (qtyContrast && !qtyContrast.contrast_ok) failingFields.push('Net Quantity');
   if (mrpContrast && !mrpContrast.contrast_ok) failingFields.push('MRP');
-  if (failingFields.length === 0 && failingLines.length > 0) {
+  if (failingFields.length === 0 && !hasStatutoryContrastData && failingLines.length > 0) {
     failingFields.push(...failingLines.slice(0, 3).map((l) => `"${l.text.slice(0, 25)}..."`));
+  }
+
+  // Determine the most critical contrast ratio observed on statutory numerals (or failing declarations)
+  let lowestContrastRatio = null;
+  if (failingFields.length > 0) {
+    const failingRatios = [
+      (qtyContrast && !qtyContrast.contrast_ok) ? qtyContrast.contrast_ratio : null,
+      (mrpContrast && !mrpContrast.contrast_ok) ? mrpContrast.contrast_ratio : null,
+      ...(!hasStatutoryContrastData ? failingLines.map((l) => l.contrast?.contrast_ratio) : []),
+    ].filter((r) => r != null);
+    lowestContrastRatio = failingRatios.length > 0 ? Math.min(...failingRatios) : null;
+  } else {
+    const passingRatios = [
+      qtyContrast?.contrast_ratio,
+      mrpContrast?.contrast_ratio,
+    ].filter((r) => r != null);
+    lowestContrastRatio = passingRatios.length > 0
+      ? Math.min(...passingRatios)
+      : (contrastSummary?.min_contrast_ratio || null);
   }
 
   return {
@@ -219,6 +251,9 @@ function analyzeFont(ocrResult, options = {}) {
     qtyContrast,
     mrpContrast,
     failingDeclarations: failingFields,
+    netQuantityBox: netQtyAnalysis.netQuantityBox,
+    exclusionBox: netQtyAnalysis.exclusionBox,
+    netQuantityMultiPiece: netQtyAnalysis.multiPieceFacts,
     isBlownFormedMoldedEmbossedOrPerforated: false,
     isExemptCharacterShape: false,
     isBlownFormedMoldedOnGlassOrPlastic: false,
@@ -226,8 +261,8 @@ function analyzeFont(ocrResult, options = {}) {
     handwritingIsClearUnambiguousLegible: false,
     legibilityIssue: false,
     declarationOnlyReadableThroughLiquid: false,
-    quantityDeclarationSurroundingAreaHasPrintedInfo: !clearance.clearanceOk,
-    clearanceOverlappingTexts: clearance.overlappingTexts,
+    quantityDeclarationSurroundingAreaHasPrintedInfo: !clearanceOk,
+    clearanceOverlappingTexts: overlappingTexts,
     rspOnCrownCapOrBottle: false,
     wrapperTransparentAndDeclarationsReadableThrough: false,
     innerPackageHasNoOuterCoverDeclaration: false,
@@ -237,3 +272,4 @@ function analyzeFont(ocrResult, options = {}) {
 }
 
 module.exports = { analyzeFont };
+

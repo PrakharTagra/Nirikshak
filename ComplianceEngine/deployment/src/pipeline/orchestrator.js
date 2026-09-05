@@ -24,6 +24,25 @@ const { allocateProductId } = require('../utils/productId');
 const { ensureDirs } = require('../utils/fileHelpers');
 
 function buildPackageRecord(declarations, labelMetrics, options = {}) {
+  // Reconcile multi-piece facts from the intermediate layer if LLM extracted only the first piece
+  const multiPiece = labelMetrics?.netQuantityMultiPiece || {};
+  if (multiPiece.pieceCount && !declarations.netQuantity?.pieceCount) {
+    declarations.netQuantity = declarations.netQuantity || {};
+    declarations.netQuantity.pieceCount = multiPiece.pieceCount;
+    declarations.netQuantity.pieces = multiPiece.pieces || [];
+  }
+  if (
+    multiPiece.totalValue != null &&
+    multiPiece.pieceCount > 1 &&
+    declarations.netQuantity?.value != null &&
+    multiPiece.pieces?.length > 0 &&
+    declarations.netQuantity.value === multiPiece.pieces[0].value &&
+    multiPiece.totalValue > declarations.netQuantity.value
+  ) {
+    declarations.netQuantity.value = multiPiece.totalValue;
+    if (multiPiece.totalUnit) declarations.netQuantity.unit = multiPiece.totalUnit;
+  }
+
   const qty = declarations.netQuantity || {};
   const unit = qty.unit || null;
   const value = qty.value ?? null;
@@ -56,6 +75,8 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
   const mfrNotPacker = !!classification.manufacturerIsNotPacker ||
     (declarations.manufacturer?.present && declarations.packer?.present && mfrName && pkrName && mfrName.toLowerCase() !== pkrName.toLowerCase());
 
+  const hasMultiplePieces = (qty.pieceCount != null && qty.pieceCount > 1) || !!declarations.commodityName?.perProductBreakdown;
+
   return {
     commodity: {
       category: classification.scheduleCategory || declarations.commodityName?.value || 'unknown',
@@ -64,12 +85,13 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
       physicalForm: physicalForm,
       netQuantityValue: value,
       netQuantityUnit: unit,
+      pieceCount: qty.pieceCount || null,
       weightOrVolumeKgOrL: normalized,
       isCementOrFertilizerBag: false,
       isIndustrialConsumer: !!classification.isIndustrialOrInstitutional,
       isInstitutionalConsumer: !!classification.isIndustrialOrInstitutional,
       isFoodArticle: !!classification.isFoodArticle,
-      isMultiProductPackage: !!declarations.commodityName?.perProductBreakdown,
+      isMultiProductPackage: hasMultiplePieces,
       manufacturerIsNotPacker: mfrNotPacker,
       isImportedPackage: !!declarations.importer?.present || !!classification.isImported,
       countryOfOrigin: classification.countryOfOrigin || null,

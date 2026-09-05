@@ -117,14 +117,28 @@ function regexExtract(ocrResult, detection) {
   const inclusiveOfTaxesStated = /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(fullText);
 
   // 2. Net Quantity
+  const { extractMultiPieceFacts } = require('./netQuantityClearanceLayer');
+  const multiPiece = extractMultiPieceFacts(lines);
+
   const qtyIdx = getIndex('netQuantity');
-  let qty = { value: null, unit: null, unitKind: null, symbolUsed: null };
+  let qty = { value: null, unit: null, unitKind: null, symbolUsed: null, pieceCount: null, pieces: [] };
   let qtyRaw = '';
-  if (qtyIdx !== -1) {
+
+  if (multiPiece.totalValue != null) {
+    qty = {
+      value: multiPiece.totalValue,
+      unit: multiPiece.totalUnit || 'ml',
+      unitKind: ['ml', 'l'].includes(multiPiece.totalUnit) ? 'volume' : (['g', 'kg'].includes(multiPiece.totalUnit) ? 'mass' : 'number'),
+      symbolUsed: multiPiece.totalUnit,
+      pieceCount: multiPiece.pieceCount,
+      pieces: multiPiece.pieces,
+    };
+    qtyRaw = multiPiece.rawText;
+  } else if (qtyIdx !== -1) {
     for (let j = Math.max(0, qtyIdx - 1); j <= Math.min(lines.length - 1, qtyIdx + 2); j++) {
       const parsed = parseNetQuantity(lines[j].text);
       if (parsed.value != null) {
-        qty = parsed;
+        qty = { ...parsed, pieceCount: multiPiece.pieceCount || null, pieces: [] };
         qtyRaw = lines[j].text;
         break;
       }
@@ -134,12 +148,12 @@ function regexExtract(ocrResult, detection) {
     // Global fallback across full text (first check countable, then weight/volume)
     const globalCountMatch = fullText.match(/(?:net\s*(?:quantity|qty)?[:\s]*)?(\d+(?:\.\d+)?)\s*(units?|u\b|n\b|pieces?|pcs?)\b/i);
     if (globalCountMatch) {
-      qty = parseNetQuantity(globalCountMatch[0]);
+      qty = { ...parseNetQuantity(globalCountMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
       qtyRaw = globalCountMatch[0];
     } else {
       const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|milliliters?|litres?|liters?)\b/i);
       if (globalMatch) {
-        qty = parseNetQuantity(globalMatch[0]);
+        qty = { ...parseNetQuantity(globalMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
         qtyRaw = globalMatch[0];
       }
     }
@@ -291,6 +305,8 @@ function regexExtract(ocrResult, detection) {
       rawText: qtyRaw,
       onTagCardOrTapeDevice: false,
       symbolUsed: qty.symbolUsed,
+      pieceCount: qty.pieceCount || null,
+      pieces: qty.pieces || [],
     },
     mfgDate: {
       present: !!mfgDateVal,

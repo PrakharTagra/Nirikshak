@@ -53,6 +53,24 @@ def calculate_contrast_ratio(
     return round(float((lighter + 0.05) / (darker + 0.05)), 2)
 
 
+def calculate_delta_e(
+    rgb1: np.ndarray | List[float] | Tuple[float, ...],
+    rgb2: np.ndarray | List[float] | Tuple[float, ...],
+) -> float:
+    """Calculate CIELAB color difference (Delta E) between two RGB colors (0-255).
+    
+    Delta E measures perceptual color difference in human vision.
+    On packaging, Delta E >= 25 indicates conspicuous chromatic contrast
+    even if luminance values are similar (e.g. vibrant red on dark green).
+    """
+    arr1 = np.uint8([[np.clip(rgb1[:3], 0, 255)]])
+    arr2 = np.uint8([[np.clip(rgb2[:3], 0, 255)]])
+    lab1 = cv2.cvtColor(arr1, cv2.COLOR_RGB2LAB).astype(float)[0][0]
+    lab2 = cv2.cvtColor(arr2, cv2.COLOR_RGB2LAB).astype(float)[0][0]
+    diff = lab1 - lab2
+    return round(float(np.sqrt(np.sum(diff ** 2))), 2)
+
+
 def rgb_to_hex(rgb: np.ndarray | List[float] | Tuple[float, ...]) -> str:
     """Convert RGB values to hexadecimal color code."""
     r, g, b = [int(np.clip(round(float(c)), 0, 255)) for c in rgb[:3]]
@@ -66,17 +84,21 @@ def analyze_region_contrast(
 ) -> Dict[str, Any]:
     """Measure the contrast ratio between text strokes and surrounding background.
     
+    Uses robust background margin sampling and dual luminance + CIELAB chromatic
+    contrast evaluation calibrated for physical packaging (Rule 9(1)(b)).
+    
     Args:
         image: BGR image as a NumPy array (OpenCV format).
         bbox: Bounding box as 4 points [[x1,y1], [x2,y2], [x3,y3], [x4,y4]] or [x, y, w, h].
-        min_ratio: Minimum passing contrast ratio.
+        min_ratio: Minimum passing contrast ratio (default 2.5).
         
     Returns:
-        Dict with contrast_ratio, contrast_ok, fg_rgb, bg_rgb, fg_hex, bg_hex.
+        Dict with contrast_ratio, delta_e, contrast_ok, fg_rgb, bg_rgb, fg_hex, bg_hex.
     """
     if image is None or image.size == 0:
         return {
             "contrast_ratio": 1.0,
+            "delta_e": 0.0,
             "contrast_ok": False,
             "fg_rgb": [0, 0, 0],
             "bg_rgb": [255, 255, 255],
@@ -89,6 +111,7 @@ def analyze_region_contrast(
     if len(arr) < 3:
         return {
             "contrast_ratio": 1.0,
+            "delta_e": 0.0,
             "contrast_ok": False,
             "fg_rgb": [0, 0, 0],
             "bg_rgb": [255, 255, 255],
@@ -97,14 +120,15 @@ def analyze_region_contrast(
             "reason": "Invalid bounding box",
         }
 
-    # Bounding rectangle with 15% context padding around the text
+    # Bounding rectangle
     x_min, y_min = np.min(arr, axis=0)
     x_max, y_max = np.max(arr, axis=0)
     w = max(1.0, x_max - x_min)
     h = max(1.0, y_max - y_min)
 
-    pad_x = int(round(w * 0.15))
-    pad_y = int(round(h * 0.15))
+    # Generous context padding to capture true substrate background without stroke bleed
+    pad_x = max(8, int(round(w * 0.25)))
+    pad_y = max(6, int(round(h * 0.35)))
 
     img_h, img_w = image.shape[:2]
     y1 = max(0, int(y_min) - pad_y)
@@ -116,6 +140,7 @@ def analyze_region_contrast(
     if crop.size == 0 or crop.shape[0] < 2 or crop.shape[1] < 2:
         return {
             "contrast_ratio": 1.0,
+            "delta_e": 0.0,
             "contrast_ok": False,
             "fg_rgb": [0, 0, 0],
             "bg_rgb": [255, 255, 255],
@@ -124,75 +149,98 @@ def analyze_region_contrast(
             "reason": "Crop area empty",
         }
 
-    # Convert to grayscale and apply slight blur for Otsu thresholding
-    gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-    _, binary_mask = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # Coordinates of the inner text bounding box within the crop
+    in_y1 = max(0, int(y_min) - y1)
+    in_y2 = min(crop.shape[0], int(y_max) - y1)
+    in_x1 = max(0, int(x_min) - x1)
+    in_x2 = min(crop.shape[1], int(x_max) - x1)
 
-    # Determine which binary value represents background.
-    # Packaging background almost always forms the perimeter of the padded crop box.
-    top_edge = binary_mask[0, :]
-    bottom_edge = binary_mask[-1, :]
-    left_edge = binary_mask[:, 0]
-    right_edge = binary_mask[:, -1]
-    border_pixels = np.concatenate([top_edge, bottom_edge, left_edge, right_edge])
+    # 1. Sample Background from the outer margin surrounding the inner text box
+    margin_mask = np.ones((crop.shape[0], crop.shape[1]), dtype=bool)
+    if in_y2 > in_y1 and in_x2 > in_x1:
+        margin_mask[in_y1:in_y2, in_x1:in_x2] = False
 
-    # If >50% of border pixels are 255, then 255 is background and 0 is text foreground
-    bg_is_light = np.mean(border_pixels) > 127
-
-    if bg_is_light:
-        bg_mask = binary_mask == 255
-        fg_mask = binary_mask == 0
+    if np.count_nonzero(margin_mask) > 10:
+        bg_pixels = crop[margin_mask]
+        # Use median for background to reject dust/artifacts/halftones
+        bg_bgr = np.median(bg_pixels, axis=0)
     else:
-        bg_mask = binary_mask == 0
-        fg_mask = binary_mask == 255
-
-    # If foreground mask has too few pixels (<1%) or too many (>99%), fall back to
-    # central stroke vs perimeter color estimation
-    total_pixels = crop.shape[0] * crop.shape[1]
-    fg_count = np.count_nonzero(fg_mask)
-    bg_count = np.count_nonzero(bg_mask)
-    if fg_count < total_pixels * 0.01 or fg_count > total_pixels * 0.99 or bg_count == 0:
+        # Fallback to outer perimeter border
         border_bgr = np.concatenate([
             crop[0, :, :],
             crop[-1, :, :],
             crop[:, 0, :],
             crop[:, -1, :],
         ], axis=0)
-        bg_bgr = border_bgr.mean(axis=0) if border_bgr.size > 0 else np.array([255.0, 255.0, 255.0])
-        ch, cw = crop.shape[:2]
-        center_core = crop[ch // 4 : max(ch // 4 + 1, 3 * ch // 4), cw // 4 : max(cw // 4 + 1, 3 * cw // 4)]
-        fg_bgr = center_core.mean(axis=(0, 1)) if center_core.size > 0 else crop.mean(axis=(0, 1))
+        bg_bgr = np.median(border_bgr, axis=0) if border_bgr.size > 0 else np.array([255.0, 255.0, 255.0])
+
+    # 2. Segment Foreground Text within the inner box using color distance from background
+    inner_crop = crop[in_y1:in_y2, in_x1:in_x2] if (in_y2 > in_y1 and in_x2 > in_x1) else crop
+    if inner_crop.size == 0:
+        inner_crop = crop
+
+    # Distance in BGR color space from the estimated background color
+    color_diff = np.linalg.norm(inner_crop.astype(float) - bg_bgr, axis=-1)
+    max_diff = np.max(color_diff) if color_diff.size > 0 else 0.0
+
+    if max_diff > 12.0:
+        # Normalized difference map (0-255)
+        diff_u8 = np.clip((color_diff / max_diff) * 255.0, 0, 255).astype(np.uint8)
+        blurred_diff = cv2.GaussianBlur(diff_u8, (3, 3), 0)
+        otsu_val, binary_mask = cv2.threshold(blurred_diff, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Text stroke pixels have high difference from background
+        fg_mask = binary_mask == 255
+        
+        # Morphological erosion slightly reduces anti-aliasing edge blend
+        kernel = np.ones((2, 2), np.uint8)
+        eroded_fg = cv2.erode(fg_mask.astype(np.uint8), kernel)
+        if np.count_nonzero(eroded_fg) >= 4:
+            fg_mask = (eroded_fg == 1)
+
+        fg_count = np.count_nonzero(fg_mask)
+        total_inner = inner_crop.shape[0] * inner_crop.shape[1]
+
+        if 0.02 * total_inner <= fg_count <= 0.85 * total_inner:
+            fg_bgr = np.median(inner_crop[fg_mask], axis=0)
+        else:
+            # High-percentile difference pixels as text core
+            p90 = np.percentile(color_diff, 90)
+            strong_fg = color_diff >= max(p90, 15.0)
+            if np.count_nonzero(strong_fg) > 0:
+                fg_bgr = np.median(inner_crop[strong_fg], axis=0)
+            else:
+                fg_bgr = np.array([0.0, 0.0, 0.0])
     else:
-        fg_bgr = crop[fg_mask].mean(axis=0)
-        bg_bgr = crop[bg_mask].mean(axis=0)
-
-    def _to_1d_bgr(val: Any, default_val: float = 0.0) -> np.ndarray:
-        if val is None:
-            return np.array([default_val, default_val, default_val], dtype=float)
-        val_arr = np.asarray(val, dtype=float)
-        if val_arr.size == 0 or np.isnan(val_arr).any():
-            return np.array([default_val, default_val, default_val], dtype=float)
-        while val_arr.ndim > 1:
-            val_arr = val_arr.mean(axis=0)
-        if val_arr.size >= 3:
-            return val_arr[:3]
-        elif val_arr.size == 1:
-            return np.repeat(val_arr, 3)
-        return np.array([default_val, default_val, default_val], dtype=float)
-
-    fg_bgr_1d = _to_1d_bgr(fg_bgr, default_val=0.0)
-    bg_bgr_1d = _to_1d_bgr(bg_bgr, default_val=255.0)
+        # Very low difference: image region is nearly uniform (low contrast)
+        gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+        _, binary_mask = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        border_b = np.concatenate([binary_mask[0, :], binary_mask[-1, :], binary_mask[:, 0], binary_mask[:, -1]])
+        bg_is_light = np.mean(border_b) > 127
+        fg_mask = (binary_mask == 0) if bg_is_light else (binary_mask == 255)
+        if np.count_nonzero(fg_mask) > 0:
+            fg_bgr = crop[fg_mask].mean(axis=0)
+        else:
+            fg_bgr = crop.mean(axis=(0, 1))
 
     # Convert BGR (OpenCV) to RGB
-    fg_rgb = [round(float(c), 1) for c in fg_bgr_1d[::-1]]
-    bg_rgb = [round(float(c), 1) for c in bg_bgr_1d[::-1]]
+    fg_rgb = [round(float(c), 1) for c in fg_bgr[::-1]]
+    bg_rgb = [round(float(c), 1) for c in bg_bgr[::-1]]
 
     ratio = calculate_contrast_ratio(fg_rgb, bg_rgb)
-    is_ok = ratio >= min_ratio
+    delta_e = calculate_delta_e(fg_rgb, bg_rgb)
+
+    # Conspicuous contrast evaluation per Rule 9(1)(b):
+    # Passes if:
+    # 1. Standard WCAG luminance contrast >= min_ratio (default 2.5:1), OR
+    # 2. Conspicuous chromatic color difference (Delta E >= 25.0 with luminance ratio >= 2.0:1), OR
+    # 3. High chromatic difference (Delta E >= 35.0, e.g. bright red on dark green or yellow on dark blue)
+    is_ok = (ratio >= min_ratio) or (ratio >= 2.0 and delta_e >= 25.0) or (delta_e >= 35.0)
 
     return {
         "contrast_ratio": ratio,
+        "delta_e": delta_e,
         "contrast_ok": is_ok,
         "min_required_ratio": min_ratio,
         "fg_rgb": fg_rgb,

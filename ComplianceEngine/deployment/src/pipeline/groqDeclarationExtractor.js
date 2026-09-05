@@ -113,6 +113,7 @@ const DECLARATION_SCHEMA = {
         onTagCardOrTapeDevice: nullableBoolean,
         symbolUsed: nullableString,
         secondaryWeight: nullableString,
+        pieceCount: nullableNumber,
       },
       required: [
         'present',
@@ -281,10 +282,16 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 - If an entity is present but no address is printed, set address to false.
 - If a separate packer is declared, populate "packer". If imported, populate "importer".
 
-3. NET QUANTITY (Rule 6(1)(c), Rule 11, Rule 12, Rule 13):
-- PRIMARY Net Quantity: The declared quantity of commodity sold in the package (e.g., "Net Quantity: 1 Unit", "Net Qty: 1 N", "100 g", "500 ml", "1 Piece").
+3. NET QUANTITY (Rule 6(1)(c), Rule 11, Rule 12, Rule 13, Rule 24, Rule 28):
+- PRIMARY Net Quantity: The declared total quantity of commodity sold in the package (e.g., "Net Quantity: 1 Unit", "Net Qty: 1 N", "100 g", "500 ml", "90 ml").
+- CRITICAL MULTI-PIECE / MULTI-PRODUCT PACK INSTRUCTION:
+    * If a packaged commodity contains multiple pieces/units (e.g., 3 pieces inside, 2 numbers x 45 ml = 90 ml, 3 x 100 g = 300 g):
+    * NEVER map only the first piece or only one piece!
+    * "value": MUST be the TOTAL aggregated net quantity of the package (e.g. 90, NOT 45; 300, NOT 100; or 3 if sold by 3 units/pieces).
+    * "pieceCount": total number of pieces inside (e.g. 2, 3, 4).
+    * "rawText": MUST include the full declaration including piece counts and breakdown (e.g. "Net Quantity: 90 ml (2 Numbers x 45 ml)").
 - DO NOT confuse auxiliary box specifications (e.g., "Box Size: 85x14x85 mm, Net Weight: 6 gm, Gross Weight: 18 gm") with the primary net quantity for a countable electronic/hardware item (which is "1 Unit" or "1 N").
-- "value": numeric float (e.g. 1, 100, 500, 1.5).
+- "value": numeric float (e.g. 1, 100, 500, 1.5, 90).
 - "unit": normalized unit string (e.g. "unit", "n", "u", "g", "kg", "ml", "l", "m", "cm", "piece").
 - "unitKind":
     * "number" for countable items sold by piece/count/unit/N/U.
@@ -373,10 +380,11 @@ function buildUserPrompt(ocrResult) {
     'CRITICAL REMINDERS:',
     '1. Set commodityName to the GENERIC/COMMON product name (e.g. "Wireless Mini USB Adapter"), NOT the brand name (e.g. "INTEX").',
     '2. For countable commodities (e.g. adapters, cables, electronics), net quantity is the sold unit count ("1 Unit", unitKind: "number"), NOT the package gross/net weight ("6 gm").',
-    '3. For MRP, do not confuse the unit count with the price figure (e.g. "for 1 Unit: 999.00" has price 999.00, not 1).',
-    '4. Populate consumer care telephone and email into their individual fields if present.',
-    '5. General legal disclaimers like "In compliance with Legal Metrology Act" are NOT standard pack declarations (Rule 5). Keep standardPackDeclaration.present: false unless it explicitly says "Not a standard pack size".',
-    '6. Return strictly valid JSON conforming to the schema.',
+    '3. For multi-piece packages (e.g. 3 pieces inside, or 2 Numbers x 45 ml = 90 ml), net quantity value MUST be the TOTAL package quantity (90 ml), NOT just one piece (45 ml). Record pieceCount.',
+    '4. For MRP, do not confuse the unit count with the price figure (e.g. "for 1 Unit: 999.00" has price 999.00, not 1).',
+    '5. Populate consumer care telephone and email into their individual fields if present.',
+    '6. General legal disclaimers like "In compliance with Legal Metrology Act" are NOT standard pack declarations (Rule 5). Keep standardPackDeclaration.present: false unless it explicitly says "Not a standard pack size".',
+    '7. Return strictly valid JSON conforming to the schema.',
     '',
     'OCR TEXT LINES:',
     formattedLines,
@@ -496,6 +504,30 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   let numVal = qty.value != null ? Number(qty.value) : null;
   if (numVal != null && isNaN(numVal)) numVal = null;
   let unit = qty.unit ? String(qty.unit).toLowerCase().trim() : null;
+  let pieceCount = qty.pieceCount != null ? Number(qty.pieceCount) : null;
+  if (pieceCount != null && isNaN(pieceCount)) pieceCount = null;
+
+  // Multi-piece reconciliation layer: extract multi-piece facts from raw OCR text
+  const { extractMultiPieceFacts } = require('./netQuantityClearanceLayer');
+  const multiPiece = extractMultiPieceFacts(
+    (rawOcrText || '').split('\n').map((t, idx) => ({ id: idx, text: t.trim() }))
+  );
+
+  if (multiPiece.pieceCount && !pieceCount) {
+    pieceCount = multiPiece.pieceCount;
+  }
+
+  // If LLM mapped only the first piece (e.g. numVal == 45 when 2 Numbers x 45 ml = 90 ml is declared)
+  if (multiPiece.totalValue != null && multiPiece.pieceCount && multiPiece.pieceCount > 1) {
+    if (numVal == null || (multiPiece.pieces.length > 0 && numVal === multiPiece.pieces[0].value && multiPiece.totalValue > numVal)) {
+      logger.info(
+        'groqDeclarationExtractor',
+        `Reconciled multi-piece net quantity from first piece (${numVal}) to total quantity (${multiPiece.totalValue} ${multiPiece.totalUnit || unit}) across ${multiPiece.pieceCount} pieces.`
+      );
+      numVal = multiPiece.totalValue;
+      if (multiPiece.totalUnit) unit = multiPiece.totalUnit;
+    }
+  }
 
   const isCountUnit = ['unit', 'units', 'n', 'u', 'piece', 'pieces', 'nos', 'no'].includes(unit);
   let unitKind = qty.unitKind || null;
@@ -523,10 +555,12 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     value: numVal,
     unit: unit,
     unitKind: unitKind,
-    rawText: qty.rawText || '',
+    rawText: qty.rawText || multiPiece.rawText || '',
     qualifiedWhenPacked: !!qty.qualifiedWhenPacked,
     onTagCardOrTapeDevice: !!qty.onTagCardOrTapeDevice,
     symbolUsed: symbolUsed,
+    pieceCount: pieceCount,
+    pieces: multiPiece.pieces || [],
   };
 
   // 5. Manufacturing / Packing Date (Rule 6(1)(d) strictly requires statutory labeling)

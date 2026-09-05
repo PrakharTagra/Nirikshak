@@ -133,28 +133,36 @@ def analyze_font_and_readability(
 
     qty_contrast_ok = qty_contrast.get("contrast_ok", True) if qty_contrast else True
     mrp_contrast_ok = mrp_contrast.get("contrast_ok", True) if mrp_contrast else True
-    overall_contrast_ok = contrast_summary.get("overall_contrast_ok", len(failing_lines) == 0)
+    has_statutory_contrast = bool(qty_contrast or mrp_contrast)
+    statutory_contrast_ok = (qty_contrast_ok and mrp_contrast_ok)
 
-    has_contrast_data = bool(qty_contrast or mrp_contrast or contrast_summary or failing_lines)
-    contrast_ok = (qty_contrast_ok and mrp_contrast_ok and overall_contrast_ok) if has_contrast_data else True
-
-    evaluated_ratios = [
-        qty_contrast.get("contrast_ratio") if qty_contrast else None,
-        mrp_contrast.get("contrast_ratio") if mrp_contrast else None,
-        contrast_summary.get("min_contrast_ratio"),
-        *[l.get("contrast", {}).get("contrast_ratio") for l in failing_lines],
-    ]
-    valid_ratios = [r for r in evaluated_ratios if r is not None]
-    lowest_contrast_ratio = min(valid_ratios) if valid_ratios else None
+    # Rule 9(1)(b) specifically applies to RSP and Net Quantity numerals
+    contrast_ok = statutory_contrast_ok if has_statutory_contrast else (len(failing_lines) == 0)
 
     failing_declarations = []
     if qty_contrast and not qty_contrast.get("contrast_ok"):
         failing_declarations.append("Net Quantity")
     if mrp_contrast and not mrp_contrast.get("contrast_ok"):
         failing_declarations.append("MRP")
-    if not failing_declarations and failing_lines:
+    if not failing_declarations and not has_statutory_contrast and failing_lines:
         for fl in failing_lines[:3]:
             failing_declarations.append(f"\"{fl.get('text', '')[:25]}...\"")
+
+    if failing_declarations:
+        failing_ratios = [
+            qty_contrast.get("contrast_ratio") if (qty_contrast and not qty_contrast.get("contrast_ok")) else None,
+            mrp_contrast.get("contrast_ratio") if (mrp_contrast and not mrp_contrast.get("contrast_ok")) else None,
+            *([l.get("contrast", {}).get("contrast_ratio") for l in failing_lines] if not has_statutory_contrast else []),
+        ]
+        valid_ratios = [r for r in failing_ratios if r is not None]
+        lowest_contrast_ratio = min(valid_ratios) if valid_ratios else None
+    else:
+        passing_ratios = [
+            qty_contrast.get("contrast_ratio") if qty_contrast else None,
+            mrp_contrast.get("contrast_ratio") if mrp_contrast else None,
+        ]
+        valid_ratios = [r for r in passing_ratios if r is not None]
+        lowest_contrast_ratio = min(valid_ratios) if valid_ratios else contrast_summary.get("min_contrast_ratio")
 
     languages = list({l.get("language") for l in lines if l.get("language")})
     if not any("english" in lang.lower() for lang in languages):
