@@ -17,7 +17,7 @@
 const logger = require('../utils/logger');
 
 // Regex patterns for detecting net quantity anchors and components
-const NET_QTY_HEADER_RE = /\b(?:net\s*(?:quantity|qty|wt|weight|content|contents|volume|vol|measure)|quantity|qty)\b/i;
+const NET_QTY_HEADER_RE = /\b(?:(?:net|ner|neto|nero)\.?\s*(?:quantity|qty\.?|wt\.?|weight|content|contents|volume|vol\.?|measure|oty\.?|otv\.?|qtv\.?|oe\b)|quantity|qty\.?|oty\.?)\s*:?/i;
 const COUNT_UNIT_RE = /\b(?:(\d+)\s*(?:numbers?|units?|pieces?|pcs?|nos?|pkts?|refills?|packs?|n\b|u\b)|([lI])\s*[uU]\b)\b/i;
 const MULTIPLIER_RE = /(?:\(?\s*(?:(\d+|[lI]))\s*(?:numbers?|units?|pieces?|n\b|u\b|refills?|nos?)?\s*[xX*×]\s*(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm)?\s*\)?)|(?:[xX*×]\s*(\d+))/i;
 const MEASURE_VAL_RE = /\b(\d+(?:\.\d+)?)\s*(ml\b|mls\b|l\b|litres?|liters?|g\b|gm\b|gms\b|kg\b|kgs\b|cm\b|mm\b|metres?|meters?|m\b(?![A-Za-z0-9]))/i;
@@ -29,10 +29,16 @@ const NON_NET_QTY_DECLARATIONS_RE = /\b(?:expiry|exp\b|best\s*before|use\s*by|mf
 
 function isOtherStatutoryOrSpecLine(txt) {
   if (!txt) return true;
+  // If the line explicitly contains a Net Quantity header, it is the declaration itself, not an "other" line
+  if (NET_QTY_HEADER_RE.test(txt)) return false;
+
   if (NON_NET_QTY_DECLARATIONS_RE.test(txt)) return true;
-  if (PROMO_OR_DISCLAIMER_RE.test(txt)) return true;
+  if (PROMO_OR_DISCLAIMER_RE.test(txt)) {
+    const hasNumericQty = MEASURE_VAL_RE.test(txt) || MULTIPLIER_RE.test(txt) || (COUNT_UNIT_RE.test(txt) && /\d/.test(txt));
+    if (!hasNumericQty) return true;
+  }
   if (TECH_TERMS_RE.test(txt)) return true;
-  const m = txt.match(/^([A-Za-z0-9\s&/-]{2,30}):/);
+  const m = txt.match(/^([A-Za-z0-9\s&/.-]{2,30}):/);
   if (m) {
     const hdr = m[1].trim();
     if (!NET_QTY_HEADER_RE.test(hdr)) return true;
@@ -42,7 +48,7 @@ function isOtherStatutoryOrSpecLine(txt) {
 
 function hasStandaloneQuantity(txt) {
   if (!txt) return false;
-  const clean = txt.replace(NET_QTY_HEADER_RE, '').trim();
+  const clean = txt.replace(NET_QTY_HEADER_RE, '').replace(/^[\s.:·•_—-]+/, '').trim();
   if (!clean) return false;
   return COUNT_UNIT_RE.test(clean) || (MEASURE_VAL_RE.test(clean) && !TECH_TERMS_RE.test(clean));
 }
@@ -103,6 +109,11 @@ function parseQuantityPiece(text) {
   return null;
 }
 
+// Statutory Net Quantity Header priority patterns
+const PRIORITY_1_NET_QTY_RE = /\b(?:net|ner|neto|nero)\.?\s*(?:quantity|qty\.?|oty\.?|otv\.?|qtv\.?|oe\b)/i;
+const PRIORITY_2_NET_QTY_RE = /\b(?:net|ner)\.?\s*(?:content|contents|volume|vol\.?|weight|wt\.?|measure)\b/i;
+const PRIORITY_3_NET_QTY_RE = /\b(?:quantity|qty\.?|oty\.?)\s*:/i;
+
 /**
  * Identifies the complete Net Quantity declaration across OCR lines.
  * Handles single lines as well as multi-line declarations (e.g. header line,
@@ -119,14 +130,42 @@ function identifyNetQuantityCluster(allLines = []) {
     panels.get(panelKey).push(line);
   }
 
+  // Determine the highest priority Net Quantity header present across any panel
+  let activeHeaderPriority = 0;
+  for (const line of allLines) {
+    const txt = String(line.text || '').trim();
+    if (!txt || isOtherStatutoryOrSpecLine(txt)) continue;
+    if (PRIORITY_1_NET_QTY_RE.test(txt)) {
+      activeHeaderPriority = 1;
+      break;
+    }
+    if (PRIORITY_2_NET_QTY_RE.test(txt) && activeHeaderPriority < 2) {
+      activeHeaderPriority = 2;
+    } else if (PRIORITY_3_NET_QTY_RE.test(txt) && activeHeaderPriority < 3) {
+      activeHeaderPriority = 3;
+    }
+  }
+
+  // If no statutory header exists, do not guess from arbitrary numbers
+  if (activeHeaderPriority === 0) {
+    logger.info('netQuantityClearanceLayer', 'No explicit Net Quantity statutory header found on packaging.');
+    return null;
+  }
+
+  const headerFilterRe = activeHeaderPriority === 1
+    ? PRIORITY_1_NET_QTY_RE
+    : activeHeaderPriority === 2
+      ? PRIORITY_2_NET_QTY_RE
+      : PRIORITY_3_NET_QTY_RE;
+
   let bestCluster = null;
   let highestScore = -1;
 
   for (const [panelKey, panelLines] of panels.entries()) {
-    // 1. Locate anchor lines containing explicit Net Quantity keywords
+    // Locate anchor lines matching the active header priority
     const headerCandidates = panelLines.filter((l) => {
       const txt = String(l.text || '').trim();
-      return NET_QTY_HEADER_RE.test(txt) && !isOtherStatutoryOrSpecLine(txt);
+      return headerFilterRe.test(txt) && !isOtherStatutoryOrSpecLine(txt);
     });
 
     for (const anchor of headerCandidates) {
@@ -137,66 +176,79 @@ function identifyNetQuantityCluster(allLines = []) {
       const seenIds = new Set([anchor.id]);
       const anchorHasCompleteQty = hasStandaloneQuantity(anchor.text);
 
-      // Iteratively expand cluster to include adjacent lines that provide pieces/breakdown/total
-      let added = true;
-      while (added) {
-        added = false;
-        const curBox = getAABB(clusterLines.flatMap((l) => l.bbox));
-        const curH = Math.max(...clusterLines.map((l) => l.heightPx || 20));
+      // Check if anchor is already complete single item (e.g. "Net Quantity: 1 Unit", "Net Quantity: 1Unit")
+      // or already contains both quantity and full breakdown. In such cases, NO other lines should be added.
+      const anchorTxt = String(anchor.text || '').trim();
+      const isSingleCount = /\b1\s*(?:u\b|n\b|unit|units|piece|pieces|nos?|pkt|pack)\b/i.test(anchorTxt) ||
+        /\b1Unit\b/i.test(anchorTxt) ||
+        /\b1N\b/i.test(anchorTxt);
+      const alreadyHasBreakdown = MULTIPLIER_RE.test(anchorTxt);
 
-        for (const candidate of panelLines) {
-          if (seenIds.has(candidate.id)) continue;
-          const candBox = getAABB(candidate.bbox);
-          if (!candBox) continue;
+      const canExpand = !isSingleCount && (!anchorHasCompleteQty || !alreadyHasBreakdown);
 
-          const candTxt = String(candidate.text || '').trim();
-          if (!candTxt) continue;
-          if (isOtherStatutoryOrSpecLine(candTxt)) continue;
+      if (canExpand) {
+        // Iteratively expand cluster to include adjacent lines that provide pieces/breakdown/total
+        let added = true;
+        while (added) {
+          added = false;
+          const curBox = getAABB(clusterLines.flatMap((l) => l.bbox));
+          const curH = Math.max(...clusterLines.map((l) => l.heightPx || 20));
 
-          // If anchor already has complete quantity (e.g. Net Quantity: 1 Unit),
-          // ONLY allow explicit continuation/breakdown lines (e.g. multiplier/sub-unit).
-          if (anchorHasCompleteQty && !isExplicitBreakdownLine(candTxt)) {
-            continue;
-          }
+          for (const candidate of panelLines) {
+            if (seenIds.has(candidate.id)) continue;
+            const candBox = getAABB(candidate.bbox);
+            if (!candBox) continue;
 
-          const isQtyValue = isExplicitBreakdownLine(candTxt) ||
-            MEASURE_VAL_RE.test(candTxt) ||
-            MULTIPLIER_RE.test(candTxt) ||
-            COUNT_UNIT_RE.test(candTxt) ||
-            /\b(?:refills?|device|plug|bottle|tablets?|capsules?|units?|pieces?)\b/i.test(candTxt);
+            const candTxt = String(candidate.text || '').trim();
+            if (!candTxt) continue;
+            if (isOtherStatutoryOrSpecLine(candTxt)) continue;
 
-          if (!isQtyValue) continue;
+            // If anchor already has complete quantity (e.g. Net Quantity: 135 ml),
+            // ONLY allow explicit continuation/breakdown lines (e.g. multiplier/sub-unit: "(3 Numbers x 45 ml)").
+            if (anchorHasCompleteQty && !MULTIPLIER_RE.test(candTxt)) {
+              continue;
+            }
 
-          // Strict downward progression: candidate must not end completely above curBox top
-          if (candBox.y2 < curBox.y1 - 2) {
-            continue;
-          }
+            const isQtyValue = isExplicitBreakdownLine(candTxt) ||
+              MEASURE_VAL_RE.test(candTxt) ||
+              MULTIPLIER_RE.test(candTxt) ||
+              COUNT_UNIT_RE.test(candTxt) ||
+              /\b(?:refills?|device|plug|bottle|tablets?|capsules?|units?|pieces?)\b/i.test(candTxt);
 
-          // Check spatial proximity to current cluster bounding box
-          const candH = candBox.y2 - candBox.y1;
-          const vertOverlap = Math.max(0, Math.min(curBox.y2, candBox.y2) - Math.max(curBox.y1, candBox.y1));
-          const isSameRow = vertOverlap >= 0.3 * Math.min(candH, curH);
+            if (!isQtyValue) continue;
 
-          const vertDist = isSameRow ? 0 : Math.max(0, Math.max(candBox.y1 - curBox.y2, curBox.y1 - candBox.y2));
-          const horizDist = Math.max(0, Math.max(candBox.x1 - curBox.x2, curBox.x1 - candBox.x2));
+            // Strict downward progression: candidate must not end completely above curBox top
+            if (candBox.y2 < curBox.y1 - 2) {
+              continue;
+            }
 
-          const adjacentRow = vertDist <= curH * 2.2 && (horizDist <= curH * 3.5 || (candBox.x2 >= curBox.x1 && candBox.x1 <= curBox.x2));
-          const adjacentCol = isSameRow && horizDist <= curH * 6.0;
+            // Check spatial proximity to current cluster bounding box
+            const candH = candBox.y2 - candBox.y1;
+            const vertOverlap = Math.max(0, Math.min(curBox.y2, candBox.y2) - Math.max(curBox.y1, candBox.y1));
+            const isSameRow = vertOverlap >= 0.3 * Math.min(candH, curH);
 
-          if (adjacentRow || adjacentCol) {
-            clusterLines.push(candidate);
-            seenIds.add(candidate.id);
-            added = true;
+            const vertDist = isSameRow ? 0 : Math.max(0, Math.max(candBox.y1 - curBox.y2, curBox.y1 - candBox.y2));
+            const horizDist = Math.max(0, Math.max(candBox.x1 - curBox.x2, curBox.x1 - candBox.x2));
+
+            const adjacentRow = vertDist <= curH * 2.5 && (horizDist <= curH * 3.5 || (candBox.x2 >= curBox.x1 && candBox.x1 <= curBox.x2));
+            const adjacentCol = isSameRow && (candBox.x1 >= curBox.x1 - 20 || horizDist <= curH * 6.0);
+
+            if (adjacentRow || adjacentCol) {
+              clusterLines.push(candidate);
+              seenIds.add(candidate.id);
+              added = true;
+            }
           }
         }
       }
 
       // Compute cluster score
-      let score = 10;
+      let score = 20;
+      if (anchorHasCompleteQty) score += 10;
       const combinedTxt = clusterLines.map((l) => l.text).join(' ');
-      if (MULTIPLIER_RE.test(combinedTxt)) score += 5;
+      if (MULTIPLIER_RE.test(combinedTxt)) score += 10;
       if (MEASURE_VAL_RE.test(combinedTxt)) score += 5;
-      if (clusterLines.length > 1) score += 3;
+      if (COUNT_UNIT_RE.test(combinedTxt)) score += 5;
 
       if (score > highestScore) {
         highestScore = score;
@@ -207,27 +259,6 @@ function identifyNetQuantityCluster(allLines = []) {
           declarationLines: clusterLines,
         };
       }
-    }
-  }
-
-  // Fallback if no explicit header was found: look for isolated valid quantity declaration
-  if (!bestCluster) {
-    for (const [panelKey, panelLines] of panels.entries()) {
-      for (const line of panelLines) {
-        const txt = String(line.text || '').trim();
-        if (PROMO_OR_DISCLAIMER_RE.test(txt)) continue;
-        if (NON_NET_QTY_DECLARATIONS_RE.test(txt)) continue;
-        if (MEASURE_VAL_RE.test(txt)) {
-          bestCluster = {
-            panelKey,
-            panelLines,
-            anchor: line,
-            declarationLines: [line],
-          };
-          break;
-        }
-      }
-      if (bestCluster) break;
     }
   }
 
@@ -363,6 +394,80 @@ function extractMultiPieceFacts(clusterLines) {
 }
 
 /**
+ * Corrects the bounding box width to the minimum corresponding to the actual quantity measurement
+ * (e.g. isolating "1 Unit" or "100 g" from "Net Quantity: 1 Unit", or isolating "60g" from "Net Qty.: .... 60g").
+ */
+function getMinimalMeasurementBox(declarationLines, fullBox) {
+  if (!declarationLines || declarationLines.length === 0 || !fullBox) return fullBox;
+
+  // Case 1: Multi-line / Multi-box cluster
+  if (declarationLines.length > 1) {
+    const hasMultiplier = declarationLines.some((l) => MULTIPLIER_RE.test(l.text || ''));
+    if (!hasMultiplier) {
+      // Find dedicated pure measurement line (e.g. '60g', '100 g', '1Unit')
+      const pureMeasureLine = declarationLines.find((l) => {
+        const txt = String(l.text || '').trim();
+        const hasHeader = NET_QTY_HEADER_RE.test(txt);
+        const hasVal = MEASURE_VAL_RE.test(txt) || COUNT_UNIT_RE.test(txt);
+        const isPromo = PROMO_OR_DISCLAIMER_RE.test(txt);
+        return !hasHeader && hasVal && !isPromo;
+      }) || declarationLines.find((l) => {
+        const txt = String(l.text || '').trim();
+        const hasHeader = NET_QTY_HEADER_RE.test(txt);
+        const hasVal = MEASURE_VAL_RE.test(txt) || COUNT_UNIT_RE.test(txt);
+        return !hasHeader && hasVal;
+      });
+      if (pureMeasureLine && pureMeasureLine.bbox) {
+        const xs = pureMeasureLine.bbox.map((p) => p[0]);
+        const ys = pureMeasureLine.bbox.map((p) => p[1]);
+        return {
+          x1: Math.min(...xs),
+          y1: Math.min(...ys),
+          x2: Math.max(...xs),
+          y2: Math.max(...ys),
+        };
+      }
+    }
+  }
+
+  // Case 2: Single line (or anchor line) containing header + dot leaders + measurement
+  const line = declarationLines[0];
+  const txt = String(line.text || '').trim();
+  const headerMatch = txt.match(NET_QTY_HEADER_RE);
+  if (headerMatch) {
+    const prefixEnd = headerMatch.index + headerMatch[0].length;
+    const rawAfter = txt.slice(prefixEnd);
+    const leadingDotsMatch = rawAfter.match(/^[\s.:·•_—-]+/);
+    const leadingSkip = leadingDotsMatch ? leadingDotsMatch[0].length : 0;
+    const cleanMeasurement = rawAfter.slice(leadingSkip).trim();
+
+    if (cleanMeasurement) {
+      const mMatch = cleanMeasurement.match(MEASURE_VAL_RE) || cleanMeasurement.match(COUNT_UNIT_RE);
+      const targetStr = mMatch ? mMatch[0] : cleanMeasurement;
+      const measureIdx = txt.indexOf(targetStr, prefixEnd);
+      if (measureIdx >= 0) {
+        const totalChars = txt.length;
+        const startRatio = measureIdx / totalChars;
+        const endRatio = (measureIdx + targetStr.length) / totalChars;
+
+        const w = fullBox.x2 - fullBox.x1;
+        const minX1 = Math.round(fullBox.x1 + w * startRatio);
+        const minX2 = Math.round(fullBox.x1 + w * endRatio);
+
+        return {
+          x1: Math.max(fullBox.x1, minX1),
+          y1: fullBox.y1,
+          x2: Math.min(fullBox.x2, Math.max(minX1 + 10, minX2)),
+          y2: fullBox.y2,
+        };
+      }
+    }
+  }
+
+  return fullBox;
+}
+
+/**
  * Main function: analyzes the Net Quantity declaration, creates the complete
  * enclosing box, computes Rule 8(1) clear space, and checks for external text intrusions.
  */
@@ -372,6 +477,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     return {
       clusterFound: false,
       netQuantityBox: null,
+      fullCompositeBox: null,
       exclusionBox: null,
       clearanceOk: true,
       overlappingTexts: [],
@@ -387,6 +493,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     return {
       clusterFound: false,
       netQuantityBox: null,
+      fullCompositeBox: null,
       exclusionBox: null,
       clearanceOk: true,
       overlappingTexts: [],
@@ -400,13 +507,14 @@ function analyzeNetQuantityWithClearance(ocrResult) {
   const { panelLines, declarationLines, anchor } = cluster;
   const multiPieceFacts = extractMultiPieceFacts(declarationLines);
 
-  // 1. Build composite box enclosing ALL declaration lines
+  // 1. Build composite box enclosing all declaration lines
   const allPts = declarationLines.flatMap((l) => l.bbox || []);
-  const netQuantityBox = getAABB(allPts);
-  if (!netQuantityBox) {
+  const fullCompositeBox = getAABB(allPts);
+  if (!fullCompositeBox) {
     return {
       clusterFound: true,
       netQuantityBox: null,
+      fullCompositeBox: null,
       exclusionBox: null,
       clearanceOk: true,
       overlappingTexts: [],
@@ -417,16 +525,26 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     };
   }
 
+  // Correct bounding box width to minimum corresponding to the actual measurement
+  const netQuantityBox = getMinimalMeasurementBox(declarationLines, fullCompositeBox);
+
   // 2. Determine effective numeral height (h)
   const h = multiPieceFacts.numeralHeightPx || (netQuantityBox.y2 - netQuantityBox.y1) || 15;
 
-  // 3. Rule 8(1) statutory exclusion boundaries:
-  //    Above & below: >= 1x numeral height
-  //    Left & right:  >= 2x numeral height
-  const exX1 = netQuantityBox.x1 - 2.0 * h;
-  const exX2 = netQuantityBox.x2 + 2.0 * h;
-  const exY1 = netQuantityBox.y1 - 1.0 * h;
-  const exY2 = netQuantityBox.y2 + 1.0 * h;
+  // 3. Rule 8(1) statutory exclusion boundaries with upper limits and error advantage:
+  //    Statutory proviso: clear space above/below >= 1x numeral height, left/right >= 2x numeral height.
+  //    To prevent unnecessary violations and grant an error advantage, we deduct an error allowance
+  //    from the checking dimensions and clamp upper bounds.
+  const errorAdvantageH = Math.max(4, Math.round(0.4 * h));
+  const errorAdvantageV = Math.max(3, Math.round(0.25 * h));
+
+  const maxAboveBelowPx = Math.max(5, Math.min(Math.round(1.0 * h - errorAdvantageV), 16));
+  const maxLeftRightPx = Math.max(8, Math.min(Math.round(2.0 * h - errorAdvantageH), 28));
+
+  const exX1 = netQuantityBox.x1 - maxLeftRightPx;
+  const exX2 = netQuantityBox.x2 + maxLeftRightPx;
+  const exY1 = netQuantityBox.y1 - maxAboveBelowPx;
+  const exY2 = netQuantityBox.y2 + maxAboveBelowPx;
 
   const exclusionBox = {
     x1: Math.round(exX1),
@@ -457,8 +575,17 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     const intersectX = Math.max(0, Math.min(exX2, lBox.x2) - Math.max(exX1, lBox.x1));
     const intersectY = Math.max(0, Math.min(exY2, lBox.y2) - Math.max(exY1, lBox.y1));
 
-    if (intersectX > 4 && intersectY > 4) {
-      overlappingTexts.push(txt);
+    if (intersectX > 8 && intersectY > 8) {
+      // Geometric alignment check:
+      // Text above/below must horizontally align with the quantity box (not just graze a diagonal corner)
+      const horizOverlap = Math.min(netQuantityBox.x2, lBox.x2) - Math.max(netQuantityBox.x1, lBox.x1);
+      const vertOverlap = Math.min(netQuantityBox.y2, lBox.y2) - Math.max(netQuantityBox.y1, lBox.y1);
+
+      const isAboveOrBelow = lBox.y2 <= netQuantityBox.y1 + 4 || lBox.y1 >= netQuantityBox.y2 - 4;
+      const isToSide = lBox.x2 <= netQuantityBox.x1 + 4 || lBox.x1 >= netQuantityBox.x2 - 4;
+
+      if (isAboveOrBelow && horizOverlap <= 4) continue;
+      if (isToSide && vertOverlap <= 4) continue;
 
       // Determine relative intrusion position and actual distance
       let position = 'surrounding';
@@ -488,8 +615,18 @@ function analyzeNetQuantityWithClearance(ocrResult) {
       }
 
       const deficitPx = Math.max(0, requiredDistancePx - actualDistancePx);
+      const errorTolerancePx = position.includes('left') || position.includes('right')
+        ? errorAdvantageH
+        : errorAdvantageV;
+
+      // Error advantage: ignore minor edge proximity within tolerance so we don't give unnecessary violations
+      if (deficitPx <= errorTolerancePx) {
+        continue;
+      }
+
       const overlapPx = Math.round(Math.min(intersectX, intersectY));
 
+      overlappingTexts.push(txt);
       overlappingDetails.push({
         text: txt,
         position,
@@ -511,6 +648,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     clusterFound: true,
     panelIndex: cluster.panelKey,
     netQuantityBox,
+    fullCompositeBox,
     exclusionBox,
     clearanceOk,
     overlappingTexts,

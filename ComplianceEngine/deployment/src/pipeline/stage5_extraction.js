@@ -16,7 +16,7 @@ const { extractDeclarationsWithGroq } = require('./groqDeclarationExtractor');
 
 const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
-  netQuantity: /\bnet\s*(wt|weight|qty|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
+  netQuantity: /\bnet\s*(wt\.?|weight|qty\.?|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
   mfgDate: /\b(?:mfd|mfg|pkd|packed|manufactured|imported)\b|\bdate\s+of\s+(?:mfg|manufacture|packing|import)\b|\b(?:manufactured|packing|import|mfg)\s+date\b|\bmonth\s*(?:&|and)\s*year\s*of\s*(?:manufacture|packing|import)\b/i,
   manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|packed\s+by/i,
   packer: /\bpacked\s+by\b|\bpacker\b/i,
@@ -36,8 +36,8 @@ function classifyLine(text) {
 }
 
 function parseNetQuantity(text) {
-  // 1. Check for count/number units first (e.g. "Net Quantity: 1 Unit", "1 N", "1 U", "1 Piece")
-  const countMatch = text.match(/(?:net\s*(?:quantity|qty)?[:\s]*)?(\d+(?:\.\d+)?)\s*(units?|u\b|n\b|pieces?|pcs?|nos?)\b/i);
+  // 1. Check for count/number units first (e.g. "Net Quantity: 1 Unit", "Net Qty.: 1 Unit", "1 N", "1 U", "1 Piece")
+  const countMatch = text.match(/(?:net\s*(?:quantity|qty\.?)?[:\s]*)?(\d+(?:\.\d+)?)\s*(units?|u\b|n\b|pieces?|pcs?|nos?)\b/i);
   if (countMatch) {
     const rawUnit = countMatch[2].toLowerCase();
     const symbolUsed = rawUnit === 'n' ? 'N' : rawUnit === 'u' ? 'U' : rawUnit.startsWith('unit') ? 'Unit' : rawUnit;
