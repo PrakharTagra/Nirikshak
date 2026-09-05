@@ -1,0 +1,36 @@
+{
+  "name": "lm-verify",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "database",
+    "admin-backend",
+    "admin-frontend",
+    "senior-inspector-backend",
+    "senior-inspector-frontend"
+  ],
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
+  "scripts": {
+    "dev": "concurrently -n clm-api,clm-web,ac-api,ac-web -c cyan,green,greenBright,magenta,magentaBright \"npm:dev:clm-api\" \"npm:dev:clm-web\" \"npm:dev:ac-api\" \"npm:dev:ac-web\"",
+    "dev:clm-api": "npm run dev -w admin-backend",
+    "dev:clm-web": "npm run dev -w admin-frontend",
+    "dev:ac-api": "npm run dev -w senior-inspector-backend",
+    "dev:ac-web": "npm run dev -w senior-inspector-frontend",
+    "build": "npm run build -w admin-frontend && npm run build -w senior-inspector-frontend",
+    "seed": "npm run seed -w database",
+    "migrate:up": "npm run migrate:up -w database",
+    "migrate:down": "npm run migrate:down -w database",
+    "migrate:create": "npm run migrate:create -w database",
+    "seed:demo": "npm run seed:demo -w database"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  },
+  "dependencies": {
+    "mongoose": "^9.9.5"
+  }
+}

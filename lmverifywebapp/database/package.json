@@ -1,0 +1,24 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "seed": "node seed.js",
+    "init:indexes": "node init-indexes.js",
+    "migrate:up": "node init-indexes.js",
+    "migrate:down": "node -e \"console.log('No-op for MongoDB Atlas')\"",
+    "migrate:create": "node -e \"console.log('No-op for MongoDB Atlas')\"",
+    "seed:demo": "node demo.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@lm-verify/shared": "^1.0.0",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "mongoose": "^8.12.1"
+  }
+}
