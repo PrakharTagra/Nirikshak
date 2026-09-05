@@ -340,6 +340,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
   const declarationTexts = new Set(declarationLines.map((l) => String(l.text || '').trim().toLowerCase()));
 
   const overlappingTexts = [];
+  const overlappingDetails = [];
 
   for (const line of panelLines) {
     if (declarationLineIds.has(line.id)) continue;
@@ -355,6 +356,46 @@ function analyzeNetQuantityWithClearance(ocrResult) {
 
     if (intersectX > 4 && intersectY > 4) {
       overlappingTexts.push(txt);
+
+      // Determine relative intrusion position and actual distance
+      let position = 'surrounding';
+      let actualDistancePx = 0;
+      let requiredDistancePx = 1.0 * h;
+
+      if (lBox.y2 <= netQuantityBox.y1 + 4) {
+        position = 'above';
+        actualDistancePx = Math.max(0, netQuantityBox.y1 - lBox.y2);
+        requiredDistancePx = 1.0 * h;
+      } else if (lBox.y1 >= netQuantityBox.y2 - 4) {
+        position = 'below';
+        actualDistancePx = Math.max(0, lBox.y1 - netQuantityBox.y2);
+        requiredDistancePx = 1.0 * h;
+      } else if (lBox.x2 <= netQuantityBox.x1 + 4) {
+        position = 'to the left of';
+        actualDistancePx = Math.max(0, netQuantityBox.x1 - lBox.x2);
+        requiredDistancePx = 2.0 * h;
+      } else if (lBox.x1 >= netQuantityBox.x2 - 4) {
+        position = 'to the right of';
+        actualDistancePx = Math.max(0, lBox.x1 - netQuantityBox.x2);
+        requiredDistancePx = 2.0 * h;
+      } else {
+        position = 'overlapping';
+        actualDistancePx = 0;
+        requiredDistancePx = 1.0 * h;
+      }
+
+      const deficitPx = Math.max(0, requiredDistancePx - actualDistancePx);
+      const overlapPx = Math.round(Math.min(intersectX, intersectY));
+
+      overlappingDetails.push({
+        text: txt,
+        position,
+        actualDistancePx: Math.round(actualDistancePx),
+        requiredDistancePx: Math.round(requiredDistancePx),
+        deficitPx: Math.round(deficitPx),
+        overlapPx,
+        bbox: line.bbox,
+      });
     }
   }
 
@@ -369,6 +410,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     exclusionBox,
     clearanceOk,
     overlappingTexts,
+    overlappingDetails,
     declarationLines,
     multiPieceFacts,
     numeralHeightPx: h,

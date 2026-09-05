@@ -186,6 +186,31 @@ function analyzeFont(ocrResult, options = {}) {
     overlappingTexts = legacyClearance.overlappingTexts;
   }
 
+  // Measurement details for Rule 8(1) clear space
+  const rawDetails = netQtyAnalysis.overlappingDetails || [];
+  const numeralHeightPx = netQtyAnalysis.numeralHeightPx || (qtyLine?.heightPx || 15);
+  const numeralHeightMm = pixelsPerMm ? +(numeralHeightPx / pixelsPerMm).toFixed(2) : heightMm.netQty;
+
+  const clearanceDetails = {
+    numeralHeightPx: Math.round(numeralHeightPx),
+    numeralHeightMm: numeralHeightMm || null,
+    requiredAboveBelowPx: Math.round(1.0 * numeralHeightPx),
+    requiredLeftRightPx: Math.round(2.0 * numeralHeightPx),
+    requiredAboveBelowMm: numeralHeightMm ? +(numeralHeightMm).toFixed(2) : null,
+    requiredLeftRightMm: numeralHeightMm ? +(2.0 * numeralHeightMm).toFixed(2) : null,
+    intrusions: rawDetails.map((det) => ({
+      text: det.text,
+      position: det.position,
+      actualDistancePx: det.actualDistancePx,
+      requiredDistancePx: det.requiredDistancePx,
+      deficitPx: det.deficitPx,
+      overlapPx: det.overlapPx,
+      actualDistanceMm: pixelsPerMm ? +(det.actualDistancePx / pixelsPerMm).toFixed(2) : null,
+      requiredDistanceMm: pixelsPerMm ? +(det.requiredDistancePx / pixelsPerMm).toFixed(2) : null,
+      deficitMm: pixelsPerMm ? +(det.deficitPx / pixelsPerMm).toFixed(2) : null,
+    })),
+  };
+
   const languageUsed = [...new Set(lines.map((l) => l.language).filter(Boolean))];
   if (!languageUsed.some((x) => /english/i.test(x))) languageUsed.push('English');
 
@@ -263,6 +288,7 @@ function analyzeFont(ocrResult, options = {}) {
     declarationOnlyReadableThroughLiquid: false,
     quantityDeclarationSurroundingAreaHasPrintedInfo: !clearanceOk,
     clearanceOverlappingTexts: overlappingTexts,
+    clearanceDetails,
     rspOnCrownCapOrBottle: false,
     wrapperTransparentAndDeclarationsReadableThrough: false,
     innerPackageHasNoOuterCoverDeclaration: false,

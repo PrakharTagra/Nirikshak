@@ -293,10 +293,11 @@ function checkPDPAndFontSize(pkg) {
       const actual = m.numeralHeightMm[field];
       if (actual == null) return;
       if (requiredMinMm != null && actual < requiredMinMm) {
+        const deficit = +(requiredMinMm - actual).toFixed(2);
         v.push(
           violation(
             'Rule 7(2)',
-            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral height is ${actual}mm; minimum required is ${requiredMinMm}mm for this quantity band.`,
+            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral height is ${actual}mm; minimum required is ${requiredMinMm}mm for this quantity band (lacks ${deficit}mm).`,
             'major',
             field
           )
@@ -305,10 +306,11 @@ function checkPDPAndFontSize(pkg) {
       // Absolute floor per Rule 7(3)
       const absoluteFloor = m.isBlownFormedMoldedEmbossedOrPerforated ? 2 : 1;
       if (actual < absoluteFloor) {
+        const deficit = +(absoluteFloor - actual).toFixed(2);
         v.push(
           violation(
             'Rule 7(3)',
-            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral height ${actual}mm is below the absolute minimum of ${absoluteFloor}mm.`,
+            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral height is ${actual}mm, which is below the absolute statutory minimum of ${absoluteFloor}mm (lacks ${deficit}mm).`,
             'major',
             field
           )
@@ -324,10 +326,12 @@ function checkPDPAndFontSize(pkg) {
       const h = m.numeralHeightMm[field];
       if (w == null || h == null) return;
       if (w < h / 3 && !m.isExemptCharacterShape) {
+        const reqW = +(h / 3).toFixed(2);
+        const deficit = +(reqW - w).toFixed(2);
         v.push(
           violation(
             'Rule 7(3) proviso',
-            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral width (${w}mm) is less than one-third of its height (${h}mm).`,
+            `${field === 'rsp' ? 'MRP' : 'Net quantity'} numeral width (${w}mm) is less than one-third of its height (${h}mm; required width is ≥ ${reqW}mm, lacks ${deficit}mm).`,
             'minor',
             field
           )
@@ -349,10 +353,34 @@ function checkMannerAndPlacement(pkg) {
 
   // Rule 8(1) — declarations on PDP, with clear space around quantity declaration
   if (m.quantityDeclarationSurroundingAreaHasPrintedInfo) {
+    let msg = 'Area surrounding the quantity declaration is not free of other printed information (must be clear above/below by ≥ numeral height, left/right by ≥ 2x numeral height).';
+    const cd = m.clearanceDetails;
+    if (cd && cd.intrusions && cd.intrusions.length > 0) {
+      const hStr = cd.numeralHeightMm != null ? `${cd.numeralHeightMm}mm (${cd.numeralHeightPx}px)` : `${cd.numeralHeightPx}px`;
+      const reqVStr = cd.requiredAboveBelowMm != null ? `≥ ${cd.requiredAboveBelowMm}mm (${cd.requiredAboveBelowPx}px)` : `≥ ${cd.requiredAboveBelowPx}px`;
+      const reqHStr = cd.requiredLeftRightMm != null ? `≥ ${cd.requiredLeftRightMm}mm (${cd.requiredLeftRightPx}px)` : `≥ ${cd.requiredLeftRightPx}px`;
+
+      const detailsList = cd.intrusions.map((item) => {
+        const actualStr = item.actualDistanceMm != null ? `${item.actualDistanceMm}mm (${item.actualDistancePx}px)` : `${item.actualDistancePx}px`;
+        const reqStr = item.requiredDistanceMm != null ? `${item.requiredDistanceMm}mm (${item.requiredDistancePx}px)` : `${item.requiredDistancePx}px`;
+        const deficitStr = item.deficitMm != null ? `${item.deficitMm}mm (${item.deficitPx}px)` : `${item.deficitPx}px`;
+
+        if (item.actualDistancePx > 0) {
+          return `"${item.text}" printed ${item.position} quantity declaration with only ${actualStr} separation (required: ${reqStr}; lacks ${deficitStr} of clear space)`;
+        } else {
+          return `"${item.text}" directly overlapping quantity declaration boundary (depth: ${item.overlapPx}px; lacks ${deficitStr} of clear space)`;
+        }
+      }).join('; ');
+
+      msg = `Area surrounding the quantity declaration is not free of other printed information (Rule 8(1) proviso). Measured numeral height: ${hStr}; Required clear space: ${reqVStr} above/below (1x height), ${reqHStr} left/right (2x height). Intruding text & measurement deficits: ${detailsList}.`;
+    } else if (m.clearanceOverlappingTexts && m.clearanceOverlappingTexts.length > 0) {
+      msg = `Area surrounding the quantity declaration is not free of other printed information (must be clear above/below by ≥ numeral height, left/right by ≥ 2x numeral height). Intruding text detected: ${m.clearanceOverlappingTexts.map((t) => `"${t}"`).join(', ')}.`;
+    }
+
     v.push(
       violation(
         'Rule 8(1) proviso',
-        'Area surrounding the quantity declaration is not free of other printed information (must be clear above/below by ≥ numeral height, left/right by ≥ 2x numeral height).',
+        msg,
         'minor',
         'netQuantity'
       )

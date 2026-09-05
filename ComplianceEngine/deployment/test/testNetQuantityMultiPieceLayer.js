@@ -57,7 +57,29 @@ console.log('--- Running Multi-Piece Net Quantity & Clearance Layer Tests ---');
   const res = analyzeNetQuantityWithClearance({ lines });
   assert.strictEqual(res.clearanceOk, false, 'Expected clearance failure due to intruding promotional slogan');
   assert.ok(res.overlappingTexts.includes('Super Saver Discount Pack'));
-  console.log('✓ Test 2: External promotional text within Rule 8(1) exclusion boundary accurately triggers clearance violation');
+
+  // Verify that Rule Engine formats the error showing actual measurements and deficits
+  const metrics = analyzeFont({ lines }, { pixelsPerMm: 10 });
+  const pkg = {
+    commodity: { netQuantityValue: 135, netQuantityUnit: 'ml' },
+    declarations: {
+      manufacturer: { present: true, address: true },
+      commodityName: { present: true },
+      netQuantity: { present: true, value: 135, unit: 'ml' },
+      mfgDate: { present: true },
+      mrp: { present: true, inclusiveOfTaxesStated: true },
+      consumerCare: { present: true },
+    },
+    labelMetrics: metrics,
+  };
+  const compliance = runComplianceCheck(pkg);
+  const r8Viol = compliance.violations.find((v) => v.rule === 'Rule 8(1) proviso');
+  assert.ok(r8Viol, 'Expected Rule 8(1) proviso violation');
+  assert.ok(r8Viol.message.includes('Measured numeral height: 2mm (20px)'), 'Expected actual numeral height measurement');
+  assert.ok(r8Viol.message.includes('Required clear space: ≥ 2mm (20px) above/below (1x height), ≥ 4mm (40px) left/right (2x height)'), 'Expected required measurements');
+  assert.ok(r8Viol.message.includes('Super Saver Discount Pack'), 'Expected intruding text name');
+  assert.ok(r8Viol.message.includes('lacks 1.5mm (15px) of clear space'), 'Expected deficit measurement');
+  console.log(`✓ Test 2: Rule 8(1) proviso error displays exact measurements & deficit:\n    "${r8Viol.message}"`);
 }
 
 // Test 3: Multi-panel isolation (text on other panels does NOT trigger false clearance failure)
