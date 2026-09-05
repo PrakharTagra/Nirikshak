@@ -17,18 +17,23 @@ function required(name) {
   return value;
 }
 
+const mongodbUri = process.env.MONGODB_URI || process.env.DATABASE_URL;
+if (!mongodbUri) {
+  console.error('Missing required environment variable: MONGODB_URI');
+  console.error('Configure your MongoDB Atlas connection string in .env:');
+  console.error('MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/lm_verify?retryWrites=true&w=majority');
+  process.exit(1);
+}
+
 export const env = {
   role: 'AC',
   serviceName: 'senior-inspector-backend',
   port: Number(process.env.SENIOR_INSPECTOR_BACKEND_PORT || 4002),
   nodeEnv: process.env.NODE_ENV || 'development',
-  databaseUrl: process.env.MONGODB_URI || required('DATABASE_URL'),
+  databaseUrl: mongodbUri,
   jwtSecret: required('JWT_SECRET'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
-    // Field application kaam ke din ka zyadatar hissa offline rehti hai aur
-  // network sirf sync ke waqt milta hai, to 8-ghante ka token officer ke
-  // wapas range mein aane se pehle hi expire ho jaata. Jaan boojh kar lamba;
-  // trade-off ye hai ki kho gaya handset zyada der tak kaam karta rahega.
+  // Field application offline tolerance
   inspectorTokenTtl: process.env.INSPECTOR_TOKEN_TTL || '7d',
   corsOrigins: [
     process.env.ADMIN_FRONTEND_ORIGIN,

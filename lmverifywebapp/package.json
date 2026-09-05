@@ -5,7 +5,6 @@
   "type": "module",
   "workspaces": [
     "shared",
-    "database",
     "admin-backend",
     "admin-frontend",
     "senior-inspector-backend",
@@ -21,16 +20,19 @@
     "dev:ac-api": "npm run dev -w senior-inspector-backend",
     "dev:ac-web": "npm run dev -w senior-inspector-frontend",
     "build": "npm run build -w admin-frontend && npm run build -w senior-inspector-frontend",
-    "seed": "npm run seed -w database",
-    "migrate:up": "npm run migrate:up -w database",
-    "migrate:down": "npm run migrate:down -w database",
-    "migrate:create": "npm run migrate:create -w database",
-    "seed:demo": "npm run seed:demo -w database"
+    "db:test": "node scripts/test-connection.js",
+    "db:indexes": "node scripts/init-indexes.js",
+    "db:seed": "node scripts/seed.js",
+    "db:demo": "node scripts/demo.js",
+    "seed": "npm run db:seed",
+    "seed:demo": "npm run db:demo"
   },
   "devDependencies": {
     "concurrently": "^10.0.5"
   },
   "dependencies": {
-    "mongoose": "^9.9.5"
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "mongoose": "^8.12.1"
   }
 }

@@ -6,17 +6,35 @@ export { User, Jurisdiction, Report, AdminAuditLog, Rule };
 
 let connectionPromise = null;
 
+const atlasOptions = {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+};
+
+// Lifecycle listeners
+mongoose.connection.on('connected', () => {
+  console.log(`[${env.serviceName}] Connected to MongoDB Atlas (${mongoose.connection.name})`);
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error(`[${env.serviceName}] MongoDB connection error:`, err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn(`[${env.serviceName}] Disconnected from MongoDB Atlas`);
+});
+
 export async function connectDB() {
   if (mongoose.connection.readyState === 1) return mongoose.connection;
   if (!connectionPromise) {
-    connectionPromise = mongoose.connect(env.databaseUrl)
+    connectionPromise = mongoose.connect(env.databaseUrl, atlasOptions)
       .then((conn) => {
-        console.log(`[${env.serviceName}] Connected to MongoDB`);
         return conn;
       })
       .catch((err) => {
         connectionPromise = null;
-        console.error(`[${env.serviceName}] MongoDB connection error:`, err.message);
+        console.error(`[${env.serviceName}] Initial connection to MongoDB Atlas failed:`, err.message);
         throw err;
       });
   }
@@ -26,12 +44,14 @@ export async function connectDB() {
 // Auto-connect on startup
 connectDB().catch(() => {});
 
+export async function disconnectDB() {
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
+}
+
 export const pool = {
-  end: async () => {
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.disconnect();
-    }
-  },
+  end: disconnectDB,
 };
 
 export async function withTransaction(fn) {

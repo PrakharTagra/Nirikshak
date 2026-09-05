@@ -1,26 +1,33 @@
 /**
- * Demo data. Officers aur reports ka ek spread banata hai taaki dashboard aur
- * inspection register mein kuch dikhe.
+ * MongoDB Atlas Demo Seed.
+ * Seeds realistic officer accounts (AC, DMI, LMO) and test inspection reports.
  *
- * Run:  npm run seed:demo
- *
- * Ye development aur rehearsal ke liye throwaway data hai. Ise kisi aisi jagah
- * mat chalana jise tum asli record ke roop mein pesh karne wale ho.
+ * Usage: npm run seed:demo (or npm run db:demo)
  */
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { randomBytes } from 'node:crypto';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { Jurisdiction, User, Report } from '@lm-verify/shared';
 
-const rootEnv = resolve(process.cwd(), '../.env');
-dotenv.config({ path: existsSync(rootEnv) ? rootEnv : resolve(process.cwd(), '.env') });
+const candidatePaths = [
+  resolve(process.cwd(), '.env'),
+  resolve(process.cwd(), '../.env'),
+  resolve(process.cwd(), 'lmverifywebapp/.env'),
+];
+
+for (const p of candidatePaths) {
+  if (existsSync(p)) {
+    dotenv.config({ path: p });
+    break;
+  }
+}
 
 const uri = process.env.MONGODB_URI || process.env.DATABASE_URL;
 if (!uri) {
-  console.error('Neither MONGODB_URI nor DATABASE_URL is set in .env');
+  console.error('\n❌ ERROR: Neither MONGODB_URI nor DATABASE_URL is set in .env');
+  console.error('Please configure your MongoDB Atlas connection string.');
   process.exit(1);
 }
 
@@ -52,11 +59,13 @@ const DECIDER = { 'DL-N': 'ac.verma', 'DL-S': 'ac.iyer', 'UP-GZB': 'ac.verma' };
 const daysAgo = (n) => new Date(Date.now() - n * 86_400_000);
 
 async function main() {
-  await mongoose.connect(uri);
+  console.log('Connecting to MongoDB Atlas...');
+  await mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
+  console.log('Connected to Atlas.');
 
   const clm = await User.findOne({ role: 'CLM' }).lean();
   if (!clm) {
-    console.error('No Controller exists yet. Run "npm run seed" first.');
+    console.error('\n❌ No Controller account found. Run "npm run seed" first to create the base records.');
     process.exit(1);
   }
   const clmId = clm._id;
@@ -68,6 +77,7 @@ async function main() {
   const hash = await bcrypt.hash(demoPassword, 12);
   const ids = {};
 
+  console.log('\nSeeding Demo Officers...');
   for (const o of OFFICERS) {
     let user = await User.findOne({ username: o.username });
     if (!user) {
@@ -89,9 +99,11 @@ async function main() {
     ids[o.username] = user._id;
   }
 
+  // Pre-configure specific test account states
   await User.updateOne({ username: 'lmo.nair' }, { $set: { must_change_password: true } });
   await User.updateOne({ username: 'dmi.bose' }, { $set: { status: 'suspended' } });
 
+  console.log('Seeding Demo Inspection Reports...');
   for (const r of REPORTS) {
     const officer = OFFICERS.find((o) => o.username === r.by);
     const decided = r.status !== 'pending';
@@ -123,11 +135,14 @@ async function main() {
   }
 
   const c = await Report.countDocuments();
-  console.log(`\n  ${OFFICERS.length} officers and ${c} reports in place.`);
-  console.log(`  Every demo officer signs in with:  ${demoPassword}`);
-  console.log('  (K. Nair is left un-activated and R. Bose suspended, on purpose.)\n');
+  console.log(`\n✅ ${OFFICERS.length} demo officers and ${c} sample reports ready in MongoDB Atlas.`);
+  console.log(`   Sign in to demo accounts with: ${demoPassword}`);
+  console.log('   (Note: K. Nair requires initial password change; R. Bose is suspended for testing.)\n');
 }
 
 main()
-  .catch((e) => { console.error('\nDemo seed failed:', e.message); process.exitCode = 1; })
+  .catch((e) => {
+    console.error('\n❌ Demo seed failed:', e.message);
+    process.exitCode = 1;
+  })
   .finally(() => mongoose.disconnect());
