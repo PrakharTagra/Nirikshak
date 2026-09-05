@@ -232,6 +232,74 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     'utf8'
   );
 
+  // 7b. Write clean report.json strictly conforming to schema for PDF generation (no raw OCR dump)
+  const reportData = {
+    reportId: `REP-${productId}`,
+    productId,
+    generatedAt: new Date().toISOString(),
+    sourceImages: paths.map((p) => path.basename(p)),
+    annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
+    summary: {
+      status: !complianceResult.applicable
+        ? 'exempt'
+        : complianceResult.compliant
+          ? 'compliant'
+          : 'non_compliant',
+      verdict: !complianceResult.applicable
+        ? 'EXEMPT'
+        : complianceResult.compliant
+          ? 'COMPLIANT'
+          : 'NON-COMPLIANT',
+      applicable: complianceResult.applicable,
+      compliant: complianceResult.compliant,
+      totalViolations: complianceResult.summary?.total ?? (complianceResult.violations?.length || 0),
+      criticalViolations: complianceResult.summary?.critical ?? 0,
+      majorViolations: complianceResult.summary?.major ?? 0,
+      minorViolations: complianceResult.summary?.minor ?? 0,
+      commodityName: declarations.commodityName?.value || packageRecord.commodity?.genericName || 'Unclassified',
+      brandName: declarations.commodityClassification?.brandName || packageRecord.commodity?.brandName || null,
+      declaredNetQuantity: declarations.netQuantity?.value != null
+        ? `${declarations.netQuantity.value} ${declarations.netQuantity.unit || ''}`.trim()
+        : null,
+      declaredMrp: declarations.mrp?.value != null
+        ? `${declarations.mrp.currency || '₹'} ${declarations.mrp.value}`
+        : null,
+    },
+    declarations,
+    packageRecord,
+    labelMetrics: {
+      numeralHeightMm: labelMetrics?.heightMm?.netQty || labelMetrics?.clearanceDetails?.numeralHeightMm || null,
+      numeralWidthMm: labelMetrics?.widthMm?.netQty || null,
+      contrastRatio: labelMetrics?.contrastRatio || null,
+      contrastOk: labelMetrics?.contrastOk ?? true,
+      clearanceOk: !labelMetrics?.quantityDeclarationSurroundingAreaHasPrintedInfo,
+      clearanceDetails: labelMetrics?.clearanceDetails || null,
+      packagingDimensions: labelMetrics?.packagingDimensions || null,
+    },
+    compliance: {
+      applicable: complianceResult.applicable,
+      exemptionReason: complianceResult.exemptionReason || null,
+      compliant: complianceResult.compliant,
+      summary: complianceResult.summary,
+      violations: complianceResult.violations || [],
+    },
+  };
+
+  fs.writeFileSync(
+    path.join(productDir, 'report.json'),
+    JSON.stringify(reportData, null, 2),
+    'utf8'
+  );
+
+  // Also write report.json to the output root for immediate access
+  try {
+    fs.writeFileSync(
+      path.join(config.paths.output, 'report.json'),
+      JSON.stringify(reportData, null, 2),
+      'utf8'
+    );
+  } catch (_) {}
+
   // 8. Generate unified PDF compliance report
   const reportPath = await generateReport({
     imagePath: paths[0],

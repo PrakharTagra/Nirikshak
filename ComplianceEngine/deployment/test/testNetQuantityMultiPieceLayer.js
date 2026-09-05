@@ -333,9 +333,180 @@ async function testAnnotator() {
   console.log('✓ Test 7: Image annotator generates green bounding box image for product output directory');
 }
 
+// Test 8: Generic packaging - "Net Quantity: 1Unit" strictly identifies ONLY that line
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Item Name:150M Wireless Mini UsB Adapter', bbox: [[150, 480], [450, 480], [450, 500], [150, 500]] },
+    { id: 2, imageIndex: 0, text: 'Generic Name:Wireless Mini UsB Adapter', bbox: [[150, 510], [440, 510], [440, 530], [150, 530]] },
+    { id: 3, imageIndex: 0, text: 'Model No.:INT WiAD 150', bbox: [[150, 550], [350, 550], [350, 570], [150, 570]] },
+    { id: 4, imageIndex: 0, text: 'Net Quantity:1Unit', bbox: [[152, 613], [289, 613], [289, 635], [152, 635]], heightPx: 22 },
+    { id: 5, imageIndex: 0, text: 'Advanced', bbox: [[150, 640], [220, 640], [220, 655], [150, 655]] },
+    { id: 6, imageIndex: 0, text: 'Month & Year of Manufacture:February 2026', bbox: [[150, 660], [460, 660], [460, 680], [150, 680]] },
+    { id: 7, imageIndex: 0, text: 'Maximum Retail Price for 1Unit999.00/-', bbox: [[150, 700], [480, 700], [480, 720], [150, 720]] },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected cluster to be found');
+  assert.strictEqual(cluster.declarationLines.length, 1, 'Declaration should strictly contain ONLY the Net Quantity line');
+  assert.strictEqual(cluster.declarationLines[0].text, 'Net Quantity:1Unit');
+  assert.strictEqual(cluster.anchor.text, 'Net Quantity:1Unit');
+
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.fullCompositeBox.x1, 152);
+  assert.strictEqual(res.fullCompositeBox.x2, 289);
+  // Bounding box width is decreased to minimum corresponding to the measurement "1Unit"
+  assert.strictEqual(res.netQuantityBox.x1, 251);
+  assert.strictEqual(res.netQuantityBox.x2, 289);
+  assert.strictEqual(res.netQuantityBox.y1, 613);
+  assert.strictEqual(res.netQuantityBox.y2, 635);
+  // Rule 8(1) clear space passes without false intrusion from "Advanced"
+  assert.strictEqual(res.clearanceOk, true);
+  console.log('✓ Test 8: "Net Quantity: 1Unit" bounding box width corrected to measurement minimum (x: 251..289, 38px) with compliant clearance');
+}
+
+// Test 9: No statutory Net Quantity header returns null (no unconstrained guessing from random numbers)
+{
+  const linesWithoutHeader = [
+    { id: 1, imageIndex: 0, text: 'USB 2.0 High Speed Dongle 150M', bbox: [[50, 50], [300, 50], [300, 70], [50, 70]] },
+    { id: 2, imageIndex: 0, text: 'Box Size 85 x 14 x 85 mm', bbox: [[50, 100], [250, 100], [250, 120], [50, 120]] },
+    { id: 3, imageIndex: 0, text: 'MRP Rs. 999.00', bbox: [[50, 150], [200, 150], [200, 170], [50, 170]] },
+  ];
+
+  const cluster = identifyNetQuantityCluster(linesWithoutHeader);
+  assert.strictEqual(cluster, null, 'Without Net Quantity header, no guessing should occur');
+  console.log('✓ Test 9: Packages without statutory Net Quantity header correctly yield null without false guessing');
+}
+
+// Test 10: "Net Qty.:" variation detection and tight bounding
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Manufactured by ABC Corp.', bbox: [[50, 50], [250, 50], [250, 70], [50, 70]] },
+    { id: 2, imageIndex: 0, text: 'Net Qty.: 100 g', bbox: [[50, 100], [180, 100], [180, 122], [50, 122]], heightPx: 22 },
+    { id: 3, imageIndex: 0, text: 'MRP Rs. 150.00', bbox: [[50, 140], [200, 140], [200, 160], [50, 160]] },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected cluster for Net Qty.:');
+  assert.strictEqual(cluster.declarationLines.length, 1);
+  assert.strictEqual(cluster.declarationLines[0].text, 'Net Qty.: 100 g');
+  assert.strictEqual(cluster.anchor.text, 'Net Qty.: 100 g');
+
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.fullCompositeBox.x1, 50);
+  assert.strictEqual(res.fullCompositeBox.x2, 180);
+  // Bounding box width is decreased to minimum corresponding to "100 g"
+  assert.strictEqual(res.netQuantityBox.x1, 137);
+  assert.strictEqual(res.netQuantityBox.x2, 180);
+  assert.strictEqual(res.netQuantityBox.y1, 100);
+  assert.strictEqual(res.netQuantityBox.y2, 122);
+  assert.strictEqual(res.clearanceOk, true);
+  console.log('✓ Test 10: "Net Qty.: 100 g" strictly identified with measurement minimum width (x: 137..180, 43px)');
+}
+
+// Test 11: Single-line declaration with dot leaders "Net Qty.: .... 100 g"
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Net Qty.: .... 100 g', bbox: [[50, 100], [250, 100], [250, 122], [50, 122]], heightPx: 22 },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected cluster for Net Qty.: .... 100 g');
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.clusterFound, true);
+  // Full composite box spans from header to measurement
+  assert.strictEqual(res.fullCompositeBox.x1, 50);
+  assert.strictEqual(res.fullCompositeBox.x2, 250);
+  // Minimal measurement box excludes "Net Qty.: ...." and isolates "100 g"
+  assert.strictEqual(res.netQuantityBox.x1, 200);
+  assert.strictEqual(res.netQuantityBox.x2, 250);
+  console.log('✓ Test 11: "Net Qty.: .... 100 g" dot leaders excluded from minimum measurement box (x: 200..250, 50px)');
+}
+
+// Test 12: Multi-box declaration across wide gap / table layout: "Net Qty.: ...." + "100 g"
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Net Qty.: ....', bbox: [[50, 100], [180, 100], [180, 122], [50, 122]], heightPx: 22 },
+    { id: 2, imageIndex: 0, text: '100 g', bbox: [[450, 100], [500, 100], [500, 122], [450, 122]], heightPx: 22 },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected cluster across wide dot-leader row');
+  assert.strictEqual(cluster.declarationLines.length, 2);
+
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.clusterFound, true);
+  assert.strictEqual(res.fullCompositeBox.x1, 50);
+  assert.strictEqual(res.fullCompositeBox.x2, 500);
+  // Minimal measurement box is strictly the pure measurement line
+  assert.strictEqual(res.netQuantityBox.x1, 450);
+  assert.strictEqual(res.netQuantityBox.x2, 500);
+  assert.strictEqual(res.multiPieceFacts.totalValue, 100);
+  assert.strictEqual(res.multiPieceFacts.totalUnit, 'g');
+  console.log('✓ Test 12: "Net Qty.: ...." and separate "100 g" clustered across wide gap with tight measurement box (x: 450..500)');
+}
+
+// Test 13: Dabur Fem OCR failure case: "Neroe" + "60g" + "(40g + 20g Free)"
+{
+  const lines = [
+    { id: 149, imageIndex: 0, text: 'Neroe', bbox: [[426, 487], [513, 487], [513, 530], [426, 530]], heightPx: 43 },
+    { id: 148, imageIndex: 0, text: '60g', bbox: [[601, 487], [645, 487], [645, 530], [601, 530]], heightPx: 43 },
+    { id: 150, imageIndex: 0, text: '(40g + 20g Free)', bbox: [[703, 487], [853, 487], [853, 530], [703, 530]], heightPx: 43 },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected Neroe to be recognized as Priority 1 Net Qty header');
+  assert.strictEqual(cluster.declarationLines.length, 3);
+
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.clusterFound, true);
+  assert.strictEqual(res.fullCompositeBox.x1, 426);
+  assert.strictEqual(res.fullCompositeBox.x2, 853);
+  // Minimal measurement box isolates pure "60g"
+  assert.strictEqual(res.netQuantityBox.x1, 601);
+  assert.strictEqual(res.netQuantityBox.x2, 645);
+  assert.strictEqual(res.multiPieceFacts.totalValue, 60);
+  assert.strictEqual(res.multiPieceFacts.totalUnit, 'g');
+  // Clearance passes: promo line (40g + 20g Free) is inside declaration and not an intrusion
+  assert.strictEqual(res.clearanceOk, true);
+  console.log('✓ Test 13: Dabur Fem "Neroe" + "60g" + "(40g + 20g Free)" produces tight 44px box on 60g with compliant clearance');
+}
+
+// Test 14: "Net. Qty.: 50 ml" with dot after Net
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Net. Qty.: 50 ml', bbox: [[60, 80], [200, 80], [200, 102], [60, 102]], heightPx: 22 },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster, 'Expected cluster for Net. Qty.:');
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.clusterFound, true);
+  assert.strictEqual(res.netQuantityBox.x1, 156);
+  assert.strictEqual(res.netQuantityBox.x2, 200);
+  console.log('✓ Test 14: "Net. Qty.: 50 ml" with dot after Net correctly identified and tightly bounded');
+}
+
+// Test 15: Standalone "Net Qty.: ...." without separate measurement found still produces non-null box
+{
+  const lines = [
+    { id: 1, imageIndex: 0, text: 'Net Qty.: ....', bbox: [[50, 100], [180, 100], [180, 122], [50, 122]], heightPx: 22 },
+  ];
+
+  const cluster = identifyNetQuantityCluster(lines);
+  assert.ok(cluster);
+  const res = analyzeNetQuantityWithClearance({ lines });
+  assert.strictEqual(res.clusterFound, true);
+  assert.ok(res.netQuantityBox != null, 'netQuantityBox must not be null');
+  assert.strictEqual(res.netQuantityBox.x1, 50);
+  assert.strictEqual(res.netQuantityBox.x2, 180);
+  console.log('✓ Test 15: Standalone "Net Qty.: ...." without separate measurement still yields non-null bounding box');
+}
+
 testAnnotator().then(() => {
-  console.log('\nALL 7 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
+  console.log('\nALL 15 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
 }).catch((err) => {
   console.error('Test 7 failed:', err);
   process.exit(1);
 });
+
+

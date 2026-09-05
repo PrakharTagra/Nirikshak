@@ -139,22 +139,22 @@ async function annotateNetQuantityImage({
 
       <!-- Spatial Clearance Exclusion Zone (Rule 8(1) proviso) -->
       <rect x="${exX1}" y="${exY1}" width="${exW}" height="${exH}"
-            fill="rgba(34, 197, 94, 0.12)" stroke="#22C55E" stroke-width="4" stroke-dasharray="12,6" rx="8" />
+            fill="rgba(34, 197, 94, 0.12)" stroke="#22C55E" stroke-width="3" stroke-dasharray="8,5" rx="6" />
 
       <!-- Spatial Clearance Label Pill -->
-      <rect x="${exX1}" y="${Math.max(5, exY1 - 28)}" width="${Math.min(exW, 490)}" height="26" fill="#15803D" rx="4" />
-      <text x="${exX1 + 10}" y="${Math.max(5, exY1 - 28) + 18}" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">
+      <rect x="${exX1}" y="${Math.max(5, exY1 - 22)}" width="${Math.min(exW, 360)}" height="20" fill="#15803D" rx="3" />
+      <text x="${exX1 + 8}" y="${Math.max(5, exY1 - 22) + 14}" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">
         ${escapeXml(clearSpaceLabel)}
       </text>
 
-      <!-- Bold Solid Green Bounding Box around Net Quantity Declaration -->
+      <!-- Bold Solid Green Bounding Box around Net Quantity Declaration (minimum measurement width) -->
       <rect x="${nqX1}" y="${nqY1}" width="${nqW}" height="${nqH}"
-            fill="none" stroke="#00FF00" stroke-width="5" rx="5" />
+            fill="none" stroke="#00FF00" stroke-width="4" rx="4" />
 
       <!-- Net Quantity Header Pill -->
-      <rect x="${nqX1}" y="${Math.max(5, nqY1 - 28)}" width="240" height="26" fill="#00FF00" rx="4" />
-      <text x="${nqX1 + 10}" y="${Math.max(5, nqY1 - 28) + 18}" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#000000">
-        NET QUANTITY DECLARATION
+      <rect x="${nqX1}" y="${Math.max(5, nqY1 - 22)}" width="${Math.max(nqW, 120)}" height="20" fill="#00FF00" rx="3" />
+      <text x="${nqX1 + 6}" y="${Math.max(5, nqY1 - 22) + 14}" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000">
+        NET QUANTITY
       </text>
 
       ${intrusionSvgElements}

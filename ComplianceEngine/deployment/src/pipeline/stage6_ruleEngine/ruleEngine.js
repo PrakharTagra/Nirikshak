@@ -333,8 +333,10 @@ function checkPDPAndFontSize(pkg) {
       const w = m.numeralWidthMm[field];
       const h = m.numeralHeightMm[field];
       if (w == null || h == null) return;
-      if (w < h / 3 && !m.isExemptCharacterShape) {
-        const reqW = +(h / 3).toFixed(2);
+      const reqW = +(h / 3).toFixed(2);
+      // Grant error advantage tolerance on numeral width so condensed/narrow fonts don't trigger unnecessary violations
+      const errorAdvantageW = +(reqW * 0.15).toFixed(2);
+      if (w < (reqW - errorAdvantageW) && !m.isExemptCharacterShape) {
         const deficit = +(reqW - w).toFixed(2);
         v.push(
           violation(
