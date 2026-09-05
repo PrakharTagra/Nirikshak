@@ -17,14 +17,43 @@
 const logger = require('../utils/logger');
 
 // Regex patterns for detecting net quantity anchors and components
-const NET_QTY_HEADER_RE = /\b(?:net\s*(?:quantity|qty|wt|weight|content|contents)|quantity|qty)\b/i;
+const NET_QTY_HEADER_RE = /\b(?:net\s*(?:quantity|qty|wt|weight|content|contents|volume|vol|measure)|quantity|qty)\b/i;
 const COUNT_UNIT_RE = /\b(?:(\d+)\s*(?:numbers?|units?|pieces?|pcs?|nos?|pkts?|refills?|packs?|n\b|u\b)|([lI])\s*[uU]\b)\b/i;
 const MULTIPLIER_RE = /(?:\(?\s*(?:(\d+|[lI]))\s*(?:numbers?|units?|pieces?|n\b|u\b|refills?|nos?)?\s*[xX*×]\s*(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm)?\s*\)?)|(?:[xX*×]\s*(\d+))/i;
-const MEASURE_VAL_RE = /\b(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm|n\b|u\b|units?|pieces?|nos?)\b/i;
+const MEASURE_VAL_RE = /\b(\d+(?:\.\d+)?)\s*(ml\b|mls\b|l\b|litres?|liters?|g\b|gm\b|gms\b|kg\b|kgs\b|cm\b|mm\b|metres?|meters?|m\b(?![A-Za-z0-9]))/i;
+const TECH_TERMS_RE = /\b(?:wireless|wifi|wi-fi|mbps|kbps|gbps|mhz|ghz|khz|hz|speed|lan|ethernet|router|adapter|modem|dongle|usb|bluetooth|ram|rom|flash|cache|storage|pixel|pixels|mp\b)\b/i;
 const PROMO_OR_DISCLAIMER_RE = /\b(?:offer|valid|till|stocks?|when\s+compared|compared\s+to|single|free|mfg\.?\s*lic|plot\s*no|works?)\b/i;
 
-// Statutory declarations that are distinctly NOT net quantity and must never be clustered into it
-const NON_NET_QTY_DECLARATIONS_RE = /\b(?:expiry|exp\b|best\s*before|use\s*by|mfg|manufactur|packer|packing|import|mrp|retail\s*price|incl|taxes|batch|voltage|wattage|power|composition|warning|caution|instruction|direction|safety|ingredients?|feedback|complaint|consumer\s*care|care@|toll\s*free)\b/i;
+// Statutory declarations and packaging metadata that are distinctly NOT net quantity and must never be clustered into it
+const NON_NET_QTY_DECLARATIONS_RE = /\b(?:expiry|exp\b|best\s*before|use\s*by|mfg\b|manufactur|packer|packing|pkd\b|imported|importer|mrp\b|maximum\s*retail\s*price|retail\s*price|rsp\b|incl\b|taxes|batch|lot\b|voltage|wattage|power\b|frequency|composition|warning|caution|instruction|direction|safety|ingredients?|feedback|complaint|consumer\s*care|customer\s*care|care@|toll\s*free|item\s*name|generic\s*name|product\s*name|commodity\s*name|model(?:\s*no\.?)?|serial(?:\s*no\.?)?|part(?:\s*no\.?)?|box\s*size|package\s*size|dimensions?|gross\s*w(?:eight|t)|tare\s*w(?:eight|t)|fssai|lic\.?\s*no|cin\b|address|email|website|phone|tel\b|contact)\b/i;
+
+function isOtherStatutoryOrSpecLine(txt) {
+  if (!txt) return true;
+  if (NON_NET_QTY_DECLARATIONS_RE.test(txt)) return true;
+  if (PROMO_OR_DISCLAIMER_RE.test(txt)) return true;
+  if (TECH_TERMS_RE.test(txt)) return true;
+  const m = txt.match(/^([A-Za-z0-9\s&/-]{2,30}):/);
+  if (m) {
+    const hdr = m[1].trim();
+    if (!NET_QTY_HEADER_RE.test(hdr)) return true;
+  }
+  return false;
+}
+
+function hasStandaloneQuantity(txt) {
+  if (!txt) return false;
+  const clean = txt.replace(NET_QTY_HEADER_RE, '').trim();
+  if (!clean) return false;
+  return COUNT_UNIT_RE.test(clean) || (MEASURE_VAL_RE.test(clean) && !TECH_TERMS_RE.test(clean));
+}
+
+function isExplicitBreakdownLine(txt) {
+  if (!txt) return false;
+  if (isOtherStatutoryOrSpecLine(txt)) return false;
+  return MULTIPLIER_RE.test(txt) ||
+    /^\(?\s*(?:[lI]|\d+)\s*(?:u\b|n\b|unit|units|piece|pieces|nos?|refills?)\b/i.test(txt) ||
+    /^\(?\s*\d+(?:\.\d+)?\s*(?:ml|l|g|kg)\s*(?:\([^)]+\))?\s*\)?$/i.test(txt);
+}
 
 function getAABB(pts) {
   if (!pts || pts.length === 0) return null;
@@ -58,7 +87,7 @@ function parseQuantityPiece(text) {
 
   // Check measure format: "90 ml", "500 g", "3 N"
   const measureMatch = text.match(MEASURE_VAL_RE);
-  if (measureMatch) {
+  if (measureMatch && !TECH_TERMS_RE.test(text)) {
     const val = parseFloat(measureMatch[1]);
     const unit = measureMatch[2].toLowerCase();
     const isCount = ['n', 'u', 'unit', 'units', 'piece', 'pieces', 'nos'].includes(unit);
@@ -97,7 +126,7 @@ function identifyNetQuantityCluster(allLines = []) {
     // 1. Locate anchor lines containing explicit Net Quantity keywords
     const headerCandidates = panelLines.filter((l) => {
       const txt = String(l.text || '').trim();
-      return NET_QTY_HEADER_RE.test(txt) && !PROMO_OR_DISCLAIMER_RE.test(txt) && !NON_NET_QTY_DECLARATIONS_RE.test(txt);
+      return NET_QTY_HEADER_RE.test(txt) && !isOtherStatutoryOrSpecLine(txt);
     });
 
     for (const anchor of headerCandidates) {
@@ -106,6 +135,7 @@ function identifyNetQuantityCluster(allLines = []) {
 
       const clusterLines = [anchor];
       const seenIds = new Set([anchor.id]);
+      const anchorHasCompleteQty = hasStandaloneQuantity(anchor.text);
 
       // Iteratively expand cluster to include adjacent lines that provide pieces/breakdown/total
       let added = true;
@@ -121,15 +151,26 @@ function identifyNetQuantityCluster(allLines = []) {
 
           const candTxt = String(candidate.text || '').trim();
           if (!candTxt) continue;
-          if (NON_NET_QTY_DECLARATIONS_RE.test(candTxt)) continue;
-          if (PROMO_OR_DISCLAIMER_RE.test(candTxt)) continue;
+          if (isOtherStatutoryOrSpecLine(candTxt)) continue;
 
-          const isQtyValue = MEASURE_VAL_RE.test(candTxt) ||
+          // If anchor already has complete quantity (e.g. Net Quantity: 1 Unit),
+          // ONLY allow explicit continuation/breakdown lines (e.g. multiplier/sub-unit).
+          if (anchorHasCompleteQty && !isExplicitBreakdownLine(candTxt)) {
+            continue;
+          }
+
+          const isQtyValue = isExplicitBreakdownLine(candTxt) ||
+            MEASURE_VAL_RE.test(candTxt) ||
             MULTIPLIER_RE.test(candTxt) ||
             COUNT_UNIT_RE.test(candTxt) ||
-            /\b(?:refills?|device|plug|bottle|tablets?|capsules?|nos?|units?|pieces?)\b/i.test(candTxt);
+            /\b(?:refills?|device|plug|bottle|tablets?|capsules?|units?|pieces?)\b/i.test(candTxt);
 
           if (!isQtyValue) continue;
+
+          // Strict downward progression: candidate must not end completely above curBox top
+          if (candBox.y2 < curBox.y1 - 2) {
+            continue;
+          }
 
           // Check spatial proximity to current cluster bounding box
           const candH = candBox.y2 - candBox.y1;
