@@ -36,11 +36,16 @@ export const pool = {
 
 export async function withTransaction(fn) {
   let session = null;
-  try {
-    session = await mongoose.startSession();
-    session.startTransaction();
-  } catch {
-    session = null;
+  const topologyType = mongoose.connection?.client?.topology?.description?.type;
+  const isReplicaSet = topologyType === 'ReplicaSetWithPrimary' || topologyType === 'Sharded' || !!mongoose.connection?.client?.topology?.description?.setName;
+
+  if (isReplicaSet) {
+    try {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    } catch {
+      session = null;
+    }
   }
 
   if (session) {

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getJurisdictions, createAccount, ROLE_LABEL } from '../lib/adminApi.js';
-import { Panel } from '../components/ui.jsx';
+import { Panel, Breadcrumb } from '../components/ui.jsx';
 
 const ROLES = ['AC', 'DMI', 'LMO'];
 
 const fieldClass =
-  'mt-1 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-[#0b2e6f] focus:outline-none focus:ring-1 focus:ring-[#0b2e6f]';
+  'mt-1.5 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 focus:border-govt-navy focus:outline-none focus:ring-1 focus:ring-govt-navy shadow-sm';
+const labelClass = "block text-sm font-bold text-govt-dark";
 
 const EMPTY = { full_name: '', username: '', role: 'AC', jurisdiction_id: '', email: '', phone: '' };
 
@@ -27,13 +28,11 @@ export default function CreateAccount() {
 
   function validate() {
     const next = {};
-    if (!form.full_name.trim()) next.full_name = 'Enter the officer\u2019s name.';
+    if (!form.full_name.trim()) next.full_name = 'Enter the officer\u2019s official name.';
     if (!/^[a-z0-9.]{3,}$/.test(form.username)) {
       next.username = 'Use lowercase letters, numbers and dots, at least 3 characters.';
     }
-    // Schema kisi bhi non-CLM account ko bina jurisdiction ke refuse karta hai,
-    // to yahin pakad lo — insert fail hone se pehle.
-    if (!form.jurisdiction_id) next.jurisdiction_id = 'Every officer works within a jurisdiction.';
+    if (!form.jurisdiction_id) next.jurisdiction_id = 'Assignment to a jurisdiction is mandatory.';
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Enter a valid email address.';
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -45,41 +44,55 @@ export default function CreateAccount() {
     try {
       const { officer, temporary_password } = await createAccount(form);
       setCreated({ ...officer, temporary_password });
-      } catch (err) {
-      setErrors({ form: err.message ?? 'The account could not be created.' });
-      } finally {
+    } catch (err) {
+      setErrors({
+        ...(err.details || {}),
+        form: err.message ?? 'The account could not be created due to a system error.',
+      });
+    } finally {
       setSaving(false);
     }
   }
 
   if (created) {
     return (
-      <div className="max-w-2xl space-y-5">
-        <h1 className="text-lg font-semibold text-slate-900">Account created</h1>
+      <div className="max-w-2xl space-y-6 mx-auto">
+        <Breadcrumb items={[{ label: 'Officers Register', to: '/officers' }, { label: 'Account Created' }]} />
+        
+        <div className="border-b border-slate-300 pb-4">
+          <h1 className="text-2xl font-bold text-emerald-700 flex items-center gap-2">
+            <span>✅</span> Official Account Generated
+          </h1>
+        </div>
+
         <Panel title={created.full_name} note={ROLE_LABEL[created.role]}>
-          <dl className="divide-y divide-slate-100 text-sm">
-            <div className="flex justify-between gap-4 px-4 py-2.5">
-              <dt className="text-slate-600">Username</dt>
-              <dd className="font-mono text-slate-900">{created.username}</dd>
+          <dl className="divide-y divide-slate-200 text-sm">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4 px-6 py-4 bg-slate-50">
+              <dt className="text-slate-600 font-bold uppercase tracking-wider text-xs">System Username</dt>
+              <dd className="font-mono font-bold text-govt-navy text-lg">{created.username}</dd>
             </div>
-            <div className="flex justify-between gap-4 px-4 py-2.5">
-              <dt className="text-slate-600">Temporary password</dt>
-              <dd className="text-slate-900">{created.temporary_password}</dd>
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4 px-6 py-4">
+              <dt className="text-slate-600 font-bold uppercase tracking-wider text-xs">One-Time Password</dt>
+              <dd className="font-mono font-bold text-govt-maroon text-xl tracking-widest bg-red-50 px-3 py-1 rounded border border-red-100">{created.temporary_password}</dd>
             </div>
           </dl>
         </Panel>
-        <p className="border-l-4 border-[#FF9933] bg-white px-4 py-3 text-sm text-slate-700">
-          Give these credentials to the officer directly. They will be required to set their own
-          password before they can do anything else.
-        </p>
-        <div className="flex gap-3">
+
+        <div className="border-l-[6px] border-saffron bg-[#fffaf0] px-5 py-4 shadow-md rounded-r">
+          <p className="text-sm text-slate-800 font-bold leading-relaxed">
+            ⚠️ MANDATORY INSTRUCTION:<br/>
+            Transmit these exact credentials to the officer securely. They will be forced by the system to configure their own permanent password upon initial login.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-200">
           <button onClick={() => { setCreated(null); setForm(EMPTY); }}
-            className="rounded-sm bg-[#0b2e6f] px-4 py-2 text-sm font-medium text-white hover:bg-[#092551]">
-            Create another
+            className="rounded bg-govt-navy px-6 py-2.5 text-sm font-bold text-white hover:bg-blue-900 shadow-sm transition-colors">
+            + Provision Another Account
           </button>
           <button onClick={() => navigate('/officers')}
-            className="rounded-sm border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-            Back to roster
+            className="rounded border-2 border-slate-300 px-6 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+            Return to Roster
           </button>
         </div>
       </div>
@@ -87,77 +100,81 @@ export default function CreateAccount() {
   }
 
   return (
-    <div className="max-w-2xl space-y-5">
-      <div>
-        <h1 className="text-lg font-semibold text-slate-900">Create account</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          The officer receives a username and a temporary password, and must replace the password
-          on first sign-in.
+    <div className="max-w-2xl space-y-6 mx-auto">
+      <Breadcrumb items={[{ label: 'Officers Register', to: '/officers' }, { label: 'Create Account' }]} />
+      
+      <div className="border-b border-slate-300 pb-4">
+        <h1 className="text-2xl font-bold text-govt-navy">Provision New Account</h1>
+        <p className="mt-1.5 text-sm text-slate-600 font-medium">
+          Create an official system identity. The system will auto-generate a secure temporary password.
         </p>
       </div>
 
-      <Panel title="Officer details">
-        <div className="space-y-4 p-4">
+      <Panel title="Officer Credentials Form" note="Fields marked with asterisk (*) are mandatory">
+        <div className="space-y-6 p-6">
           <div>
-            <label htmlFor="full_name" className="block text-sm text-slate-700">Full name</label>
+            <label htmlFor="full_name" className={labelClass}>Full Legal Name <span className="text-red-600">*</span></label>
             <input id="full_name" value={form.full_name} onChange={set('full_name')} className={fieldClass}
-              aria-invalid={!!errors.full_name} />
-            {errors.full_name && <p className="mt-1 text-xs text-red-700">{errors.full_name}</p>}
+              aria-invalid={!!errors.full_name} placeholder="e.g. Ramesh Kumar" />
+            {errors.full_name && <p className="mt-1.5 text-xs font-bold text-red-700 flex items-center gap-1"><span>❌</span> {errors.full_name}</p>}
           </div>
 
           <div>
-            <label htmlFor="username" className="block text-sm text-slate-700">Username</label>
+            <label htmlFor="username" className={labelClass}>Desired Username <span className="text-red-600">*</span></label>
             <input id="username" value={form.username} onChange={set('username')} className={fieldClass}
-              placeholder="ac.verma" aria-invalid={!!errors.username} />
-            {errors.username && <p className="mt-1 text-xs text-red-700">{errors.username}</p>}
+              placeholder="e.g. ramesh.kumar" aria-invalid={!!errors.username} />
+            <p className="mt-1 text-[11px] text-slate-500 font-medium">Format: lowercase letters, numbers, and dots only. Minimum 3 characters.</p>
+            {errors.username && <p className="mt-1.5 text-xs font-bold text-red-700 flex items-center gap-1"><span>❌</span> {errors.username}</p>}
           </div>
 
-          <div>
-            <label htmlFor="role" className="block text-sm text-slate-700">Designation</label>
-            <select id="role" value={form.role} onChange={set('role')} className={fieldClass}>
-              {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
-            </select>
-            {form.role === 'DMI' && (
-              <p className="mt-1.5 text-xs text-slate-500">
-                Marketplace inspectors sign in on the e-commerce system, which runs separately.
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="jurisdiction" className="block text-sm text-slate-700">Jurisdiction</label>
-            <select id="jurisdiction" value={form.jurisdiction_id} onChange={set('jurisdiction_id')}
-              className={fieldClass} aria-invalid={!!errors.jurisdiction_id}>
-              <option value="">Select a jurisdiction</option>
-              {jurisdictions.map((j) => <option key={j.id} value={j.id}>{j.name} ({j.code})</option>)}
-            </select>
-            {errors.jurisdiction_id && <p className="mt-1 text-xs text-red-700">{errors.jurisdiction_id}</p>}
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2 bg-slate-50 p-4 rounded border border-slate-200">
             <div>
-              <label htmlFor="email" className="block text-sm text-slate-700">Email</label>
+              <label htmlFor="role" className={labelClass}>Designation <span className="text-red-600">*</span></label>
+              <select id="role" value={form.role} onChange={set('role')} className={fieldClass}>
+                {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
+              </select>
+              {form.role === 'DMI' && (
+                <p className="mt-2 text-xs font-bold text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">
+                  Note: Digital Marketplace Inspectors authenticate via the e-commerce portal subsystem.
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="jurisdiction" className={labelClass}>Posting Jurisdiction <span className="text-red-600">*</span></label>
+              <select id="jurisdiction" value={form.jurisdiction_id} onChange={set('jurisdiction_id')}
+                className={fieldClass} aria-invalid={!!errors.jurisdiction_id}>
+                <option value="">-- Select Office --</option>
+                {jurisdictions.map((j) => <option key={j.id} value={j.id}>{j.name} ({j.code})</option>)}
+              </select>
+              {errors.jurisdiction_id && <p className="mt-1.5 text-xs font-bold text-red-700 flex items-center gap-1"><span>❌</span> {errors.jurisdiction_id}</p>}
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label htmlFor="email" className={labelClass}>Official Email Address</label>
               <input id="email" type="email" value={form.email} onChange={set('email')} className={fieldClass}
-                aria-invalid={!!errors.email} />
-              {errors.email && <p className="mt-1 text-xs text-red-700">{errors.email}</p>}
+                aria-invalid={!!errors.email} placeholder="name@gov.in" />
+              {errors.email && <p className="mt-1.5 text-xs font-bold text-red-700 flex items-center gap-1"><span>❌</span> {errors.email}</p>}
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm text-slate-700">Phone</label>
-              <input id="phone" value={form.phone} onChange={set('phone')} className={fieldClass} />
+              <label htmlFor="phone" className={labelClass}>Contact Number</label>
+              <input id="phone" value={form.phone} onChange={set('phone')} className={fieldClass} placeholder="10-digit mobile number" />
             </div>
           </div>
 
           {errors.form && (
-            <p className="border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">{errors.form}</p>
+            <p className="border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-900 font-bold shadow-sm">{errors.form}</p>
           )}
 
-          <div className="flex gap-3 pt-1">
+          <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-200">
             <button onClick={handleSubmit} disabled={saving}
-              className="rounded-sm bg-[#0b2e6f] px-4 py-2 text-sm font-medium text-white hover:bg-[#092551] disabled:opacity-60">
-              {saving ? 'Creating…' : 'Create account'}
+              className="rounded bg-govt-navy px-6 py-2.5 text-sm font-bold text-white hover:bg-blue-900 disabled:opacity-60 shadow-sm transition-colors min-w-[150px]">
+              {saving ? 'Processing…' : 'Generate Account'}
             </button>
             <button onClick={() => navigate('/officers')}
-              className="rounded-sm border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+              className="rounded border-2 border-slate-300 px-6 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-100 transition-colors">
               Cancel
             </button>
           </div>

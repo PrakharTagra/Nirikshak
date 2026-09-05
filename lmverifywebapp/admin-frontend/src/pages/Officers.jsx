@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getOfficers, setAccountStatus, resetPassword, ROLE_LABEL } from '../lib/adminApi.js';
-import { Panel, Loading, EmptyState, formatDateTime } from '../components/ui.jsx';
+import { Panel, Loading, EmptyState, formatDateTime, Breadcrumb } from '../components/ui.jsx';
 
 const ACCOUNT_STYLE = {
-  active: 'bg-emerald-50 text-emerald-800 ring-emerald-300',
-  suspended: 'bg-amber-50 text-amber-900 ring-amber-300',
-  disabled: 'bg-slate-100 text-slate-600 ring-slate-300',
+  active: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+  suspended: 'bg-amber-50 text-amber-900 border-amber-300',
+  disabled: 'bg-slate-100 text-slate-600 border-slate-300',
 };
 
 const linkBtn =
-  'text-xs text-[#0b2e6f] underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline';
+  'text-xs font-semibold text-govt-navy hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors disabled:cursor-not-allowed disabled:text-slate-400 disabled:hover:bg-transparent';
 
 export default function Officers() {
   const [officers, setOfficers] = useState(null);
@@ -39,87 +39,93 @@ export default function Officers() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6">
+      <Breadcrumb items={[{ label: 'Officers Register' }]} />
+
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-300 pb-4">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">Officers</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Every account on the system. Accounts are issued here; officers cannot register themselves.
+          <h1 className="text-2xl font-bold text-govt-navy">Officers Register</h1>
+          <p className="mt-1.5 text-sm text-slate-600 font-medium">
+            Administrative roster of all officer accounts. Accounts are issued here; public registration is disabled.
           </p>
         </div>
         <Link to="/officers/new"
-          className="rounded-sm bg-[#0b2e6f] px-4 py-2 text-sm font-medium text-white hover:bg-[#092551] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b2e6f]">
-          Create account
+          className="rounded bg-govt-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-govt-navy shadow-sm transition-colors flex items-center gap-2">
+          <span>+</span> Create New Account
         </Link>
       </div>
 
-      {/* Dobara jaari kiya password sirf ek baar padha ja sakta hai, isliye use
-          apna panel milta hai — toast jo miss ho jaye, woh nahi. */}
       {issued && (
-        <div className="border-l-4 border-[#FF9933] bg-white px-4 py-3">
-          <p className="text-sm text-slate-800">
-            New temporary password for <span className="font-medium">{issued.full_name}</span>:{' '}
-            <span className="font-mono text-slate-900">{issued.temporary_password}</span>
-          </p>
-          <p className="mt-1 text-xs text-slate-600">
-            Write it down now — it cannot be shown again. They must replace it on next sign-in.
-          </p>
-          <button onClick={() => setIssued(null)} className="mt-2 text-xs text-[#0b2e6f] underline-offset-2 hover:underline">
-            Dismiss
-          </button>
+        <div className="border-l-[6px] border-saffron bg-[#fffaf0] px-5 py-4 shadow-md rounded-r">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-base text-slate-900 font-medium">
+                New temporary password generated for <span className="font-bold text-govt-navy">{issued.full_name}</span>
+              </p>
+              <div className="mt-3 inline-block bg-white border border-slate-300 px-4 py-2 rounded">
+                <span className="font-mono text-xl font-bold tracking-widest text-govt-navy">{issued.temporary_password}</span>
+              </div>
+              <p className="mt-3 text-sm font-bold text-govt-maroon">
+                ⚠️ CRITICAL: Write this down immediately. It will not be shown again.
+              </p>
+            </div>
+            <button onClick={() => setIssued(null)} className="text-sm font-bold text-slate-500 hover:text-slate-800 bg-slate-100 px-3 py-1.5 rounded">
+              Dismiss Message
+            </button>
+          </div>
         </div>
       )}
 
       {error && (
-        <p role="alert" className="border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>
+        <p role="alert" className="border-l-4 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-900 font-medium shadow-sm">{error}</p>
       )}
 
-      <Panel title="Roster" note={officers ? `${officers.length} accounts` : undefined}>
-        {!officers && !error && <Loading label="Loading officers" />}
-        {officers?.length === 0 && <EmptyState message="No accounts yet." hint="Create the first one." />}
+      <Panel title="Official Roster" note={officers ? `Total ${officers.length} active and inactive accounts` : undefined}>
+        {!officers && !error && <Loading label="Loading officers database" />}
+        {officers?.length === 0 && <EmptyState message="No accounts exist in the system yet." hint="Create the first account to get started." />}
 
         {officers?.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 text-left text-xs text-slate-600">
-                  <th scope="col" className="px-4 py-2 font-medium">Name</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Username</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Designation</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Jurisdiction</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Filed</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Decided</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Last signed in</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Account</th>
-                  <th scope="col" className="px-4 py-2 font-medium">Actions</th>
+            <table className="w-full text-sm border-collapse">
+              <thead className="bg-[#f0f4f8]">
+                <tr className="border-b-2 border-slate-300 text-left text-xs font-bold text-govt-dark uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Name</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Username</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Designation</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Jurisdiction</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300" title="Reports Filed">Filed</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300" title="Reports Decided">Decided</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Last Signed In</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Account Status</th>
+                  <th scope="col" className="px-4 py-3">Administrative Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-200">
                 {officers.map((o) => {
                   const busy = busyId === o.id;
                   return (
-                    <tr key={o.id} className="hover:bg-slate-50">
-                      <td className="whitespace-nowrap px-4 py-2.5 text-slate-900">{o.full_name}</td>
-                      <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-slate-700">{o.username}</td>
-                      <td className="whitespace-nowrap px-4 py-2.5">
-                        <span className="text-slate-900">{o.role}</span>
-                        <span className="ml-2 hidden text-xs text-slate-500 xl:inline">{ROLE_LABEL[o.role]}</span>
+                    <tr key={o.id} className="even:bg-govt-light-blue hover:bg-slate-100 transition-colors">
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-900 font-bold border-r border-slate-200">{o.full_name}</td>
+                      <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-govt-navy font-medium border-r border-slate-200">{o.username}</td>
+                      <td className="whitespace-nowrap px-4 py-3 border-r border-slate-200">
+                        <span className="font-bold text-slate-900">{o.role}</span>
+                        <span className="ml-2 hidden text-[10px] uppercase font-bold text-slate-500 xl:inline bg-slate-200 px-1.5 py-0.5 rounded">{ROLE_LABEL[o.role]}</span>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-2.5 text-slate-700">{o.jurisdiction}</td>
-                      <td className="px-4 py-2.5 tabular-nums text-slate-700">{o.filed || '—'}</td>
-                      <td className="px-4 py-2.5 tabular-nums text-slate-700">{o.decided || '—'}</td>
-                      <td className="whitespace-nowrap px-4 py-2.5 text-slate-600">
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-800 font-medium border-r border-slate-200">{o.jurisdiction}</td>
+                      <td className="px-4 py-3 tabular-nums text-slate-800 font-medium border-r border-slate-200 text-center">{o.filed || '—'}</td>
+                      <td className="px-4 py-3 tabular-nums text-slate-800 font-medium border-r border-slate-200 text-center">{o.decided || '—'}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-700 border-r border-slate-200">
                         {o.must_change_password
-                          ? <span className="text-amber-800">Not activated</span>
+                          ? <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-xs">Pending Activation</span>
                           : formatDateTime(o.last_login_at)}
                       </td>
-                      <td className="px-4 py-2.5">
-                        <span className={`inline-flex rounded-sm px-2 py-0.5 text-xs font-medium capitalize ring-1 ring-inset ${ACCOUNT_STYLE[o.status]}`}>
+                      <td className="px-4 py-3 border-r border-slate-200">
+                        <span className={`inline-flex items-center justify-center min-w-[80px] rounded px-2 py-1 text-xs font-bold uppercase tracking-wider border ${ACCOUNT_STYLE[o.status]}`}>
                           {o.status}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-2.5">
-                        <div className="flex gap-3">
+                      <td className="whitespace-nowrap px-4 py-3">
+                        <div className="flex gap-1 flex-wrap">
                           {o.status !== 'active' && (
                             <button disabled={busy} onClick={() => changeStatus(o, 'active')} className={linkBtn}>
                               Restore
@@ -134,19 +140,17 @@ export default function Officers() {
                             <button
                               disabled={busy}
                               onClick={() => {
-                                // Disable ek account ke kaam ka ant hai, aur audit log
-                                // use permanent bana deta hai, isliye pehle poochta hai.
                                 if (confirm(`Disable ${o.full_name}? They will not be able to sign in again unless you restore the account.`)) {
                                   changeStatus(o, 'disabled');
                                 }
                               }}
-                              className={linkBtn}
+                              className={`${linkBtn} text-govt-maroon hover:text-red-900 hover:bg-red-50`}
                             >
                               Disable
                             </button>
                           )}
                           <button disabled={busy} onClick={() => issueNewPassword(o)} className={linkBtn}>
-                            Reset password
+                            Reset Password
                           </button>
                         </div>
                       </td>
@@ -159,11 +163,14 @@ export default function Officers() {
         )}
       </Panel>
 
-      <p className="text-xs leading-relaxed text-slate-500">
-        Accounts are suspended or disabled, never deleted — the administrative log holds a
-        permanent record against each one. Digital Marketplace Inspectors sign in on the
-        e-commerce system, which runs separately.
-      </p>
+      <div className="bg-slate-100 border border-slate-300 rounded p-4 text-xs leading-relaxed text-slate-600 font-medium flex gap-3">
+        <span className="text-lg">ℹ️</span>
+        <p>
+          Accounts are suspended or disabled, never deleted — the administrative log holds a
+          permanent record against each one for accountability. Digital Marketplace Inspectors sign in on the
+          e-commerce system portal, which operates separately from this interface.
+        </p>
+      </div>
     </div>
   );
 }

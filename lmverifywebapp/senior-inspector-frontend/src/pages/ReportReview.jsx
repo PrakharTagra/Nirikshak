@@ -4,18 +4,18 @@ import {
   getReport, decide, DECIDABLE, REASON_REQUIRED, ACTION_LABEL,
   STATUS_LABEL, CHANNEL_LABEL,
 } from '../lib/acApi.js';
-import { StatusBadge, PdfLink, Panel, Loading, formatDate, formatDateTime } from '../components/ui.jsx';
+import { StatusBadge, PdfLink, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
 
 const ACTION_STYLE = {
-  approved: 'bg-emerald-700 hover:bg-emerald-800',
-  rejected: 'bg-red-700 hover:bg-red-800',
+  approved: 'bg-emerald-700 hover:bg-emerald-800 focus-visible:outline-emerald-700',
+  rejected: 'bg-govt-maroon hover:bg-red-900 focus-visible:outline-govt-maroon',
 };
 
 function Field({ label, children }) {
   return (
-    <div className="flex justify-between gap-4 px-4 py-2 text-sm">
-      <dt className="shrink-0 text-slate-600">{label}</dt>
-      <dd className="text-right text-slate-900">{children}</dd>
+    <div className="flex flex-col sm:flex-row justify-between gap-2 px-4 py-3 text-sm hover:bg-slate-50">
+      <dt className="shrink-0 font-medium text-slate-600">{label}</dt>
+      <dd className="sm:text-right font-semibold text-slate-900">{children}</dd>
     </div>
   );
 }
@@ -26,23 +26,28 @@ function DecisionPanel({ report, onDecided }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
-  // A decided report is finished. Showing buttons that the server would refuse
-  // teaches the officer the wrong thing about the system.
   if (report.status !== DECIDABLE) {
     return (
-      <Panel title="Decision">
-        <div className="space-y-2 px-4 py-4 text-sm">
-          <p className="text-slate-900">
-            This report was {STATUS_LABEL[report.status].toLowerCase()} on{' '}
-            {formatDateTime(report.decided_at)}
-            {report.decided_by_name ? ` by ${report.decided_by_name}` : ''}.
+      <Panel title="Official Decision">
+        <div className="space-y-3 px-5 py-5 text-sm bg-slate-50">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-slate-700">Final Status:</span>
+            <StatusBadge status={report.status} />
+          </div>
+          <p className="text-slate-900 border-b border-slate-200 pb-3">
+            Recorded on <span className="font-semibold">{formatDateTime(report.decided_at)}</span>
+            {report.decided_by_name ? ` by ` : ''}
+            {report.decided_by_name && <span className="font-semibold">{report.decided_by_name}</span>}
           </p>
           {report.decision_reason && (
-            <p className="border-l-4 border-red-300 bg-red-50 px-3 py-2 text-slate-800">
-              {report.decision_reason}
-            </p>
+            <div className="mt-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Remarks / Reason</p>
+              <p className="border-l-4 border-slate-400 bg-white px-4 py-3 text-slate-800 shadow-sm italic">
+                "{report.decision_reason}"
+              </p>
+            </div>
           )}
-          <p className="text-xs text-slate-500">A decision is final and cannot be changed.</p>
+          <p className="text-xs font-semibold text-slate-500 mt-2">A decision is final and cannot be modified.</p>
         </div>
       </Panel>
     );
@@ -70,46 +75,47 @@ function DecisionPanel({ report, onDecided }) {
   }
 
   return (
-    <Panel title="Decision" note="Read the PDF before deciding. This cannot be undone.">
-      <div className="p-4">
-        <div className="flex flex-wrap gap-2">
+    <Panel title="Record Decision" note="Review the inspection PDF thoroughly before deciding. This action is irreversible.">
+      <div className="p-5">
+        <p className="text-sm font-semibold mb-3 text-slate-800">Select an action:</p>
+        <div className="flex flex-wrap gap-3">
           {['approved', 'rejected'].map((s) => (
             <button
               key={s}
               onClick={() => { setAction(action === s ? null : s); setError(null); }}
-              className={`rounded-sm px-4 py-2 text-sm font-medium text-white transition ${ACTION_STYLE[s]} ${
-                action === s ? 'ring-2 ring-slate-900 ring-offset-1' : ''
+              className={`rounded-sm px-6 py-2.5 text-sm font-semibold tracking-wide text-white transition-all shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${ACTION_STYLE[s]} ${
+                action === s ? 'ring-4 ring-slate-300 scale-105' : 'opacity-90 hover:opacity-100'
               }`}
             >
-              {ACTION_LABEL[s]}
+              {ACTION_LABEL[s].toUpperCase()}
             </button>
           ))}
         </div>
 
         {action && (
-          <div className="mt-4">
-            <label htmlFor="reason" className="block text-sm text-slate-700">
-              Reason {needsReason
-                ? <span className="text-red-700">(required)</span>
-                : <span className="text-slate-500">(not required to approve)</span>}
+          <div className="mt-6 border-t border-slate-200 pt-5 animate-in fade-in slide-in-from-top-2">
+            <label htmlFor="reason" className="block text-sm font-semibold text-slate-800 mb-2">
+              Remarks / Reason {needsReason
+                ? <span className="text-govt-maroon">(Required for rejection)</span>
+                : <span className="text-slate-500 font-normal">(Optional for approval)</span>}
             </label>
             <textarea
               id="reason"
-              rows={3}
+              rows={4}
               value={reason}
               onChange={(e) => { setReason(e.target.value); setError(null); }}
-              placeholder={needsReason ? 'Why is this package being refused?' : ''}
-              disabled={!needsReason}
-              className="mt-1 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm focus:border-[#0b2e6f] focus:outline-none focus:ring-1 focus:ring-[#0b2e6f] disabled:bg-slate-50 disabled:text-slate-400"
+              placeholder={needsReason ? 'Specify the legal or procedural grounds for refusal...' : 'Any optional remarks...'}
+              disabled={!needsReason && false}
+              className="w-full rounded-sm border border-slate-300 bg-white px-4 py-3 text-sm focus:border-govt-navy focus:outline-none focus:ring-1 focus:ring-govt-navy shadow-inner"
             />
             {needsReason && (
-              <p className="mt-1 text-xs text-slate-500">
-                This is recorded against the report and cannot be edited afterwards.
+              <p className="mt-1.5 text-xs font-medium text-slate-500">
+                These remarks will be permanently recorded against this report.
               </p>
             )}
 
             {error && (
-              <p role="alert" className="mt-2 border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+              <p role="alert" className="mt-3 border-l-4 border-red-500 bg-red-50 px-4 py-3 text-sm font-medium text-red-900 shadow-sm">
                 {error}
               </p>
             )}
@@ -117,9 +123,9 @@ function DecisionPanel({ report, onDecided }) {
             <button
               onClick={submit}
               disabled={busy}
-              className="mt-3 rounded-sm bg-[#0b2e6f] px-4 py-2 text-sm font-medium text-white hover:bg-[#092551] disabled:opacity-60"
+              className="mt-5 w-full sm:w-auto min-w-[200px] rounded-sm bg-govt-navy px-6 py-2.5 text-sm font-bold tracking-wide text-white shadow-md hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-govt-navy disabled:opacity-60 transition-colors"
             >
-              {busy ? 'Recording…' : `Confirm: ${ACTION_LABEL[action]}`}
+              {busy ? 'Recording Decision…' : `CONFIRM ${ACTION_LABEL[action].toUpperCase()}`}
             </button>
           </div>
         )}
@@ -139,54 +145,60 @@ export default function ReportReview() {
   if (error) {
     return (
       <div className="space-y-4">
-        <Link to="/" className="text-sm text-[#0b2e6f] underline-offset-2 hover:underline">← Back to queue</Link>
-        <p className="border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">{error}</p>
+        <Breadcrumb items={[{label: 'Error'}]} />
+        <p className="border-l-4 border-amber-500 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-900 shadow-sm">{error}</p>
       </div>
     );
   }
-  if (!report) return <Loading label="Loading report" />;
+  if (!report) return <Loading label="Retrieving official report" />;
 
   return (
-    <div className="space-y-5">
-      <div>
-        <Link to="/" className="text-sm text-[#0b2e6f] underline-offset-2 hover:underline">← Back to queue</Link>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-lg font-semibold text-slate-900">{report.reference_no}</h1>
+    <div className="space-y-6">
+      <Breadcrumb items={[{to: '/', label: 'Queue'}, {label: report.reference_no}]} />
+
+      <div className="pb-4 border-b-2 border-slate-200">
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="font-mono text-2xl font-bold text-govt-navy">{report.reference_no}</h1>
           <StatusBadge status={report.status} />
         </div>
-        <p className="mt-1 text-sm text-slate-600">
-          Filed by {report.officer_name} ({report.officer_role}) · {CHANNEL_LABEL[report.channel]}
+        <p className="mt-2 text-sm font-medium text-slate-600">
+          Filed by <span className="text-slate-900 font-semibold">{report.officer_name}</span> ({report.officer_role}) via {CHANNEL_LABEL[report.channel]}
         </p>
       </div>
 
-      {/* The PDF is what the officer actually reviews, so it sits above
-          everything else rather than at the end of a list of fields. */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border border-slate-200 bg-white px-4 py-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-300 bg-white p-5 rounded-sm shadow-sm border-l-4 border-l-govt-navy">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Inspection report</p>
-          <p className="mt-0.5 text-xs text-slate-600">
-            The PDF carries every declaration checked on this package.
+          <h2 className="text-base font-bold text-slate-900">Official Inspection Document</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Contains all verified declarations and photographic evidence.
           </p>
         </div>
-        <PdfLink url={report.pdf_url} />
+        <PdfLink url={report.pdf_url} label="View Full Report PDF" />
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <Panel title="Inspection">
-          <dl className="divide-y divide-slate-100">
-            <Field label="Channel">{CHANNEL_LABEL[report.channel]}</Field>
-            <Field label="Filed by">{report.officer_name} ({report.officer_role})</Field>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Panel title="Report Metadata">
+          <dl className="divide-y divide-slate-200 bg-white">
+            <Field label="Channel">
+              <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded text-xs font-bold border border-slate-200">
+                {CHANNEL_LABEL[report.channel]}
+              </span>
+            </Field>
+            <Field label="Filed By">{report.officer_name} <br/><span className="text-xs font-normal text-slate-500">{report.officer_role}</span></Field>
             <Field label="Jurisdiction">{report.jurisdiction}</Field>
-            {/* Inspection aur submission alag hain jaan boojh kar — field app
-                offline chalti hai aur baad mein sync karti hai. */}
-            <Field label="Inspected on">{formatDate(report.inspected_at)}</Field>
-            <Field label="Submitted">{formatDateTime(report.submitted_at)}</Field>
-            <Field label="Edible">{report.is_edible ? 'Yes' : 'No'}</Field>
-            <Field label="Imported">{report.is_imported ? 'Yes' : 'No'}</Field>
+            <Field label="Inspection Date">{formatDate(report.inspected_at)}</Field>
+            <Field label="Submission Time">{formatDateTime(report.submitted_at)}</Field>
+            <Field label="Commodity Type">
+              {report.is_edible ? 'Edible' : 'Non-Edible'}
+              <span className="mx-2 text-slate-300">|</span>
+              {report.is_imported ? 'Imported' : 'Domestic'}
+            </Field>
             {report.listing_url && (
-              <Field label="Listing">
+              <Field label="Product Listing">
                 <a href={report.listing_url} target="_blank" rel="noreferrer"
-                  className="text-[#0b2e6f] underline-offset-2 hover:underline">Open</a>
+                  className="inline-flex items-center gap-1 font-semibold text-govt-navy underline-offset-2 hover:underline">
+                  Open Link <span aria-hidden="true" className="text-xs">↗</span>
+                </a>
               </Field>
             )}
           </dl>
