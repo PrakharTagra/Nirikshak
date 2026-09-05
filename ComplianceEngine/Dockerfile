@@ -1,4 +1,4 @@
-﻿# Dockerfile for Nirikshak ComplianceEngine Orchestrator + Stage-9 Reporting
+# Dockerfile for Nirikshak ComplianceEngine Orchestrator + Stage-9 Reporting
 FROM node:20-bookworm-slim
 
 # Install Python & build dependencies for OpenCV, Pillow, ReportLab
@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir --break-system-packages -r stage9_reporting/requi
 # Copy orchestrator dependency definitions
 COPY orchestrator/package*.json ./orchestrator/
 WORKDIR /app/orchestrator
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 WORKDIR /app
 
@@ -36,6 +36,8 @@ WORKDIR /app/orchestrator
 
 ENV PYTHON_CMD=python3
 ENV NODE_ENV=production
+ENV PORT=3000
 
-ENTRYPOINT ["node", "src/cli.js"]
-CMD ["--help"]
+EXPOSE 3000
+
+CMD ["node", "src/server.js"]
