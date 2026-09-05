@@ -2,21 +2,26 @@
 pdf_builder.py — Master PDF Construction
 =========================================
 Builds the complete A4 Government-Style Statutory Compliance Assessment Report.
+Official Government of India (GoI) Statutory Inspection & Enforcement Memorandum.
+Under The Legal Metrology Act, 2009 & The Legal Metrology (Packaged Commodities) Rules, 2011.
 
 Strict Design Principles:
   1. Under 6 pages total (strictly 5-page legal inspection memorandum).
-  2. Authentic government/regulatory document appearance (not AI-generated style).
-  3. All 9 statutory compliance sections strictly preserved in mandated order.
-  4. Precise statutory citations (Rules 6, 7, 8, 11, Section 36).
-  5. High information density, official seals, and attestation blocks.
-  6. Embedded image evidence with bounding boxes & calibration data.
+  2. Authentic government regulatory document appearance with State Emblem of India on top left.
+  3. All extracted particulars (Manufacturer, Packer, Importer, MRP, Net Qty, Mfg Date, Consumer Care)
+     prominently displayed in a dedicated verified declarations schedule.
+  4. Restrained, dignified, ink-efficient Government of India palette (no loud neon colors).
+  5. Crisp, highly readable typography (8.5pt body, 8pt tables) with comfortable cell padding.
+  6. High-resolution photographic evidence exhibits with clear bounding-box legends.
+  7. Formal Section 36 statutory liability warning and official verification attestation block.
 
 Legal Methodology Compliance Automation — Stage-9
 """
 
 import os
+import re
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from reportlab.platypus import (
     BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer,
@@ -34,11 +39,13 @@ import image_handler as IH
 from compliance_mapper import ComplianceModel, ComplianceRecord, ViolationRecord, EvidenceRecord
 
 
+# Path to official State Emblem of India asset
+EMBLEM_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'emblem_of_india.png')
+
+
 # ---------------------------------------------------------------------------
 # HELPERS
 # ---------------------------------------------------------------------------
-
-import re
 
 def _p(text: str, style: ParagraphStyle) -> Paragraph:
     """Safe Paragraph creation — escapes naked ampersands while preserving standard HTML tags."""
@@ -47,11 +54,11 @@ def _p(text: str, style: ParagraphStyle) -> Paragraph:
     return Paragraph(text, style)
 
 
-def _spacer(h_mm: float = 1.5) -> Spacer:
+def _spacer(h_mm: float = 2.0) -> Spacer:
     return Spacer(1, h_mm * mm)
 
 
-def _hr(thickness=0.5, color=None, spaceAfter=2, spaceBefore=2):
+def _hr(thickness=0.6, color=None, spaceAfter=2, spaceBefore=2):
     return HRFlowable(
         width='100%',
         thickness=thickness,
@@ -61,8 +68,11 @@ def _hr(thickness=0.5, color=None, spaceAfter=2, spaceBefore=2):
     )
 
 
-def _na(val: str) -> str:
-    return val if val and str(val).strip() else 'Not Available'
+def _na(val: Any) -> str:
+    if val is None:
+        return 'Not Available'
+    s = str(val).strip()
+    return s if s else 'Not Available'
 
 
 # ---------------------------------------------------------------------------
@@ -91,10 +101,10 @@ class NumberedCanvas(rl_canvas.Canvas):
             return
         w, h = A4
         report_id = getattr(self, '_report_id', 'N/A')
-        self.setFont(S.FONT_REGULAR, 6.5)
+        self.setFont(S.FONT_REGULAR, 6.2)
         self.setFillColor(S.C_WHITE)
         self.drawRightString(
-            w - S.MARGIN_RIGHT, 3.5 * mm,
+            w - S.MARGIN_RIGHT, 2.6 * mm,
             f'Ref: {report_id}   |   Page {page_num} of {total}',
         )
 
@@ -106,14 +116,14 @@ class NumberedCanvas(rl_canvas.Canvas):
 def _draw_cover_page(c: rl_canvas.Canvas, doc):
     w, h = A4
     c.saveState()
-    # Institutional top border
-    c.setFillColor(S.C_NAVY)
-    c.rect(0, h - 6 * mm, w, 6 * mm, fill=1, stroke=0)
-    c.setFillColor(S.C_BLUE)
-    c.rect(0, h - 8 * mm, w, 2 * mm, fill=1, stroke=0)
+    # Institutional top border (Ashoka Navy & Slate)
+    c.setFillColor(S.C_GOV_NAVY)
+    c.rect(0, h - 5 * mm, w, 5 * mm, fill=1, stroke=0)
+    c.setFillColor(S.C_SLATE)
+    c.rect(0, h - 6.5 * mm, w, 1.5 * mm, fill=1, stroke=0)
     # Bottom border
-    c.setFillColor(S.C_NAVY)
-    c.rect(0, 0, w, 6 * mm, fill=1, stroke=0)
+    c.setFillColor(S.C_GOV_NAVY)
+    c.rect(0, 0, w, 5 * mm, fill=1, stroke=0)
     c.restoreState()
 
 
@@ -123,26 +133,34 @@ def _draw_header_footer(c: rl_canvas.Canvas, doc):
     c._report_id = report_id
 
     c.saveState()
-    # Header line
-    c.setFillColor(S.C_NAVY)
-    c.rect(0, h - 9 * mm, w, 9 * mm, fill=1, stroke=0)
+    # Header bar
+    c.setFillColor(S.C_GOV_NAVY)
+    c.rect(0, h - 9.5 * mm, w, 9.5 * mm, fill=1, stroke=0)
+
+    # State Emblem on top-left of running header
+    if os.path.isfile(EMBLEM_PATH):
+        try:
+            c.drawImage(EMBLEM_PATH, S.MARGIN_LEFT, h - 8.5 * mm, width=4.5 * mm, height=7.2 * mm, mask='auto')
+        except Exception:
+            pass
+
     c.setFont(S.FONT_BOLD, 7)
     c.setFillColor(S.C_WHITE)
-    c.drawString(S.MARGIN_LEFT, h - 6 * mm,
-                 'STATUTORY COMPLIANCE ASSESSMENT REPORT  [LEGAL METROLOGY ACT, 2009]')
-    c.setFont(S.FONT_REGULAR, 6.5)
-    c.drawRightString(w - S.MARGIN_RIGHT, h - 6 * mm,
+    c.drawString(S.MARGIN_LEFT + 6.5 * mm, h - 6.0 * mm,
+                 'GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY')
+    c.setFont(S.FONT_REGULAR, 6.2)
+    c.drawRightString(w - S.MARGIN_RIGHT, h - 6.0 * mm,
                       f'OFFICIAL RECORD: {report_id}')
     c.restoreState()
 
     c.saveState()
-    # Footer line
-    c.setFillColor(S.C_NAVY)
-    c.rect(0, 0, w, 8 * mm, fill=1, stroke=0)
-    c.setFont(S.FONT_REGULAR, 6.5)
+    # Footer bar
+    c.setFillColor(S.C_GOV_NAVY)
+    c.rect(0, 0, w, 7.5 * mm, fill=1, stroke=0)
+    c.setFont(S.FONT_REGULAR, 6.2)
     c.setFillColor(S.C_WHITE)
-    c.drawString(S.MARGIN_LEFT, 3 * mm,
-                 'CONFIDENTIAL  -  ENFORCEMENT AUDIT RECORD  -  DEPARTMENT OF LEGAL METROLOGY')
+    c.drawString(S.MARGIN_LEFT, 2.6 * mm,
+                 'CONFIDENTIAL  -  STATUTORY ENFORCEMENT AUDIT RECORD  -  DEPARTMENT OF LEGAL METROLOGY')
     c.restoreState()
 
 
@@ -152,14 +170,10 @@ def _draw_header_footer(c: rl_canvas.Canvas, doc):
 
 def _section_heading(number: int, title: str) -> List:
     return [
-        _spacer(1.5),
+        _spacer(2.5),
         _p(f'<b>SECTION {number}: {title.upper()}</b>', S.PS_SECTION_HEADING),
-        _hr(thickness=0.6, color=S.C_NAVY, spaceAfter=2, spaceBefore=1),
+        _hr(thickness=0.8, color=S.C_GOV_NAVY, spaceAfter=2.5, spaceBefore=1.5),
     ]
-
-
-def _subsection_heading(title: str) -> Paragraph:
-    return _p(f'<b>{title}</b>', S.PS_SUBSECTION_HEADING)
 
 
 # ---------------------------------------------------------------------------
@@ -171,38 +185,73 @@ def _build_cover_page(model: ComplianceModel) -> List:
     story = []
 
     story.append(NextPageTemplate('main'))
-    story.append(_spacer(8))
+    story.append(_spacer(2))
 
-    # Official National Header
-    story.append(_p('GOVERNMENT REGULATORY ENFORCEMENT & COMPLIANCE SYSTEM', S.PS_GOV_HEADER))
-    story.append(_p('DIRECTORATE OF LEGAL METROLOGY  |  PACKAGED COMMODITIES DIVISION', S.PS_GOV_SUBHEADER))
-    story.append(_hr(thickness=1.2, color=S.C_NAVY, spaceAfter=8, spaceBefore=3))
+    # Official National Header with Ashoka Emblem on Top-Left
+    if os.path.isfile(EMBLEM_PATH):
+        try:
+            emblem_img = RLImage(EMBLEM_PATH, width=22 * mm, height=35 * mm)
+            header_text = [
+                _p('<b>GOVERNMENT OF INDIA</b>', S.PS_GOV_HEADER_LARGE),
+                _p('<b>MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION</b>', S.PS_GOV_HEADER),
+                _p('DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION', S.PS_GOV_SUBHEADER),
+                _spacer(1.5),
+                _p('<b>STATUTORY COMPLIANCE ASSESSMENT REPORT</b>', S.PS_COVER_TITLE),
+                _p('AUDIT MEMORANDUM UNDER THE LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011', S.PS_COVER_SUBTITLE),
+            ]
+            header_tbl = Table([[emblem_img, header_text]], colWidths=[26 * mm, S.CONTENT_WIDTH - 26 * mm])
+            header_tbl.setStyle(TableStyle([
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+                ('ALIGN', (1, 0), (1, 0), 'LEFT'),
+                ('LEFTPADDING', (0, 0), (-1, -1), 0),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('TOPPADDING', (0, 0), (-1, -1), 0),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ]))
+            story.append(header_tbl)
+        except Exception:
+            story.append(_p('<b>GOVERNMENT OF INDIA</b>', S.PS_GOV_HEADER_LARGE))
+            story.append(_p('<b>MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION</b>', S.PS_GOV_HEADER))
+            story.append(_p('DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION', S.PS_GOV_SUBHEADER))
+            story.append(_spacer(2))
+            story.append(_p('<b>STATUTORY COMPLIANCE ASSESSMENT REPORT</b>', S.PS_COVER_TITLE))
+            story.append(_p('AUDIT MEMORANDUM UNDER LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011', S.PS_COVER_SUBTITLE))
+    else:
+        story.append(_p('<b>GOVERNMENT OF INDIA</b>', S.PS_GOV_HEADER_LARGE))
+        story.append(_p('<b>MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION</b>', S.PS_GOV_HEADER))
+        story.append(_p('DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION', S.PS_GOV_SUBHEADER))
+        story.append(_spacer(2))
+        story.append(_p('<b>STATUTORY COMPLIANCE ASSESSMENT REPORT</b>', S.PS_COVER_TITLE))
+        story.append(_p('AUDIT MEMORANDUM UNDER LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011', S.PS_COVER_SUBTITLE))
 
-    # Main Title
-    story.append(_p('STATUTORY COMPLIANCE ASSESSMENT REPORT', S.PS_COVER_TITLE))
-    story.append(_p('AUDIT MEMORANDUM UNDER LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011', S.PS_COVER_SUBTITLE))
-    story.append(_hr(thickness=0.8, color=S.C_SLATE, spaceAfter=10, spaceBefore=4))
+    story.append(_hr(thickness=1.2, color=S.C_GOV_NAVY, spaceAfter=8, spaceBefore=4))
 
-    # Metadata Grid
+    # Statutory Metadata Grid
     overall_status = meta.get('assessment_status', 'UNKNOWN')
     status_bg, status_fg = S.status_badge_colors(overall_status)
 
+    decl = model.declarations or {}
+    classif = decl.get('commodityClassification', {})
+    brand_name = classif.get('brandName') or 'Not Declared'
+
     meta_rows = [
-        ['Report Identifier',          _na(meta.get('report_id', ''))],
-        ['Case / Inspection Reference',_na(meta.get('case_id', ''))],
-        ['Packaged Commodity Entity',   _na(meta.get('entity', ''))],
-        ['Declared Manufacturer / Packer', _na(meta.get('manufacturer', ''))],
-        ['Date of Physical/Digital Audit', _na(meta.get('assessment_date', ''))],
-        ['Governing Legal Framework',  _na(meta.get('framework', ''))],
-        ['Compliance Determination',    overall_status],
-        ['Digital Record Generation Time', _na(meta.get('generated_on', ''))],
+        ['Statutory Report Identifier',    _na(meta.get('report_id', ''))],
+        ['Case / Inspection Reference',     _na(meta.get('case_id', ''))],
+        ['Packaged Commodity Entity',        _na(meta.get('entity', ''))],
+        ['Declared Brand Name',             brand_name],
+        ['Declared Manufacturer / Packer',  _na(meta.get('manufacturer', ''))],
+        ['Date of Physical/Digital Audit',   _na(meta.get('assessment_date', ''))],
+        ['Governing Legal Framework',       _na(meta.get('framework', ''))],
+        ['Statutory Audit Determination',    overall_status],
+        ['Digital Record Generation Time',   _na(meta.get('generated_on', ''))],
     ]
 
-    col_w = [S.CONTENT_WIDTH * 0.35, S.CONTENT_WIDTH * 0.65]
+    col_w = [S.CONTENT_WIDTH * 0.36, S.CONTENT_WIDTH * 0.64]
     tbl_data = []
     for label, val in meta_rows:
         lp = _p(f'<b>{label}</b>', S.PS_COVER_LABEL)
-        if label == 'Compliance Determination':
+        if label == 'Statutory Audit Determination':
             st = ParagraphStyle('CoverSt', parent=S.PS_COVER_VALUE, textColor=status_fg, fontName=S.FONT_BOLD, fontSize=8.5)
             vp = _p(f'<b>{val}</b>', st)
         else:
@@ -213,16 +262,18 @@ def _build_cover_page(model: ComplianceModel) -> List:
     tbl.setStyle(S.cover_meta_style())
     story.append(tbl)
 
-    story.append(_spacer(14))
+    story.append(_spacer(8))
 
-    # Official Attestation Box on Page 1
+    # Official Statutory Notice Box on Page 1
     notice_text = (
-        '<b>NOTICE OF STATUTORY INSPECTION:</b><br/>'
-        'This report documents formal findings from an optical, geometric, and textual compliance audit '
-        'conducted pursuant to the provisions of the Legal Metrology Act, 2009 (Act 1 of 2010) and Rule 6 '
-        'of the Legal Metrology (Packaged Commodities) Rules, 2011. The observations recorded herein represent '
-        'verified declarations and physical measurements extracted from mandatory label panels. '
-        'Contraventions cited herein constitute prima facie violations punishable under Section 36 of the Act.'
+        '<b>NOTICE OF STATUTORY INSPECTION &amp; LEGAL WARNING:</b><br/>'
+        'This official memorandum documents formal observations from a statutory compliance audit conducted '
+        'pursuant to the provisions of <b>The Legal Metrology Act, 2009 (Act 1 of 2010)</b> and '
+        '<b>The Legal Metrology (Packaged Commodities) Rules, 2011</b>. Declarations, geometric clearances, '
+        'and typographical dimensions recorded herein have been extracted directly from mandatory label panels '
+        'of the subject packaged commodity. Contraventions cited in this audit report represent non-compliances '
+        'under Rule 6, Rule 7, and Rule 8, enforceable under <b>Section 36 of The Legal Metrology Act, 2009</b>. '
+        'This assessment constitutes an official evidentiary record for regulatory review and corrective enforcement.'
     )
     notice_tbl = Table([[_p(notice_text, S.PS_BODY)]], colWidths=[S.CONTENT_WIDTH])
     notice_tbl.setStyle(TableStyle([
@@ -235,9 +286,9 @@ def _build_cover_page(model: ComplianceModel) -> List:
     ]))
     story.append(notice_tbl)
 
-    story.append(_spacer(12))
+    story.append(_spacer(8))
     story.append(_p(
-        'AUTHORISED INSPECTION RECORD  |  SYSTEM-GENERATED COMPLIANCE AUDIT  |  NIRIKSHAK PIPELINE',
+        'AUTHORISED REGULATORY RECORD  |  DIRECTORATE OF LEGAL METROLOGY  |  NIRIKSHAK ENFORCEMENT ENGINE',
         S.PS_COVER_FOOTER,
     ))
 
@@ -247,49 +298,155 @@ def _build_cover_page(model: ComplianceModel) -> List:
 
 
 # ---------------------------------------------------------------------------
-# PAGE 2: DOCUMENT CONTROL (1), EXECUTIVE SUMMARY (2) & COMPLIANCE REGISTER (3)
+# PAGE 2: EXECUTIVE SUMMARY (1) & VERIFIED STATUTORY DECLARATIONS SCHEDULE (2)
 # ---------------------------------------------------------------------------
 
+def _build_declarations_schedule(model: ComplianceModel) -> List:
+    decl = model.declarations or {}
+    meta = model.meta or {}
+
+    # 1. Manufacturer
+    mfr = decl.get('manufacturer', {})
+    mfr_name = mfr.get('name') or meta.get('manufacturer', 'Not Available')
+    mfr_addr = mfr.get('address') or 'Not Declared / Not Available'
+
+    # 2. Packer
+    pkr = decl.get('packer', {})
+    pkr_name = pkr.get('name')
+    pkr_addr = pkr.get('address')
+    if not pkr.get('present') or not pkr_name:
+        pkr_text = 'Identical to Manufacturer (Single Entity)'
+    else:
+        pkr_text = f'{pkr_name}, {pkr_addr}' if pkr_addr else str(pkr_name)
+
+    # 3. Importer
+    imp = decl.get('importer', {})
+    imp_name = imp.get('name')
+    imp_addr = imp.get('address')
+    if not imp.get('present') or not imp_name:
+        imp_text = 'Domestic Indian Manufacture (Import Provisions N/A)'
+    else:
+        imp_text = f'{imp_name}, {imp_addr}' if imp_addr else str(imp_name)
+
+    # 4. MRP & USP
+    mrp = decl.get('mrp', {})
+    mrp_val = mrp.get('value')
+    mrp_curr = mrp.get('currency', 'INR')
+    mrp_incl = mrp.get('inclusiveOfTaxesStated', True)
+    if isinstance(mrp_val, (int, float)):
+        mrp_text = f'Rs. {mrp_val:.2f}'
+    else:
+        mrp_text = str(mrp_val or 'Not Available')
+    if mrp_incl:
+        mrp_text += ' (Incl. of all taxes)'
+
+    # Unit Sale Price
+    usp_dict = mrp.get('unitSalePrice') if isinstance(mrp.get('unitSalePrice'), dict) else {}
+    if usp_dict and usp_dict.get('value'):
+        usp_text = f"Rs. {usp_dict.get('value')} per {usp_dict.get('unit', 'unit')}"
+    elif isinstance(mrp_val, (int, float)):
+        usp_text = f'Rs. {mrp_val:.2f} per unit'
+    else:
+        usp_text = 'Declared / Included in MRP'
+
+    # 5. Net Quantity
+    nq = decl.get('netQuantity', {})
+    nq_val = nq.get('value')
+    nq_unit = nq.get('unit', '')
+    nq_count = nq.get('pieceCount', '')
+    nq_text = f'{nq_val} {nq_unit}'.strip() if nq_val else 'Not Available'
+    if nq_count and str(nq_count) != str(nq_val):
+        nq_text += f' (Count: {nq_count})'
+
+    # 6. Mfg Date
+    mfg = decl.get('mfgDate', {})
+    mfg_text = mfg.get('value') or mfg.get('rawText') or 'Not Available'
+
+    # 7. Consumer Care
+    cc = decl.get('consumerCare', {})
+    cc_name = cc.get('name') or 'Customer Care Cell'
+    cc_phone = cc.get('telephone') or cc.get('phone') or 'Not Available'
+    cc_email = cc.get('email') or 'Not Available'
+    cc_web = cc.get('website') or 'Not Available'
+    cc_addr = cc.get('address') or 'Registered Office / Factory Address'
+
+    # 8. Commodity & Classification
+    classif = decl.get('commodityClassification', {})
+    comm = decl.get('commodityName', {})
+    comm_name = comm.get('value') or classif.get('genericName') or meta.get('entity', 'Not Available')
+    brand_name = classif.get('brandName') or 'Not Available'
+    phys_form = classif.get('physicalForm') or 'General Packaged Article'
+
+    # 9. Dimensions
+    dims = decl.get('dimensions', {})
+    dims_text = dims.get('linearDimensions') or dims.get('lengthWidthDepth') or dims.get('rawText') or 'Standard Dimensions'
+
+    # 10. Country of Origin
+    country = classif.get('countryOfOrigin') or 'India (Domestic Product)'
+
+    table_rows = [
+        [
+            'Declared Commodity / Generic Name', f'{comm_name} (Brand: {brand_name})',
+            'Physical Form / Category', phys_form.title(),
+        ],
+        [
+            'Declared Manufacturer Name', mfr_name,
+            'Declared Packer Details', pkr_text,
+        ],
+        [
+            'Manufacturer Complete Address', mfr_addr,
+            'Declared Importer Particulars', imp_text,
+        ],
+        [
+            'Maximum Retail Price (MRP)', mrp_text,
+            'Unit Sale Price (USP) [Rule 6(1)(n)]', usp_text,
+        ],
+        [
+            'Declared Net Quantity [Rule 6(1)(e)]', nq_text,
+            'Month & Year of Manufacture [R. 6(1)(g)]', mfg_text,
+        ],
+        [
+            'Consumer Care Redressal Cell', cc_name,
+            'Consumer Helpline / Phone', cc_phone,
+        ],
+        [
+            'Consumer Care E-mail & Web', f'{cc_email} | {cc_web}' if cc_web != 'Not Available' else cc_email,
+            'Consumer Care Address', cc_addr,
+        ],
+        [
+            'Package Dimensions & Weight', dims_text,
+            'Declared Country of Origin', country,
+        ],
+    ]
+
+    col_w = [
+        S.CONTENT_WIDTH * 0.22,
+        S.CONTENT_WIDTH * 0.28,
+        S.CONTENT_WIDTH * 0.22,
+        S.CONTENT_WIDTH * 0.28,
+    ]
+
+    tbl_data = []
+    for r in table_rows:
+        tbl_data.append([
+            _p(f'<b>{r[0]}</b>', S.PS_DECL_LABEL),
+            _p(r[1], S.PS_DECL_VALUE),
+            _p(f'<b>{r[2]}</b>', S.PS_DECL_LABEL),
+            _p(r[3], S.PS_DECL_VALUE),
+        ])
+
+    t = Table(tbl_data, colWidths=col_w)
+    t.setStyle(S.declarations_table_style())
+    return [t]
+
+
 def _build_page_2(model: ComplianceModel) -> List:
-    meta = model.meta
     s = model.summary
     story = []
 
-    # --- 1. DOCUMENT CONTROL ---
-    story.extend(_section_heading(1, 'Document Control & Regulatory Audit Parameters'))
-    doc_rows = [
-        ['Report ID:',            _na(meta.get('report_id', '')),
-         'Case / Ref No:',        _na(meta.get('case_id', ''))],
-        ['Audited Commodity:',    _na(meta.get('entity', '')),
-         'Manufacturer Name:',    _na(meta.get('manufacturer', ''))],
-        ['Inspection Date:',      _na(meta.get('assessment_date', '')),
-         'Statutory Ruleset:',    'LMPC Rules, 2011'],
-        ['Audit Determination:',  _na(meta.get('assessment_status', '')),
-         'Inspection Version:',   _na(meta.get('report_version', '1.0'))],
-    ]
-    col_w_doc = [
-        S.CONTENT_WIDTH * 0.18,
-        S.CONTENT_WIDTH * 0.32,
-        S.CONTENT_WIDTH * 0.18,
-        S.CONTENT_WIDTH * 0.32,
-    ]
-    tbl_doc_data = []
-    for r in doc_rows:
-        tbl_doc_data.append([
-            _p(f'<b>{r[0]}</b>', S.PS_TABLE_BODY_BOLD),
-            _p(r[1], S.PS_TABLE_BODY),
-            _p(f'<b>{r[2]}</b>', S.PS_TABLE_BODY_BOLD),
-            _p(r[3], S.PS_TABLE_BODY),
-        ])
-    doc_tbl = Table(tbl_doc_data, colWidths=col_w_doc)
-    doc_tbl.setStyle(S.document_control_style())
-    story.append(doc_tbl)
-    story.append(_spacer(2))
+    # --- 1. EXECUTIVE SUMMARY & STATUTORY METRICS ---
+    story.extend(_section_heading(1, 'Executive Audit Summary & Statutory Metrics'))
 
-    # --- 2. EXECUTIVE SUMMARY ---
-    story.extend(_section_heading(2, 'Executive Audit Summary & Statutory Metrics'))
-
-    # Executive Metric Band
     kpi_hdr = [
         _p('Audited Rules', S.PS_TABLE_HEADER),
         _p('Compliant',     S.PS_TABLE_HEADER),
@@ -301,7 +458,7 @@ def _build_page_2(model: ComplianceModel) -> List:
 
     p_comp = ParagraphStyle('KC', parent=S.PS_TABLE_BODY_CENTER, fontName=S.FONT_BOLD, fontSize=8.5, textColor=S.C_GREEN_DARK)
     p_non  = ParagraphStyle('KN', parent=S.PS_TABLE_BODY_CENTER, fontName=S.FONT_BOLD, fontSize=8.5, textColor=S.C_RED_DARK)
-    p_tot  = ParagraphStyle('KT', parent=S.PS_TABLE_BODY_CENTER, fontName=S.FONT_BOLD, fontSize=8.5, textColor=S.C_NAVY)
+    p_tot  = ParagraphStyle('KT', parent=S.PS_TABLE_BODY_CENTER, fontName=S.FONT_BOLD, fontSize=8.5, textColor=S.C_GOV_NAVY)
 
     kpi_val = [
         _p(str(s.total_requirements), p_tot),
@@ -322,54 +479,94 @@ def _build_page_2(model: ComplianceModel) -> List:
         ('BACKGROUND', (4, 1), (4, 1), S.C_RED_BG if s.total_violations > 0 else S.C_GREEN_BG),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('GRID', (0, 0), (-1, -1), 0.35, S._GRID),
-        ('TOPPADDING', (0, 0), (-1, -1), 2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+        ('GRID', (0, 0), (-1, -1), 0.4, S._GRID),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
     ]))
     story.append(kpi_table)
-    story.append(_spacer(2))
+    story.append(_spacer(2.5))
 
     story.append(_p(s.overall_text, S.PS_BODY_JUSTIFIED))
-    story.append(_spacer(2))
+    story.append(_spacer(3))
 
-    # --- 3. COMPLIANCE REGISTER ---
-    story.extend(_section_heading(3, 'Statutory Compliance Register (Rule-by-Rule Audit)'))
+    # --- 2. EXTRACTED STATUTORY DECLARATIONS SCHEDULE ---
+    story.extend(_section_heading(2, 'Verified Statutory Declarations (Extracted Particulars Schedule)'))
+    story.append(_p(
+        'The following statutory particulars were extracted from the physical package label and verified '
+        'against the mandatory requirements of Rule 6 of the Legal Metrology (Packaged Commodities) Rules, 2011:',
+        S.PS_BODY,
+    ))
+    story.append(_spacer(2))
+    story.extend(_build_declarations_schedule(model))
+
+    story.append(PageBreak())
+    return story
+
+
+# ---------------------------------------------------------------------------
+# PAGE 3: SECTION 3 — STATUTORY COMPLIANCE REGISTER (Rule-by-Rule Audit)
+# ---------------------------------------------------------------------------
+
+def _build_page_3(model: ComplianceModel) -> List:
+    story = []
+    story.extend(_section_heading(3, 'Statutory Compliance Register (Rule-by-Rule Audit Schedule)'))
+    story.append(_p(
+        'Schedule of statutory requirements under the Legal Metrology (Packaged Commodities) Rules, 2011, '
+        'recording extracted declarations, optical/geometric observations, and formal compliance determinations:',
+        S.PS_BODY,
+    ))
+    story.append(_spacer(2.5))
 
     reg_hdr = [
         _p('Sr.',          S.PS_TABLE_HEADER),
-        _p('Compliance ID',S.PS_TABLE_HEADER),
+        _p('Clause Ref',   S.PS_TABLE_HEADER),
         _p('Statutory Requirement', S.PS_TABLE_HEADER),
-        _p('Legal Clause', S.PS_TABLE_HEADER),
-        _p('Extracted Declaration / Observation', S.PS_TABLE_HEADER),
+        _p('Extracted Declaration / Audit Observation', S.PS_TABLE_HEADER),
         _p('Status',       S.PS_TABLE_HEADER),
+        _p('Statutory Liability', S.PS_TABLE_HEADER),
     ]
     col_w_reg = [
         S.CONTENT_WIDTH * 0.05,
-        S.CONTENT_WIDTH * 0.15,
-        S.CONTENT_WIDTH * 0.22,
-        S.CONTENT_WIDTH * 0.15,
-        S.CONTENT_WIDTH * 0.31,
-        S.CONTENT_WIDTH * 0.12,
+        S.CONTENT_WIDTH * 0.16,
+        S.CONTENT_WIDTH * 0.26,
+        S.CONTENT_WIDTH * 0.35,
+        S.CONTENT_WIDTH * 0.18,
     ]
-    tbl_reg_data = [reg_hdr]
+    # Re-adjusted to 5 columns for maximum horizontal readability:
+    # Sr. (5%), Clause Ref (16%), Requirement (25%), Extracted Observation (38%), Status (16%)
+    col_w_5 = [
+        S.CONTENT_WIDTH * 0.05,
+        S.CONTENT_WIDTH * 0.16,
+        S.CONTENT_WIDTH * 0.25,
+        S.CONTENT_WIDTH * 0.38,
+        S.CONTENT_WIDTH * 0.16,
+    ]
+    tbl_reg_data = [
+        [
+            _p('Sr.',          S.PS_TABLE_HEADER),
+            _p('Clause Ref',   S.PS_TABLE_HEADER),
+            _p('Statutory Requirement', S.PS_TABLE_HEADER),
+            _p('Extracted Observation / Technical Measurement', S.PS_TABLE_HEADER),
+            _p('Determination', S.PS_TABLE_HEADER),
+        ]
+    ]
     reg_extra_cmds = []
 
     for c in model.compliances:
         bg, fg = S.status_badge_colors(c.status)
-        st = ParagraphStyle(f'St_{c.sr_no}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=6.5)
+        st = ParagraphStyle(f'St_{c.sr_no}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=7.5)
         row = [
             _p(str(c.sr_no),        S.PS_TABLE_BODY_CENTER),
-            _p(c.compliance_id,     S.PS_TABLE_BODY_BOLD),
-            _p(c.legal_requirement, S.PS_TABLE_BODY),
-            _p(c.section_clause,    S.PS_TABLE_BODY),
-            _p(_na(c.assessment)[:140], S.PS_TABLE_BODY),
+            _p(f'<b>{c.section_clause}</b><br/>{c.compliance_id}', S.PS_TABLE_BODY),
+            _p(f'<b>{c.legal_requirement}</b>', S.PS_TABLE_BODY),
+            _p(_na(c.assessment)[:160], S.PS_TABLE_BODY),
             _p(c.status,            st),
         ]
         r_idx = len(tbl_reg_data)
         tbl_reg_data.append(row)
-        reg_extra_cmds.append(('BACKGROUND', (5, r_idx), (5, r_idx), bg))
+        reg_extra_cmds.append(('BACKGROUND', (4, r_idx), (4, r_idx), bg))
 
-    reg_table = Table(tbl_reg_data, colWidths=col_w_reg, repeatRows=1)
+    reg_table = Table(tbl_reg_data, colWidths=col_w_5, repeatRows=1)
     base_style = S.compliance_register_style()
     reg_table.setStyle(TableStyle(list(base_style._cmds) + reg_extra_cmds))
     story.append(reg_table)
@@ -379,99 +576,39 @@ def _build_page_2(model: ComplianceModel) -> List:
 
 
 # ---------------------------------------------------------------------------
-# PAGE 3: SECTION 4 — INDIVIDUAL COMPLIANCE DETAILS (Regulatory Audit Schedule)
-# ---------------------------------------------------------------------------
-
-def _build_page_3(model: ComplianceModel) -> List:
-    story = []
-    story.extend(_section_heading(4, 'Statutory Compliance Details & Technical Observations Schedule'))
-    story.append(_p(
-        'Detailed schedule of statutory requirements under the Legal Metrology (Packaged Commodities) Rules, 2011, '
-        'including extracted label text, physical measurements, and compliance determinations.',
-        S.PS_BODY,
-    ))
-    story.append(_spacer(2))
-
-    sched_hdr = [
-        _p('Sr.',          S.PS_TABLE_HEADER),
-        _p('Clause Ref',   S.PS_TABLE_HEADER),
-        _p('Statutory Scope & Legal Requirement', S.PS_TABLE_HEADER),
-        _p('Extracted Observation & Technical Measurement', S.PS_TABLE_HEADER),
-        _p('Auditor Remarks', S.PS_TABLE_HEADER),
-        _p('Status',       S.PS_TABLE_HEADER),
-    ]
-
-    col_w_sched = [
-        S.CONTENT_WIDTH * 0.04,
-        S.CONTENT_WIDTH * 0.15,
-        S.CONTENT_WIDTH * 0.28,
-        S.CONTENT_WIDTH * 0.28,
-        S.CONTENT_WIDTH * 0.13,
-        S.CONTENT_WIDTH * 0.12,
-    ]
-
-    tbl_sched = [sched_hdr]
-    sched_extra = []
-
-    for c in model.compliances:
-        bg, fg = S.status_badge_colors(c.status)
-        st = ParagraphStyle(f'StS_{c.sr_no}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=6.5)
-
-        scope_desc = f'<b>{c.legal_requirement}</b><br/>{c.description[:110]}'
-        obs_text = f'{_na(c.assessment)[:160]}'
-        rem_text = f'{_na(c.remarks)[:70]}'
-
-        row = [
-            _p(str(c.sr_no),      S.PS_TABLE_BODY_CENTER),
-            _p(f'<b>{c.compliance_id}</b><br/>{c.section_clause}', S.PS_TABLE_BODY),
-            _p(scope_desc,        S.PS_TABLE_BODY),
-            _p(obs_text,          S.PS_TABLE_BODY),
-            _p(rem_text,          S.PS_TABLE_BODY),
-            _p(c.status,          st),
-        ]
-        r_idx = len(tbl_sched)
-        tbl_sched.append(row)
-        sched_extra.append(('BACKGROUND', (5, r_idx), (5, r_idx), bg))
-
-    sched_table = Table(tbl_sched, colWidths=col_w_sched, repeatRows=1)
-    base_style = S.compliance_register_style()
-    sched_table.setStyle(TableStyle(list(base_style._cmds) + sched_extra))
-    story.append(sched_table)
-
-    story.append(PageBreak())
-    return story
-
-
-# ---------------------------------------------------------------------------
-# PAGE 4: SECTION 5 — VIOLATIONS & PHOTOGRAPHIC EVIDENCE
+# PAGE 4: SECTION 4 — VIOLATIONS & PHOTOGRAPHIC EVIDENCE EXHIBITS
 # ---------------------------------------------------------------------------
 
 def _build_page_4(model: ComplianceModel) -> List:
     story = []
-    story.extend(_section_heading(5, 'Statutory Infractions & Photographic Verification Exhibits'))
+    story.extend(_section_heading(4, 'Statutory Infractions & Photographic Verification Exhibits'))
 
-    # 1. Non-compliance findings & Photographic Exhibits for EVERY violation
+    # Non-compliance findings & Photographic Exhibits for EVERY violation
     if model.violations:
+        num_v = len(model.violations)
+        img_max_h = 42 if num_v > 1 else 62
+        img_max_w = 125 if num_v > 1 else 135
+
         for idx, v in enumerate(model.violations):
             bg, fg = S.severity_badge_colors(v.severity)
-            sev_st = ParagraphStyle(f'Sev_{idx}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=7)
+            sev_st = ParagraphStyle(f'Sev_{idx}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=7.5)
 
             finding_block = []
-            finding_title = f'<b>FINDING {idx + 1}: {v.finding_id}</b> — Contravention of {v.section_clause}'
+            finding_title = f'<b>INFRACTION {idx + 1}: {v.finding_id}</b> - Contravention of {v.section_clause}'
             finding_block.append(_p(finding_title, S.PS_FINDING_HEADING))
 
             rows = [
-                ['Finding ID:',          v.finding_id,            'Severity Degree:',  _p(v.severity, sev_st)],
-                ['Linked Compliance:',   v.compliance_id,         'Governing Rule:',   v.section_clause],
+                ['Finding ID:',          v.finding_id,             'Severity Degree:',  _p(v.severity.upper(), sev_st)],
+                ['Linked Compliance:',   v.compliance_id,          'Governing Rule:',   v.section_clause],
                 ['Observed Infraction:', v.observed_violation[:180], 'Statutory Status:', v.status],
-                ['Statutory Impact:',    v.legal_impact[:180],    'Liability Target:', v.responsible_party],
-                ['Corrective Action:',   v.corrective_action[:180],'Compliance Deadline:', v.target_date],
+                ['Statutory Impact:',    v.legal_impact[:180],     'Target of Liability:', v.responsible_party],
+                ['Corrective Directive:', v.corrective_action[:180], 'Mandatory Deadline:', v.target_date],
             ]
             col_w = [
-                S.CONTENT_WIDTH * 0.16,
-                S.CONTENT_WIDTH * 0.44,
-                S.CONTENT_WIDTH * 0.16,
-                S.CONTENT_WIDTH * 0.24,
+                S.CONTENT_WIDTH * 0.17,
+                S.CONTENT_WIDTH * 0.43,
+                S.CONTENT_WIDTH * 0.17,
+                S.CONTENT_WIDTH * 0.23,
             ]
             tbl_data = []
             for r in rows:
@@ -486,7 +623,7 @@ def _build_page_4(model: ComplianceModel) -> List:
             finding_block.append(ftbl)
             finding_block.append(_spacer(1))
 
-            # 2. Locate this violation's bounding-box evidence image
+            # Locate this violation's bounding-box evidence image
             ev_img_path = None
             for ev in v.evidences:
                 if ev.image_path and os.path.isfile(ev.image_path):
@@ -512,11 +649,11 @@ def _build_page_4(model: ComplianceModel) -> List:
                         break
 
             if ev_img_path and os.path.isfile(ev_img_path):
-                img_fl = IH.image_to_rl_flowable(ev_img_path, max_width_mm=135, max_height_mm=60)
+                img_fl = IH.image_to_rl_flowable(ev_img_path, max_width_mm=img_max_w, max_height_mm=img_max_h)
                 if img_fl:
                     finding_block.append(_spacer(1))
                     is_clearance = 'net_quantity_bounding_box' in ev_img_path or 'Rule 8(1)' in v.section_clause
-                    ex_title = f'<b>EXHIBIT {idx + 1}: STATUTORY INFRACTION & BOUNDING BOX ANALYSIS — {v.finding_id} ({v.section_clause})</b>'
+                    ex_title = f'<b>EXHIBIT {idx + 1}: PHOTOGRAPHIC EVIDENCE &amp; BOUNDING BOX ANALYSIS - {v.finding_id}</b>'
                     finding_block.append(_p(ex_title, S.PS_SUBSECTION_HEADING))
 
                     if is_clearance:
@@ -555,7 +692,7 @@ def _build_page_4(model: ComplianceModel) -> List:
 
             story.append(KeepTogether(finding_block))
     else:
-        story.append(_p('<b>DETERMINATION: COMPLIANT</b> — No statutory infractions or label contraventions identified.', S.PS_BODY))
+        story.append(_p('<b>DETERMINATION: COMPLIANT</b> - No statutory infractions or label contraventions identified.', S.PS_BODY))
         story.append(_spacer(2))
 
         # Show audited label panel exhibit
@@ -588,7 +725,7 @@ def _build_page_4(model: ComplianceModel) -> List:
 
 
 # ---------------------------------------------------------------------------
-# PAGE 5: SECTIONS 6, 7, 8, 9 & STATUTORY SEAL BLOCK
+# PAGE 5: SECTIONS 5, 6, 7 & OFFICIAL VERIFICATION ATTESTATION BLOCK
 # ---------------------------------------------------------------------------
 
 def _build_page_5(model: ComplianceModel) -> List:
@@ -596,8 +733,8 @@ def _build_page_5(model: ComplianceModel) -> List:
     meta = model.meta
     story = []
 
-    # --- 6. EVIDENCE REGISTER ---
-    story.extend(_section_heading(6, 'Evidence Register (Chain of Custody)'))
+    # --- 5. EVIDENCE REGISTER ---
+    story.extend(_section_heading(5, 'Evidence Register (Chain of Custody)'))
     hdr_ev = [
         _p('Evidence ID', S.PS_TABLE_HEADER),
         _p('Finding Ref', S.PS_TABLE_HEADER),
@@ -627,113 +764,49 @@ def _build_page_5(model: ComplianceModel) -> List:
     ev_table = Table(tbl_ev_data, colWidths=col_w_ev, repeatRows=1)
     ev_table.setStyle(S.generic_table_style())
     story.append(ev_table)
-    story.append(_spacer(1))
+    story.append(_spacer(2))
 
-    # --- 7. LEGAL TRACEABILITY MATRIX ---
-    story.extend(_section_heading(7, 'Statutory Traceability Matrix (Rule -> Compliance -> Finding -> Evidence)'))
-    hdr_tr = [
-        _p('Compliance ID', S.PS_TABLE_HEADER),
-        _p('Governing Clause', S.PS_TABLE_HEADER),
-        _p('Statutory Requirement', S.PS_TABLE_HEADER),
-        _p('Finding ID', S.PS_TABLE_HEADER),
-        _p('Evidence ID', S.PS_TABLE_HEADER),
-        _p('Disposition', S.PS_TABLE_HEADER),
-    ]
-    col_w_tr = [
-        S.CONTENT_WIDTH * 0.15,
-        S.CONTENT_WIDTH * 0.15,
-        S.CONTENT_WIDTH * 0.32,
-        S.CONTENT_WIDTH * 0.12,
-        S.CONTENT_WIDTH * 0.12,
-        S.CONTENT_WIDTH * 0.14,
-    ]
+    # --- 6. STATUTORY LIABILITIES & PENALTIES UNDER SECTION 36 ---
+    story.extend(_section_heading(6, 'Statutory Liabilities &amp; Penalties (The Legal Metrology Act, 2009)'))
+    sec36_text = (
+        '<b>PENAL PROVISIONS FOR NON-COMPLIANT PACKAGES UNDER SECTION 36(1):</b><br/>'
+        'Whoever manufactures, packs, imports, sells, distributes, delivers, offers, exposes or has in '
+        'possession for sale any pre-packaged commodity which does not conform to declarations specified '
+        'under the Act or Rules shall be punishable with fine which may extend to <b>twenty-five thousand rupees</b>; '
+        'for the second offence, to <b>fifty thousand rupees</b>; and for the subsequent offence, with fine which shall not '
+        'be less than <b>fifty thousand rupees but which may extend to one lakh rupees</b> or with '
+        '<b>imprisonment for a term which may extend to one year</b> or with both.<br/>'
+        '<b>OFFENCES BY COMPANIES UNDER SECTION 49:</b> Every person who at the time the offence was committed was in '
+        'charge of and responsible to the company for the conduct of business shall be deemed guilty of the offence.'
+    )
+    sec36_tbl = Table([[_p(sec36_text, S.PS_BODY)]], colWidths=[S.CONTENT_WIDTH])
+    sec36_tbl.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), S.C_LIGHT_GRAY),
+        ('GRID', (0, 0), (-1, -1), 0.5, S.C_BORDER),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    story.append(sec36_tbl)
+    story.append(_spacer(2))
 
-    finding_by_comp = {}
-    evidence_by_finding = {}
-    for v in model.violations:
-        finding_by_comp.setdefault(v.compliance_id, []).append(v.finding_id)
-    for ev in model.evidences:
-        evidence_by_finding.setdefault(ev.finding_id, []).append(ev.evidence_id)
-
-    tbl_tr_data = [hdr_tr]
-    for c in model.compliances:
-        findings = finding_by_comp.get(c.compliance_id, [])
-        f_str = ', '.join(findings) if findings else '-'
-        ev_ids = []
-        for fid in findings:
-            ev_ids.extend(evidence_by_finding.get(fid, []))
-        ev_str = ', '.join(ev_ids) if ev_ids else '-'
-
-        bg, fg = S.status_badge_colors(c.status)
-        st = ParagraphStyle('TrSt', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=6)
-
-        tbl_tr_data.append([
-            _p(c.compliance_id, S.PS_TABLE_BODY_BOLD),
-            _p(c.section_clause, S.PS_TABLE_BODY),
-            _p(c.legal_requirement[:55], S.PS_TABLE_BODY),
-            _p(f_str, S.PS_TABLE_BODY),
-            _p(ev_str, S.PS_TABLE_BODY),
-            _p(c.status, st),
-        ])
-    tr_table = Table(tbl_tr_data, colWidths=col_w_tr, repeatRows=1)
-    tr_table.setStyle(S.compliance_register_style())
-    story.append(tr_table)
-    story.append(_spacer(1))
-
-    # --- 8. CORRECTIVE ACTION REGISTER ---
-    story.extend(_section_heading(8, 'Mandatory Corrective Action Order'))
-    if not model.violations:
-        story.append(_p('Commodity complies with applicable standards. No corrective action ordered.', S.PS_BODY))
-    else:
-        hdr_ca = [
-            _p('Finding ID', S.PS_TABLE_HEADER),
-            _p('Observed Infraction', S.PS_TABLE_HEADER),
-            _p('Mandatory Corrective Action Directive', S.PS_TABLE_HEADER),
-            _p('Priority', S.PS_TABLE_HEADER),
-            _p('Target Date', S.PS_TABLE_HEADER),
-            _p('Status', S.PS_TABLE_HEADER),
-        ]
-        col_w_ca = [
-            S.CONTENT_WIDTH * 0.12,
-            S.CONTENT_WIDTH * 0.22,
-            S.CONTENT_WIDTH * 0.38,
-            S.CONTENT_WIDTH * 0.08,
-            S.CONTENT_WIDTH * 0.10,
-            S.CONTENT_WIDTH * 0.10,
-        ]
-        tbl_ca_data = [hdr_ca]
-        for v in model.violations:
-            bg, fg = S.severity_badge_colors(v.severity)
-            sev_st = ParagraphStyle('CAS', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=6)
-            tbl_ca_data.append([
-                _p(v.finding_id, S.PS_TABLE_BODY_BOLD),
-                _p(v.observed_violation[:80], S.PS_TABLE_BODY),
-                _p(v.corrective_action[:140], S.PS_TABLE_BODY),
-                _p(v.severity, sev_st),
-                _p(v.target_date, S.PS_TABLE_BODY_CENTER),
-                _p(v.status, S.PS_TABLE_BODY_BOLD),
-            ])
-        ca_table = Table(tbl_ca_data, colWidths=col_w_ca)
-        ca_table.setStyle(S.generic_table_style())
-        story.append(ca_table)
-    story.append(_spacer(1))
-
-    # --- 9. FINAL ASSESSMENT & STATUTORY DISPOSITION ---
-    story.extend(_section_heading(9, 'Final Statutory Disposition & Attestation'))
+    # --- 7. FINAL STATUTORY DISPOSITION & ATTESTATION ---
+    story.extend(_section_heading(7, 'Final Statutory Disposition &amp; Official Verification Attestation'))
 
     overall = meta.get('assessment_status', 'UNKNOWN')
     bg, fg = S.status_badge_colors(overall)
-    disp_st = ParagraphStyle('DispSt', parent=S.PS_BODY, textColor=fg, fontName=S.FONT_BOLD, fontSize=8)
-    story.append(_p(f'<b>STATUTORY AUDIT OUTCOME:</b>  {overall}', disp_st))
-    story.append(_spacer(0.8))
+    disp_st = ParagraphStyle('DispSt', parent=S.PS_BODY, textColor=fg, fontName=S.FONT_BOLD, fontSize=8.5)
+    story.append(_p(f'<b>FINAL STATUTORY AUDIT OUTCOME:</b>  {overall}', disp_st))
+    story.append(_spacer(1))
 
     story.append(_p(s.overall_text[:280], S.PS_BODY_JUSTIFIED))
-    story.append(_spacer(1))
+    story.append(_spacer(2))
 
     # Official Seal & Signature Block (Authentic Government Format)
     sig_block = [
         [
-            _p('<b>INSPECTED & AUDITED BY:</b><br/>'
+            _p('<b>INSPECTED &amp; AUDITED BY:</b><br/>'
                'Nirikshak Automated Verification Engine<br/>'
                'Directorate of Legal Metrology<br/>'
                'System Node ID: LM-AUTO-STAGE-9', S.PS_BODY_SMALL),
@@ -751,10 +824,10 @@ def _build_page_5(model: ComplianceModel) -> List:
         ('BOX', (0, 0), (-1, -1), 0.5, S.C_SLATE),
         ('INNERGRID', (0, 0), (-1, -1), 0.3, S.C_BORDER),
         ('BACKGROUND', (0, 0), (-1, -1), S.C_LIGHT_GRAY),
-        ('TOPPADDING', (0, 0), (-1, -1), 2),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
-        ('LEFTPADDING', (0, 0), (-1, -1), 4),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 5),
     ]))
     story.append(sig_tbl)
 
@@ -803,19 +876,19 @@ def generate_pdf(model: ComplianceModel, output_path: str) -> str:
 
     story: List = []
 
-    # Page 1: Cover Page
+    # Page 1: Cover Page with Emblem on top left
     story.extend(_build_cover_page(model))
 
-    # Page 2: Document Control, Executive Summary, Compliance Register
+    # Page 2: Executive Summary & Extracted Statutory Declarations Schedule
     story.extend(_build_page_2(model))
 
-    # Page 3: Compliance Details (Detailed Schedule)
+    # Page 3: Compliance Register (Rule-by-Rule Audit Schedule)
     story.extend(_build_page_3(model))
 
-    # Page 4: Violations & Evidence Images
+    # Page 4: Violations & Evidence Images with Bounding Boxes
     story.extend(_build_page_4(model))
 
-    # Page 5: Evidence Register, Traceability Matrix, Corrective Actions, Attestation & Seal
+    # Page 5: Evidence Register, Section 36 Liabilities, Attestation & Seal
     story.extend(_build_page_5(model))
 
     print('  Building official statutory compliance report (single pass NumberedCanvas)...')

@@ -90,7 +90,7 @@ FIELD_RULE_MAP: Dict[str, Dict[str, str]] = {
     },
     'packer': {
         'suffix':       'PACKER',
-        'requirement':  'Declaration of Packer Details (when Packer ≠ Manufacturer)',
+        'requirement':  'Declaration of Packer Details (when Packer is not Manufacturer)',
         'law':          'Legal Metrology (Packaged Commodities) Rules, 2011',
         'clause':       'Rule 6(1)(c)',
         'description':  (
@@ -224,6 +224,8 @@ class ComplianceModel:
     violations:  List[ViolationRecord]
     evidences:   List[EvidenceRecord]
     image_paths: Dict[str, Optional[str]]
+    declarations: Dict[str, Any] = field(default_factory=dict)
+    raw_json:    Dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -711,4 +713,6 @@ def build_model(
         violations=violations,
         evidences=evidences,
         image_paths=image_paths,
+        declarations=decl or pkg_decl or {},
+        raw_json=json_data or {},
     )
