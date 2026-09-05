@@ -123,7 +123,10 @@ def main():
     print("======================================================================")
     print("  NIRIKSHAK — STATUTORY COMPLIANCE SCAN")
     print(f"  Input Folder : {input_path}")
-    print(f"  Images Found : {len(images)} image(s)")
+    if images:
+        print(f"  Images Found : {len(images)} image(s)")
+    else:
+        print(f"  Subfolders   : {len(subdirs)} product subfolder(s)")
     print("======================================================================")
 
     # 1. Ensure Preprocessor Microservice is running
