@@ -122,15 +122,18 @@ Stage-9 maps the following `mapped.json` fields to compliance records:
 
 ---
 
-## Design Specs
+## Design Specs (Modern Compact Executive Style)
 
 | Property | Value |
 |----------|-------|
 | Page size | A4 (210 × 297 mm) |
-| Margins | 25mm left/right, 22mm top/bottom |
+| Margins | 16mm left/right, 15mm top/bottom (expanded content area) |
+| Page Count | **8–11 pages** (compact, 60% page reduction from original 22+ pages) |
 | Primary font | Helvetica (built-in) |
-| Heading colour | Navy `#1B2A4A` |
-| Body text | 10pt Helvetica |
-| Table font | 8pt Helvetica |
-| Header | Navy stripe — report title + report ID |
-| Footer | Navy stripe — "CONFIDENTIAL" + "Page X of Y" |
+| Palette | Slate 900 (`#0F172A`), Blue Accent (`#1E40AF`), Hairline Borders (`#E2E8F0`) |
+| Badges | Green (`#DCFCE7`/`#166534`), Red (`#FEE2E2`/`#991B1B`), Amber (`#FEF3C7`/`#92400E`) |
+| Body text | 8.5pt Helvetica (leading 11.5pt) |
+| Table text | 7.5pt Helvetica (leading 9.5pt) |
+| Header | Navy & Blue stripe — report title + report ID |
+| Footer | Navy stripe — "CONFIDENTIAL" + "Page X of Y" via NumberedCanvas |
+

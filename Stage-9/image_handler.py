@@ -26,8 +26,8 @@ from reportlab.lib.units import mm
 # CONSTANTS
 # ---------------------------------------------------------------------------
 
-MAX_IMAGE_WIDTH_MM  = 130   # maximum image width in mm (within content area)
-MAX_IMAGE_HEIGHT_MM = 90    # maximum image height in mm (safe for one page)
+MAX_IMAGE_WIDTH_MM  = 110   # maximum image width in mm (within content area)
+MAX_IMAGE_HEIGHT_MM = 45    # maximum image height in mm (compact, fits cleanly)
 
 
 def _mm_to_pt(mm_val: float) -> float:
@@ -116,6 +116,55 @@ def image_to_rl_flowable(
     rl_img = RLImage(buf, width=w_pt, height=h_pt)
     rl_img.hAlign = hAlign
     return rl_img
+
+
+def bbox_image_to_rl_flowable(
+    image_path: str,
+    max_width_mm: float = 120,
+    max_height_mm: float = 65,
+    hAlign: str = 'CENTER',
+) -> Optional[RLImage]:
+    """
+    Specifically prepares net_quantity_bounding_box.png by focusing on the
+    package and bounding box while preserving the top banner, so the green/red
+    boxes and legal text are clearly legible.
+    """
+    if not image_path or not os.path.isfile(image_path):
+        return None
+    try:
+        img = PILImage.open(image_path).convert('RGB')
+        w, h = img.size
+        # The banner is at the top (top ~3.5% of height)
+        banner_h = max(35, int(h * 0.038))
+        banner = img.crop((0, 0, w, banner_h))
+
+        # The package is typically in the vertical range 32% to 72%
+        y1 = int(h * 0.32)
+        y2 = int(h * 0.72)
+        x1 = int(w * 0.06)
+        x2 = int(w * 0.94)
+        package = img.crop((x1, y1, x2, y2))
+
+        # Stack banner on top of cropped package
+        combined = PILImage.new('RGB', (package.width, banner.height + package.height))
+        banner_resized = banner.resize((package.width, banner.height))
+        combined.paste(banner_resized, (0, 0))
+        combined.paste(package, (0, banner.height))
+
+        buf = io.BytesIO()
+        combined.save(buf, format='JPEG', quality=92)
+        buf.seek(0)
+
+        c_w, c_h = combined.size
+        scale = min((max_width_mm * mm) / c_w, (max_height_mm * mm) / c_h)
+        target_w = c_w * scale
+        target_h = c_h * scale
+
+        rl_img = RLImage(buf, width=target_w, height=target_h)
+        rl_img.hAlign = hAlign
+        return rl_img
+    except Exception:
+        return image_to_rl_flowable(image_path, max_width_mm, max_height_mm, hAlign)
 
 
 # ---------------------------------------------------------------------------
