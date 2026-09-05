@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 import time
 from typing import Any, Dict, Optional
 
@@ -11,6 +12,7 @@ from .postprocess import extract_declarations
 from .recognizer import normalize_ocr_result
 
 _ENGINE = None
+_OCR_LOCK = threading.Lock()
 
 
 def _get_engine():
@@ -27,7 +29,8 @@ def run_ocr(image: Any, engine: Optional[Any] = None) -> Dict[str, Any]:
         raise ValueError("Image could not be loaded.")
 
     start_time = time.time()
-    result = detect_and_recognize(image, engine=engine or _get_engine())
+    with _OCR_LOCK:
+        result = detect_and_recognize(image, engine=engine or _get_engine())
     elapsed = round(time.time() - start_time, 4)
 
     regions = normalize_ocr_result(result)

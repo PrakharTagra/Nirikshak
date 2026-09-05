@@ -16,6 +16,7 @@ const { analyzeFont } = require('./stage5_fontAnalysis');
 const { extract } = require('./stage5_extraction');
 const { runComplianceCheck } = require('./stage6_ruleEngine');
 const { generateReport } = require('./stage7_report');
+const { annotateNetQuantityImage } = require('./netQuantityImageAnnotator');
 const logger = require('../utils/logger');
 const fs = require('fs');
 const path = require('path');
@@ -176,23 +177,6 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
 
   fs.writeFileSync(path.join(productDir, 'raw_extracted_text.txt'), ocrResult.text || '', 'utf8');
 
-  fs.writeFileSync(
-    path.join(productDir, 'mapped.json'),
-    JSON.stringify(
-      {
-        productId,
-        sourceImages: paths.map((p) => path.basename(p)),
-        declarations,
-        packageRecord,
-        complianceResult,
-        panels: ocrResult.perImage || [],
-      },
-      null,
-      2
-    ),
-    'utf8'
-  );
-
   // Copy preprocessed images into product directory
   const preprocessedImages = [];
   (preprocessed.items || []).forEach((item, idx) => {
@@ -207,7 +191,44 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     preprocessedImages.push(destPath);
   });
 
-  // 7. Generate unified PDF compliance report
+  // 7. Generate annotated image with green bounding box around Net Quantity & spatial requirements
+  let annotatedImagePath = null;
+  if (labelMetrics?.netQuantityBox && preprocessedImages.length > 0) {
+    const pIdx = labelMetrics.panelIndex != null && labelMetrics.panelIndex < preprocessedImages.length ? labelMetrics.panelIndex : 0;
+    const sourcePanelImg = preprocessedImages[pIdx] || preprocessedImages[0];
+    const outAnnotatedName = 'net_quantity_bounding_box.png';
+    const targetAnnotatedPath = path.join(productDir, outAnnotatedName);
+
+    annotatedImagePath = await annotateNetQuantityImage({
+      imagePath: sourcePanelImg,
+      outputPath: targetAnnotatedPath,
+      netQuantityBox: labelMetrics.netQuantityBox,
+      exclusionBox: labelMetrics.exclusionBox,
+      intrusions: labelMetrics.clearanceDetails?.intrusions || [],
+      numeralHeightPx: labelMetrics.clearanceDetails?.numeralHeightPx || 20,
+      numeralHeightMm: labelMetrics.clearanceDetails?.numeralHeightMm || null,
+    });
+  }
+
+  fs.writeFileSync(
+    path.join(productDir, 'mapped.json'),
+    JSON.stringify(
+      {
+        productId,
+        sourceImages: paths.map((p) => path.basename(p)),
+        declarations,
+        packageRecord,
+        complianceResult,
+        panels: ocrResult.perImage || [],
+        annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
+      },
+      null,
+      2
+    ),
+    'utf8'
+  );
+
+  // 8. Generate unified PDF compliance report
   const reportPath = await generateReport({
     imagePath: paths[0],
     imagePaths: paths,
@@ -234,6 +255,7 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     productDir,
     preprocessedImages,
     preprocessedImagePath: preprocessedImages[0] || null,
+    annotatedNetQuantityImage: annotatedImagePath,
     ocrResult,
     reportPath,
     packageRecord,

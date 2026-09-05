@@ -21,7 +21,10 @@ const NET_QTY_HEADER_RE = /\b(?:net\s*(?:quantity|qty|wt|weight|content|contents
 const COUNT_UNIT_RE = /\b(\d+)\s*(?:numbers?|units?|pieces?|pcs?|nos?|pkts?|refills?|packs?|n\b|u\b)\b/i;
 const MULTIPLIER_RE = /(?:\(?\s*(\d+)\s*(?:numbers?|units?|pieces?|n|u|refills?|nos?)?\s*[xX*×]\s*(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm)?\s*\)?)|(?:[xX*×]\s*(\d+))/i;
 const MEASURE_VAL_RE = /\b(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm|n\b|u\b|units?|pieces?|nos?)\b/i;
-const PROMO_OR_DISCLAIMER_RE = /\b(?:offer|valid|till|stocks?|when\s+compared|compared\s+to|single|machine|free|mfg\.?\s*lic|plot\s*no|works?)\b/i;
+const PROMO_OR_DISCLAIMER_RE = /\b(?:offer|valid|till|stocks?|when\s+compared|compared\s+to|single|free|mfg\.?\s*lic|plot\s*no|works?)\b/i;
+
+// Statutory declarations that are distinctly NOT net quantity and must never be clustered into it
+const NON_NET_QTY_DECLARATIONS_RE = /\b(?:expiry|exp\b|best\s*before|use\s*by|mfg|manufactur|packer|packing|import|mrp|retail\s*price|incl|taxes|batch|voltage|wattage|power|composition|warning|caution|instruction|direction|safety|ingredients?|feedback|complaint|consumer\s*care|care@|toll\s*free)\b/i;
 
 function getAABB(pts) {
   if (!pts || pts.length === 0) return null;
@@ -94,41 +97,56 @@ function identifyNetQuantityCluster(allLines = []) {
     // 1. Locate anchor lines containing explicit Net Quantity keywords
     const headerCandidates = panelLines.filter((l) => {
       const txt = String(l.text || '').trim();
-      return NET_QTY_HEADER_RE.test(txt) && !PROMO_OR_DISCLAIMER_RE.test(txt);
+      return NET_QTY_HEADER_RE.test(txt) && !PROMO_OR_DISCLAIMER_RE.test(txt) && !NON_NET_QTY_DECLARATIONS_RE.test(txt);
     });
 
     for (const anchor of headerCandidates) {
       const anchorBox = getAABB(anchor.bbox);
       if (!anchorBox) continue;
 
-      const anchorH = anchor.heightPx || (anchorBox.y2 - anchorBox.y1) || 20;
       const clusterLines = [anchor];
       const seenIds = new Set([anchor.id]);
 
-      // Expand cluster to include adjacent lines that provide pieces/breakdown/total
-      // Looking above and below within reasonable packaging layout distance (typically <= 4.5x line height)
-      for (const candidate of panelLines) {
-        if (seenIds.has(candidate.id)) continue;
-        const candBox = getAABB(candidate.bbox);
-        if (!candBox) continue;
+      // Iteratively expand cluster to include adjacent lines that provide pieces/breakdown/total
+      let added = true;
+      while (added) {
+        added = false;
+        const curBox = getAABB(clusterLines.flatMap((l) => l.bbox));
+        const curH = Math.max(...clusterLines.map((l) => l.heightPx || 20));
 
-        const candTxt = String(candidate.text || '').trim();
-        if (!candTxt || PROMO_OR_DISCLAIMER_RE.test(candTxt)) continue;
+        for (const candidate of panelLines) {
+          if (seenIds.has(candidate.id)) continue;
+          const candBox = getAABB(candidate.bbox);
+          if (!candBox) continue;
 
-        const isQtyValue = MEASURE_VAL_RE.test(candTxt) ||
-          MULTIPLIER_RE.test(candTxt) ||
-          COUNT_UNIT_RE.test(candTxt) ||
-          /\brefills?\b/i.test(candTxt);
+          const candTxt = String(candidate.text || '').trim();
+          if (!candTxt) continue;
+          if (NON_NET_QTY_DECLARATIONS_RE.test(candTxt)) continue;
+          if (PROMO_OR_DISCLAIMER_RE.test(candTxt)) continue;
 
-        if (!isQtyValue) continue;
+          const isQtyValue = MEASURE_VAL_RE.test(candTxt) ||
+            MULTIPLIER_RE.test(candTxt) ||
+            COUNT_UNIT_RE.test(candTxt) ||
+            /\b(?:refills?|device|plug|bottle|tablets?|capsules?|nos?|units?|pieces?)\b/i.test(candTxt);
 
-        // Check spatial proximity to anchor box
-        const verticalDist = Math.max(0, Math.max(candBox.y1 - anchorBox.y2, anchorBox.y1 - candBox.y2));
-        const horizontalDist = Math.max(0, Math.max(candBox.x1 - anchorBox.x2, anchorBox.x1 - candBox.x2));
+          if (!isQtyValue) continue;
 
-        if (verticalDist <= anchorH * 4.5 && horizontalDist <= anchorH * 8.0) {
-          clusterLines.push(candidate);
-          seenIds.add(candidate.id);
+          // Check spatial proximity to current cluster bounding box
+          const candH = candBox.y2 - candBox.y1;
+          const vertOverlap = Math.max(0, Math.min(curBox.y2, candBox.y2) - Math.max(curBox.y1, candBox.y1));
+          const isSameRow = vertOverlap >= 0.3 * Math.min(candH, curH);
+
+          const vertDist = isSameRow ? 0 : Math.max(0, Math.max(candBox.y1 - curBox.y2, curBox.y1 - candBox.y2));
+          const horizDist = Math.max(0, Math.max(candBox.x1 - curBox.x2, curBox.x1 - candBox.x2));
+
+          const adjacentRow = vertDist <= curH * 2.2 && (horizDist <= curH * 3.5 || (candBox.x2 >= curBox.x1 && candBox.x1 <= curBox.x2));
+          const adjacentCol = isSameRow && horizDist <= curH * 6.0;
+
+          if (adjacentRow || adjacentCol) {
+            clusterLines.push(candidate);
+            seenIds.add(candidate.id);
+            added = true;
+          }
         }
       }
 
@@ -157,6 +175,7 @@ function identifyNetQuantityCluster(allLines = []) {
       for (const line of panelLines) {
         const txt = String(line.text || '').trim();
         if (PROMO_OR_DISCLAIMER_RE.test(txt)) continue;
+        if (NON_NET_QTY_DECLARATIONS_RE.test(txt)) continue;
         if (MEASURE_VAL_RE.test(txt)) {
           bestCluster = {
             panelKey,
@@ -346,6 +365,8 @@ function analyzeNetQuantityWithClearance(ocrResult) {
     if (declarationLineIds.has(line.id)) continue;
     const txt = String(line.text || '').trim();
     if (!txt || declarationTexts.has(txt.toLowerCase())) continue;
+    // Statutory Rule 8(1) proviso applies to other printed information (ignore single stray OCR noise punctuation/chars)
+    if (!/[a-zA-Z0-9]{2,}/.test(txt)) continue;
 
     const lBox = getAABB(line.bbox);
     if (!lBox) continue;
@@ -394,7 +415,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
         requiredDistancePx: Math.round(requiredDistancePx),
         deficitPx: Math.round(deficitPx),
         overlapPx,
-        bbox: line.bbox,
+        bbox: lBox,
       });
     }
   }
@@ -406,6 +427,7 @@ function analyzeNetQuantityWithClearance(ocrResult) {
 
   return {
     clusterFound: true,
+    panelIndex: cluster.panelKey,
     netQuantityBox,
     exclusionBox,
     clearanceOk,

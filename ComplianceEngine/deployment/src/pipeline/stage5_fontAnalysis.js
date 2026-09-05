@@ -278,6 +278,7 @@ function analyzeFont(ocrResult, options = {}) {
     failingDeclarations: failingFields,
     netQuantityBox: netQtyAnalysis.netQuantityBox,
     exclusionBox: netQtyAnalysis.exclusionBox,
+    panelIndex: netQtyAnalysis.panelIndex ?? 0,
     netQuantityMultiPiece: netQtyAnalysis.multiPieceFacts,
     isBlownFormedMoldedEmbossedOrPerforated: false,
     isExemptCharacterShape: false,

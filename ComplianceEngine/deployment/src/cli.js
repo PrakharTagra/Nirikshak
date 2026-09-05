@@ -88,14 +88,13 @@ async function main() {
       .filter((g) => g.images.length > 0);
 
     if (productGroups.length > 0) {
-      logger.info('cli', `Found ${productGroups.length} product subfolder(s) in ${targetDir}. Running each product with its panel images concurrently...`);
-      const results = await Promise.all(
-        productGroups.map(async (g) => {
-          logger.info('cli', `Processing product "${g.name}" with ${g.images.length} panel(s)...`);
-          const res = await runPipelineForProduct(g.images, pipelineOptions);
-          return { name: g.name, ...res };
-        })
-      );
+      logger.info('cli', `Found ${productGroups.length} product subfolder(s) in ${targetDir}. Running each product with its panel images...`);
+      const results = [];
+      for (const g of productGroups) {
+        logger.info('cli', `Processing product "${g.name}" with ${g.images.length} panel(s)...`);
+        const res = await runPipelineForProduct(g.images, pipelineOptions);
+        results.push({ name: g.name, ...res });
+      }
 
 
       console.log('\n=== Multi-Product Inspection Summary ===');

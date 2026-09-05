@@ -219,4 +219,48 @@ MRP Rs. 260.00
   console.log('✓ Test 5: Statutory Rule 9(1)(b) correctly approves product when RSP & Net Quantity contrast conspicuously');
 }
 
-console.log('\nALL 5 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
+// Test 6: Image annotator generates green bounding box around Net Quantity and spatial clearance box
+async function testAnnotator() {
+  const { annotateNetQuantityImage } = require('../src/pipeline/netQuantityImageAnnotator');
+  const fs = require('fs');
+  const path = require('path');
+
+  // Create a minimal test image with sharp
+  const sharp = require('sharp');
+  const testImgPath = path.join(__dirname, 'temp_test_panel.png');
+  const testOutPath = path.join(__dirname, 'temp_test_annotated.png');
+
+  await sharp({
+    create: {
+      width: 400,
+      height: 400,
+      channels: 3,
+      background: { r: 240, g: 240, b: 240 },
+    },
+  }).png().toFile(testImgPath);
+
+  const res = await annotateNetQuantityImage({
+    imagePath: testImgPath,
+    outputPath: testOutPath,
+    netQuantityBox: { x1: 50, y1: 100, x2: 260, y2: 170 },
+    exclusionBox: { x1: 10, y1: 80, x2: 300, y2: 190 },
+    intrusions: [],
+    numeralHeightPx: 20,
+    numeralHeightMm: 2.0,
+  });
+
+  assert.strictEqual(res, testOutPath, 'Expected annotator to return output path');
+  assert.ok(fs.existsSync(testOutPath), 'Expected annotated image file to exist');
+  assert.ok(fs.statSync(testOutPath).size > 1000, 'Expected non-empty annotated image');
+
+  fs.unlinkSync(testImgPath);
+  fs.unlinkSync(testOutPath);
+  console.log('✓ Test 6: Image annotator generates green bounding box image for product output directory');
+}
+
+testAnnotator().then(() => {
+  console.log('\nALL 6 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
+}).catch((err) => {
+  console.error('Test 6 failed:', err);
+  process.exit(1);
+});
