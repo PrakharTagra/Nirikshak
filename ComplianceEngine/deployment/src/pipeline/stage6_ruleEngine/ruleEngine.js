@@ -146,14 +146,22 @@ function checkMandatoryDeclarations(pkg) {
     v.push(violation('Rule 6(1)(b)', 'Missing common/generic name of the commodity.', 'critical', 'commodityName'));
   }
   if (c.isMultiProductPackage && !d.commodityName?.perProductBreakdown) {
-    v.push(
-      violation(
-        'Rule 6(1)(b)',
-        'Multi-product package must declare name and number/quantity of each product.',
-        'critical',
-        'commodityName'
-      )
-    );
+    // Under Rule 6(1)(b), breakdown is mandatory for packages containing more than one distinct product.
+    // Packages with multiple pieces of the SAME commodity (multi-piece) are governed by Rule 24, not Rule 6(1)(b).
+    const rawText = `${d.netQuantity?.rawText || ''} ${d.commodityName?.rawText || ''}`;
+    const isDistinctMultiProduct =
+      c.physicalForm === 'combination' ||
+      (/\b(?:device|machine|plug|dispenser)\b/i.test(rawText) && /\b(?:refill|liquid|solution)\b/i.test(rawText));
+    if (isDistinctMultiProduct) {
+      v.push(
+        violation(
+          'Rule 6(1)(b)',
+          'Multi-product package must declare name and number/quantity of each product.',
+          'critical',
+          'commodityName'
+        )
+      );
+    }
   }
 
   // 6(1)(c) — net quantity
@@ -559,16 +567,37 @@ function checkQuantityMannerAndUnits(pkg) {
       cubic: 'volume',
       countable: 'number',
     };
-    const expected = expectedByPhysicalForm[c.physicalForm];
-    if (expected && d.netQuantity?.unitKind && d.netQuantity.unitKind !== expected) {
-      v.push(
-        violation(
-          'Rule 12(2)',
-          `Physical form "${c.physicalForm}" requires unit-kind "${expected}"; found "${d.netQuantity.unitKind}".`,
-          'major',
-          'netQuantity'
-        )
-      );
+
+    // Combination / multi-product packages contain items of different forms (e.g. machine/device + liquid refills).
+    // Per Rule 12(1), a combination of weight, measure or number is explicitly permitted.
+    const isCombo =
+      c.physicalForm === 'combination' ||
+      c.physicalForm === 'multi_product' ||
+      c.physicalForm === 'kit' ||
+      c.isMultiComponentInSeparateUnits ||
+      (c.isMultiProductPackage && !!d.commodityName?.perProductBreakdown);
+
+    if (!isCombo) {
+      const rawText = (d.netQuantity?.rawText || '').toLowerCase();
+      const hasVolumePieces = (d.netQuantity?.pieces || []).some((p) => p.unit === 'ml' || p.unit === 'l');
+      const isCountableWithLiquidRefills =
+        c.physicalForm === 'countable' &&
+        d.netQuantity?.unitKind === 'volume' &&
+        (hasVolumePieces || /\b(?:refill|liquid|ml\b|l\b)\b/i.test(rawText));
+
+      if (!isCountableWithLiquidRefills) {
+        const expected = expectedByPhysicalForm[c.physicalForm];
+        if (expected && d.netQuantity?.unitKind && d.netQuantity.unitKind !== expected) {
+          v.push(
+            violation(
+              'Rule 12(2)',
+              `Physical form "${c.physicalForm}" requires unit-kind "${expected}"; found "${d.netQuantity.unitKind}".`,
+              'major',
+              'netQuantity'
+            )
+          );
+        }
+      }
     }
   }
 
