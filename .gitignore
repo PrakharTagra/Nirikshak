@@ -5,4 +5,9 @@
 **/node_modules/
 **/__pycache__/
 *.pyc
+**/dist/
+**/storage/
+*.log
+.DS_Store
+
 
