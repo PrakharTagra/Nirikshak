@@ -58,9 +58,11 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
     classification.isEcommerce
   );
 
-  // Infer physicalForm if not provided
+  // Infer physicalForm if not provided or reconcile for combination packages
   let physicalForm = classification.physicalForm || null;
-  if (!physicalForm) {
+  if (declarations.commodityName?.perProductBreakdown || classification.physicalForm === 'combination') {
+    physicalForm = 'combination';
+  } else if (!physicalForm) {
     if (qty.unitKind === 'number' || ['unit', 'units', 'n', 'u', 'piece', 'pieces', 'nos'].includes((unit || '').toLowerCase())) {
       physicalForm = 'countable';
     } else if (unit === 'g' || unit === 'kg') {
@@ -68,6 +70,8 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
     } else if (unit === 'ml' || unit === 'l') {
       physicalForm = 'liquid';
     }
+  } else if (physicalForm === 'countable' && (unit === 'ml' || unit === 'l' || qty.unitKind === 'volume')) {
+    physicalForm = 'combination';
   }
 
   // Manufacturer is not packer check

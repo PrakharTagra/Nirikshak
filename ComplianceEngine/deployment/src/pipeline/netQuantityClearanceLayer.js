@@ -18,8 +18,8 @@ const logger = require('../utils/logger');
 
 // Regex patterns for detecting net quantity anchors and components
 const NET_QTY_HEADER_RE = /\b(?:net\s*(?:quantity|qty|wt|weight|content|contents)|quantity|qty)\b/i;
-const COUNT_UNIT_RE = /\b(\d+)\s*(?:numbers?|units?|pieces?|pcs?|nos?|pkts?|refills?|packs?|n\b|u\b)\b/i;
-const MULTIPLIER_RE = /(?:\(?\s*(\d+)\s*(?:numbers?|units?|pieces?|n|u|refills?|nos?)?\s*[xX*×]\s*(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm)?\s*\)?)|(?:[xX*×]\s*(\d+))/i;
+const COUNT_UNIT_RE = /\b(?:(\d+)\s*(?:numbers?|units?|pieces?|pcs?|nos?|pkts?|refills?|packs?|n\b|u\b)|([lI])\s*[uU]\b)\b/i;
+const MULTIPLIER_RE = /(?:\(?\s*(?:(\d+|[lI]))\s*(?:numbers?|units?|pieces?|n\b|u\b|refills?|nos?)?\s*[xX*×]\s*(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm)?\s*\)?)|(?:[xX*×]\s*(\d+))/i;
 const MEASURE_VAL_RE = /\b(\d+(?:\.\d+)?)\s*(ml|l|litre|litres|liter|liters|g|gm|gms|kg|m|cm|mm|n\b|u\b|units?|pieces?|nos?)\b/i;
 const PROMO_OR_DISCLAIMER_RE = /\b(?:offer|valid|till|stocks?|when\s+compared|compared\s+to|single|free|mfg\.?\s*lic|plot\s*no|works?)\b/i;
 
@@ -205,6 +205,8 @@ function extractMultiPieceFacts(clusterLines) {
       pieces: [],
       rawText: '',
       numeralHeightPx: null,
+      isMultiProduct: false,
+      hasPerProductBreakdown: false,
     };
   }
 
@@ -213,35 +215,58 @@ function extractMultiPieceFacts(clusterLines) {
   let totalValue = null;
   let totalUnit = null;
   const pieces = [];
+  const items = [];
+
+  const parseDigit = (s) => {
+    if (!s) return null;
+    const str = String(s).trim();
+    if (str.toLowerCase() === 'l' || str === 'I') return 1;
+    const n = parseInt(str, 10);
+    return isNaN(n) ? null : n;
+  };
 
   for (const line of clusterLines) {
     const txt = String(line.text || '');
 
-    // Check for multiplier / breakdown (e.g. "(2 Numbers x 45 ml)", "3 x 100 g")
+    // Check for multiplier / breakdown (e.g. "(2 Numbers x 45 ml)", "2U x 25ml", "3 x 100 g")
     const mMatch = txt.match(MULTIPLIER_RE);
     if (mMatch) {
       if (mMatch[1] && mMatch[2]) {
-        const count = parseInt(mMatch[1], 10);
+        const count = parseDigit(mMatch[1]) || 1;
         const eachVal = parseFloat(mMatch[2]);
         const unit = (mMatch[3] || 'ml').toLowerCase();
-        pieceCount = count;
         pieces.push({ count, value: eachVal, unit, rawText: mMatch[0] });
         if (!totalValue) {
           totalValue = +(count * eachVal).toFixed(2);
           totalUnit = unit;
         }
       } else if (mMatch[4]) {
-        pieceCount = parseInt(mMatch[4], 10);
+        const count = parseDigit(mMatch[4]);
+        if (count) pieces.push({ count, value: null, unit: 'u', rawText: mMatch[0] });
       }
     }
 
-    // Check count unit (e.g. "3 Pieces", "2 Numbers", "3 N")
-    const cMatch = txt.match(COUNT_UNIT_RE);
-    if (cMatch && !pieceCount) {
-      pieceCount = parseInt(cMatch[1], 10);
+    // Check for countable product item with name: "1U Godrej aer plug Device", "1 Unit Machine", "1 N Adapter"
+    const itemMatch = !mMatch ? txt.match(/\b(?:(\d+)\s*(?:u\b|n\b|units?|pieces?|nos?)|([lI])\s*[uU]\b)\s+([A-Za-z].*)/i) : null;
+    if (itemMatch) {
+      const cnt = parseDigit(itemMatch[1] || itemMatch[2]) || 1;
+      const name = itemMatch[3].trim();
+      const isInstructionOrNoise = /^(?:in|the|not|to|with|for|on|at|by|from|of|and|or|is|are|a|an)\b/i.test(name);
+      if (!isInstructionOrNoise) {
+        items.push({ count: cnt, name, unit: 'u', rawText: txt });
+        if (!pieces.some((p) => p.rawText === txt)) {
+          pieces.push({ count: cnt, name, value: null, unit: 'u', rawText: txt });
+        }
+      }
     }
 
-    // Check direct measure values (e.g. "90 ml", "500 g")
+    // Check count unit (e.g. "3 Pieces", "2 Numbers", "3 N", "1U")
+    const cMatch = txt.match(COUNT_UNIT_RE);
+    if (cMatch && !pieceCount && !itemMatch && !mMatch) {
+      pieceCount = parseDigit(cMatch[1]);
+    }
+
+    // Check direct measure values (e.g. "90 ml", "500 g", "50ml")
     const valMatch = txt.match(MEASURE_VAL_RE);
     if (valMatch) {
       const v = parseFloat(valMatch[1]);
@@ -258,7 +283,21 @@ function extractMultiPieceFacts(clusterLines) {
     }
   }
 
-  if (pieces.length > 0 && pieceCount && pieces[0].value) {
+  // If pieces were collected from multiple sources, reconcile total piece count
+  if (pieces.length > 0) {
+    const totalUnitsCount = pieces.reduce((sum, p) => sum + (p.count || 0), 0);
+    if (totalUnitsCount > 0) {
+      pieceCount = totalUnitsCount;
+    }
+  }
+
+  // Detect multi-product combination (e.g., machine/device + liquid refills)
+  const hasDeviceOrMachine = /\b(?:device|machine|plug|dispenser|applicator|handle|razor|brush|mop)\b/i.test(rawText);
+  const hasRefillOrLiquid = /\b(?:refills?|liquid|ml|l\b|litres?|solution|cartridges?)\b/i.test(rawText);
+  const isMultiProduct = (hasDeviceOrMachine && hasRefillOrLiquid) || items.length > 1;
+  const hasPerProductBreakdown = isMultiProduct && pieces.length >= 2;
+
+  if (pieces.length > 0 && pieces[0].value) {
     const expectedTotal = +(pieces[0].count * pieces[0].value).toFixed(2);
     if (totalValue == null || totalValue === pieces[0].value) {
       totalValue = expectedTotal;
@@ -277,6 +316,8 @@ function extractMultiPieceFacts(clusterLines) {
     pieces,
     rawText,
     numeralHeightPx,
+    isMultiProduct,
+    hasPerProductBreakdown,
   };
 }
 

@@ -219,7 +219,82 @@ MRP Rs. 260.00
   console.log('✓ Test 5: Statutory Rule 9(1)(b) correctly approves product when RSP & Net Quantity contrast conspicuously');
 }
 
-// Test 6: Image annotator generates green bounding box around Net Quantity and spatial clearance box
+// Test 6: Multi-product combo pack (Device + Refills with different units of measurement)
+{
+  const rawOcrText = `
+ELECTRIC AIR FRESHENER
+aer plug Air Freshener device + 2 refills
+Manufactured by Godrej Consumer Supplies Limited
+RS No:108/8, PIPDIC Industrial Estate, Puducherry-607402
+Packed on 06/26
+MRP 275.00/- Incl. of all taxes
+Net Content
+lU Godrej aer plug Device
+(23.1g)
+2U x 25ml
+50ml(46.2g)
+For complaints call 18002660007 or Care@godrejcp.com
+`;
+
+  const llmOutput = {
+    commodityClassification: {
+      brandName: 'Godrej',
+      genericName: 'Electric Air Freshener',
+      scheduleCategory: null,
+      physicalForm: 'countable', // LLM initially classified machine as countable
+      isFoodArticle: false,
+      isIndustrialOrInstitutional: false,
+      isImported: false,
+      countryOfOrigin: 'India',
+      dimensionsRelevant: false,
+      manufacturerIsNotPacker: false,
+    },
+    commodityName: { present: true, value: 'Electric Air Freshener', perProductBreakdown: false },
+    manufacturer: { present: true, name: 'Godrej Consumer Supplies Limited', address: 'Puducherry-607402' },
+    packer: { present: false, name: null, address: false },
+    importer: { present: false, name: null, address: false },
+    netQuantity: {
+      present: true,
+      value: 50,
+      unit: 'ml',
+      unitKind: 'volume',
+      rawText: '2U x 25ml 50ml(46.2g)',
+      qualifiedWhenPacked: false,
+      onTagCardOrTapeDevice: false,
+      symbolUsed: 'ml',
+    },
+    mfgDate: { present: true, value: '06/26', rawText: 'Packed on 06/26' },
+    mrp: { present: true, value: 275, currency: 'INR', rawText: '275.00/-', inclusiveOfTaxesStated: true },
+    dimensions: { present: false, rawText: '' },
+    consumerCare: { present: true, telephone: '18002660007', email: 'Care@godrejcp.com' },
+    standardPackDeclaration: { present: false },
+    sheetCount: { present: false },
+    multiComponentDeclarationHandled: false,
+  };
+
+  const healed = ensureFieldDefaults(llmOutput, rawOcrText);
+  assert.strictEqual(healed.commodityName.perProductBreakdown, true, 'Expected perProductBreakdown to be true for multi-product pack');
+  assert.strictEqual(healed.commodityClassification.physicalForm, 'combination', 'Expected physicalForm combination for device + liquid refills');
+  assert.strictEqual(healed.netQuantity.value, 50);
+  assert.strictEqual(healed.netQuantity.unit, 'ml');
+
+  const pkgRecord = buildPackageRecord(healed, {
+    netQuantityMultiPiece: { pieceCount: 3, totalValue: 50, totalUnit: 'ml' },
+    contrastOk: true,
+  });
+  assert.strictEqual(pkgRecord.commodity.physicalForm, 'combination');
+  assert.strictEqual(pkgRecord.commodity.isMultiProductPackage, true);
+
+  const compliance = runComplianceCheck(pkgRecord);
+  const r6Viol = compliance.violations.find((v) => v.rule === 'Rule 6(1)(b)');
+  const r12Viol = compliance.violations.find((v) => v.rule === 'Rule 12(2)');
+  assert.strictEqual(r6Viol, undefined, 'Rule 6(1)(b) must PASS because product names and quantities are explicitly declared');
+  assert.strictEqual(r12Viol, undefined, 'Rule 12(2) must PASS because combination packages can have different units per Rule 12(1)');
+  assert.strictEqual(compliance.compliant, true, 'Product must be fully COMPLIANT with 0 violations');
+  console.log('✓ Test 6: Multi-product combo pack (Device + Refills) passes Rule 6(1)(b) & Rule 12(2) with 0 violations');
+}
+
+// Test 7: Image annotator generates green bounding box around Net Quantity and spatial clearance box
 async function testAnnotator() {
   const { annotateNetQuantityImage } = require('../src/pipeline/netQuantityImageAnnotator');
   const fs = require('fs');
@@ -255,12 +330,12 @@ async function testAnnotator() {
 
   fs.unlinkSync(testImgPath);
   fs.unlinkSync(testOutPath);
-  console.log('✓ Test 6: Image annotator generates green bounding box image for product output directory');
+  console.log('✓ Test 7: Image annotator generates green bounding box image for product output directory');
 }
 
 testAnnotator().then(() => {
-  console.log('\nALL 6 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
+  console.log('\nALL 7 MULTI-PIECE NET QUANTITY & CLEARANCE TESTS PASSED SUCCESSFULLY!');
 }).catch((err) => {
-  console.error('Test 6 failed:', err);
+  console.error('Test 7 failed:', err);
   process.exit(1);
 });

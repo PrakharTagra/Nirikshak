@@ -269,10 +269,8 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 1. COMMODITY NAME vs. BRAND NAME (Rule 6(1)(b)):
 - Brand Name: The commercial brand or trademark (e.g., "INTEX", "Cadbury", "Britannia", "Samsung", "boAt", "Sony", "Parle").
 - Generic Commodity Name: The generic or common identity of the commodity (e.g., "Wireless Mini USB Adapter", "Milk Chocolate", "Biscuits", "Bluetooth Earphones", "LED Television", "Wheat Flour").
-- Look for labels like "Generic Name:", "Item Name:", "Product:", "Commodity:".
-- "commodityName.value" MUST be the common or generic name (e.g., "Wireless Mini USB Adapter"), NOT the brand!
-- Record the brand separately in "commodityClassification.brandName".
-- "commodityName.perProductBreakdown": true only for multi-product packages containing distinct commodities declaring names and quantities of each.
+- "commodityName.perProductBreakdown": true for multi-product or combination packages containing distinct commodities (e.g., machine/device + refills, shaver + foam, kit) that declare names and numbers/quantities of each product.
+- If a package contains multiple pieces of the SAME commodity (e.g. 3 refills of vaporiser), perProductBreakdown is false.
 
 2. MANUFACTURER, PACKER, IMPORTER (Rule 6(1)(a)):
 - Look for "Manufactured by", "Mfd. by", "Mfg by", "Produced by", "Marketed by", "Manufactured For", "Supported By", "Packed by", "Pkd. by", "Imported by", "Imp. by".
@@ -352,7 +350,7 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 - "genericName": generic commodity name (e.g., "Wireless Mini USB Adapter").
 - "scheduleCategory": If the product matches an item in the Second Schedule, give the exact key:
   ("baby food", "weaning food", "biscuits", "bread (including brown bread, excluding bun)", "butter and margarine (un-canned)", "cereals and pulses", "coffee", "tea", "reconstituted beverage materials", "edible oils, vanaspati, ghee, butter oil", "milk powder", "non-soapy detergents (powder)", "rice (powdered), flour, atta, rawa, suji", "salt", "soap - laundry", "soap - non-soapy detergent cakes/bars", "soap - toilet (incl. bath soap cakes)", "aerated soft drinks / non-alcoholic beverages", "mineral water and drinking water", "cement in bags", "paint, varnish etc. - (a) paint (other than paste/solid), varnish, stains, enamels", "paint, varnish etc. - (b) paste paint and solid paint", "paint, varnish etc. - (c) base paint"). Otherwise null.
-- "physicalForm": "countable" (for electronics, hardware, garments, goods sold by piece/count/units), "solid", "liquid", "semi_solid", "viscous", "linear", or "area".
+- "physicalForm": "combination" (for kits or combo packs containing distinct items of different forms, e.g. a countable device/machine + liquid refills), "countable" (for single items sold by piece/count/units), "solid", "liquid", "semi_solid", "viscous", "linear", or "area".
 - "isFoodArticle": true if food or beverage, false otherwise.
 - "isImported": true if manufactured outside India.
 - "countryOfOrigin": e.g., "India", "China", etc. if declared.
@@ -562,6 +560,25 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     pieceCount: pieceCount,
     pieces: multiPiece.pieces || [],
   };
+
+  // Multi-product combination reconciliation:
+  // When packaging contains multiple distinct items (e.g. machine/device + liquid refills),
+  // identify per-product breakdown and set physicalForm to 'combination' to prevent false single-unit violations.
+  const hasDeviceAndRefill =
+    /(?:device|machine|plug|dispenser)\b/i.test(rawOcrText) &&
+    /(?:refills?|liquid|ml\b|50\s*ml|25\s*ml)\b/i.test(rawOcrText);
+  const hasComboSlogan = /(?:device|machine)\s*(?:\+|and|&)\s*\d*\s*refills?/i.test(rawOcrText);
+  const hasMultiProductDeclared =
+    multiPiece.hasPerProductBreakdown ||
+    hasComboSlogan ||
+    (hasDeviceAndRefill && (multiPiece.pieces.length >= 2 || /(?:1|l|I)\s*u\b[^\n]*device/i.test(rawOcrText)));
+
+  if (hasMultiProductDeclared) {
+    d.commodityName.perProductBreakdown = true;
+    classification.physicalForm = 'combination';
+  } else if (classification.physicalForm === 'countable' && unitKind === 'volume' && /(?:refill|liquid|ml\b|l\b)/i.test(rawOcrText)) {
+    classification.physicalForm = 'combination';
+  }
 
   // 5. Manufacturing / Packing Date (Rule 6(1)(d) strictly requires statutory labeling)
   const STATUTORY_MFG_LABELS = /\b(?:manufactur(?:ed\s+date|e\s+date|ed\s+on)|date\s+of\s+manufacture|mfg\.?\s*date|date\s+of\s+mfg|\bmfd\b|\bmfg\b|month\s*(?:&|and)\s*year\s*of\s*manufacture|packed\s+on|date\s+of\s+packing|\bpkd\b|pre-?packed\s+on|imported\s+on|date\s+of\s+import)\b/i;
