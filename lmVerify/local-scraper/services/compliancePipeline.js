@@ -19,7 +19,7 @@ const require = createRequire(import.meta.url);
 
 const complianceEnginePipelineDir = path.resolve(
   __dirname,
-  "../../../ComplianceEngine/deployment/src/pipeline"
+  "../../../ComplianceEngine/orchestrator/src/pipeline"
 );
 
 const { extract, regexExtract } = require(

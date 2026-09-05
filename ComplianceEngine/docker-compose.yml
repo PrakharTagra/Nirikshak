@@ -1,0 +1,34 @@
+﻿version: '3.8'
+
+services:
+  preprocessor:
+    build:
+      context: .
+      dockerfile: ./stage2_preprocessing/Dockerfile
+    container_name: nirikshak-preprocessor
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./output:/app/ComplianceEngine/output
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nirikshak-orchestrator
+    restart: unless-stopped
+    depends_on:
+      - preprocessor
+    environment:
+      - PREPROCESSOR_URL=http://preprocessor:8000
+      - SHARED_OUTPUT_DIR=/app/output
+      - GROQ_API_KEY=\
+      - GROQ_MODEL=\
+      - GROQ_FALLBACK_TO_REGEX=true
+      - PYTHON_CMD=python
+    volumes:
+      - ./output:/app/output
+      - ./orchestrator/input:/app/input

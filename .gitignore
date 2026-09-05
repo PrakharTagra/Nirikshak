@@ -1,3 +1,8 @@
 /ComplianceEngine/OCR_1.zip
 /ComplianceEngine/OCR_1
 /ComplianceEngine/output/
+/ComplianceEngine/orchestrator/node_modules/
+**/node_modules/
+**/__pycache__/
+*.pyc
+
