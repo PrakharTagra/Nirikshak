@@ -94,13 +94,11 @@ def parse_dimension_string(text: str) -> Optional[Dict[str, Any]]:
     if h_mm is not None:
         dims.append(h_mm)
 
-    dims.sort(reverse=True)
-
     return {
         "raw_text": match.group(0),
-        "length_mm": dims[0],
-        "width_mm": dims[1],
-        "height_mm": dims[2] if len(dims) > 2 else None,
+        "length_mm": l_mm,
+        "width_mm": w_mm,
+        "height_mm": h_mm,
         "all_dimensions_mm": dims,
         "is_3d": len(dims) >= 3,
     }
@@ -161,12 +159,13 @@ def prompt_user_for_dimensions() -> Optional[Dict[str, Any]]:
     print("\n" + "=" * 65)
     print(" [STAGE 5] Packaging dimensions not found on package label.")
     print(" Rule 7 font-size analysis requires the physical package dimensions.")
+    print(" Format required: Length * Width * Height (e.g., '120x80x40 mm')")
     print("=" * 65)
     sys.stdout.flush()
 
     try:
         user_input = input(
-            "Enter box/packaging dimensions (e.g., '120x80x40 mm' or '12x8x4 cm'): "
+            "Enter box/packaging dimensions in Length*Width*Height format (e.g., '120x80x40 mm' or '12x8x4 cm'): "
         ).strip()
     except (EOFError, KeyboardInterrupt):
         return None
@@ -241,8 +240,9 @@ def calculate_pixels_per_mm(
 
     # In a 2D package view, the visible panel corresponds to the largest dimensions
     dims_mm = package_dims["all_dimensions_mm"]
-    dim_long_mm = dims_mm[0]
-    dim_short_mm = dims_mm[1] if len(dims_mm) > 1 else dims_mm[0]
+    sorted_dims = sorted(dims_mm, reverse=True)
+    dim_long_mm = sorted_dims[0]
+    dim_short_mm = sorted_dims[1] if len(sorted_dims) > 1 else sorted_dims[0]
 
     box_long_px = max(box_w, box_h)
     box_short_px = min(box_w, box_h)

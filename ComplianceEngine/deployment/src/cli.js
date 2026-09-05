@@ -30,7 +30,7 @@ function promptForDimensions() {
       output: process.stdout,
     });
     rl.question(
-      '\nEnter packaging/box dimensions (e.g., "120x80x40 mm" or "10x5x15 cm") [Press Enter to auto-detect from label]: ',
+      '\nEnter packaging/box dimensions in Length*Width*Height format (e.g., "120x80x40 mm" or "10x5x15 cm") [Press Enter to auto-detect from label]: ',
       (answer) => {
         rl.close();
         const trimmed = answer.trim();

@@ -39,13 +39,12 @@ function parseDimensionString(text) {
 
   const dims = [d1, d2];
   if (d3 != null) dims.push(d3);
-  dims.sort((a, b) => b - a);
 
   return {
     rawText: match[0],
-    lengthMm: dims[0],
-    widthMm: dims[1],
-    heightMm: dims[2] || null,
+    lengthMm: d1,
+    widthMm: d2,
+    heightMm: d3 != null ? d3 : null,
     allDimensionsMm: dims,
   };
 }
@@ -147,8 +146,9 @@ function analyzeFont(ocrResult, options = {}) {
       const maxY = Math.max(...allPts.map((p) => p[1]));
       const boxLongPx = Math.max(maxX, maxY);
       const boxShortPx = Math.min(maxX, maxY);
-      const dimLongMm = pkgDims.allDimensionsMm[0];
-      const dimShortMm = pkgDims.allDimensionsMm[1] || dimLongMm;
+      const sortedDims = [...pkgDims.allDimensionsMm].sort((a, b) => b - a);
+      const dimLongMm = sortedDims[0];
+      const dimShortMm = sortedDims[1] || dimLongMm;
       if (dimLongMm > 0) {
         pixelsPerMm = +(boxLongPx / dimLongMm).toFixed(2);
         calibrationSource = pkgDims.source || 'packaging_dimensions';

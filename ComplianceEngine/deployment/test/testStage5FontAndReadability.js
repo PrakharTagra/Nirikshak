@@ -41,9 +41,17 @@ console.log('--- Running Stage 5 Font & Readability Tests ---');
   const metrics = analyzeFont(ocrResult, { packageDimensions: '100x50x20 mm' });
   assert.strictEqual(metrics.packagingDimensions.source, 'user_input');
   assert.strictEqual(metrics.packagingDimensions.lengthMm, 100);
+  assert.strictEqual(metrics.packagingDimensions.widthMm, 50);
+  assert.strictEqual(metrics.packagingDimensions.heightMm, 20);
   assert.strictEqual(metrics.calibrationAvailable, true);
   assert.ok(metrics.numeralHeightMm.netQty > 0, 'Expected measured mm height for netQty');
   console.log(`✓ Test 2: User-supplied dimensions established physical scale (${metrics.numeralHeightMm.netQty} mm)`);
+
+  const metricsCustom = analyzeFont(ocrResult, { packageDimensions: '117x53x117 mm' });
+  assert.strictEqual(metricsCustom.packagingDimensions.lengthMm, 117);
+  assert.strictEqual(metricsCustom.packagingDimensions.widthMm, 53);
+  assert.strictEqual(metricsCustom.packagingDimensions.heightMm, 117);
+  console.log('✓ Test 2b: Exact Length*Width*Height preserved for 117x53x117 mm (L: 117, W: 53, H: 117)');
 }
 
 // Test 3: Rule 8(1) clear space surrounding Net Quantity

@@ -19,14 +19,30 @@ class TestStage5Engine(unittest.TestCase):
         d1 = parse_dimension_string("Pack Size: 120 x 80 x 40 mm")
         self.assertIsNotNone(d1)
         self.assertEqual(d1["all_dimensions_mm"], [120.0, 80.0, 40.0])
+        self.assertEqual(d1["length_mm"], 120.0)
+        self.assertEqual(d1["width_mm"], 80.0)
+        self.assertEqual(d1["height_mm"], 40.0)
 
         d2 = parse_dimension_string("Dimensions: 10 cm x 5 cm x 15 cm")
         self.assertIsNotNone(d2)
-        self.assertEqual(d2["all_dimensions_mm"], [150.0, 100.0, 50.0])
+        self.assertEqual(d2["all_dimensions_mm"], [100.0, 50.0, 150.0])
+        self.assertEqual(d2["length_mm"], 100.0)
+        self.assertEqual(d2["width_mm"], 50.0)
+        self.assertEqual(d2["height_mm"], 150.0)
 
         d3 = parse_dimension_string("85 x 14 x 85 mm")
         self.assertIsNotNone(d3)
-        self.assertEqual(d3["all_dimensions_mm"], [85.0, 85.0, 14.0])
+        self.assertEqual(d3["all_dimensions_mm"], [85.0, 14.0, 85.0])
+        self.assertEqual(d3["length_mm"], 85.0)
+        self.assertEqual(d3["width_mm"], 14.0)
+        self.assertEqual(d3["height_mm"], 85.0)
+
+        d4 = parse_dimension_string("117x53x117 mm")
+        self.assertIsNotNone(d4)
+        self.assertEqual(d4["all_dimensions_mm"], [117.0, 53.0, 117.0])
+        self.assertEqual(d4["length_mm"], 117.0)
+        self.assertEqual(d4["width_mm"], 53.0)
+        self.assertEqual(d4["height_mm"], 117.0)
 
     def test_inner_product_vs_packaging_rejection(self):
         # Inner product dimensions should be identified
