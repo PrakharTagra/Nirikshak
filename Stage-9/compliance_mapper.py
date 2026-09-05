@@ -11,6 +11,7 @@ its corresponding Rule, checks violation linkage, and computes status.
 Legal Methodology Compliance Automation — Stage-9
 """
 
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from datetime import datetime
@@ -529,90 +530,66 @@ def build_model(
         # Build evidences for this finding
         finding_evidences: List[EvidenceRecord] = []
 
-        # Primary evidence: source image for the violated panel
-        panel_img = None
-        for panel in json_data.get('panels', []):
-            # Match panel text to violation field context
-            if field_name in ('netQuantity', 'mrp', 'mfgDate'):
-                panel_filename = panel.get('filename', '')
-                if panel_filename and panel_filename in source_imgs:
-                    panel_img = image_paths.get(panel_filename)
-                    if panel_img:
-                        break
-
-        # For netQuantity violations, also include annotated image
-        if field_name == 'netQuantity' and annotated_img:
+        # 1. Check for finding-specific annotated bounding box image
+        specific_ev_name = raw_v.get('evidenceImage') or f'violation_evidence_{finding_num}.png'
+        ann_path = image_paths.get(specific_ev_name)
+        if not ann_path and field_name == 'netQuantity' and annotated_img:
             ann_path = image_paths.get(annotated_img)
-            # Primary evidence: original image
-            if panel_img:
-                ev_id = f'EVID-{product_id}-{ev_counter:03d}'
-                ev_counter += 1
-                ev = EvidenceRecord(
-                    evidence_id=ev_id,
-                    finding_id=finding_id,
-                    compliance_id=comp_id,
-                    evidence_type='Image',
-                    description=(
-                        f'Product label image showing the net quantity declaration '
-                        f'area. Image extracted from panel analysis during OCR stage.'
-                    ),
-                    image_path=panel_img,
-                    annotated_path=None,
-                    annotation_data=None,
-                    reference=source_imgs[0] if source_imgs else '',
-                )
-                finding_evidences.append(ev)
-                evidences.append(ev)
 
-            # Annotated evidence
-            if ann_path:
-                ann_data = {
-                    'netQuantityBox': _safe(label_m, 'netQuantityBox', default=None),
-                    'exclusionBox':   _safe(label_m, 'exclusionBox',   default=None),
-                    'intrusions':     _safe(label_m, 'clearanceDetails', 'intrusions', default=[]),
-                }
-                ev_id = f'EVID-{product_id}-{ev_counter:03d}'
-                ev_counter += 1
-                ev = EvidenceRecord(
-                    evidence_id=ev_id,
-                    finding_id=finding_id,
-                    compliance_id=comp_id,
-                    evidence_type='Annotated Image',
-                    description=(
-                        'Annotated image with bounding box highlighting the net quantity '
-                        'declaration zone and the required clear-space boundaries. '
-                        'Intrusion(s) of other printed text into the exclusion zone '
-                        'are marked.'
-                    ),
-                    image_path=ann_path,
-                    annotated_path=ann_path,
-                    annotation_data=ann_data,
-                    reference=annotated_img,
-                )
-                finding_evidences.append(ev)
-                evidences.append(ev)
-        else:
-            # Generic evidence: first available product image
-            if source_imgs:
-                first_img_path = image_paths.get(source_imgs[0])
-                ev_id = f'EVID-{product_id}-{ev_counter:03d}'
-                ev_counter += 1
-                ev = EvidenceRecord(
-                    evidence_id=ev_id,
-                    finding_id=finding_id,
-                    compliance_id=comp_id,
-                    evidence_type='Image',
-                    description=(
-                        f'Product label image used for compliance assessment '
-                        f'of {field_name} declaration.'
-                    ),
-                    image_path=first_img_path,
-                    annotated_path=None,
-                    annotation_data=None,
-                    reference=source_imgs[0],
-                )
-                finding_evidences.append(ev)
-                evidences.append(ev)
+        # Primary evidence: Annotated bounding-box photographic exhibit
+        if ann_path and os.path.isfile(ann_path):
+            ev_id = f'EVID-{product_id}-{ev_counter:03d}'
+            ev_counter += 1
+            ann_data = {
+                'netQuantityBox': _safe(label_m, 'netQuantityBox', default=None),
+                'exclusionBox':   _safe(label_m, 'exclusionBox',   default=None),
+                'intrusions':     _safe(label_m, 'clearanceDetails', 'intrusions', default=[]),
+            } if field_name == 'netQuantity' else None
+
+            ev = EvidenceRecord(
+                evidence_id=ev_id,
+                finding_id=finding_id,
+                compliance_id=comp_id,
+                evidence_type='Annotated Image',
+                description=(
+                    f'High-resolution photographic evidence with statutory bounding-box verification '
+                    f'for {rule_ref}: {raw_v.get("message", "Non-compliance observed.")}'
+                ),
+                image_path=ann_path,
+                annotated_path=ann_path,
+                annotation_data=ann_data,
+                reference=os.path.basename(ann_path),
+            )
+            finding_evidences.append(ev)
+            evidences.append(ev)
+
+        # Supporting evidence: raw source / preprocessed panel image
+        panel_img = None
+        panel_idx = raw_v.get('panelIndex', 0)
+        preproc_name = f'preprocessed_{panel_idx + 1}.png' if panel_idx > 0 else 'preprocessed_1.png'
+        panel_img = image_paths.get(preproc_name) or image_paths.get('preprocessed.png')
+        if not panel_img and source_imgs:
+            panel_img = image_paths.get(source_imgs[min(panel_idx, len(source_imgs) - 1)])
+
+        # If no annotated image was found, use the panel image as primary evidence
+        if not finding_evidences and panel_img:
+            ev_id = f'EVID-{product_id}-{ev_counter:03d}'
+            ev_counter += 1
+            ev = EvidenceRecord(
+                evidence_id=ev_id,
+                finding_id=finding_id,
+                compliance_id=comp_id,
+                evidence_type='Image',
+                description=(
+                    f'Product label panel image inspected during audit for {field_name} declaration.'
+                ),
+                image_path=panel_img,
+                annotated_path=None,
+                annotation_data=None,
+                reference=os.path.basename(panel_img),
+            )
+            finding_evidences.append(ev)
+            evidences.append(ev)
 
         # Add measurement evidence for netQuantity
         if field_name == 'netQuantity' and label_m:

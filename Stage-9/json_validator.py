@@ -159,9 +159,14 @@ def validate_json(json_path: str, image_dir: Optional[str] = None) -> Validation
     if not source_images:
         result.add_warning('sourceImages', 'No source images listed.')
     else:
-        for img_name in source_images:
+        fallback_images = sorted([
+            os.path.join(image_dir, f)
+            for f in os.listdir(image_dir)
+            if f.startswith('preprocessed') and f.endswith('.png')
+        ] if os.path.isdir(image_dir) else [])
+        for idx, img_name in enumerate(source_images):
             img_path = os.path.join(image_dir, img_name)
-            if not os.path.isfile(img_path):
+            if not os.path.isfile(img_path) and idx >= len(fallback_images):
                 result.add_warning('sourceImages',
                                    f'Image file not found: {img_name} '
                                    f'(looked in: {image_dir})')
@@ -204,6 +209,7 @@ def extract_image_paths(json_data: Dict, image_dir: str) -> Dict[str, Optional[s
     For images that are not found by their original name, attempts to
     find preprocessed counterparts (preprocessed_1.png, preprocessed_2.png, etc.)
     in the same directory.
+    Also maps all violation evidence images (violation_evidence_*.png).
 
     Returns None for still-missing images rather than raising.
     """
@@ -214,7 +220,7 @@ def extract_image_paths(json_data: Dict, image_dir: str) -> Dict[str, Optional[s
     fallback_images = sorted([
         os.path.join(image_dir, f)
         for f in os.listdir(image_dir)
-        if f.startswith('preprocessed_') and f.endswith('.png')
+        if f.startswith('preprocessed') and f.endswith('.png')
     ] if os.path.isdir(image_dir) else [])
 
     source_images = json_data.get('sourceImages', [])
@@ -228,10 +234,34 @@ def extract_image_paths(json_data: Dict, image_dir: str) -> Dict[str, Optional[s
         else:
             paths[img_name] = None
 
+    # Map preprocessed images by their own names as well
+    for f_img in fallback_images:
+        paths[os.path.basename(f_img)] = f_img
+
     annotated = json_data.get('annotatedNetQuantityImage')
     if annotated:
         candidate = os.path.join(image_dir, annotated)
         paths[annotated] = candidate if os.path.isfile(candidate) else None
+
+    # Map violation-specific evidence images from complianceResult.violations
+    for v in json_data.get('complianceResult', {}).get('violations', []):
+        ev_img = v.get('evidenceImage')
+        if ev_img:
+            candidate = os.path.join(image_dir, ev_img)
+            paths[ev_img] = candidate if os.path.isfile(candidate) else None
+
+    # Map violation-specific evidence images from violationEvidences
+    for ev in json_data.get('violationEvidences', []):
+        ev_img = ev.get('evidenceImage')
+        if ev_img:
+            candidate = os.path.join(image_dir, ev_img)
+            paths[ev_img] = candidate if os.path.isfile(candidate) else None
+
+    # Automatically register any violation_evidence_*.png files found on disk
+    if os.path.isdir(image_dir):
+        for f in os.listdir(image_dir):
+            if (f.startswith('violation_evidence_') or f.startswith('evidence_') or f == 'net_quantity_bounding_box.png') and f.endswith('.png'):
+                paths[f] = os.path.join(image_dir, f)
 
     return paths
 

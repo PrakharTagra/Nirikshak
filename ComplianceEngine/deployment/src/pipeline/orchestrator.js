@@ -17,6 +17,7 @@ const { extract } = require('./stage5_extraction');
 const { runComplianceCheck } = require('./stage6_ruleEngine');
 const { generateReport } = require('./stage7_report');
 const { annotateNetQuantityImage } = require('./netQuantityImageAnnotator');
+const { generateAllViolationEvidences } = require('./violationEvidenceAnnotator');
 const logger = require('../utils/logger');
 const fs = require('fs');
 const path = require('path');
@@ -214,6 +215,17 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     });
   }
 
+  // 7b. Generate bounding-boxed evidence images for ALL violations
+  const violationEvidences = await generateAllViolationEvidences({
+    violations: complianceResult.violations || [],
+    declarations,
+    ocrResult,
+    labelMetrics,
+    preprocessedImages,
+    productDir,
+    productId,
+  });
+
   fs.writeFileSync(
     path.join(productDir, 'mapped.json'),
     JSON.stringify(
@@ -225,6 +237,7 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
         complianceResult,
         panels: ocrResult.perImage || [],
         annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
+        violationEvidences,
       },
       null,
       2
@@ -232,13 +245,14 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     'utf8'
   );
 
-  // 7b. Write clean report.json strictly conforming to schema for PDF generation (no raw OCR dump)
+  // 7c. Write clean report.json strictly conforming to schema for PDF generation (no raw OCR dump)
   const reportData = {
     reportId: `REP-${productId}`,
     productId,
     generatedAt: new Date().toISOString(),
     sourceImages: paths.map((p) => path.basename(p)),
     annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
+    violationEvidences,
     summary: {
       status: !complianceResult.applicable
         ? 'exempt'

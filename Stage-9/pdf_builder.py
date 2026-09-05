@@ -241,6 +241,7 @@ def _build_cover_page(model: ComplianceModel) -> List:
         S.PS_COVER_FOOTER,
     ))
 
+    story.append(NextPageTemplate('main'))
     story.append(PageBreak())
     return story
 
@@ -449,14 +450,15 @@ def _build_page_4(model: ComplianceModel) -> List:
     story = []
     story.extend(_section_heading(5, 'Statutory Infractions & Photographic Verification Exhibits'))
 
-    # 1. Non-compliance findings (if any)
+    # 1. Non-compliance findings & Photographic Exhibits for EVERY violation
     if model.violations:
         for idx, v in enumerate(model.violations):
             bg, fg = S.severity_badge_colors(v.severity)
             sev_st = ParagraphStyle(f'Sev_{idx}', parent=S.PS_TABLE_BODY_CENTER, textColor=fg, fontName=S.FONT_BOLD, fontSize=7)
 
+            finding_block = []
             finding_title = f'<b>FINDING {idx + 1}: {v.finding_id}</b> — Contravention of {v.section_clause}'
-            story.append(_p(finding_title, S.PS_FINDING_HEADING))
+            finding_block.append(_p(finding_title, S.PS_FINDING_HEADING))
 
             rows = [
                 ['Finding ID:',          v.finding_id,            'Severity Degree:',  _p(v.severity, sev_st)],
@@ -481,57 +483,105 @@ def _build_page_4(model: ComplianceModel) -> List:
 
             ftbl = Table(tbl_data, colWidths=col_w)
             ftbl.setStyle(S.finding_detail_style())
-            story.append(ftbl)
-            story.append(_spacer(1))
+            finding_block.append(ftbl)
+            finding_block.append(_spacer(1))
+
+            # 2. Locate this violation's bounding-box evidence image
+            ev_img_path = None
+            for ev in v.evidences:
+                if ev.image_path and os.path.isfile(ev.image_path):
+                    ev_img_path = ev.image_path
+                    break
+
+            if not ev_img_path:
+                candidate_names = [
+                    f'violation_evidence_{idx + 1}.png',
+                    f'evidence_{idx + 1}.png',
+                    'net_quantity_bounding_box.png' if ('net' in v.compliance_id.lower() or 'quantity' in v.observed_violation.lower()) else None,
+                ]
+                for cname in candidate_names:
+                    if cname and model.image_paths.get(cname) and os.path.isfile(model.image_paths[cname]):
+                        ev_img_path = model.image_paths[cname]
+                        break
+
+            # Fallback to any available product image if specific annotated image not found
+            if not ev_img_path:
+                for k, p in model.image_paths.items():
+                    if p and os.path.isfile(p):
+                        ev_img_path = p
+                        break
+
+            if ev_img_path and os.path.isfile(ev_img_path):
+                img_fl = IH.image_to_rl_flowable(ev_img_path, max_width_mm=135, max_height_mm=60)
+                if img_fl:
+                    finding_block.append(_spacer(1))
+                    is_clearance = 'net_quantity_bounding_box' in ev_img_path or 'Rule 8(1)' in v.section_clause
+                    ex_title = f'<b>EXHIBIT {idx + 1}: STATUTORY INFRACTION & BOUNDING BOX ANALYSIS — {v.finding_id} ({v.section_clause})</b>'
+                    finding_block.append(_p(ex_title, S.PS_SUBSECTION_HEADING))
+
+                    if is_clearance:
+                        ex_caption = (
+                            '<b>Technical Legend:</b> Solid Green = Detected Net Quantity Box; '
+                            'Dashed Boundary = Rule 8(1) Required Clear Space; '
+                            'Red Highlight = Unlawful Printed Text Intrusion into Exclusion Zone.'
+                        )
+                    elif 'missing' in v.observed_violation.lower() or 'not found' in v.observed_violation.lower():
+                        ex_caption = (
+                            f'<b>Photographic Verification Record:</b> Scanned label verification boundary '
+                            f'confirming mandatory declaration under {v.section_clause} is absent from packaging.'
+                        )
+                    else:
+                        ex_caption = (
+                            f'<b>Technical Legend:</b> Solid Red Bounding Box = Contravention of {v.section_clause}; '
+                            f'Red Badge = Non-Compliance Citation & Measured Deficit.'
+                        )
+
+                    ex_tbl = Table([
+                        [img_fl],
+                        [_p(ex_caption, S.PS_CAPTION)],
+                    ], colWidths=[S.CONTENT_WIDTH])
+                    ex_tbl.setStyle(TableStyle([
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                        ('BACKGROUND', (0, 0), (-1, -1), S.C_LIGHT_GRAY),
+                        ('BOX', (0, 0), (-1, -1), 0.5, S.C_BORDER),
+                        ('TOPPADDING', (0, 0), (-1, -1), 2),
+                        ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+                        ('LEFTPADDING', (0, 0), (-1, -1), 4),
+                        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+                    ]))
+                    finding_block.append(ex_tbl)
+                    finding_block.append(_spacer(2))
+
+            story.append(KeepTogether(finding_block))
     else:
         story.append(_p('<b>DETERMINATION: COMPLIANT</b> — No statutory infractions or label contraventions identified.', S.PS_BODY))
         story.append(_spacer(2))
 
-    # 2. Prominent Bounding Box Verification Exhibit
-    bbox_path = model.image_paths.get('net_quantity_bounding_box.png')
-    fallback_img = None
-    if not bbox_path or not os.path.exists(bbox_path):
+        # Show audited label panel exhibit
+        fallback_img = None
         for k, p in model.image_paths.items():
             if p and os.path.exists(p):
                 fallback_img = p
                 break
-
-    exhibit_path = bbox_path if (bbox_path and os.path.exists(bbox_path)) else fallback_img
-
-    if exhibit_path and os.path.exists(exhibit_path):
-        is_bbox = (exhibit_path == bbox_path)
-        if is_bbox:
-            img_fl = IH.bbox_image_to_rl_flowable(exhibit_path, max_width_mm=135, max_height_mm=62)
-        else:
-            img_fl = IH.image_to_rl_flowable(exhibit_path, max_width_mm=110, max_height_mm=55)
-        if img_fl:
-            story.append(_spacer(1))
-            ex_title = '<b>EXHIBIT 1: STATUTORY DECLARATION & SPATIAL CLEARANCE BOUNDING BOX ANALYSIS</b>' if is_bbox \
-                else '<b>EXHIBIT 1: PACKAGED COMMODITY MANDATORY LABEL PANEL RECORD</b>'
-            story.append(_p(ex_title, S.PS_SUBSECTION_HEADING))
-
-            ex_caption = (
-                '<b>Technical Legend:</b> Solid Green = Detected Net Quantity Box; '
-                'Dashed Boundary = Rule 8(1) Required Clear Space; '
-                'Red Highlight = Unlawful Printed Text Intrusion into Exclusion Zone.'
-                if is_bbox else
-                '<b>Photographic Record:</b> Principal display panel showing declarations verified during digital audit.'
-            )
-            ex_tbl = Table([
-                [img_fl],
-                [_p(ex_caption, S.PS_CAPTION)],
-            ], colWidths=[S.CONTENT_WIDTH])
-            ex_tbl.setStyle(TableStyle([
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                ('BACKGROUND', (0, 0), (-1, -1), S.C_LIGHT_GRAY),
-                ('BOX', (0, 0), (-1, -1), 0.5, S.C_BORDER),
-                ('TOPPADDING', (0, 0), (-1, -1), 2),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
-                ('LEFTPADDING', (0, 0), (-1, -1), 4),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 4),
-            ]))
-            story.append(ex_tbl)
+        if fallback_img:
+            img_fl = IH.image_to_rl_flowable(fallback_img, max_width_mm=135, max_height_mm=60)
+            if img_fl:
+                ex_title = '<b>EXHIBIT 1: PACKAGED COMMODITY MANDATORY LABEL PANEL AUDIT RECORD</b>'
+                story.append(_p(ex_title, S.PS_SUBSECTION_HEADING))
+                ex_caption = '<b>Photographic Record:</b> Principal display panel showing declarations verified during statutory digital audit.'
+                ex_tbl = Table([[img_fl], [_p(ex_caption, S.PS_CAPTION)]], colWidths=[S.CONTENT_WIDTH])
+                ex_tbl.setStyle(TableStyle([
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                    ('BACKGROUND', (0, 0), (-1, -1), S.C_LIGHT_GRAY),
+                    ('BOX', (0, 0), (-1, -1), 0.5, S.C_BORDER),
+                    ('TOPPADDING', (0, 0), (-1, -1), 2),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 4),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+                ]))
+                story.append(ex_tbl)
 
     story.append(PageBreak())
     return story
@@ -574,7 +624,7 @@ def _build_page_5(model: ComplianceModel) -> List:
                 _p(ev.reference[:30], S.PS_TABLE_BODY),
                 _p(ev.description[:80], S.PS_TABLE_BODY),
             ])
-    ev_table = Table(tbl_ev_data[:6], colWidths=col_w_ev)
+    ev_table = Table(tbl_ev_data, colWidths=col_w_ev, repeatRows=1)
     ev_table.setStyle(S.generic_table_style())
     story.append(ev_table)
     story.append(_spacer(1))

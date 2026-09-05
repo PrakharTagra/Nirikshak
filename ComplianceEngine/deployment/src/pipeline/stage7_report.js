@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const { generatePdfBuffer, FONT_HEADING_SIZE, FONT_SUBHEADING_SIZE } = require('../utils/simplePdfWriter');
 const { ensureDirs } = require('../utils/fileHelpers');
 const config = require('../config');
@@ -85,12 +86,52 @@ function buildReportBlocks({ imagePath, imagePaths, packageRecord, complianceRes
 
 async function generateReport({ imagePath, imagePaths, packageRecord, complianceResult, productDir }) {
   ensureDirs(productDir);
+  const mappedJsonPath = path.join(productDir, 'mapped.json');
+  const outFile = path.join(productDir, 'report.pdf');
+
+  // 1. Primary: Invoke Stage-9 official statutory report generator via Python
+  const candidateStage9Paths = [
+    path.resolve(__dirname, '../../../../Stage-9/report_generator.py'),
+    path.resolve(process.cwd(), 'Stage-9/report_generator.py'),
+    path.resolve(process.cwd(), '../Stage-9/report_generator.py'),
+  ];
+  const stage9Script = candidateStage9Paths.find((p) => fs.existsSync(p));
+
+  if (stage9Script && fs.existsSync(mappedJsonPath)) {
+    try {
+      logger.info('stage7_report', `Connecting to Stage-9 report generator: ${stage9Script}`);
+      const pythonCmd = process.env.PYTHON_CMD || process.env.PYTHON_PATH || 'python';
+      const res = spawnSync(
+        pythonCmd,
+        [
+          stage9Script,
+          '--input', mappedJsonPath,
+          '--output', outFile,
+          '--image-dir', productDir,
+        ],
+        {
+          encoding: 'utf8',
+          timeout: 60000,
+        }
+      );
+
+      if (res.status === 0 && fs.existsSync(outFile) && fs.statSync(outFile).size > 1000) {
+        logger.info('stage7_report', `Official Stage-9 compliance report generated: ${outFile} (${fs.statSync(outFile).size} bytes)`);
+        return outFile;
+      } else {
+        logger.warn('stage7_report', `Stage-9 Python script exited with code ${res.status}: ${res.stderr || res.stdout}`);
+      }
+    } catch (err) {
+      logger.warn('stage7_report', `Stage-9 execution error: ${err.message}`);
+    }
+  }
+
+  // 2. Fallback to simplePdfWriter if Stage-9 script / python unavailable
+  logger.info('stage7_report', 'Falling back to simplePdfWriter for report output.');
   const blocks = buildReportBlocks({ imagePath, imagePaths, packageRecord, complianceResult });
   const pdfBuffer = generatePdfBuffer(blocks);
-
-  const outFile = path.join(productDir, 'report.pdf');
   fs.writeFileSync(outFile, pdfBuffer);
-  logger.info('stage8_report', `Report written: ${outFile}`);
+  logger.info('stage7_report', `Report written: ${outFile}`);
   return outFile;
 }
 
