@@ -5,6 +5,7 @@ import cors from "cors";
 import scrapeRouter from "./routes/scrape.js";
 import listingRouter from "./routes/listing.js";
 import complianceRouter from "./routes/compliance.js";
+import reportsRouter from "./routes/reports.js";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use("/api/scrape", scrapeRouter);
 app.use("/api/listing", listingRouter);
 app.use("/api/compliance", complianceRouter);
+app.use("/reports", reportsRouter);
+app.use("/api/reports", reportsRouter);
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", role: "local-scraper" }));
 
