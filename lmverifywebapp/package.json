@@ -25,6 +25,7 @@
     "db:seed": "node scripts/seed.js",
     "db:demo": "node scripts/demo.js",
     "seed": "npm run db:seed",
+    "seed:admin": "node scripts/seed-admin.js",
     "seed:demo": "npm run db:demo"
   },
   "devDependencies": {
