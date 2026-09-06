@@ -25,6 +25,18 @@ if (!mongodbUri) {
   process.exit(1);
 }
 
+function parseOrigins(...inputs) {
+  const list = [];
+  for (const input of inputs) {
+    if (!input) continue;
+    for (const item of input.split(',')) {
+      const trimmed = item.trim().replace(/\/+$/, '');
+      if (trimmed) list.push(trimmed);
+    }
+  }
+  return [...new Set(list)];
+}
+
 export const env = {
   role: 'AC',
   serviceName: 'senior-inspector-backend',
@@ -35,8 +47,9 @@ export const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
   // Field application offline tolerance
   inspectorTokenTtl: process.env.INSPECTOR_TOKEN_TTL || '7d',
-  corsOrigins: [
+  corsOrigins: parseOrigins(
     process.env.ADMIN_FRONTEND_ORIGIN,
     process.env.SENIOR_INSPECTOR_FRONTEND_ORIGIN,
-  ].filter(Boolean),
+    process.env.CORS_ORIGIN,
+  ),
 };
