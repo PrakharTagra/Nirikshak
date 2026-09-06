@@ -22,8 +22,8 @@ git reset --hard origin/main
 npm install --production=false
 npm cache clean --force
 
-# 3. Restart PM2 services
-pm2 reload ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
+# 3. Restart PM2 services (pm2 restart revives errored processes)
+pm2 restart ecosystem.config.cjs
 pm2 save
 
 echo "=================================================="
