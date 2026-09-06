@@ -94,20 +94,25 @@ def _get_ocr_runner():
     """Load Stage 4 lazily so preprocessing can run without OCR installed."""
     base_dir = Path(__file__).resolve().parents[2]
     stage4_candidates = [
+        Path("/app/stage4_ocr"),
+        Path("/app"),
+        Path(__file__).resolve().parents[1] / "stage4_ocr",
         base_dir / "stage4_ocr",
         base_dir / "STAGE-4",
     ]
-    stage4_path = next((p for p in stage4_candidates if p.is_dir()), stage4_candidates[0])
-    if str(stage4_path) not in sys.path:
-        sys.path.insert(0, str(stage4_path))
+    for p in stage4_candidates:
+        if p.is_dir() and str(p) not in sys.path:
+            sys.path.insert(0, str(p))
 
     try:
         from ocr import run_ocr
-    except ImportError as exc:
-        raise RuntimeError(
-            f"Stage 4 OCR dependencies are not installed. Run: "
-            f"python -m pip install -r {stage4_path / 'requirements.txt'}"
-        ) from exc
+    except ImportError:
+        try:
+            from stage4_ocr.ocr import run_ocr
+        except ImportError as exc:
+            raise RuntimeError(
+                f"Stage 4 OCR dependencies are not installed or ocr module not found. Exc: {exc}"
+            ) from exc
     return run_ocr
 
 

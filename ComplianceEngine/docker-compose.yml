@@ -11,6 +11,7 @@ services:
       - "8000:8000"
     volumes:
       - ./output:/app/ComplianceEngine/output
+      - ./stage4_ocr:/app/stage4_ocr
     environment:
       - PYTHONUNBUFFERED=1
     healthcheck:
