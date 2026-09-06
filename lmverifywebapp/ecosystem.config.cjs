@@ -34,5 +34,22 @@ module.exports = {
       out_file: '../logs/senior-inspector-backend-out.log',
       time: true,
     },
+    {
+      name: 'lmv-webhook-listener',
+      script: 'deploy/webhook-server.js',
+      cwd: './',
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '200M',
+      env: {
+        NODE_ENV: 'production',
+        WEBHOOK_PORT: 4005,
+      },
+      error_file: './logs/webhook-listener-err.log',
+      out_file: './logs/webhook-listener-out.log',
+      time: true,
+    },
   ],
 };
