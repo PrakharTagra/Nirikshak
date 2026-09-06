@@ -32,11 +32,12 @@ export default function Emblem({ size = 48, className = "", light = false }) {
         y="105"
         textAnchor="middle"
         fill={color}
-        fontSize="8"
-        fontFamily="'Noto Sans Devanagari', sans-serif"
-        fontWeight="600"
+        fontSize="6.5"
+        fontFamily="'Inter', 'Helvetica', sans-serif"
+        fontWeight="700"
+        letterSpacing="0.5"
       >
-        सत्यमेव जयते
+        TRUTH ALONE TRIUMPHS
       </text>
     </svg>
   );

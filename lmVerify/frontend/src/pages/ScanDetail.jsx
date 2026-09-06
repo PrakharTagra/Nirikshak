@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getScanById } from "../lib/api.js";
 import ScanResultView from "../components/ScanResultView.jsx";
+import ComplianceReport from "../components/ComplianceReport.jsx";
 import { Breadcrumb, Loading, PdfButton } from "../components/ui.jsx";
 import { generatePdfReport } from "../lib/pdfReportGenerator.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -27,11 +28,11 @@ export default function ScanDetail() {
     };
   }, [id]);
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     if (!data) return;
     setPdfBusy(true);
     try {
-      generatePdfReport(data, user);
+      await generatePdfReport(data, user);
     } catch (err) {
       alert("Failed to generate PDF: " + err.message);
     } finally {
@@ -114,7 +115,7 @@ export default function ScanDetail() {
         </div>
       )}
 
-      <ScanResultView data={data} />
+      <ComplianceReport report={data} />
     </div>
   );
 }

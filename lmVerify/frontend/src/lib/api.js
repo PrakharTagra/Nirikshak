@@ -44,6 +44,27 @@ function normalizeReport(r) {
       ? "exempt"
       : "pending";
 
+  const declaredValues = r.declared_values || r.declarations || {};
+  const violations = r.summary?.violations || r.violations || [];
+  const packageRecord = r.package_record || r.packageRecord || {
+    commodity: {
+      productName: r.product_name || r.productName,
+      brandName: r.brand,
+      category: r.category,
+      isDigitalMarketplace: true,
+      isEcommerce: true,
+    },
+  };
+
+  const evidenceImages =
+    r.evidenceImages ||
+    r.evidence_images ||
+    r.images ||
+    (r.listing?.images?.items
+      ? r.listing.images.items.map((i) => (typeof i === "string" ? i : i.url))
+      : []) ||
+    [];
+
   return {
     id: r.id || r._id,
     reference_no: r.reference_no,
@@ -63,9 +84,25 @@ function normalizeReport(r) {
     decided_at: r.decided_at,
     decision_reason: r.decision_reason,
     pdf_url: r.pdf_url || r.report_pdf_link,
-    declarations: r.declared_values || {},
-    summary: r.summary || {},
-    evidenceImages: r.evidenceImages || [],
+    declarations: declaredValues,
+    summary: {
+      totalViolations: violations.length,
+      violations,
+      ...(r.summary || {}),
+    },
+    packageRecord,
+    compliance: {
+      compliance: {
+        compliant: status === "compliant",
+        applicable: status !== "exempt",
+        violations,
+      },
+      declarations: declaredValues,
+      packageRecord,
+      summary: r.summary || {},
+    },
+    evidenceImages,
+    images: evidenceImages,
   };
 }
 
@@ -124,10 +161,19 @@ export async function fileStatutoryReport(scanResult) {
   const isApplicable = compliance.applicable !== false;
   const complianceResult = !isApplicable ? "exempt" : isCompliant ? "compliant" : "non_compliant";
 
+  const rawImages =
+    scanResult.evidenceImages ||
+    scanResult.images ||
+    (scanResult.listing?.images?.items
+      ? scanResult.listing.images.items.map((i) => (typeof i === "string" ? i : i.url))
+      : []) ||
+    [];
+
   const payload = {
     channel: "ecommerce",
     product_name:
       scanResult.listing?.title ||
+      scanResult.listing?.metadata?.title ||
       packageRecord.commodity?.productName ||
       declarations.commodityName?.value ||
       "Marketplace Listing Inspection",
@@ -143,6 +189,8 @@ export async function fileStatutoryReport(scanResult) {
       violations: compliance.violations || [],
       ...summary,
     },
+    evidenceImages: rawImages.slice(0, 10),
+    package_record: packageRecord,
     inspected_at: scanResult.crawledAt || new Date().toISOString(),
     pdf_url: `https://nirikshakscraper.duckdns.org/reports/dmi-${Date.now()}`,
   };

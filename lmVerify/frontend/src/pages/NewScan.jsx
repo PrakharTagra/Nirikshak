@@ -93,12 +93,18 @@ export default function NewScan() {
     if (!compliance || !result) return;
     setFiling(true);
     setFileError("");
+    const evidenceImages =
+      result.images?.items?.map((i) => (typeof i === "string" ? i : i.url)) ||
+      result.images ||
+      [];
     try {
       const saved = await fileStatutoryReport({
         ...compliance,
         url: result.url,
         platform: result.platform,
         listing: result,
+        evidenceImages,
+        images: evidenceImages,
       });
       setFiledReport(saved);
     } catch (err) {
@@ -298,7 +304,22 @@ export default function NewScan() {
                     )}
                   </div>
 
-                  <ComplianceReport report={{ ...compliance, url: result.url, platform: result.platform }} />
+                  <ComplianceReport
+                    report={{
+                      ...compliance,
+                      url: result.url,
+                      platform: result.platform,
+                      listing: result,
+                      images:
+                        result.images?.items?.map((i) => (typeof i === "string" ? i : i.url)) ||
+                        result.images ||
+                        [],
+                      evidenceImages:
+                        result.images?.items?.map((i) => (typeof i === "string" ? i : i.url)) ||
+                        result.images ||
+                        [],
+                    }}
+                  />
                 </div>
               )}
             </div>

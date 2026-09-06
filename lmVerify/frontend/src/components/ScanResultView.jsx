@@ -3,8 +3,17 @@ import { Panel } from "./ui.jsx";
 
 export default function ScanResultView({ data }) {
   const [tab, setTab] = useState("fields");
-  const foundCount = data.extractedFields.filter((f) => f.found).length;
-  const totalCount = data.extractedFields.length;
+  const extractedFields = data?.extractedFields || [
+    { id: 1, label: "Manufacturer Details", value: data?.declarations?.manufacturer?.name, found: !!data?.declarations?.manufacturer?.present },
+    { id: 2, label: "Generic Commodity Name", value: data?.declarations?.commodityName?.value, found: !!data?.declarations?.commodityName?.present },
+    { id: 3, label: "Net Quantity & Standard Unit", value: data?.declarations?.netQuantity?.value ? `${data.declarations.netQuantity.value} ${data.declarations.netQuantity.unit || ""}` : null, found: !!data?.declarations?.netQuantity?.present },
+    { id: 4, label: "Retail Sale Price (MRP)", value: data?.declarations?.mrp?.value ? `₹ ${data.declarations.mrp.value}` : null, found: !!data?.declarations?.mrp?.present },
+    { id: 5, label: "Month & Year of Manufacture", value: data?.declarations?.mfgDate?.value, found: !!data?.declarations?.mfgDate?.present },
+    { id: 6, label: "Consumer Grievance Particulars", value: data?.declarations?.consumerCare?.telephone || data?.declarations?.consumerCare?.email, found: !!data?.declarations?.consumerCare?.present },
+    { id: 7, label: "Country of Origin", value: data?.declarations?.commodityClassification?.countryOfOrigin, found: !!data?.declarations?.commodityClassification?.countryOfOrigin },
+  ];
+  const foundCount = extractedFields.filter((f) => f.found).length;
+  const totalCount = extractedFields.length;
 
   return (
     <div className="space-y-6">
@@ -86,7 +95,7 @@ export default function ScanResultView({ data }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {data.extractedFields.map((f) => (
+                {extractedFields.map((f) => (
                   <tr key={f.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 text-slate-400 font-mono text-xs">{f.id}</td>
                     <td className="px-4 py-3 font-semibold text-slate-900 text-xs">{f.label}</td>

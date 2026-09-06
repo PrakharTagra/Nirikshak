@@ -7,9 +7,7 @@ export default function GovtHeader({ user, onLogout }) {
       {/* Tier 1 - Utility Bar */}
       <div className="bg-govt-dark text-white px-4 py-1.5 flex justify-between items-center text-xs">
         <div className="flex items-center gap-2">
-          <span className="font-semibold tracking-wider">भारत सरकार</span>
-          <span className="text-white/40">|</span>
-          <span className="text-white/90">GOVERNMENT OF INDIA</span>
+          <span className="font-semibold tracking-wider">GOVERNMENT OF INDIA</span>
         </div>
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex gap-2 items-center text-[11px] text-white/80" aria-label="Font size controls">
@@ -44,13 +42,12 @@ export default function GovtHeader({ user, onLogout }) {
         <div className="flex items-center gap-4">
           <Emblem light={true} size={42} />
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-semibold tracking-wide">उपभोक्ता मामले विभाग</span>
             <span className="text-xs sm:text-sm font-semibold tracking-wide">DEPARTMENT OF CONSUMER AFFAIRS</span>
             <span className="text-[11px] text-white/80 font-medium">Legal Metrology Division • Digital Marketplace Inspectorate</span>
           </div>
         </div>
         <div className="text-right hidden sm:block">
-          <span className="text-lg sm:text-xl font-bold tracking-wider text-white">निरीक्षक · NIRIKSHAK</span>
+          <span className="text-lg sm:text-xl font-bold tracking-wider text-white">NIRIKSHAK · LEGAL METROLOGY</span>
           <p className="text-[11px] text-saffron tracking-wider font-semibold uppercase">Digital Marketplace Inspector Portal</p>
         </div>
       </div>

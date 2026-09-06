@@ -37,12 +37,12 @@ export default function PreviousScans() {
     });
   }, [scans, query, statusFilter]);
 
-  const handleDownloadPdf = (e, scan) => {
+  const handleDownloadPdf = async (e, scan) => {
     e.stopPropagation();
     e.preventDefault();
     setDownloadingId(scan.id);
     try {
-      generatePdfReport(scan, user);
+      await generatePdfReport(scan, user);
     } catch (err) {
       alert("Failed to generate PDF: " + err.message);
     } finally {

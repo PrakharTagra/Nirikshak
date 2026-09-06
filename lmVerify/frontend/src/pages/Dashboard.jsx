@@ -25,12 +25,12 @@ export default function Dashboard() {
     };
   }, []);
 
-  const handleDownloadPdf = (e, scan) => {
+  const handleDownloadPdf = async (e, scan) => {
     e.stopPropagation();
     e.preventDefault();
     setDownloadingId(scan.id);
     try {
-      generatePdfReport(scan, user);
+      await generatePdfReport(scan, user);
     } catch (err) {
       console.error("PDF generation failed:", err);
       alert("Failed to generate PDF report: " + err.message);
