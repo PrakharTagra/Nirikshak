@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import GovtHeader from "../components/GovtHeader.jsx";
+import GovtFooter from "../components/GovtFooter.jsx";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Dashboard", end: true },
-  { to: "/scan/new", label: "New scan" },
-  { to: "/scans", label: "Previous scans" },
+  { to: "/", label: "Surveillance Overview", end: true },
+  { to: "/scan/new", label: "New Marketplace Scan" },
+  { to: "/scans", label: "Historical Records" },
 ];
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -18,67 +21,56 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <aside className="hidden w-60 flex-shrink-0 flex-col border-r border-slate-200 bg-white sm:flex">
-        <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-900 text-white">
-            <span className="text-xs font-semibold">LM</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold leading-tight text-slate-900">Listing Scanner</p>
-            <p className="text-xs leading-tight text-slate-400">Legal Metrology</p>
-          </div>
-        </div>
+    <div className="min-h-screen flex flex-col bg-govt-cream text-slate-900">
+      {/* Official Government 3-Tier Header */}
+      <GovtHeader user={user} onLogout={handleLogout} />
 
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `block rounded-md px-3 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                }`
-              }
+      {/* Horizontal Nav Bar matching lmverifywebapp */}
+      <nav className="bg-[#1a3a6c] text-white shadow-md">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="md:hidden flex items-center justify-between py-2.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-saffron">
+              DMI Portal Navigation
+            </span>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-xs border border-white/30 px-3 py-1 rounded hover:bg-white/10 font-medium"
             >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="border-t border-slate-200 px-4 py-4">
-          <p className="truncate text-sm font-medium text-slate-800">{user?.name}</p>
-          <p className="truncate text-xs text-slate-400">{user?.role}</p>
-          <button
-            onClick={handleLogout}
-            className="mt-3 w-full rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
-          >
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile top bar */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:hidden">
-          <p className="text-sm font-semibold text-slate-900">Listing Scanner</p>
-          <button
-            onClick={handleLogout}
-            className="text-xs font-medium text-slate-500 hover:text-slate-800"
-          >
-            Sign out
-          </button>
-        </div>
-
-        <main className="flex-1 px-6 py-8">
-          <div className="mx-auto max-w-5xl">
-            <Outlet />
+              {mobileMenuOpen ? "Close Menu" : "Menu ☰"}
+            </button>
           </div>
-        </main>
-      </div>
+
+          <ul className={`md:flex ${mobileMenuOpen ? "block" : "hidden"} py-1 md:py-0`}>
+            {NAV_ITEMS.map((item) => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `block px-5 py-3 text-xs sm:text-sm font-semibold tracking-wide transition-colors border-b-4 ${
+                      isActive
+                        ? "border-saffron text-white bg-white/10"
+                        : "border-transparent text-white/80 hover:bg-white/5 hover:text-white"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 py-6 md:px-6">
+        <Outlet />
+      </main>
+
+      {/* Official Government Footer */}
+      <GovtFooter />
     </div>
   );
 }

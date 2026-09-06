@@ -8,6 +8,7 @@ import PageLoader from "./components/PageLoader.jsx";
 
 // Route-level code splitting: each page is its own chunk, fetched on demand.
 const Login = lazy(() => import("./pages/Login.jsx"));
+const Signup = lazy(() => import("./pages/Signup.jsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const NewScan = lazy(() => import("./pages/NewScan.jsx"));
 const PreviousScans = lazy(() => import("./pages/PreviousScans.jsx"));
@@ -22,6 +23,7 @@ export default function App() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
