@@ -126,6 +126,7 @@ export async function loadProductPage(url) {
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
       "--disable-blink-features=AutomationControlled",
       "--disable-infobars",
     ],
@@ -147,13 +148,26 @@ export async function loadProductPage(url) {
     requestQueue,
     maxRequestsPerCrawl: 1,
     maxConcurrency: 1,
+    navigationTimeoutSecs: 45,
     requestHandlerTimeoutSecs: REQUEST_HANDLER_TIMEOUT_SECS,
     launchContext: {
       launchOptions,
       userAgent: USER_AGENT,
     },
+    gotoFunction: async ({ page, request }) => {
+      return page.goto(request.url, {
+        waitUntil: "domcontentloaded",
+        timeout: 45000,
+      });
+    },
     preNavigationHooks: [
       async ({ page }) => {
+        // Block third-party ad/analytics domains that cause datacenter hangs & ERR_TIMED_OUT
+        await page.route(
+          /(googletagmanager|google-analytics|doubleclick|facebook|criteo|branch\.io|hotjar|scorecardresearch)/i,
+          (route) => route.abort()
+        ).catch(() => {});
+
         // Strip automation indicators
         await page.addInitScript(() => {
           Object.defineProperty(navigator, "webdriver", {
