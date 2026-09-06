@@ -5,9 +5,9 @@ import GovtHeader from "../components/GovtHeader.jsx";
 import GovtFooter from "../components/GovtFooter.jsx";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Surveillance Overview", end: true },
-  { to: "/scan/new", label: "New Marketplace Scan" },
-  { to: "/scans", label: "Historical Records" },
+  { to: "/", label: "Surveillance Overview", icon: "📊", end: true },
+  { to: "/scan/new", label: "New Marketplace Scan", icon: "🛒" },
+  { to: "/scans", label: "Historical Records", icon: "📋" },
 ];
 
 export default function DashboardLayout() {
@@ -21,27 +21,28 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-govt-cream text-slate-900">
+    <div className="min-h-screen flex flex-col bg-govt-cream text-slate-900 font-sans antialiased">
       {/* Official Government 3-Tier Header */}
       <GovtHeader user={user} onLogout={handleLogout} />
 
-      {/* Horizontal Nav Bar matching lmverifywebapp */}
-      <nav className="bg-[#1a3a6c] text-white shadow-md">
+      {/* Horizontal Navigation Bar matching lmverifywebapp */}
+      <nav className="bg-[#0f2e5a] text-white/85 shadow-md sticky top-0 z-30 border-b border-white/10" aria-label="DMI Main Navigation">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <div className="md:hidden flex items-center justify-between py-2.5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-saffron">
-              DMI Portal Navigation
+            <span className="text-xs font-semibold uppercase tracking-wider text-amber-300">
+              DMI Portal Menu
             </span>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-xs border border-white/30 px-3 py-1 rounded hover:bg-white/10 font-medium"
+              className="text-xs border border-white/20 px-2.5 py-1 rounded hover:bg-white/10 flex items-center gap-1.5 cursor-pointer text-white"
             >
-              {mobileMenuOpen ? "Close Menu" : "Menu ☰"}
+              <span>{mobileMenuOpen ? "✕" : "☰"}</span>
+              <span>{mobileMenuOpen ? "Close" : "Menu"}</span>
             </button>
           </div>
 
-          <ul className={`md:flex ${mobileMenuOpen ? "block" : "hidden"} py-1 md:py-0`}>
+          <ul className={`md:flex ${mobileMenuOpen ? "flex flex-col py-2 border-t border-white/10" : "hidden"} gap-1 py-1 md:py-0`}>
             {NAV_ITEMS.map((item) => (
               <li key={item.to}>
                 <NavLink
@@ -49,14 +50,15 @@ export default function DashboardLayout() {
                   end={item.end}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `block px-5 py-3 text-xs sm:text-sm font-semibold tracking-wide transition-colors border-b-4 ${
+                    `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold tracking-wide transition-all border-b-2 ${
                       isActive
-                        ? "border-saffron text-white bg-white/10"
-                        : "border-transparent text-white/80 hover:bg-white/5 hover:text-white"
+                        ? "border-saffron text-white bg-white/10 shadow-sm"
+                        : "border-transparent text-white/75 hover:bg-white/5 hover:text-white"
                     }`
                   }
                 >
-                  {item.label}
+                  <span className="text-sm opacity-90">{item.icon}</span>
+                  <span>{item.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -65,7 +67,7 @@ export default function DashboardLayout() {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 py-6 md:px-6">
+      <main id="main-content" className="flex-1 max-w-[1400px] w-full mx-auto px-4 py-6 md:px-6 min-w-0">
         <Outlet />
       </main>
 
