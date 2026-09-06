@@ -43,7 +43,7 @@ export default function NewScan() {
       setResult(data);
 
       if (autoVerify) {
-        setStatusMessage("Executing ComplianceEngine declaration mapping and codified rule engine…");
+        setStatusMessage("Executing PaddleOCR on packaging images & verifying codified Legal Metrology rules…");
         setChecking(true);
         try {
           const compData = await checkCompliance(data.url, {
@@ -51,6 +51,7 @@ export default function NewScan() {
             platform: data.platform,
             structuredData: data.structuredData,
             metadata: data.metadata,
+            productImages: data.images?.productImages || data.images?.items || [],
           });
           setCompliance(compData);
           setTab("compliance");
@@ -79,6 +80,7 @@ export default function NewScan() {
         platform: result.platform,
         structuredData: result.structuredData,
         metadata: result.metadata,
+        productImages: result.images?.productImages || result.images?.items || [],
       });
       setCompliance(compData);
       setTab("compliance");
@@ -94,6 +96,7 @@ export default function NewScan() {
     setFiling(true);
     setFileError("");
     const evidenceImages =
+      result.images?.productImages?.map((i) => (typeof i === "string" ? i : i.url)) ||
       result.images?.items?.map((i) => (typeof i === "string" ? i : i.url)) ||
       result.images ||
       [];

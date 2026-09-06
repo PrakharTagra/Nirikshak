@@ -1,7 +1,11 @@
 // Client for the local-scraper backend connecting directly to
 // ComplianceEngine's post-OCR mapping & rule engine pipeline.
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
+    ? "https://nirikshakscraper.duckdns.org"
+    : "http://localhost:5000");
 
 /**
  * Crawl a product listing URL via the local-scraper backend.

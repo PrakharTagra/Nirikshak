@@ -84,8 +84,9 @@ export const DECLARATIONS = [
     id: 4,
     key: "manufacture_date",
     label: "Month & year of manufacture / pre-packing / import",
-    rule: "Rule 6(1)(d)",
-    description: "Month and year of manufacture, pre-packing, or import.",
+    rule: "Rule 6(1)(d), Rule 6(10)",
+    description:
+      "Month and year of manufacture, pre-packing, or import (Exempt on online/e-commerce marketplace listings pursuant to Rule 6(10)).",
   },
   {
     id: 5,
@@ -186,9 +187,12 @@ quantity) and #5 (MRP) are required — mark the rest "not_applicable".
 STEP 2 — MANDATORY DECLARATIONS (Rule 6), only when in scope:
 ${decls}
 
-For each declaration, search the raw text for the corresponding
+IMPORTANT RULE 6(10) E-COMMERCE EXEMPTION:
+Under Rule 6(10) of the Legal Metrology (Packaged Commodities) Rules, 2011, e-commerce listings and digital marketplaces are EXEMPT from displaying the month and year of manufacture or pre-packing (#4 manufacture_date). For online product listings, date and month of manufacturing is NOT required. If manufacture_date is not present, mark its status as "not_applicable" with issues: ["Exempt on e-commerce per Rule 6(10)"] instead of "missing", and DO NOT penalize overall compliance status.
+
+For each declaration, search the raw text and any product packaging OCR text for the corresponding
 information. Extract the exact value as it appears (don't paraphrase
-numbers or names). If you can't find it, value must be null and status
+numbers or names). If you can't find it (and it is not exempt under Rule 6(10)), value must be null and status
 "missing". Never guess or fabricate a value that isn't actually present
 in the text.
 
