@@ -154,14 +154,13 @@ export async function loadProductPage(url) {
       launchOptions,
       userAgent: USER_AGENT,
     },
-    gotoFunction: async ({ page, request }) => {
-      return page.goto(request.url, {
-        waitUntil: "domcontentloaded",
-        timeout: 45000,
-      });
-    },
     preNavigationHooks: [
-      async ({ page }) => {
+      async ({ page }, gotoOptions) => {
+        if (gotoOptions) {
+          gotoOptions.waitUntil = "domcontentloaded";
+          gotoOptions.timeout = 45000;
+        }
+
         // Block third-party ad/analytics domains that cause datacenter hangs & ERR_TIMED_OUT
         await page.route(
           /(googletagmanager|google-analytics|doubleclick|facebook|criteo|branch\.io|hotjar|scorecardresearch)/i,
