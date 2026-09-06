@@ -51,5 +51,22 @@ module.exports = {
       out_file: './logs/webhook-listener-out.log',
       time: true,
     },
+    {
+      name: 'lmv-local-scraper',
+      script: 'server.js',
+      cwd: '../lmVerify/local-scraper',
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '500M',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 5000,
+      },
+      error_file: './logs/local-scraper-err.log',
+      out_file: './logs/local-scraper-out.log',
+      time: true,
+    },
   ],
 };

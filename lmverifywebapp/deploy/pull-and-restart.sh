@@ -18,8 +18,9 @@ echo "=================================================="
 git fetch origin main
 git reset --hard origin/main
 
-# 2. Install any updated dependencies
+# 2. Install any updated dependencies and clean cache (preserves 8 GiB disk)
 npm install --production=false
+npm cache clean --force
 
 # 3. Restart PM2 services
 pm2 reload ecosystem.config.cjs || pm2 restart ecosystem.config.cjs

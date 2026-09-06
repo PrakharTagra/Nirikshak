@@ -19,7 +19,8 @@ export function createApp() {
       const allowed = env.corsOrigins;
       if (allowed.length === 0 || allowed.includes('*')) return callback(null, true);
       if (allowed.includes(origin)) return callback(null, true);
-      if (allowed.some((o) => o.includes('.vercel.app')) && origin.endsWith('.vercel.app')) {
+      // Automatically allow Vercel production and preview deployment URLs
+      if (origin.endsWith('.vercel.app')) {
         return callback(null, true);
       }
       return callback(new Error(`Origin ${origin} not allowed by CORS`));
