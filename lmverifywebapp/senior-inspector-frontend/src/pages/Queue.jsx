@@ -281,8 +281,16 @@ export default function Queue({ awaiting = false }) {
                         <div className="font-semibold text-slate-900 truncate" title={r.product_name}>
                           {r.product_name}
                         </div>
-                        <div className="text-[11px] text-slate-500">
-                          Channel: {CHANNEL_LABEL[r.channel] || r.channel}
+                        <div className="mt-1">
+                          {r.channel === 'ecommerce' ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 border border-blue-200">
+                              🛒 Marketplace (DMI)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200">
+                              🏢 Field (LMO)
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 border-x border-slate-200">

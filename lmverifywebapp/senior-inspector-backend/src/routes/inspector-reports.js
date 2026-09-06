@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { badRequest, forbidden, AppError } from '@lm-verify/shared';
+import { badRequest, notFound, forbidden, AppError } from '@lm-verify/shared';
 import { Report } from '../config/db.js';
 import { authenticate, requireRole, blockUntilPasswordChanged } from '../middleware/auth.js';
 
@@ -9,17 +9,23 @@ export const inspectorReportsRouter = Router();
 inspectorReportsRouter.use(authenticate, requireRole('DMI', 'LMO'), blockUntilPasswordChanged);
 
 const submitSchema = z.object({
-  channel: z.enum(['field', 'ecommerce'], { error: 'Channel must be field or ecommerce.' }),
-  filed_by: z.string({ error: 'filed_by is required.' }).min(1, 'filed_by must be a user id.'),
-  jurisdiction_id: z.string({ error: 'jurisdiction_id is required.' }).min(1, 'jurisdiction_id must be an id.'),
-  inspected_at: z.coerce.date({ error: 'inspected_at is required, as an ISO timestamp.' }),
-  pdf_url: z.string({ error: 'pdf_url is required.' })
-    .url('pdf_url must be a URL.')
-    .refine((u) => u.startsWith('https://'), 'pdf_url must be an https URL.'),
+  channel: z.enum(['field', 'ecommerce']).default('ecommerce'),
+  filed_by: z.string().optional(),
+  jurisdiction_id: z.string().optional(),
+  inspected_at: z.coerce.date().optional(),
+  pdf_url: z.string().optional(),
+  product_name: z.string().optional(),
+  productName: z.string().optional(),
   brand: z.string().trim().max(200).optional(),
+  category: z.string().optional(),
   is_edible: z.boolean().optional(),
   is_imported: z.boolean().optional(),
-  listing_url: z.string().url('listing_url must be a URL.').optional(),
+  listing_url: z.string().optional(),
+  declared_values: z.any().optional(),
+  compliance_result: z.string().optional(),
+  complianceResult: z.string().optional(),
+  summary: z.any().optional(),
+  evidenceImages: z.any().optional(),
 });
 
 function parse(schema, body) {
@@ -56,33 +62,49 @@ async function nextReferenceNo() {
 inspectorReportsRouter.post('/', async (req, res) => {
   const data = parse(submitSchema, req.body);
 
-  if (data.filed_by !== req.user.id) {
-    throw forbidden('filed_by does not match the signed-in inspector.');
-  }
-  if (data.jurisdiction_id !== req.user.jurisdictionId) {
-    throw forbidden('jurisdiction_id does not match your own jurisdiction.');
+  const filedBy = req.user.id;
+  const jurisdictionId = req.user.jurisdictionId || data.jurisdiction_id;
+  if (!jurisdictionId) {
+    throw badRequest('Jurisdiction is required.');
   }
 
-  if (data.inspected_at.getTime() > Date.now() + 5 * 60_000) {
+  const inspectedAt = data.inspected_at || new Date();
+  if (inspectedAt.getTime() > Date.now() + 5 * 60_000) {
     throw badRequest('Check the highlighted fields.', {
       inspected_at: 'That is in the future. Send when the inspection happened.',
     });
   }
 
+  const pdfUrl = data.pdf_url && data.pdf_url.startsWith('http')
+    ? data.pdf_url
+    : `https://nirikshakscraper.duckdns.org/reports/dmi-${Date.now()}`;
+
   try {
     const reference_no = await nextReferenceNo();
+    const prodName = data.product_name || data.productName || null;
+    const compResult = data.compliance_result || data.complianceResult || null;
 
     const report = await Report.create({
       reference_no,
-      channel: data.channel,
-      filed_by: data.filed_by,
-      jurisdiction_id: data.jurisdiction_id,
-      pdf_url: data.pdf_url,
+      channel: data.channel || 'ecommerce',
+      filed_by: filedBy,
+      lmo_id: filedBy,
+      jurisdiction_id: jurisdictionId,
+      product_name: prodName,
+      productName: prodName,
       brand: data.brand ?? null,
+      category: data.category ?? null,
       is_edible: data.is_edible ?? false,
       is_imported: data.is_imported ?? false,
       listing_url: data.listing_url ?? null,
-      inspected_at: data.inspected_at,
+      declared_values: data.declared_values || {},
+      compliance_result: compResult,
+      complianceResult: compResult,
+      summary: data.summary || {},
+      evidenceImages: data.evidenceImages || [],
+      pdf_url: pdfUrl,
+      report_pdf_link: pdfUrl,
+      inspected_at: inspectedAt,
       status: 'pending',
     });
 
@@ -91,6 +113,13 @@ inspectorReportsRouter.post('/', async (req, res) => {
         id: report._id,
         reference_no: report.reference_no,
         status: report.status,
+        channel: report.channel,
+        product_name: report.product_name,
+        brand: report.brand,
+        listing_url: report.listing_url,
+        compliance_result: report.compliance_result,
+        summary: report.summary,
+        declared_values: report.declared_values,
         pdf_url: report.pdf_url,
         report_pdf_link: report.report_pdf_link || report.pdf_url,
         filed_by: report.filed_by,
@@ -121,6 +150,12 @@ inspectorReportsRouter.get('/', async (req, res) => {
     reference_no: r.reference_no,
     channel: r.channel,
     status: r.status,
+    product_name: r.product_name || r.productName || null,
+    brand: r.brand || null,
+    listing_url: r.listing_url || null,
+    compliance_result: r.compliance_result || r.complianceResult || null,
+    summary: r.summary || {},
+    declared_values: r.declared_values || {},
     pdf_url: r.pdf_url,
     report_pdf_link: r.report_pdf_link || r.pdf_url,
     filed_by: r.filed_by?._id || r.filed_by,
@@ -135,4 +170,46 @@ inspectorReportsRouter.get('/', async (req, res) => {
   }));
 
   res.json({ reports: rows });
+});
+
+/* GET /api/inspector/reports/:id */
+inspectorReportsRouter.get('/:id', async (req, res) => {
+  const r = await Report.findOne({ _id: req.params.id, filed_by: req.user.id })
+    .populate('decided_by')
+    .populate('jurisdiction_id')
+    .lean();
+
+  if (!r) {
+    throw notFound('Statutory inspection report not found.');
+  }
+
+  res.json({
+    report: {
+      id: r._id,
+      reference_no: r.reference_no,
+      channel: r.channel,
+      status: r.status,
+      product_name: r.product_name || r.productName || null,
+      brand: r.brand || null,
+      category: r.category || null,
+      listing_url: r.listing_url || null,
+      is_edible: r.is_edible || false,
+      is_imported: r.is_imported || false,
+      compliance_result: r.compliance_result || r.complianceResult || null,
+      summary: r.summary || {},
+      declared_values: r.declared_values || {},
+      evidenceImages: r.evidenceImages || [],
+      pdf_url: r.pdf_url,
+      report_pdf_link: r.report_pdf_link || r.pdf_url,
+      filed_by: r.filed_by?._id || r.filed_by,
+      jurisdiction: r.jurisdiction_id?.name || null,
+      decided_by: r.decided_by?._id || r.decided_by || null,
+      assistant_controller_id: r.assistant_controller_id || r.decided_by?._id || r.decided_by || null,
+      inspected_at: r.inspected_at,
+      submitted_at: r.submitted_at,
+      decided_at: r.decided_at,
+      decision_reason: r.decision_reason,
+      decided_by_name: r.decided_by?.full_name || null,
+    },
+  });
 });

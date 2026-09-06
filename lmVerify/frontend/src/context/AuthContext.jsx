@@ -2,192 +2,170 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 const SESSION_KEY = "lm_verify_dmi_session";
-const OFFICERS_KEY = "lm_verify_dmi_officers";
+const TOKEN_KEY = "lm_verify_dmi_token";
 
-// Default pre-seeded Digital Marketplace Inspector
-const DEFAULT_OFFICERS = [
-  {
-    id: "dmi-officer-01",
-    username: "dmi.officer",
-    email: "officer.dmi@gov.in",
-    full_name: "Rajesh Sharma",
-    role: "DMI",
-    designation: "Digital Marketplace Inspector",
-    jurisdiction: "Central E-Commerce Cell (HQ Delhi)",
-    phone: "+91 98765 43210",
-    badge_no: "DMI-DEL-2024-089",
-    password: "password123",
-  },
-  {
-    id: "dmi-officer-02",
-    username: "prakhar.dmi",
-    email: "prakhar.tagra@gov.in",
-    full_name: "Prakhar Tagra",
-    role: "DMI",
-    designation: "Digital Marketplace Inspector",
-    jurisdiction: "Northern Digital Surveillance Zone",
-    phone: "+91 98123 45678",
-    badge_no: "DMI-NZ-2024-001",
-    password: "password123",
-  },
-];
+// Backend API URL for AC / Inspector Auth & Statutory Reports
+export const AUTH_API_BASE =
+  import.meta.env.VITE_AC_API_BASE_URL || "https://nirikshakwebapi.duckdns.org/ac-api";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [initializing, setInitializing] = useState(true);
 
-  // Initialize officers and restore active session
+  // Restore session and verify JWT token validity against backend on startup
   useEffect(() => {
-    try {
-      const storedOfficers = localStorage.getItem(OFFICERS_KEY);
-      if (!storedOfficers) {
-        localStorage.setItem(OFFICERS_KEY, JSON.stringify(DEFAULT_OFFICERS));
-      }
+    async function restoreSession() {
+      try {
+        const savedToken = localStorage.getItem(TOKEN_KEY);
+        const savedSession = localStorage.getItem(SESSION_KEY);
 
-      const savedSession = localStorage.getItem(SESSION_KEY);
-      if (savedSession) {
-        setUser(JSON.parse(savedSession));
+        if (savedToken && savedSession) {
+          const parsed = JSON.parse(savedSession);
+          setUser(parsed);
+          setToken(savedToken);
+
+          // Verify token is active with /inspector/auth/me
+          try {
+            const res = await fetch(`${AUTH_API_BASE}/inspector/auth/me`, {
+              headers: { Authorization: `Bearer ${savedToken}` },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.user) {
+                const freshUser = {
+                  ...data.user,
+                  token: savedToken,
+                  name: data.user.full_name || data.user.username,
+                };
+                setUser(freshUser);
+                localStorage.setItem(SESSION_KEY, JSON.stringify(freshUser));
+              }
+            } else if (res.status === 401 || res.status === 403) {
+              logout();
+            }
+          } catch (netErr) {
+            console.warn("Could not verify token with backend, using offline cache:", netErr);
+          }
+        }
+      } catch (e) {
+        console.warn("Auth restoration error:", e);
+        logout();
+      } finally {
+        setInitializing(false);
       }
-    } catch (e) {
-      console.warn("Auth initialization error:", e);
-      localStorage.removeItem(SESSION_KEY);
-    } finally {
-      setInitializing(false);
     }
+
+    restoreSession();
   }, []);
 
-  const getOfficers = () => {
-    try {
-      const data = localStorage.getItem(OFFICERS_KEY);
-      return data ? JSON.parse(data) : DEFAULT_OFFICERS;
-    } catch {
-      return DEFAULT_OFFICERS;
-    }
-  };
-
   /**
-   * Log in as a Digital Marketplace Inspector
+   * Log in using real credentials created by the Controller of Legal Metrology (CLM)
    */
-  const login = async (usernameOrEmail, password) => {
-    // Artificial slight delay for realistic UX
-    await new Promise((r) => setTimeout(r, 400));
+  const login = async (username, password) => {
+    const u = username.trim().toLowerCase();
+    const p = password.trim();
 
-    const query = usernameOrEmail.trim().toLowerCase();
-    const pass = password.trim();
-
-    if (!query || !pass) {
-      throw new Error("Enter both official username/email and password.");
+    if (!u || !p) {
+      throw new Error("Enter both official username and password.");
     }
 
-    const officers = getOfficers();
-    const found = officers.find(
-      (o) =>
-        (o.username.toLowerCase() === query || (o.email && o.email.toLowerCase() === query)) &&
-        o.password === pass
-    );
-
-    if (!found) {
-      // If prototype quick test: let any email with 4+ char password in as a fallback DMI
-      if (query.includes("@") && pass.length >= 4) {
-        const adhoc = {
-          id: `dmi-${Date.now()}`,
-          username: query.split("@")[0].replace(/[^a-z0-9.]/gi, "."),
-          email: query,
-          full_name: query.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Marketplace Inspector",
-          role: "DMI",
-          designation: "Digital Marketplace Inspector",
-          jurisdiction: "Central E-Commerce Surveillance",
-          phone: "+91 99999 00000",
-          badge_no: `DMI-TEMP-${Math.floor(1000 + Math.random() * 9000)}`,
-        };
-        setUser(adhoc);
-        localStorage.setItem(SESSION_KEY, JSON.stringify(adhoc));
-        return adhoc;
-      }
-      throw new Error("Invalid officer credentials. Please check your username and password.");
+    let res;
+    try {
+      res = await fetch(`${AUTH_API_BASE}/inspector/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+      });
+    } catch {
+      throw new Error(
+        `Unable to reach authentication server at ${AUTH_API_BASE}. Please verify internet connectivity.`
+      );
     }
 
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Unexpected response from authentication service.");
+    }
+
+    if (!res.ok) {
+      const msg =
+        data.error?.message ||
+        data.message ||
+        (data.error?.details && Object.values(data.error.details).join(" ")) ||
+        "Invalid officer credentials.";
+      throw new Error(msg);
+    }
+
+    const { token: jwtToken, user: officerUser } = data;
     const sessionUser = {
-      id: found.id,
-      username: found.username,
-      email: found.email,
-      full_name: found.full_name,
-      name: found.full_name,
-      role: "DMI",
-      designation: "Digital Marketplace Inspector",
-      jurisdiction: found.jurisdiction || "Central E-Commerce Cell",
-      phone: found.phone || "",
-      badge_no: found.badge_no || "",
+      ...officerUser,
+      token: jwtToken,
+      name: officerUser.full_name || officerUser.username,
     };
 
+    setToken(jwtToken);
     setUser(sessionUser);
+    localStorage.setItem(TOKEN_KEY, jwtToken);
     localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
     return sessionUser;
   };
 
   /**
-   * Register / Sign up a new Digital Marketplace Inspector
+   * Update officer password (required upon initial temporary password login)
    */
-  const signup = async (officerData) => {
-    await new Promise((r) => setTimeout(r, 500));
+  const changePassword = async (currentPassword, newPassword) => {
+    const activeToken = token || localStorage.getItem(TOKEN_KEY);
+    if (!activeToken) throw new Error("No active session found. Please sign in again.");
 
-    const { full_name, username, email, phone, jurisdiction, badge_no, password } = officerData;
-
-    if (!full_name?.trim()) throw new Error("Full official legal name is required.");
-    if (!username?.trim() || username.trim().length < 3) {
-      throw new Error("Username must contain at least 3 characters (lowercase letters, numbers, dots).");
-    }
-    if (!password || password.length < 6) {
-      throw new Error("Password must be at least 6 characters long.");
-    }
-
-    const cleanUsername = username.trim().toLowerCase();
-    const officers = getOfficers();
-
-    if (officers.some((o) => o.username.toLowerCase() === cleanUsername)) {
-      throw new Error("An inspector account with that username already exists.");
-    }
-    if (email && officers.some((o) => o.email?.toLowerCase() === email.trim().toLowerCase())) {
-      throw new Error("An inspector account with that email already exists.");
+    let res;
+    try {
+      res = await fetch(`${AUTH_API_BASE}/inspector/auth/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${activeToken}`,
+        },
+        body: JSON.stringify({
+          current_password: currentPassword.trim(),
+          new_password: newPassword.trim(),
+        }),
+      });
+    } catch {
+      throw new Error("Network error contacting authentication server.");
     }
 
-    const newOfficer = {
-      id: `dmi-${Date.now()}`,
-      username: cleanUsername,
-      email: email?.trim() || `${cleanUsername}@dmi.gov.in`,
-      full_name: full_name.trim(),
-      role: "DMI",
-      designation: "Digital Marketplace Inspector",
-      jurisdiction: jurisdiction?.trim() || "Central E-Commerce Cell",
-      phone: phone?.trim() || "",
-      badge_no: badge_no?.trim() || `DMI-${Math.floor(1000 + Math.random() * 9000)}`,
-      password: password.trim(),
-      created_at: new Date().toISOString(),
-    };
+    const data = await res.json();
+    if (!res.ok) {
+      const msg =
+        data.error?.message ||
+        data.message ||
+        (data.error?.details && Object.values(data.error.details).join(" ")) ||
+        "Failed to update password.";
+      throw new Error(msg);
+    }
 
-    const updated = [newOfficer, ...officers];
-    localStorage.setItem(OFFICERS_KEY, JSON.stringify(updated));
-
+    const { token: updatedToken, user: updatedUser } = data;
     const sessionUser = {
-      id: newOfficer.id,
-      username: newOfficer.username,
-      email: newOfficer.email,
-      full_name: newOfficer.full_name,
-      name: newOfficer.full_name,
-      role: "DMI",
-      designation: "Digital Marketplace Inspector",
-      jurisdiction: newOfficer.jurisdiction,
-      phone: newOfficer.phone,
-      badge_no: newOfficer.badge_no,
+      ...updatedUser,
+      token: updatedToken || activeToken,
+      name: updatedUser.full_name || updatedUser.username,
+      must_change_password: false,
     };
 
+    setToken(updatedToken || activeToken);
     setUser(sessionUser);
+    localStorage.setItem(TOKEN_KEY, updatedToken || activeToken);
     localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
     return sessionUser;
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
+    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(SESSION_KEY);
   };
 
@@ -195,10 +173,11 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        token: token || localStorage.getItem(TOKEN_KEY),
         isAuthenticated: !!user,
         initializing,
         login,
-        signup,
+        changePassword,
         logout,
       }}
     >

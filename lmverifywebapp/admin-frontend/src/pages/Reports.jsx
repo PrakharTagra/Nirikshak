@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getReports, getOfficers, STATUSES, STATUS_LABEL, CHANNEL_LABEL } from '../lib/adminApi.js';
 import { StatusBadge, PdfLink, Panel, Loading, EmptyState, formatDate, Breadcrumb } from '../components/ui.jsx';
 
@@ -7,7 +7,14 @@ const selectClass =
   'rounded border border-slate-400 bg-white px-3 py-2 text-sm font-medium text-slate-800 focus:border-govt-navy focus:outline-none focus:ring-1 focus:ring-govt-navy shadow-sm';
 
 export default function Reports() {
-  const [filters, setFilters] = useState({ status: 'all', channel: 'all', officerId: 'all', search: '' });
+  const [searchParams] = useSearchParams();
+  const paramChannel = searchParams.get('channel');
+  const [filters, setFilters] = useState({
+    status: 'all',
+    channel: (paramChannel === 'ecommerce' || paramChannel === 'field') ? paramChannel : 'all',
+    officerId: 'all',
+    search: '',
+  });
   const [rows, setRows] = useState(null);
   const [officers, setOfficers] = useState([]);
 
@@ -36,11 +43,50 @@ export default function Reports() {
         </p>
       </div>
 
+      {/* Quick Channel Tabs */}
+      <div className="flex flex-wrap gap-2 border-b border-slate-300 pb-1">
+        <button
+          type="button"
+          onClick={() => setFilters((f) => ({ ...f, channel: 'all' }))}
+          className={`px-4 py-2 text-xs font-bold rounded-t uppercase tracking-wider transition-colors ${
+            filters.channel === 'all'
+              ? 'bg-govt-navy text-white shadow-sm'
+              : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+          }`}
+        >
+          All Records
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilters((f) => ({ ...f, channel: 'ecommerce' }))}
+          className={`px-4 py-2 text-xs font-bold rounded-t uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
+            filters.channel === 'ecommerce'
+              ? 'bg-blue-900 text-white shadow-sm ring-2 ring-blue-400'
+              : 'bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200'
+          }`}
+        >
+          <span>🛒</span>
+          <span>Digital Marketplace (DMI) Reports</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilters((f) => ({ ...f, channel: 'field' }))}
+          className={`px-4 py-2 text-xs font-bold rounded-t uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
+            filters.channel === 'field'
+              ? 'bg-emerald-900 text-white shadow-sm ring-2 ring-emerald-400'
+              : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-100 border border-emerald-200'
+          }`}
+        >
+          <span>🏢</span>
+          <span>Field Inspections (LMO)</span>
+        </button>
+      </div>
+
       <div className="flex flex-wrap items-end gap-4 border border-slate-300 bg-slate-100 p-5 rounded shadow-sm border-t-[3px] border-t-govt-navy">
         <div className="min-w-[16rem] flex-1">
           <label htmlFor="search" className="block text-xs font-semibold uppercase tracking-wider text-govt-dark mb-1">Search Reference</label>
           <input id="search" type="search" value={filters.search} onChange={set('search')}
-            placeholder="Search by reference no..." className={`w-full ${selectClass}`} />
+            placeholder="Search by reference no or officer name..." className={`w-full ${selectClass}`} />
         </div>
 
         <div className="min-w-[12rem]">
@@ -52,7 +98,7 @@ export default function Reports() {
         </div>
 
         <div className="min-w-[12rem]">
-          <label htmlFor="channel" className="block text-xs font-semibold uppercase tracking-wider text-govt-dark mb-1">Channel</label>
+          <label htmlFor="channel" className="block text-xs font-semibold uppercase tracking-wider text-govt-dark mb-1">Channel Filter</label>
           <select id="channel" value={filters.channel} onChange={set('channel')} className={`w-full ${selectClass}`}>
             <option value="all">Both channels</option>
             <option value="ecommerce">{CHANNEL_LABEL.ecommerce}</option>
@@ -82,6 +128,7 @@ export default function Reports() {
               <thead className="bg-[#f0f4f8]">
                 <tr className="border-b-2 border-slate-300 text-left text-xs font-bold text-govt-dark uppercase tracking-wider">
                   <th scope="col" className="px-4 py-3 border-r border-slate-300">Reference No.</th>
+                  <th scope="col" className="px-4 py-3 border-r border-slate-300">Product / Commodity</th>
                   <th scope="col" className="px-4 py-3 border-r border-slate-300">Filed By Officer</th>
                   <th scope="col" className="px-4 py-3 border-r border-slate-300">Channel</th>
                   <th scope="col" className="px-4 py-3 border-r border-slate-300">Inspected On</th>
@@ -99,11 +146,26 @@ export default function Reports() {
                         {r.reference_no}
                       </Link>
                     </td>
+                    <td className="px-4 py-3 border-r border-slate-200 max-w-[240px] truncate text-slate-800 font-medium" title={r.product_name || r.brand || '—'}>
+                      {r.product_name || r.brand || (r.channel === 'ecommerce' ? 'Marketplace Listing' : 'Packaged Commodity')}
+                    </td>
                     <td className="whitespace-nowrap px-4 py-3 border-r border-slate-200">
                       <span className="font-medium text-slate-900">{r.officer_name}</span>
-                      <span className="ml-2 inline-block px-1.5 py-0.5 rounded bg-slate-200 text-xs font-bold text-slate-700">{r.officer_role}</span>
+                      <span className={`ml-2 inline-block px-1.5 py-0.5 rounded text-xs font-bold ${r.officer_role === 'DMI' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200 text-slate-700'}`}>
+                        {r.officer_role}
+                      </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-slate-800 font-medium border-r border-slate-200">{CHANNEL_LABEL[r.channel]}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-slate-800 font-medium border-r border-slate-200">
+                      {r.channel === 'ecommerce' ? (
+                        <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700 border border-blue-200">
+                          🛒 Marketplace
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
+                          🏢 Field
+                        </span>
+                      )}
+                    </td>
                     <td className="whitespace-nowrap px-4 py-3 tabular-nums text-slate-800 border-r border-slate-200">
                       {formatDate(r.inspected_at)}
                     </td>

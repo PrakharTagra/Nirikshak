@@ -6,7 +6,8 @@ import GovtFooter from './GovtFooter.jsx';
 
 const NAV = [
   { to: '/', label: 'Dashboard', end: true },
-  { to: '/reports', label: 'Inspection records' },
+  { to: '/reports', label: 'Inspection records', end: true },
+  { to: '/reports?channel=ecommerce', label: '🛒 DMI Reports' },
   { to: '/officers', label: 'Officers' },
   { to: '/officers/new', label: 'Create account' },
   { to: '/audit', label: 'Administrative log' },

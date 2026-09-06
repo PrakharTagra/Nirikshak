@@ -66,7 +66,7 @@ export default function ScanDetail() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-govt-navy">
-              Inspection Dossier: {data.id}
+              Inspection Dossier: {data.reference_no || data.id}
             </h1>
             <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700 border border-slate-200">
               {data.platform}
@@ -83,6 +83,36 @@ export default function ScanDetail() {
           label="Download Statutory PDF"
         />
       </div>
+
+      {/* Assistant Controller Review Status Banner */}
+      {data.controller_status && (
+        <div className={`p-4 rounded-sm border ${
+          data.controller_status === 'approved'
+            ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+            : data.controller_status === 'rejected'
+            ? 'bg-red-50 border-red-300 text-red-900'
+            : 'bg-amber-50 border-amber-300 text-amber-900'
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-base">
+                {data.controller_status === 'approved' ? '✅' : data.controller_status === 'rejected' ? '❌' : '⏳'}
+              </span>
+              <span className="font-bold text-xs uppercase tracking-wider">
+                Statutory Decision Status: {data.controller_status.toUpperCase()}
+              </span>
+            </div>
+            {data.decided_by && (
+              <span className="text-xs font-medium">Decided by: {data.decided_by}</span>
+            )}
+          </div>
+          {data.decision_reason && (
+            <p className="mt-2 text-xs italic bg-white p-2.5 rounded border border-red-200">
+              "{data.decision_reason}"
+            </p>
+          )}
+        </div>
+      )}
 
       <ScanResultView data={data} />
     </div>

@@ -1,54 +1,21 @@
-// Mock API layer. Every function here simulates a network call with a
-// delay and returns plausible data. Swap the internals for real `fetch`
-// calls to your backend (see .env.example for VITE_API_BASE_URL) — page
-// components only import from this file, so nothing else needs to change.
+// Real API client connecting the DMI frontend to the Legal Metrology
+// backend ecosystem (MongoDB Atlas via nirikshakwebapi.duckdns.org).
 
-import { initialScans, nextId } from "./mockData.js";
+import { AUTH_API_BASE } from "../context/AuthContext.jsx";
 
-const DELAY = 700;
-const wait = (ms = DELAY) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// In-memory store, seeded once per page load.
-let scans = [...initialScans];
-
-export async function loginRequest(email, password) {
-  await wait(600);
-  if (!email.trim() || !password.trim()) {
-    throw new Error("Enter both email and password.");
-  }
-  if (password.length < 4) {
-    throw new Error("Incorrect email or password.");
-  }
+function getAuthHeaders() {
+  const token = localStorage.getItem("lm_verify_dmi_token");
   return {
-    name: email.split("@")[0].replace(/[._]/g, " ") || "Enforcement Officer",
-    email,
-    role: "Enforcement Officer",
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
-export async function getScans() {
-  await wait(500);
-  return [...scans].sort((a, b) => new Date(b.scannedAt) - new Date(a.scannedAt));
-}
-
-export async function getScanById(id) {
-  await wait(400);
-  const found = scans.find((s) => s.id === id);
-  if (!found) throw new Error("Scan not found.");
-  return found;
-}
-
-const SAMPLE_IMAGES = [
-  "https://placehold.co/300x300/1e293b/e2e8f0?text=Front+Pack",
-  "https://placehold.co/300x300/1e293b/e2e8f0?text=Back+Label",
-  "https://placehold.co/300x300/1e293b/e2e8f0?text=Side+Panel",
-  "https://placehold.co/300x300/1e293b/e2e8f0?text=Nutrition+Info",
-];
-
-function detectPlatform(url) {
+export function detectPlatform(url) {
+  if (!url) return "E-Commerce Marketplace";
   const host = (() => {
     try {
-      return new URL(url).hostname;
+      return new URL(url).hostname.toLowerCase();
     } catch {
       return "";
     }
@@ -58,62 +25,139 @@ function detectPlatform(url) {
   if (host.includes("meesho")) return "Meesho";
   if (host.includes("bigbasket")) return "BigBasket";
   if (host.includes("jiomart")) return "JioMart";
-  return host || "Unknown platform";
+  if (host.includes("blinkit")) return "Blinkit";
+  if (host.includes("zepto")) return "Zepto";
+  return host || "E-Commerce Marketplace";
 }
 
-// TODO: replace this whole function body with a real call, e.g.:
-//   const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/scrape`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({ url }),
-//   });
-//   if (!res.ok) throw new Error("Scan failed");
-//   const scan = await res.json();
-//   scans = [scan, ...scans];
-//   return scan;
-export async function scanUrl(url) {
-  await wait(1400);
+/**
+ * Normalizes a raw backend report into the format expected by DMI frontend components
+ */
+function normalizeReport(r) {
+  const comp = r.compliance_result || r.complianceResult;
+  const status =
+    comp === "compliant"
+      ? "compliant"
+      : comp === "non_compliant"
+      ? "non_compliant"
+      : comp === "exempt"
+      ? "exempt"
+      : "pending";
 
-  let parsed;
-  try {
-    parsed = new URL(url);
-  } catch {
-    throw new Error("Enter a valid listing URL.");
+  return {
+    id: r.id || r._id,
+    reference_no: r.reference_no,
+    title: r.product_name || r.productName || r.brand || "Statutory Marketplace Inspection",
+    product_name: r.product_name || r.productName,
+    brand: r.brand,
+    category: r.category,
+    platform: detectPlatform(r.listing_url),
+    url: r.listing_url || "",
+    scannedAt: r.inspected_at || r.submitted_at || new Date().toISOString(),
+    inspected_at: r.inspected_at,
+    submitted_at: r.submitted_at,
+    status,
+    compliance_result: r.compliance_result,
+    controller_status: r.status, // pending | approved | rejected
+    decided_by: r.decided_by_name || r.decided_by,
+    decided_at: r.decided_at,
+    decision_reason: r.decision_reason,
+    pdf_url: r.pdf_url || r.report_pdf_link,
+    declarations: r.declared_values || {},
+    summary: r.summary || {},
+    evidenceImages: r.evidenceImages || [],
+  };
+}
+
+/**
+ * Fetch historical DMI reports filed by the signed-in inspector
+ */
+export async function getScans() {
+  const headers = getAuthHeaders();
+  if (!headers.Authorization) {
+    return [];
   }
 
-  const extractedFields = [
-    { id: 1, label: "Net quantity", value: "1000 g", found: true },
-    { id: 2, label: "MRP (inclusive of taxes)", value: "Rs. 28.00", found: true },
-    { id: 3, label: "Manufacturer / packer / importer name & address", value: "Sample Foods Pvt Ltd, Pune", found: true },
-    { id: 4, label: "Consumer care details", value: "1800-111-2222", found: true },
-    { id: 5, label: "Month & year of manufacture/packing", value: null, found: false },
-    { id: 6, label: "Country of origin", value: "India", found: true },
-    { id: 7, label: "Unit sale price (Rs./g or Rs./kg)", value: null, found: false },
-  ];
+  try {
+    const res = await fetch(`${AUTH_API_BASE}/inspector/reports`, { headers });
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) return [];
+      throw new Error(`Failed to load reports: ${res.statusText}`);
+    }
+    const data = await res.json();
+    const reports = data.reports || [];
+    return reports.map(normalizeReport);
+  } catch (err) {
+    console.warn("Could not fetch reports from backend:", err.message);
+    return [];
+  }
+}
 
-  const scan = {
-    id: nextId(),
-    url: parsed.href,
-    platform: detectPlatform(parsed.href),
-    title: "Scanned listing — " + parsed.pathname.split("/").filter(Boolean).pop() || "Product listing",
-    scannedAt: new Date().toISOString(),
-    status: extractedFields.every((f) => f.found)
-      ? "compliant"
-      : extractedFields.some((f) => f.found)
-      ? "partial"
-      : "non_compliant",
-    extractedFields,
-    images: SAMPLE_IMAGES,
-    rawText: [
-      "Product listing scraped from " + detectPlatform(parsed.href),
-      "MRP: Rs. 28.00 (Inclusive of all taxes)",
-      "Net Wt: 1000 g",
-      "Marketed by: Sample Foods Pvt Ltd, Pune - 411001",
-      "Customer Care: 1800-111-2222",
-      "Country of Origin: India",
-    ],
+/**
+ * Fetch a single inspection report by ID
+ */
+export async function getScanById(id) {
+  const headers = getAuthHeaders();
+  const res = await fetch(`${AUTH_API_BASE}/inspector/reports/${id}`, { headers });
+  if (!res.ok) {
+    throw new Error("Statutory inspection record not found.");
+  }
+  const data = await res.json();
+  return normalizeReport(data.report || data);
+}
+
+/**
+ * File an official statutory report in MongoDB Atlas via the backend
+ */
+export async function fileStatutoryReport(scanResult) {
+  const headers = getAuthHeaders();
+  if (!headers.Authorization) {
+    throw new Error("Officer session expired. Please sign in again.");
+  }
+
+  const compliance = scanResult?.compliance?.compliance || scanResult?.compliance || {};
+  const declarations = scanResult?.declarations || scanResult?.compliance?.declarations || {};
+  const packageRecord = scanResult?.packageRecord || {};
+  const summary = scanResult?.summary || {};
+
+  const isCompliant = compliance.compliant === true;
+  const isApplicable = compliance.applicable !== false;
+  const complianceResult = !isApplicable ? "exempt" : isCompliant ? "compliant" : "non_compliant";
+
+  const payload = {
+    channel: "ecommerce",
+    product_name:
+      scanResult.listing?.title ||
+      packageRecord.commodity?.productName ||
+      declarations.commodityName?.value ||
+      "Marketplace Listing Inspection",
+    brand: declarations.commodityClassification?.brandName || packageRecord.commodity?.brandName || null,
+    category: declarations.commodityClassification?.category || packageRecord.commodity?.category || null,
+    listing_url: scanResult.url,
+    is_edible: declarations.commodityClassification?.isFood === true,
+    is_imported: declarations.countryOfOrigin?.isImported === true,
+    declared_values: declarations,
+    compliance_result: complianceResult,
+    summary: {
+      totalViolations: compliance.violations?.length || 0,
+      violations: compliance.violations || [],
+      ...summary,
+    },
+    inspected_at: scanResult.crawledAt || new Date().toISOString(),
+    pdf_url: `https://nirikshakscraper.duckdns.org/reports/dmi-${Date.now()}`,
   };
 
-  scans = [scan, ...scans];
-  return scan;
+  const res = await fetch(`${AUTH_API_BASE}/inspector/reports`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    const msg = data.error?.message || data.message || "Failed to file statutory report.";
+    throw new Error(msg);
+  }
+
+  return normalizeReport(data.report || data);
 }

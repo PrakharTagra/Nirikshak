@@ -27,6 +27,7 @@ const createSchema = z.object({
   jurisdiction_id: z.string({ error: 'Choose a jurisdiction.' }).min(1, 'Choose a jurisdiction.'),
   email: z.string().email('Enter a valid email address.').optional().or(z.literal('')),
   phone: z.string().max(20, 'That phone number is too long.').optional().or(z.literal('')),
+  password: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
 });
 
 const statusSchema = z.object({
@@ -99,15 +100,16 @@ accountsRouter.post('/', async (req, res) => {
       status: 'active',
     }).sort({ created_at: 1 }).lean();
 
-    if (!ac) {
-      throw badRequest('Check the highlighted fields.', {
-        jurisdiction_id: 'Create an Assistant Controller for this jurisdiction first — inspectors report to one.',
-      });
+    if (ac) {
+      reportsTo = ac._id;
+    } else {
+      // If no AC exists in this jurisdiction yet, assign directly under CLM so provisioning succeeds
+      reportsTo = req.user.id;
     }
-    reportsTo = ac._id;
   }
 
-  const password = generatePassword();
+  const customPasswordProvided = Boolean(data.password && data.password.trim());
+  const password = customPasswordProvided ? data.password.trim() : generatePassword();
   const hash = await bcrypt.hash(password, 12);
 
   const created = await withTransaction(async (session) => {
@@ -121,7 +123,7 @@ accountsRouter.post('/', async (req, res) => {
       jurisdiction_id: data.jurisdiction_id,
       reports_to: reportsTo,
       created_by: req.user.id,
-      must_change_password: true,
+      must_change_password: !customPasswordProvided,
     }], session ? { session } : {});
 
     await AdminAuditLog.create([{

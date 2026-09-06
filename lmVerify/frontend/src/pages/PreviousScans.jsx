@@ -119,61 +119,92 @@ export default function PreviousScans() {
           <table className="w-full text-left text-sm">
             <thead className="bg-[#f1f5f9] text-[11px] uppercase tracking-wider text-slate-700 font-bold border-b border-slate-200">
               <tr>
+                <th className="px-4 py-3">Reference No.</th>
                 <th className="px-4 py-3">Product Listing / Record</th>
                 <th className="px-4 py-3">Marketplace</th>
-                <th className="px-4 py-3">Scanned Timestamp</th>
+                <th className="px-4 py-3">Scanned Date</th>
                 <th className="px-4 py-3">Rule Verdict</th>
+                <th className="px-4 py-3">AC Decision</th>
                 <th className="px-4 py-3 text-right">Official Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {filtered.map((s) => (
                 <tr key={s.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <Link
+                      to={`/scans/${s.id}`}
+                      className="font-mono font-bold text-xs text-govt-navy hover:underline"
+                    >
+                      {s.reference_no || `REC-${s.id.slice(-6)}`}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3.5">
                     <Link
                       to={`/scans/${s.id}`}
-                      className="font-bold text-govt-navy hover:underline line-clamp-1"
+                      className="font-bold text-slate-900 hover:text-govt-navy hover:underline line-clamp-1"
                     >
                       {s.title}
                     </Link>
-                    <p className="text-[11px] text-slate-500 font-mono truncate max-w-sm">{s.url}</p>
+                    <p className="text-[11px] text-slate-500 font-mono truncate max-w-sm">{s.url || "Marketplace Listing"}</p>
                   </td>
-                  <td className="px-4 py-3.5 font-semibold text-slate-700">
+                  <td className="px-4 py-3.5 font-semibold text-slate-700 whitespace-nowrap">
                     <span className="inline-block rounded bg-slate-100 px-2 py-0.5 text-xs font-medium border border-slate-200">
                       {s.platform}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-xs text-slate-600 font-medium">
+                  <td className="px-4 py-3.5 text-xs text-slate-600 font-medium whitespace-nowrap">
                     {new Date(s.scannedAt).toLocaleString("en-IN", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
                     })}
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-4 py-3.5 whitespace-nowrap">
                     <StatusBadge status={s.status} />
                   </td>
-                  <td className="px-4 py-3.5 text-right">
-                    <button
-                      type="button"
-                      onClick={(e) => handleDownloadPdf(e, s)}
-                      disabled={downloadingId === s.id}
-                      className="inline-flex items-center gap-1 rounded-sm border border-govt-navy bg-white px-2.5 py-1 text-xs font-bold text-govt-navy hover:bg-govt-light-blue shadow-sm transition-colors"
-                      title="Download Official PDF Inspection Report"
-                    >
-                      <span>📄</span>
-                      <span>{downloadingId === s.id ? "PDF…" : "PDF Report"}</span>
-                      <span>⬇</span>
-                    </button>
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    {s.controller_status === "approved" ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        ✅ Approved
+                      </span>
+                    ) : s.controller_status === "rejected" ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200" title={s.decision_reason}>
+                        ❌ Rejected
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        ⏳ In Review
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                    <div className="inline-flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDownloadPdf(e, s)}
+                        disabled={downloadingId === s.id}
+                        className="inline-flex items-center gap-1 rounded-sm border border-govt-navy bg-white px-2.5 py-1 text-xs font-bold text-govt-navy hover:bg-govt-light-blue shadow-sm transition-colors"
+                        title="Download Official PDF Inspection Report"
+                      >
+                        <span>📄</span>
+                        <span>{downloadingId === s.id ? "PDF…" : "PDF"}</span>
+                        <span>⬇</span>
+                      </button>
+                      <Link
+                        to={`/scans/${s.id}`}
+                        className="rounded-sm bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-200 border border-slate-300"
+                      >
+                        Details
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5}>
+                  <td colSpan={7}>
                     <EmptyState
                       message="No records match your filter criteria."
                       hint="Try adjusting the search query or status filter."

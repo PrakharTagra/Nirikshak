@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { crawlListing, checkCompliance } from "../lib/scraperApi.js";
+import { fileStatutoryReport } from "../lib/api.js";
 import RawListingView from "../components/RawListingView.jsx";
 import ComplianceReport from "../components/ComplianceReport.jsx";
 import { Breadcrumb, Panel, Loading } from "../components/ui.jsx";
@@ -16,6 +18,11 @@ export default function NewScan() {
   const [checkError, setCheckError] = useState("");
   const [compliance, setCompliance] = useState(null);
   const [tab, setTab] = useState("compliance"); // "compliance" | "raw"
+
+  // Filing state
+  const [filing, setFiling] = useState(false);
+  const [filedReport, setFiledReport] = useState(null);
+  const [fileError, setFileError] = useState("");
 
   const handleScan = async (e) => {
     e.preventDefault();
@@ -79,6 +86,25 @@ export default function NewScan() {
       setCheckError(err.message || "Failed to execute Legal Metrology rule engine.");
     } finally {
       setChecking(false);
+    }
+  };
+
+  const handleFileReport = async () => {
+    if (!compliance || !result) return;
+    setFiling(true);
+    setFileError("");
+    try {
+      const saved = await fileStatutoryReport({
+        ...compliance,
+        url: result.url,
+        platform: result.platform,
+        listing: result,
+      });
+      setFiledReport(saved);
+    } catch (err) {
+      setFileError(err.message || "Failed to file statutory report to the registry.");
+    } finally {
+      setFiling(false);
     }
   };
 
@@ -218,7 +244,62 @@ export default function NewScan() {
               )}
 
               {compliance && !checking && (
-                <ComplianceReport report={{ ...compliance, url: result.url, platform: result.platform }} />
+                <div className="space-y-4">
+                  {/* Statutory Registry Filing Card */}
+                  <div className="bg-white border-2 border-govt-navy p-5 rounded-sm shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-govt-maroon block mb-1">
+                          🏛️ Official Enforcement Action
+                        </span>
+                        <h3 className="text-base font-bold text-govt-navy">
+                          Record Inspection in Legal Metrology Registry
+                        </h3>
+                        <p className="text-xs text-slate-600 mt-1 max-w-xl">
+                          Transmit these verified marketplace declarations and non-compliance contraventions to the Assistant Controller's statutory review queue.
+                        </p>
+                      </div>
+
+                      {!filedReport ? (
+                        <button
+                          type="button"
+                          onClick={handleFileReport}
+                          disabled={filing}
+                          className="rounded-sm bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm px-6 py-3 shadow transition-colors flex items-center gap-2 shrink-0 disabled:opacity-60"
+                        >
+                          <span>{filing ? "Submitting to Registry…" : "🏛️ File Official Statutory Report"}</span>
+                        </button>
+                      ) : (
+                        <div className="bg-emerald-50 border border-emerald-300 px-4 py-2 rounded text-xs text-emerald-900 font-semibold flex items-center gap-2">
+                          <span>✅ Officially Filed:</span>
+                          <span className="font-mono font-bold text-sm text-govt-navy">{filedReport.reference_no}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {fileError && (
+                      <p className="mt-3 text-xs text-red-700 font-semibold bg-red-50 p-2 rounded border border-red-200">
+                        ❌ {fileError}
+                      </p>
+                    )}
+
+                    {filedReport && (
+                      <div className="mt-4 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <span className="text-slate-600">
+                          Assigned Reference: <strong className="font-mono text-govt-navy">{filedReport.reference_no}</strong> · Awaiting Assistant Controller Decision
+                        </span>
+                        <Link
+                          to="/scans"
+                          className="font-bold text-govt-navy underline hover:text-blue-900"
+                        >
+                          View in Historical Surveillance Registry →
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  <ComplianceReport report={{ ...compliance, url: result.url, platform: result.platform }} />
+                </div>
               )}
             </div>
           )}
