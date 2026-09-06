@@ -1,0 +1,14 @@
+{
+  "name": "sharp",
+  "version": "0.33.5",
+  "main": "index.cjs",
+  "module": "index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs",
+      "default": "./index.cjs"
+    }
+  }
+}
