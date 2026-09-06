@@ -17,6 +17,15 @@ const Report = require('./models/Report');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.enable('trust proxy');
+
+// Helper to get fully-qualified public URL
+function getBaseUrl(req) {
+  const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers['x-forwarded-host'] || req.get('host');
+  return `${proto}://${host}`;
+}
+
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -128,7 +137,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       if (!pdfUrl) {
         // Fallback to local server URL if Cloudinary is not configured
         const relPath = path.relative(config.paths.outputRoot, result.reportPath).replace(/\\/g, '/');
-        pdfUrl = `${req.protocol}://${req.get('host')}/output/${relPath}`;
+        pdfUrl = `${getBaseUrl(req)}/output/${relPath}`;
       }
     }
 
@@ -142,7 +151,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       ? 'COMPLIANT'
       : 'NON-COMPLIANT';
 
-    const directPdfUrl = `${req.protocol}://${req.get('host')}/api/v1/reports/${reportId}/pdf`;
+    const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${reportId}/pdf`;
 
     // 3. Store ONLY the final PDF into MongoDB Atlas (no raw inspection records)
     let dbRecord = null;
@@ -207,7 +216,7 @@ app.get('/api/v1/reports/:id', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Report not found in database.' });
     }
 
-    const directPdfUrl = `${req.protocol}://${req.get('host')}/api/v1/reports/${report.reportId}/pdf`;
+    const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${report.reportId}/pdf`;
 
     res.json({
       success: true,
