@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const mongoose = require('mongoose');
 
@@ -12,6 +12,7 @@ const ReportSchema = new mongoose.Schema(
     reportId: { type: String, required: true, unique: true, index: true },
     productId: { type: String, default: null, index: true },
     pdfUrl: { type: String, required: true },
+    cloudinaryUrl: { type: String, default: null },
     productName: { type: String, default: 'Package Report' },
     status: { type: String, default: null }, // COMPLIANT, NON-COMPLIANT, or EXEMPT
   },

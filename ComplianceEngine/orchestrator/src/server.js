@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const express = require('express');
 const cors = require('cors');
@@ -142,7 +142,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       ? 'COMPLIANT'
       : 'NON-COMPLIANT';
 
-    const reportId = `REP-${result.productId}-${Date.now()}`;
+    const directPdfUrl = `${req.protocol}://${req.get('host')}/api/v1/reports/${reportId}/pdf`;
 
     // 3. Store ONLY the final PDF into MongoDB Atlas (no raw inspection records)
     let dbRecord = null;
@@ -151,7 +151,8 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
         dbRecord = await Report.create({
           reportId,
           productId: String(result.productId),
-          pdfUrl,
+          pdfUrl: directPdfUrl,
+          cloudinaryUrl: pdfUrl,
           productName,
           status,
         });
@@ -170,8 +171,9 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       success: true,
       data: {
         reportId: finalReportId,
-        pdfUrl,
-        directPdfUrl: `${req.protocol}://${req.get('host')}/api/v1/reports/${finalReportId}/pdf`,
+        pdfUrl: directPdfUrl,
+        directPdfUrl,
+        cloudinaryUrl: pdfUrl,
         status,
         productName,
       },
@@ -205,12 +207,15 @@ app.get('/api/v1/reports/:id', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Report not found in database.' });
     }
 
+    const directPdfUrl = `${req.protocol}://${req.get('host')}/api/v1/reports/${report.reportId}/pdf`;
+
     res.json({
       success: true,
       data: {
         reportId: report.reportId,
-        pdfUrl: report.pdfUrl,
-        directPdfUrl: `${req.protocol}://${req.get('host')}/api/v1/reports/${report.reportId}/pdf`,
+        pdfUrl: directPdfUrl,
+        directPdfUrl,
+        cloudinaryUrl: report.cloudinaryUrl || report.pdfUrl,
         status: report.status,
         productName: report.productName,
         createdAt: report.createdAt,
@@ -222,37 +227,48 @@ app.get('/api/v1/reports/:id', async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Direct PDF Viewer Endpoint: Immediately Streams/Redirects to the Final PDF
-// Ideal for mobile screen PDF rendering
+// Direct PDF Viewer Endpoint: Immediately Streams the Final PDF
+// Ideal for mobile screen PDF rendering (returns 200 application/pdf)
 // ---------------------------------------------------------------------------
 app.get('/api/v1/reports/:id/pdf', async (req, res) => {
   try {
-    let pdfUrl = null;
+    let report = null;
+    let productId = null;
 
     if (mongoose.connection.readyState === 1) {
       const query = mongoose.Types.ObjectId.isValid(req.params.id)
         ? { _id: req.params.id }
         : { $or: [{ reportId: req.params.id }, { productId: req.params.id }] };
 
-      const report = await Report.findOne(query).lean();
-      if (report && report.pdfUrl) {
-        pdfUrl = report.pdfUrl;
+      report = await Report.findOne(query).lean();
+      if (report && report.productId) {
+        productId = report.productId;
       }
     }
 
-    if (!pdfUrl) {
-      // Fallback: check local output/product_<id>/report.pdf
-      const candPath = path.join(config.paths.outputRoot, `product_${req.params.id}`, 'report.pdf');
-      if (fs.existsSync(candPath)) {
+    if (!productId && req.params.id) {
+      const match = req.params.id.match(/^REP-(\d+)-/);
+      if (match) productId = match[1];
+      else if (/^\d+$/.test(req.params.id)) productId = req.params.id;
+    }
+
+    // 1. If local PDF file exists, stream directly as application/pdf with 200 OK
+    if (productId) {
+      const localPath = path.join(config.paths.outputRoot, `product_${productId}`, 'report.pdf');
+      if (fs.existsSync(localPath)) {
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'inline; filename="compliance_report.pdf"');
-        return fs.createReadStream(candPath).pipe(res);
+        res.setHeader('Content-Disposition', `inline; filename="compliance_report_${productId}.pdf"`);
+        return fs.createReadStream(localPath).pipe(res);
       }
-      return res.status(404).json({ success: false, error: 'PDF report not found.' });
     }
 
-    // Redirect directly to the Cloudinary CDN PDF URL
-    return res.redirect(pdfUrl);
+    // 2. Fallback to Cloudinary redirect if local file is missing
+    const fallbackUrl = report?.cloudinaryUrl || report?.pdfUrl;
+    if (fallbackUrl && fallbackUrl.startsWith('http')) {
+      return res.redirect(fallbackUrl);
+    }
+
+    return res.status(404).json({ success: false, error: 'PDF report not found.' });
   } catch (err) {
     logger.error('server', `Error fetching PDF for ${req.params.id}: ${err.message}`);
     res.status(500).json({ success: false, error: err.message });
