@@ -19,10 +19,22 @@ export const ACTION_LABEL = { approved: 'Approve', rejected: 'Reject' };
  *  console can never disagree about what is open. */
 export const AWAITING_STATUSES = 'pending';
 
-export async function getQueue({ status = 'all', channel = 'all', search = '' } = {}) {
+export const COMPLIANCE_LABEL = {
+  COMPLIANT: 'Compliant',
+  NON_COMPLIANT: 'Non-Compliant',
+  EXEMPT: 'Exempt',
+};
+
+export async function getJurisdictionLmos() {
+  const { data } = await api.get('/reports/lmos');
+  return data;
+}
+
+export async function getQueue({ status = 'all', channel = 'all', search = '', officer_id = 'all' } = {}) {
   const params = {};
   if (status !== 'all') params.status = status;
   if (channel !== 'all') params.channel = channel;
+  if (officer_id && officer_id !== 'all') params.officer_id = officer_id;
   if (search.trim()) params.search = search.trim();
 
   const { data } = await api.get('/reports', { params });

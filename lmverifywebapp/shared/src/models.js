@@ -80,6 +80,7 @@ const reportSchema = new mongoose.Schema({
   lmo_id: { type: String, ref: 'User' },
   jurisdiction_id: { type: String, ref: 'Jurisdiction', required: true },
   product_name: { type: String, default: null },
+  productName: { type: String, default: null },
   brand: { type: String, default: null },
   category: { type: String, default: null },
   is_edible: { type: Boolean, default: false },
@@ -88,7 +89,17 @@ const reportSchema = new mongoose.Schema({
   listing_url: { type: String, default: null },
   pdf_url: { type: String, required: true },
   report_pdf_link: { type: String },
+  directPdfUrl: { type: String, default: null },
+  cloudinaryUrl: { type: String, default: null },
+  reportId: { type: String, default: null },
+  productId: { type: String, default: null },
+  preprocessedImages: [{ type: String }],
+  evidenceImages: [{ type: mongoose.Schema.Types.Mixed }],
+  summary: { type: mongoose.Schema.Types.Mixed, default: () => ({}) },
   status: { type: String, enum: Object.values(REPORT_STATUS), default: REPORT_STATUS.PENDING },
+  compliance_result: { type: String, default: null },
+  complianceResult: { type: String, default: null },
+  assessment_status: { type: String, default: null },
   decision_reason: { type: String, default: null },
   decided_by: { type: String, ref: 'User', default: null },
   assistant_controller_id: { type: String, ref: 'User', default: null },
@@ -106,6 +117,16 @@ reportSchema.pre('save', function (next) {
 
   if (this.report_pdf_link && !this.pdf_url) this.pdf_url = this.report_pdf_link;
   if (this.pdf_url && !this.report_pdf_link) this.report_pdf_link = this.pdf_url;
+  if (this.pdfUrl && !this.pdf_url) this.pdf_url = this.pdfUrl;
+
+  if (this.productName && !this.product_name) this.product_name = this.productName;
+  if (this.product_name && !this.productName) this.productName = this.product_name;
+
+  if (this.complianceResult && !this.compliance_result) this.compliance_result = this.complianceResult;
+  if (this.compliance_result && !this.complianceResult) this.complianceResult = this.compliance_result;
+
+  if (this.reportId && !this.reference_no) this.reference_no = this.reportId;
+  if (this.reference_no && !this.reportId) this.reportId = this.reference_no;
 
   if (typeof next === 'function') next();
 });
@@ -113,6 +134,7 @@ reportSchema.pre('save', function (next) {
 reportSchema.index({ jurisdiction_id: 1, status: 1 });
 reportSchema.index({ filed_by: 1 });
 reportSchema.index({ lmo_id: 1 });
+reportSchema.index({ reportId: 1 });
 reportSchema.index({ inspected_at: -1 });
 reportSchema.index({ submitted_at: -1 });
 reportSchema.index({ status: 1 });

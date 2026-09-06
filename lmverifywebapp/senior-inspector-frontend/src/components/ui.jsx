@@ -22,6 +22,26 @@ export function StatusBadge({ status }) {
   );
 }
 
+export function ComplianceBadge({ result }) {
+  if (!result) return <span className="text-xs text-slate-400">—</span>;
+  const isNonCompliant = result === 'NON_COMPLIANT';
+  const isCompliant = result === 'COMPLIANT';
+  const style = isNonCompliant
+    ? 'bg-rose-50 text-rose-800 border-rose-300'
+    : isCompliant
+      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+      : 'bg-slate-100 text-slate-700 border-slate-300';
+
+  const label = isNonCompliant ? 'Non-Compliant' : isCompliant ? 'Compliant' : result;
+
+  return (
+    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-sm px-2 py-0.5 text-xs font-semibold border ${style}`}>
+      <span className="font-bold">{isNonCompliant ? '⚠' : isCompliant ? '✓' : '•'}</span>
+      <span>{label}</span>
+    </span>
+  );
+}
+
 export function PdfLink({ url, label = 'Open PDF' }) {
   if (!url) return <span className="text-xs text-slate-400">No PDF</span>;
   return (

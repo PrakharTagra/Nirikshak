@@ -4,7 +4,7 @@ import {
   getReport, decide, DECIDABLE, REASON_REQUIRED, ACTION_LABEL,
   STATUS_LABEL, CHANNEL_LABEL,
 } from '../lib/acApi.js';
-import { StatusBadge, PdfLink, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
+import { StatusBadge, ComplianceBadge, PdfLink, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
 
 const ACTION_STYLE = {
   approved: 'bg-emerald-700 hover:bg-emerald-800 focus-visible:outline-emerald-700',
@@ -160,17 +160,20 @@ export default function ReportReview() {
         <div className="flex flex-wrap items-center gap-4">
           <h1 className="font-mono text-2xl font-bold text-govt-navy">{report.reference_no}</h1>
           <StatusBadge status={report.status} />
+          {report.compliance_result && <ComplianceBadge result={report.compliance_result} />}
         </div>
         <p className="mt-2 text-sm font-medium text-slate-600">
+          Product: <span className="text-slate-900 font-bold">{report.product_name || 'Packaged Commodity'}</span>
+          <span className="mx-2 text-slate-300">|</span>
           Filed by <span className="text-slate-900 font-semibold">{report.officer_name}</span> ({report.officer_role}) via {CHANNEL_LABEL[report.channel]}
         </p>
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-300 bg-white p-5 rounded-sm shadow-sm border-l-4 border-l-govt-navy">
         <div>
-          <h2 className="text-base font-bold text-slate-900">Official Inspection Document</h2>
+          <h2 className="text-base font-bold text-slate-900">Official Statutory Inspection Document</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Contains all verified declarations and photographic evidence.
+            Contains all statutory rule checks, computer vision declarations, and cropped violation evidence.
           </p>
         </div>
         <PdfLink url={report.pdf_url} label="View Full Report PDF" />
@@ -179,13 +182,22 @@ export default function ReportReview() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Panel title="Report Metadata">
           <dl className="divide-y divide-slate-200 bg-white">
+            <Field label="Commodity / Product">{report.product_name || 'Packaged Commodity'}</Field>
+            {report.compliance_result && (
+              <Field label="AI Compliance Finding">
+                <ComplianceBadge result={report.compliance_result} />
+              </Field>
+            )}
             <Field label="Channel">
               <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded text-xs font-bold border border-slate-200">
                 {CHANNEL_LABEL[report.channel]}
               </span>
             </Field>
-            <Field label="Filed By">{report.officer_name} <br/><span className="text-xs font-normal text-slate-500">{report.officer_role}</span></Field>
-            <Field label="Jurisdiction">{report.jurisdiction}</Field>
+            <Field label="Submitting LMO">
+              {report.officer_name} <br/>
+              <span className="text-xs font-normal text-slate-500">{report.officer_role}</span>
+            </Field>
+            <Field label="Jurisdiction">{report.jurisdiction || 'Regional Office'}</Field>
             <Field label="Inspection Date">{formatDate(report.inspected_at)}</Field>
             <Field label="Submission Time">{formatDateTime(report.submitted_at)}</Field>
             <Field label="Commodity Type">

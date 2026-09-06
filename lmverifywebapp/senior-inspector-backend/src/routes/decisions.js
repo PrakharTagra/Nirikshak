@@ -30,7 +30,10 @@ function parse(schema, body) {
 
 async function loadScoped(reportId, user) {
   const scope = jurisdictionScopeFor(user);
-  const report = await Report.findOne({ _id: reportId, jurisdiction_id: scope.jurisdictionId });
+  const report = await Report.findOne({
+    $or: [{ _id: reportId }, { reference_no: reportId }, { reportId }],
+    jurisdiction_id: scope.jurisdictionId,
+  });
   if (!report) throw notFound('That report does not exist.');
   return report;
 }
@@ -47,7 +50,7 @@ decisionRouter.post('/:id/decision', async (req, res) => {
   if (report.status !== DECIDABLE_FROM) {
     throw new AppError(
       409, 'ALREADY_DECIDED',
-      `${report.reference_no} was already ${report.status}. A decision cannot be changed.`,
+      `${report.reference_no || report.reportId} was already ${report.status}. A decision cannot be changed.`,
       { current_status: report.status },
     );
   }
@@ -59,6 +62,7 @@ decisionRouter.post('/:id/decision', async (req, res) => {
         status,
         decision_reason: reason?.trim() || null,
         decided_by: req.user.id,
+        assistant_controller_id: req.user.id,
         decided_at: new Date(),
       },
     },

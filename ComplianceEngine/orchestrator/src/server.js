@@ -117,6 +117,15 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       productName = 'Package Inspection',
       packageDimensions = null,
       isEcommerce = false,
+      officerId = null,
+      lmoId = null,
+      lmo_id = null,
+      filedBy = null,
+      filed_by = null,
+      jurisdictionId = null,
+      jurisdiction_id = null,
+      inspectedAt = null,
+      inspected_at = null,
     } = req.body;
 
     const pipelineOptions = {
@@ -146,40 +155,93 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
     const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${reportId}/pdf`;
     const finalPdfUrl = result.pdfUrl || directPdfUrl;
 
-    // 3. Store ONLY the final statutory assessment and Cloudinary asset links into MongoDB Atlas
+    // 3. Resolve submitting Legal Metrology Officer (LMO) and regional Jurisdiction
+    let resolvedOfficerId = officerId || lmoId || lmo_id || filedBy || filed_by || null;
+    let resolvedJurisdictionId = jurisdictionId || jurisdiction_id || null;
+
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const usersCollection = mongoose.connection.collection('users');
+        if (resolvedOfficerId) {
+          const officerUser = await usersCollection.findOne({
+            $or: [{ _id: resolvedOfficerId }, { username: String(resolvedOfficerId).toLowerCase() }]
+          });
+          if (officerUser) {
+            resolvedOfficerId = officerUser._id;
+            if (!resolvedJurisdictionId && officerUser.jurisdiction_id) {
+              resolvedJurisdictionId = officerUser.jurisdiction_id;
+            }
+          }
+        } else {
+          // If not explicitly provided, assign to active regional LMO
+          const defaultLmo = (await usersCollection.findOne({ role: 'LMO', status: 'active' })) ||
+                             (await usersCollection.findOne({ role: 'LMO' }));
+          if (defaultLmo) {
+            resolvedOfficerId = defaultLmo._id;
+            resolvedJurisdictionId = resolvedJurisdictionId || defaultLmo.jurisdiction_id;
+          }
+        }
+      } catch (lookupErr) {
+        logger.warn('api', `Officer lookup note: ${lookupErr.message}`);
+      }
+    }
+
+    const inspectionDate = inspectedAt || inspected_at ? new Date(inspectedAt || inspected_at) : new Date();
+
+    // 4. Store statutory assessment into MongoDB Atlas:
+    // IMPORTANT: Reports initially generated MUST enter status: 'pending' (statutory law requires
+    // manual acceptance or rejection by an Assistant Controller; status changes are NEVER automated).
     let dbRecord = null;
     if (mongoose.connection.readyState === 1) {
       try {
         dbRecord = await Report.create({
+          _id: reportId,
           reportId,
           reference_no: reportId,
           productId: String(result.productId),
           productName: finalProductName,
-          status: result.status,
+          product_name: finalProductName,
+          channel: (isEcommerce === 'true' || isEcommerce === true) ? 'ecommerce' : 'field',
+          filed_by: resolvedOfficerId,
+          lmo_id: resolvedOfficerId,
+          jurisdiction_id: resolvedJurisdictionId,
+          status: 'pending', // Statutory requirement: ALWAYS pending on initial generation
+          complianceResult: result.status, // AI compliance finding ('COMPLIANT', 'NON_COMPLIANT', 'EXEMPT')
+          compliance_result: result.status,
+          assessmentStatus: result.status,
           pdfUrl: finalPdfUrl,
+          pdf_url: finalPdfUrl,
+          report_pdf_link: finalPdfUrl,
           cloudinaryUrl: result.cloudinaryUrl,
           directPdfUrl,
           preprocessedImages: result.preprocessedImages || [],
           evidenceImages: result.violationEvidences || [],
           summary: result.summary || {},
+          inspected_at: inspectionDate,
+          submitted_at: new Date(),
         });
-        logger.info('api', `Final PDF & evidence links saved to MongoDB Atlas: ${reportId} (${finalProductName})`);
+        logger.info('api', `Statutory report filed as PENDING in MongoDB: ${reportId} (${finalProductName})`);
       } catch (dbErr) {
         logger.error('api', `Failed to save assessment to MongoDB Atlas: ${dbErr.message}`);
       }
     }
 
-    // 4. Clean up uploaded temporary photos from disk immediately
+    // 5. Clean up uploaded temporary photos from disk immediately
     cleanupFiles(localFilePaths);
 
-    // 5. Return complete statutory assessment and Cloudinary links to the mobile app
+    // 6. Return complete assessment and Cloudinary links to the mobile app
     const finalReportId = dbRecord ? dbRecord.reportId : reportId;
     return res.status(200).json({
       success: true,
       data: {
         reportId: finalReportId,
+        referenceNo: finalReportId,
         productName: finalProductName,
-        status: result.status,
+        status: 'pending', // Always pending until Assistant Controller decides
+        complianceResult: result.status, // AI evaluation: COMPLIANT / NON_COMPLIANT
+        assessmentStatus: result.status,
+        officerId: resolvedOfficerId,
+        jurisdictionId: resolvedJurisdictionId,
         pdfUrl: finalPdfUrl,
         directPdfUrl,
         cloudinaryUrl: result.cloudinaryUrl,
@@ -211,28 +273,35 @@ app.get('/api/v1/reports/:id', async (req, res) => {
 
     const query = mongoose.Types.ObjectId.isValid(req.params.id)
       ? { _id: req.params.id }
-      : { $or: [{ reportId: req.params.id }, { productId: req.params.id }] };
+      : { $or: [{ reportId: req.params.id }, { reference_no: req.params.id }, { productId: req.params.id }] };
 
     const report = await Report.findOne(query).lean();
     if (!report) {
       return res.status(404).json({ success: false, error: 'Report not found in database.' });
     }
 
-    const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${report.reportId}/pdf`;
+    const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${report.reportId || report.reference_no}/pdf`;
 
     res.json({
       success: true,
       data: {
-        reportId: report.reportId,
-        productName: report.productName,
-        status: report.status,
-        pdfUrl: report.cloudinaryUrl || report.pdfUrl || directPdfUrl,
+        reportId: report.reportId || report.reference_no,
+        referenceNo: report.reference_no || report.reportId,
+        productName: report.productName || report.product_name,
+        status: report.status || 'pending',
+        complianceResult: report.complianceResult || report.compliance_result || report.assessmentStatus,
+        officerId: report.filed_by || report.lmo_id,
+        jurisdictionId: report.jurisdiction_id,
+        decisionReason: report.decision_reason || null,
+        decidedBy: report.decided_by || report.assistant_controller_id || null,
+        decidedAt: report.decided_at || null,
+        pdfUrl: report.cloudinaryUrl || report.pdfUrl || report.pdf_url || directPdfUrl,
         directPdfUrl,
         cloudinaryUrl: report.cloudinaryUrl,
         preprocessedImages: report.preprocessedImages || [],
         evidenceImages: report.evidenceImages || [],
         summary: report.summary || {},
-        createdAt: report.createdAt,
+        createdAt: report.createdAt || report.created_at,
       },
     });
   } catch (err) {
