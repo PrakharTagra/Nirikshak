@@ -151,6 +151,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       ? 'COMPLIANT'
       : 'NON-COMPLIANT';
 
+    const reportId = `REP-${result.productId}-${Date.now()}`;
     const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${reportId}/pdf`;
 
     // 3. Store ONLY the final PDF into MongoDB Atlas (no raw inspection records)
