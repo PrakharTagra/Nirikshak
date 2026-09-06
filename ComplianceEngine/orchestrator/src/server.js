@@ -160,6 +160,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
       try {
         dbRecord = await Report.create({
           reportId,
+          reference_no: reportId,
           productId: String(result.productId),
           pdfUrl: directPdfUrl,
           cloudinaryUrl: pdfUrl,

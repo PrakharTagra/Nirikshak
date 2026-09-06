@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const ReportSchema = new mongoose.Schema(
   {
     reportId: { type: String, required: true, unique: true, index: true },
+    reference_no: { type: String, default: null }, // Backwards compatibility with legacy queries
     productId: { type: String, default: null, index: true },
     pdfUrl: { type: String, required: true },
     cloudinaryUrl: { type: String, default: null },
