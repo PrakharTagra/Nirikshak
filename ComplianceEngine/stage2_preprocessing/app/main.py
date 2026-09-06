@@ -324,30 +324,6 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
         ],
     }
 
-    result_path = product_dir / "mapped.json"
-    result_path.write_text(
-        json.dumps(
-            {
-                "product_id": product_id,
-                "items": [
-                    {
-                        "image_index": it["image_index"],
-                        "filename": it["filename"],
-                        "metadata": it["metadata"],
-                        "extracted_text": it["extracted_text"],
-                        "declarations": it["declarations"],
-                        "contrast_analysis": it["contrast_analysis"],
-                    }
-                    for it in items_output
-                ],
-                "declarations": merged_declarations,
-                "contrast_analysis": batch_contrast_summary,
-            },
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-
     return JSONResponse({
         "product_id": product_id,
         "items": items_output,
@@ -355,6 +331,6 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
         "combined_regions": combined_regions,
         "declarations": merged_declarations,
         "contrast_analysis": batch_contrast_summary,
-        "result_json": str(result_path),
+        "result_json": None,
     })
 
