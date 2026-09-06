@@ -125,36 +125,28 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
     };
 
     // 1. Run COMPLETE processing pipeline entirely on the server
-    // (Preprocessing -> OCR -> Font Clearance -> LLM Extraction -> Rule Engine -> Evidence Crops -> PDF Builder)
+    // (Preprocessing -> OCR -> Font Clearance -> LLM Extraction -> Rule Engine -> Evidence Crops -> PDF Builder -> Cloudinary Upload)
     const result = await runPipelineForProduct(localFilePaths, pipelineOptions);
 
-    // 2. Upload the FINAL PDF to Cloudinary
-    let pdfUrl = null;
-    if (result.reportPath && fs.existsSync(result.reportPath)) {
-      if (isCloudinaryConfigured) {
-        pdfUrl = await uploadPdf(result.reportPath, 'compliance_reports');
-      }
-      if (!pdfUrl) {
-        // Fallback to local server URL if Cloudinary is not configured
-        const relPath = path.relative(config.paths.outputRoot, result.reportPath).replace(/\\/g, '/');
-        pdfUrl = `${getBaseUrl(req)}/output/${relPath}`;
-      }
-    }
-
-    if (!pdfUrl) {
-      throw new Error('Failed to generate compliance report PDF.');
-    }
-
-    const status = !result.complianceResult.applicable
-      ? 'EXEMPT'
-      : result.complianceResult.compliant
-      ? 'COMPLIANT'
-      : 'NON-COMPLIANT';
+    // 2. Resolve genuine product name (prioritize AI-detected commodity/brand over dummy test strings)
+    const dummyNames = new Set([
+      'package inspection',
+      'package report',
+      'test packaged commodity',
+      'bourbon biscuits 120g',
+      'packaged commodity',
+      'test product',
+      ''
+    ]);
+    const userProvided = (req.body.productName || '').trim();
+    const isDummy = dummyNames.has(userProvided.toLowerCase());
+    const finalProductName = (!isDummy && userProvided ? userProvided : null) || result.detectedProductName || userProvided || 'Packaged Commodity';
 
     const reportId = `REP-${result.productId}-${Date.now()}`;
     const directPdfUrl = `${getBaseUrl(req)}/api/v1/reports/${reportId}/pdf`;
+    const finalPdfUrl = result.pdfUrl || directPdfUrl;
 
-    // 3. Store ONLY the final PDF into MongoDB Atlas (no raw inspection records)
+    // 3. Store ONLY the final statutory assessment and Cloudinary asset links into MongoDB Atlas
     let dbRecord = null;
     if (mongoose.connection.readyState === 1) {
       try {
@@ -162,31 +154,39 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
           reportId,
           reference_no: reportId,
           productId: String(result.productId),
-          pdfUrl: directPdfUrl,
-          cloudinaryUrl: pdfUrl,
-          productName,
-          status,
+          productName: finalProductName,
+          status: result.status,
+          pdfUrl: finalPdfUrl,
+          cloudinaryUrl: result.cloudinaryUrl,
+          directPdfUrl,
+          preprocessedImages: result.preprocessedImages || [],
+          evidenceImages: result.violationEvidences || [],
+          summary: result.summary || {},
         });
-        logger.info('api', `Final PDF saved to MongoDB Atlas with reportId: ${reportId}`);
+        logger.info('api', `Final PDF & evidence links saved to MongoDB Atlas: ${reportId} (${finalProductName})`);
       } catch (dbErr) {
-        logger.error('api', `Failed to save PDF to MongoDB Atlas: ${dbErr.message}`);
+        logger.error('api', `Failed to save assessment to MongoDB Atlas: ${dbErr.message}`);
       }
     }
 
-    // 4. Clean up uploaded temporary photos from disk
+    // 4. Clean up uploaded temporary photos from disk immediately
     cleanupFiles(localFilePaths);
 
-    // 5. Return the final PDF link to the mobile app
+    // 5. Return complete statutory assessment and Cloudinary links to the mobile app
     const finalReportId = dbRecord ? dbRecord.reportId : reportId;
     return res.status(200).json({
       success: true,
       data: {
         reportId: finalReportId,
-        pdfUrl: directPdfUrl,
+        productName: finalProductName,
+        status: result.status,
+        pdfUrl: finalPdfUrl,
         directPdfUrl,
-        cloudinaryUrl: pdfUrl,
-        status,
-        productName,
+        cloudinaryUrl: result.cloudinaryUrl,
+        preprocessedImages: result.preprocessedImages || [],
+        evidenceImages: result.violationEvidences || [],
+        annotatedNetQuantityUrl: result.annotatedNetQuantityUrl || null,
+        summary: result.summary || {},
       },
     });
   } catch (err) {
@@ -201,7 +201,7 @@ app.post('/api/v1/inspect', upload.array('images', 10), async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Fetch Final PDF by Report ID or Product ID from MongoDB Atlas
+// Fetch Final Assessment & Cloudinary Asset Links by Report ID or Product ID
 // ---------------------------------------------------------------------------
 app.get('/api/v1/reports/:id', async (req, res) => {
   try {
@@ -224,11 +224,14 @@ app.get('/api/v1/reports/:id', async (req, res) => {
       success: true,
       data: {
         reportId: report.reportId,
-        pdfUrl: directPdfUrl,
-        directPdfUrl,
-        cloudinaryUrl: report.cloudinaryUrl || report.pdfUrl,
-        status: report.status,
         productName: report.productName,
+        status: report.status,
+        pdfUrl: report.cloudinaryUrl || report.pdfUrl || directPdfUrl,
+        directPdfUrl,
+        cloudinaryUrl: report.cloudinaryUrl,
+        preprocessedImages: report.preprocessedImages || [],
+        evidenceImages: report.evidenceImages || [],
+        summary: report.summary || {},
         createdAt: report.createdAt,
       },
     });
@@ -238,13 +241,11 @@ app.get('/api/v1/reports/:id', async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Direct PDF Viewer Endpoint: Immediately Streams the Final PDF
-// Ideal for mobile screen PDF rendering (returns 200 application/pdf)
+// Direct PDF Viewer Endpoint: Redirects to the Cloudinary PDF
 // ---------------------------------------------------------------------------
 app.get('/api/v1/reports/:id/pdf', async (req, res) => {
   try {
     let report = null;
-    let productId = null;
 
     if (mongoose.connection.readyState === 1) {
       const query = mongoose.Types.ObjectId.isValid(req.params.id)
@@ -252,31 +253,11 @@ app.get('/api/v1/reports/:id/pdf', async (req, res) => {
         : { $or: [{ reportId: req.params.id }, { productId: req.params.id }] };
 
       report = await Report.findOne(query).lean();
-      if (report && report.productId) {
-        productId = report.productId;
-      }
     }
 
-    if (!productId && req.params.id) {
-      const match = req.params.id.match(/^REP-(\d+)-/);
-      if (match) productId = match[1];
-      else if (/^\d+$/.test(req.params.id)) productId = req.params.id;
-    }
-
-    // 1. If local PDF file exists, stream directly as application/pdf with 200 OK
-    if (productId) {
-      const localPath = path.join(config.paths.outputRoot, `product_${productId}`, 'report.pdf');
-      if (fs.existsSync(localPath)) {
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `inline; filename="compliance_report_${productId}.pdf"`);
-        return fs.createReadStream(localPath).pipe(res);
-      }
-    }
-
-    // 2. Fallback to Cloudinary redirect if local file is missing
-    const fallbackUrl = report?.cloudinaryUrl || report?.pdfUrl;
-    if (fallbackUrl && fallbackUrl.startsWith('http')) {
-      return res.redirect(fallbackUrl);
+    const targetUrl = report?.cloudinaryUrl || report?.pdfUrl;
+    if (targetUrl && targetUrl.startsWith('http')) {
+      return res.redirect(targetUrl);
     }
 
     return res.status(404).json({ success: false, error: 'PDF report not found.' });

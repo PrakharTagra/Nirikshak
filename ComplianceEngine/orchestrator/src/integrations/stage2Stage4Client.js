@@ -138,12 +138,14 @@ async function callStage2And4Batch(imagePaths) {
   }
 }
 
+const os = require('os');
+
 async function savePreprocessedImage(base64, originalImagePath, suffix = '') {
-  const outputDir = config.paths.preprocessed;
+  const outputDir = path.join(os.tmpdir(), 'nirikshak_pipeline', 'temp_preprocessed');
   await fs.mkdir(outputDir, { recursive: true });
   const stem = path.basename(originalImagePath, path.extname(originalImagePath));
   const sfx = suffix ? `_${suffix}` : '';
-  const outputPath = path.join(outputDir, `${stem}${sfx}_${Date.now()}_preprocessed.png`);
+  const outputPath = path.join(outputDir, `${stem}${sfx}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}_preprocessed.png`);
   await fs.writeFile(outputPath, Buffer.from(base64, 'base64'));
   return outputPath;
 }

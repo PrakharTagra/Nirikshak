@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
@@ -72,9 +72,30 @@ async function uploadPdf(filePath, folder = 'compliance_reports') {
 }
 
 /**
+ * Upload base64 encoded image directly to Cloudinary without writing to disk
+ */
+async function uploadBase64Image(base64Data, filename = 'panel', folder = 'compliance_engine/preprocessed') {
+  if (!isConfigured) return null;
+  try {
+    const dataUri = base64Data.startsWith('data:') ? base64Data : `data:image/png;base64,${base64Data}`;
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder,
+      resource_type: 'image',
+      public_id: `${filename}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      overwrite: true,
+    });
+    logger.info('cloudinary', `Uploaded image (${filename}) -> ${result.secure_url}`);
+    return result.secure_url;
+  } catch (err) {
+    logger.error('cloudinary', `Base64 upload error: ${err.message}`, err);
+    return null;
+  }
+}
+
+/**
  * Upload an image (packaging panel photo or evidence crop) to Cloudinary
  */
-async function uploadImage(filePath, folder = 'product_images') {
+async function uploadImage(filePath, folder = 'compliance_engine/evidence') {
   return uploadFile(filePath, { folder, resource_type: 'image' });
 }
 
@@ -83,4 +104,5 @@ module.exports = {
   uploadFile,
   uploadPdf,
   uploadImage,
+  uploadBase64Image,
 };

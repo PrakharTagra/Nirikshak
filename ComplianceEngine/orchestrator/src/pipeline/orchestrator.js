@@ -175,177 +175,182 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
   const packageRecord = buildPackageRecord(declarations, labelMetrics);
   const complianceResult = runComplianceCheck(packageRecord);
 
-  // 6. Persistence in product_<n> directory
+  // 6. Use an ephemeral workspace in OS tmpdir (zero disk footprint on backend)
+  const os = require('os');
+  const { uploadImage, uploadPdf } = require('../utils/cloudinary');
   const productId = preprocessed.productId ?? allocateProductId(config.paths.outputRoot);
-  const productDir = path.join(config.paths.output, `product_${productId}`);
-  ensureDirs(productDir);
-
-  fs.writeFileSync(path.join(productDir, 'raw_extracted_text.txt'), ocrResult.text || '', 'utf8');
-
-  // Copy preprocessed images into product directory
-  const preprocessedImages = [];
-  (preprocessed.items || []).forEach((item, idx) => {
-    const destName = paths.length > 1 ? `preprocessed_${idx + 1}.png` : 'preprocessed.png';
-    const destPath = path.join(productDir, destName);
-    if (item.path && fs.existsSync(item.path)) {
-      if (path.resolve(item.path) !== path.resolve(destPath)) {
-        fs.copyFileSync(item.path, destPath);
-        fs.rmSync(item.path, { force: true });
-      }
-    }
-    preprocessedImages.push(destPath);
-  });
-
-  // 7. Generate annotated image with green bounding box around Net Quantity & spatial requirements
-  let annotatedImagePath = null;
-  if (labelMetrics?.netQuantityBox && preprocessedImages.length > 0) {
-    const pIdx = labelMetrics.panelIndex != null && labelMetrics.panelIndex < preprocessedImages.length ? labelMetrics.panelIndex : 0;
-    const sourcePanelImg = preprocessedImages[pIdx] || preprocessedImages[0];
-    const outAnnotatedName = 'net_quantity_bounding_box.png';
-    const targetAnnotatedPath = path.join(productDir, outAnnotatedName);
-
-    annotatedImagePath = await annotateNetQuantityImage({
-      imagePath: sourcePanelImg,
-      outputPath: targetAnnotatedPath,
-      netQuantityBox: labelMetrics.netQuantityBox,
-      exclusionBox: labelMetrics.exclusionBox,
-      intrusions: labelMetrics.clearanceDetails?.intrusions || [],
-      numeralHeightPx: labelMetrics.clearanceDetails?.numeralHeightPx || 20,
-      numeralHeightMm: labelMetrics.clearanceDetails?.numeralHeightMm || null,
-    });
-  }
-
-  // 7b. Generate bounding-boxed evidence images for ALL violations
-  const violationEvidences = await generateAllViolationEvidences({
-    violations: complianceResult.violations || [],
-    declarations,
-    ocrResult,
-    labelMetrics,
-    preprocessedImages,
-    productDir,
-    productId,
-  });
-
-  fs.writeFileSync(
-    path.join(productDir, 'mapped.json'),
-    JSON.stringify(
-      {
-        productId,
-        sourceImages: paths.map((p) => path.basename(p)),
-        declarations,
-        packageRecord,
-        complianceResult,
-        panels: ocrResult.perImage || [],
-        annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
-        violationEvidences,
-      },
-      null,
-      2
-    ),
-    'utf8'
+  const tempProductDir = path.join(
+    os.tmpdir(),
+    'nirikshak_pipeline',
+    `run_${productId}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
   );
+  ensureDirs(tempProductDir);
 
-  // 7c. Write clean report.json strictly conforming to schema for PDF generation (no raw OCR dump)
-  const reportData = {
-    reportId: `REP-${productId}`,
-    productId,
-    generatedAt: new Date().toISOString(),
-    sourceImages: paths.map((p) => path.basename(p)),
-    annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
-    violationEvidences,
-    summary: {
-      status: !complianceResult.applicable
-        ? 'exempt'
-        : complianceResult.compliant
-          ? 'compliant'
-          : 'non_compliant',
-      verdict: !complianceResult.applicable
-        ? 'EXEMPT'
-        : complianceResult.compliant
-          ? 'COMPLIANT'
-          : 'NON-COMPLIANT',
-      applicable: complianceResult.applicable,
-      compliant: complianceResult.compliant,
-      totalViolations: complianceResult.summary?.total ?? (complianceResult.violations?.length || 0),
-      criticalViolations: complianceResult.summary?.critical ?? 0,
-      majorViolations: complianceResult.summary?.major ?? 0,
-      minorViolations: complianceResult.summary?.minor ?? 0,
-      commodityName: declarations.commodityName?.value || packageRecord.commodity?.genericName || 'Unclassified',
-      brandName: declarations.commodityClassification?.brandName || packageRecord.commodity?.brandName || null,
-      declaredNetQuantity: declarations.netQuantity?.value != null
-        ? `${declarations.netQuantity.value} ${declarations.netQuantity.unit || ''}`.trim()
-        : null,
-      declaredMrp: declarations.mrp?.value != null
-        ? `${declarations.mrp.currency || '₹'} ${declarations.mrp.value}`
-        : null,
-    },
-    declarations,
-    packageRecord,
-    labelMetrics: {
-      numeralHeightMm: labelMetrics?.heightMm?.netQty || labelMetrics?.clearanceDetails?.numeralHeightMm || null,
-      numeralWidthMm: labelMetrics?.widthMm?.netQty || null,
-      contrastRatio: labelMetrics?.contrastRatio || null,
-      contrastOk: labelMetrics?.contrastOk ?? true,
-      clearanceOk: !labelMetrics?.quantityDeclarationSurroundingAreaHasPrintedInfo,
-      clearanceDetails: labelMetrics?.clearanceDetails || null,
-      packagingDimensions: labelMetrics?.packagingDimensions || null,
-    },
-    compliance: {
-      applicable: complianceResult.applicable,
-      exemptionReason: complianceResult.exemptionReason || null,
-      compliant: complianceResult.compliant,
-      summary: complianceResult.summary,
-      violations: complianceResult.violations || [],
-    },
-  };
+  let uploadedPreprocessedUrls = [];
+  let cloudViolationEvidences = [];
+  let annotatedNetQuantityUrl = null;
+  let pdfCloudinaryUrl = null;
 
-  fs.writeFileSync(
-    path.join(productDir, 'report.json'),
-    JSON.stringify(reportData, null, 2),
-    'utf8'
-  );
-
-  // Also write report.json to the output root for immediate access
   try {
+    fs.writeFileSync(path.join(tempProductDir, 'raw_extracted_text.txt'), ocrResult.text || '', 'utf8');
+
+    // Write preprocessed images to ephemeral workspace for annotation & PDF generation
+    const preprocessedImages = [];
+    (preprocessed.items || []).forEach((item, idx) => {
+      const destName = paths.length > 1 ? `preprocessed_${idx + 1}.png` : 'preprocessed.png';
+      const destPath = path.join(tempProductDir, destName);
+      if (item.image_base64) {
+        fs.writeFileSync(destPath, Buffer.from(item.image_base64, 'base64'));
+      } else if (item.path && fs.existsSync(item.path)) {
+        if (path.resolve(item.path) !== path.resolve(destPath)) {
+          fs.copyFileSync(item.path, destPath);
+          try { fs.rmSync(item.path, { force: true }); } catch (_) {}
+        }
+      }
+      preprocessedImages.push(destPath);
+    });
+
+    // 7. Generate annotated image with bounding box around Net Quantity & spatial requirements
+    let annotatedImagePath = null;
+    if (labelMetrics?.netQuantityBox && preprocessedImages.length > 0) {
+      const pIdx = labelMetrics.panelIndex != null && labelMetrics.panelIndex < preprocessedImages.length ? labelMetrics.panelIndex : 0;
+      const sourcePanelImg = preprocessedImages[pIdx] || preprocessedImages[0];
+      const outAnnotatedName = 'net_quantity_bounding_box.png';
+      const targetAnnotatedPath = path.join(tempProductDir, outAnnotatedName);
+
+      annotatedImagePath = await annotateNetQuantityImage({
+        imagePath: sourcePanelImg,
+        outputPath: targetAnnotatedPath,
+        netQuantityBox: labelMetrics.netQuantityBox,
+        exclusionBox: labelMetrics.exclusionBox,
+        intrusions: labelMetrics.clearanceDetails?.intrusions || [],
+        numeralHeightPx: labelMetrics.clearanceDetails?.numeralHeightPx || 20,
+        numeralHeightMm: labelMetrics.clearanceDetails?.numeralHeightMm || null,
+      });
+    }
+
+    // 7b. Generate bounding-boxed evidence images for ALL violations
+    const violationEvidences = await generateAllViolationEvidences({
+      violations: complianceResult.violations || [],
+      declarations,
+      ocrResult,
+      labelMetrics,
+      preprocessedImages,
+      productDir: tempProductDir,
+      productId,
+    });
+
     fs.writeFileSync(
-      path.join(config.paths.output, 'report.json'),
-      JSON.stringify(reportData, null, 2),
+      path.join(tempProductDir, 'mapped.json'),
+      JSON.stringify(
+        {
+          productId,
+          sourceImages: paths.map((p) => path.basename(p)),
+          declarations,
+          packageRecord,
+          complianceResult,
+          panels: ocrResult.perImage || [],
+          annotatedNetQuantityImage: annotatedImagePath ? path.basename(annotatedImagePath) : null,
+          violationEvidences,
+        },
+        null,
+        2
+      ),
       'utf8'
     );
-  } catch (_) {}
 
-  // 8. Generate unified PDF compliance report
-  const reportPath = await generateReport({
-    imagePath: paths[0],
-    imagePaths: paths,
-    packageRecord,
-    complianceResult,
-    productDir,
-  });
+    // 8. Generate unified PDF compliance report
+    const reportPath = await generateReport({
+      imagePath: paths[0],
+      imagePaths: paths,
+      packageRecord,
+      complianceResult,
+      productDir: tempProductDir,
+    });
+
+    // 9. Upload ALL assets directly to Cloudinary
+    logger.info('orchestrator', `Uploading preprocessed images and evidence crops to Cloudinary...`);
+    for (let i = 0; i < preprocessedImages.length; i++) {
+      const imgPath = preprocessedImages[i];
+      if (fs.existsSync(imgPath)) {
+        const url = await uploadImage(imgPath, 'compliance_engine/preprocessed');
+        if (url) uploadedPreprocessedUrls.push(url);
+      }
+    }
+
+    if (annotatedImagePath && fs.existsSync(annotatedImagePath)) {
+      annotatedNetQuantityUrl = await uploadImage(annotatedImagePath, 'compliance_engine/evidence');
+    }
+
+    for (const ev of violationEvidences) {
+      let evUrl = null;
+      if (ev.annotatedImagePath && fs.existsSync(ev.annotatedImagePath)) {
+        evUrl = await uploadImage(ev.annotatedImagePath, 'compliance_engine/evidence');
+      }
+      cloudViolationEvidences.push({
+        findingId: ev.findingId,
+        findingIndex: ev.findingIndex,
+        rule: ev.rule,
+        field: ev.field,
+        severity: ev.severity,
+        message: ev.message,
+        panelIndex: ev.panelIndex,
+        evidenceUrl: evUrl,
+      });
+    }
+
+    if (reportPath && fs.existsSync(reportPath)) {
+      pdfCloudinaryUrl = await uploadPdf(reportPath, 'compliance_reports');
+    }
+  } finally {
+    // 10. Guaranteed cleanup: completely wipe ephemeral workspace (0 bytes left on server disk)
+    try {
+      fs.rmSync(tempProductDir, { recursive: true, force: true });
+      logger.info('orchestrator', `Cleaned up ephemeral workspace: ${tempProductDir}`);
+    } catch (cleanErr) {
+      logger.warn('orchestrator', `Ephemeral workspace cleanup note: ${cleanErr.message}`);
+    }
+  }
+
+  // 11. Extract accurate commodity/brand product name
+  const detectedProductName =
+    declarations.commodityName?.value ||
+    declarations.commodityClassification?.genericName ||
+    declarations.commodityClassification?.brandName ||
+    packageRecord.commodity?.genericName ||
+    packageRecord.commodity?.brandName ||
+    null;
+
+  const status = !complianceResult.applicable
+    ? 'EXEMPT'
+    : complianceResult.compliant
+    ? 'COMPLIANT'
+    : 'NON-COMPLIANT';
 
   logger.info(
     'orchestrator',
-    `--- Finished product_${productId} (${paths.length} panel(s)): ${
-      complianceResult.applicable
-        ? complianceResult.compliant
-          ? 'COMPLIANT'
-          : `NON-COMPLIANT (${complianceResult.summary.total} issues)`
-        : 'NOT APPLICABLE'
-    } ---`
+    `--- Finished product_${productId} (${paths.length} panel(s)): ${status} (${complianceResult.summary?.total || 0} issues). All assets uploaded to Cloudinary. ---`
   );
 
   return {
     productId,
-    imagePaths: paths,
-    imagePath: paths[0],
-    productDir,
-    preprocessedImages,
-    preprocessedImagePath: preprocessedImages[0] || null,
-    annotatedNetQuantityImage: annotatedImagePath,
-    ocrResult,
-    reportPath,
+    detectedProductName,
+    status,
+    pdfUrl: pdfCloudinaryUrl,
+    cloudinaryUrl: pdfCloudinaryUrl,
+    preprocessedImages: uploadedPreprocessedUrls,
+    annotatedNetQuantityUrl,
+    violationEvidences: cloudViolationEvidences,
+    declarations,
     packageRecord,
     complianceResult,
+    summary: {
+      status,
+      totalViolations: complianceResult.summary?.total ?? (complianceResult.violations?.length || 0),
+      criticalViolations: complianceResult.summary?.critical ?? 0,
+      majorViolations: complianceResult.summary?.major ?? 0,
+      minorViolations: complianceResult.summary?.minor ?? 0,
+    },
   };
 }
 

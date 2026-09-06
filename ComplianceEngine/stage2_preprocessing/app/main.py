@@ -214,29 +214,7 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
         )
 
         product_id = _allocate_product_id()
-        product_dir = OUTPUT_ROOT / f"product_{product_id}"
-        product_dir.mkdir(parents=True, exist_ok=True)
-
-        output_path = product_dir / "preprocessed.png"
-        output_path.write_bytes(res["buf"])
-
         ocr_result = res["ocr_result"]
-        (product_dir / "raw_extracted_text.txt").write_text(
-            ocr_result.get("text", "") or "", encoding="utf-8"
-        )
-
-        result_path = product_dir / "mapped.json"
-        result_path.write_text(
-            json.dumps(
-                {
-                    "metadata": res["meta"],
-                    "declarations": ocr_result.get("declarations", {}),
-                    "contrast_analysis": ocr_result.get("contrast_analysis", {}),
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
     except PreprocessingError as e:
         raise HTTPException(status_code=422, detail=str(e))
     except RuntimeError as e:
@@ -253,8 +231,8 @@ async def preprocess_and_ocr(image: UploadFile = File(...)):
             "regions": ocr_result.get("regions", []),
             "contrast_analysis": ocr_result.get("contrast_analysis", {}),
             "product_id": product_id,
-            "preprocessed_image": str(output_path),
-            "result_json": str(result_path),
+            "preprocessed_image": None,
+            "result_json": None,
             "ocr": ocr_result,
             "image_base64": res["image_base64"],
         }
@@ -291,10 +269,8 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
 
     processed_items.sort(key=lambda x: x["index"])
 
-    # Allocate ONE product ID for the multi-panel product inspection
+    # Allocate product ID for tracking
     product_id = _allocate_product_id()
-    product_dir = OUTPUT_ROOT / f"product_{product_id}"
-    product_dir.mkdir(parents=True, exist_ok=True)
 
     items_output = []
     combined_regions = []
@@ -304,13 +280,8 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
     for item in processed_items:
         idx = item["index"]
         fn = item["filename"]
-        buf = item["buf"]
         ocr_result = item["ocr_result"]
         meta = item["meta"]
-
-        out_name = f"preprocessed_{idx + 1}.png" if len(processed_items) > 1 else "preprocessed.png"
-        output_path = product_dir / out_name
-        output_path.write_bytes(buf)
 
         raw_txt = ocr_result.get("text", "") or ""
         text_blocks.append(f"--- [Panel/Image {idx + 1}: {fn}] ---\n{raw_txt}")
@@ -333,14 +304,13 @@ async def preprocess_and_ocr_batch(images: list[UploadFile] = File(...)):
             "extracted_text": raw_txt,
             "regions": ocr_result.get("regions", []),
             "contrast_analysis": ocr_result.get("contrast_analysis", {}),
-            "preprocessed_image": str(output_path),
+            "preprocessed_image": None,
             "declarations": decls,
             "ocr": ocr_result,
             "image_base64": item["image_base64"],
         })
 
     combined_text = "\n\n".join(text_blocks)
-    (product_dir / "raw_extracted_text.txt").write_text(combined_text, encoding="utf-8")
 
     batch_contrast_summary = {
         "overall_contrast_ok": all(
