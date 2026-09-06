@@ -177,6 +177,157 @@ export async function extractImages(page) {
       }
     });
 
-    return { count: items.length, items };
+    // -----------------------------------------------------------------------
+    // Product Images Only Isolation
+    // -----------------------------------------------------------------------
+    const PRODUCT_CONTAINER_SELECTORS = [
+      "#main-image-container",
+      "#imgTagWrapperId",
+      "#altImages",
+      "#imageBlock",
+      "#imageBlock_feature_div",
+      "#leftCol",
+      ".imgTagWrapper",
+      "[data-action='main-image-click']",
+      "div._2c7YLP",
+      "div._396cs4",
+      "ul._3GnUWp",
+      ".product-gallery",
+      ".product-images",
+      ".pdp-image-viewer",
+      ".pdp-images",
+      ".product__media",
+      ".product-single__photos",
+      "[data-testid*='product-image']",
+      "[data-testid*='image-gallery']",
+      "[data-gallery-role='gallery']",
+      ".woocommerce-product-gallery",
+      ".product-slider",
+      ".product-carousel",
+      "#product-image-carousel",
+    ].join(", ");
+
+    const NON_PRODUCT_URL_PATTERN =
+      /(?:[\b_/-](?:logo|icon|badge|star|rating|sprite|arrow|loader|spinner|prime|assured|payment|visa|mastercard|upi|rupay|delivery|truck|tick|check|close|share|heart|wishlist|transparent|pixel)[\b_.-]|\/images\/G\/|data:image\/svg|\.svg$)/i;
+
+    function cleanAmazonRes(url) {
+      if (!url) return url;
+      // Strip dynamic resizing modifier: e.g. ._AC_SR38,50_.jpg or ._SX466_.jpg -> .jpg
+      return url.replace(/\._[A-Za-z0-9_,]+_(\.[a-zA-Z]+)$/, "$1");
+    }
+
+    function cleanFlipkartRes(url) {
+      if (!url) return url;
+      // Upgrade Flipkart image dimensions to high resolution for clear label OCR
+      return url.replace(/\/image\/\d+\/\d+\//, "/image/832/832/");
+    }
+
+    function normalizeProductImageUrl(url) {
+      if (!url) return null;
+      let u = resolve(url);
+      if (u.includes("media-amazon.com") || u.includes("images-amazon.com")) {
+        // Amazon catalog item images reside in /images/I/
+        if (!u.includes("/images/I/")) return null;
+        u = cleanAmazonRes(u);
+      } else if (u.includes("flixcart.com") || u.includes("flipkart.com")) {
+        u = cleanFlipkartRes(u);
+      }
+      return u;
+    }
+
+    const productUrlsSet = new Set();
+    const productImages = [];
+
+    function addProductImage(rawUrl, meta = {}) {
+      if (!rawUrl) return;
+      if (NON_PRODUCT_URL_PATTERN.test(rawUrl)) return;
+
+      const norm = normalizeProductImageUrl(rawUrl);
+      if (!norm || productUrlsSet.has(norm)) return;
+      if (NON_PRODUCT_URL_PATTERN.test(norm)) return;
+
+      productUrlsSet.add(norm);
+      productImages.push({
+        url: norm,
+        alt: meta.alt || null,
+        isPackagingImage: true,
+      });
+    }
+
+    // 1. Check Amazon dynamic high-res image maps (e.g. data-a-dynamic-image on #landingImage)
+    document.querySelectorAll("[data-a-dynamic-image]").forEach((el) => {
+      try {
+        const raw = el.getAttribute("data-a-dynamic-image");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          Object.keys(parsed).forEach((imgUrl) => {
+            addProductImage(imgUrl, { alt: el.getAttribute("alt") });
+          });
+        }
+      } catch {}
+    });
+
+    // 2. Check JSON-LD Product schema images from the DOM
+    document.querySelectorAll('script[type="application/ld+json"]').forEach((script) => {
+      try {
+        const parsed = JSON.parse(script.textContent || "");
+        const blocks = Array.isArray(parsed) ? parsed : [parsed];
+        for (const block of blocks) {
+          if (block && (block["@type"] === "Product" || block.image)) {
+            const imgs = Array.isArray(block.image)
+              ? block.image
+              : block.image
+              ? [block.image]
+              : [];
+            for (const img of imgs) {
+              const url = typeof img === "string" ? img : img?.url;
+              if (url) addProductImage(url, { alt: block.name });
+            }
+          }
+        }
+      } catch {}
+    });
+
+    // 3. Check OpenGraph Product Image meta tag
+    const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute("content");
+    if (ogImage) {
+      addProductImage(ogImage, { alt: "Primary Listing Image" });
+    }
+
+    // 4. Targeted Product Gallery Elements
+    document.querySelectorAll(PRODUCT_CONTAINER_SELECTORS).forEach((container) => {
+      container.querySelectorAll("img").forEach((img) => {
+        if (isInsideNoise(img)) return;
+
+        // Skip obvious tiny icons
+        const w = img.naturalWidth || img.width || 0;
+        const h = img.naturalHeight || img.height || 0;
+        if ((w > 0 && w < 60) || (h > 0 && h < 60)) return;
+
+        const src =
+          img.getAttribute("data-old-hires") ||
+          img.getAttribute("data-zoom-image") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("src");
+
+        const alt = img.getAttribute("alt") || "";
+        if (src) addProductImage(src, { alt });
+      });
+    });
+
+    // 5. Fallback: If no product images isolated yet, take high-confidence images from items
+    if (productImages.length === 0) {
+      items.forEach((item) => {
+        if (!NON_PRODUCT_URL_PATTERN.test(item.url)) {
+          addProductImage(item.url, { alt: item.alt });
+        }
+      });
+    }
+
+    return {
+      count: items.length,
+      items,
+      productImages,
+    };
   });
 }

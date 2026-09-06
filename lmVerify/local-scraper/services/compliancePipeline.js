@@ -17,6 +17,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
+import { runOcrOnProductImages } from "./ocrService.js";
+
 const complianceEnginePipelineDir = path.resolve(
   __dirname,
   "../../../ComplianceEngine/orchestrator/src/pipeline"
@@ -163,7 +165,7 @@ export function extractStructuredDeclarations(structuredDataOrJson) {
  * @param {object|string} [structuredData] - Optional JSON-LD or structured payload
  * @returns {{ lines: Array<{ id: number, text: string }>, text: string }}
  */
-export function prepareOcrResultFromText(rawText, structuredData = null) {
+export function prepareOcrResultFromText(rawText, structuredData = null, imageOcrLines = []) {
   let text = String(rawText || "").trim();
 
   // If rawText is itself a JSON payload, parse it
@@ -190,7 +192,14 @@ export function prepareOcrResultFromText(rawText, structuredData = null) {
     );
   }
 
+  // Format OCR lines from product packaging images
+  const packagingOcrTextLines = (imageOcrLines || []).map((line) => {
+    const l = typeof line === "string" ? line : line.text;
+    return `[Product Packaging Label]: ${l}`;
+  });
+
   const rawLines = [
+    ...packagingOcrTextLines,
     ...structuredLines,
     ...text.split("\n").map((l) => l.trim()).filter(Boolean),
   ];
@@ -209,14 +218,14 @@ export function prepareOcrResultFromText(rawText, structuredData = null) {
     if (seen.has(norm)) continue;
     seen.add(norm);
 
-    if (LM_KEYWORDS.test(line)) {
+    if (line.startsWith("[Product Packaging Label]") || LM_KEYWORDS.test(line)) {
       highPriority.push(line);
     } else {
       normalPriority.push(line);
     }
   }
 
-  // Budget maximum characters to stay well within Groq's 8,000 TPM limit (~10,000 characters / 2,500 tokens)
+  // Budget maximum characters to stay well within Groq's TPM limit (~10,000 characters / 2,500 tokens)
   const MAX_CHARS = 10000;
   const chosenLines = [];
   let totalChars = 0;
@@ -230,7 +239,7 @@ export function prepareOcrResultFromText(rawText, structuredData = null) {
   const formattedLines = chosenLines.map((lineText, idx) => ({
     id: idx,
     text: lineText,
-    confidence: 1.0,
+    confidence: lineText.startsWith("[Product Packaging Label]") ? 0.95 : 1.0,
     bbox: null,
     heightPx: null,
     heightMm: null,
@@ -242,33 +251,54 @@ export function prepareOcrResultFromText(rawText, structuredData = null) {
   return {
     text: cleanedText,
     lines: formattedLines,
-    engine: "web-listing-text",
-    isMultiImage: false,
-    imageCount: 1,
+    engine: "web-listing-and-packaging-ocr",
+    isMultiImage: packagingOcrTextLines.length > 0,
+    imageCount: packagingOcrTextLines.length > 0 ? 2 : 1,
   };
 }
 
 /**
- * Runs the full post-OCR mapping and rule engine verification on listing text.
+ * Runs the full post-OCR mapping and rule engine verification on listing text
+ * and product packaging images.
  *
  * @param {string} rawText - Verbatim listing text
- * @param {object} [context] - Optional metadata (url, platform, images, etc.)
- * @returns {Promise<object>} { declarations, packageRecord, compliance, summary }
+ * @param {object} [context] - Optional metadata (url, platform, images, productImages, structuredData, etc.)
+ * @returns {Promise<object>} { declarations, packageRecord, compliance, summary, imageOcr }
  */
 export async function runCompliancePipeline(rawText, context = {}) {
   if (!rawText || !rawText.trim()) {
     throw new Error("runCompliancePipeline: rawText is required.");
   }
 
-  const ocrResult = prepareOcrResultFromText(rawText, context.structuredData);
+  // 1. Run OCR on Product Packaging Images only (if provided)
+  const productImages =
+    context.productImages ||
+    context.images?.productImages ||
+    (Array.isArray(context.images) ? context.images : context.images?.items) ||
+    [];
 
-  // 1. Stage 5/6: Declaration Extraction / Mapping (Groq or regex fallback)
+  let imageOcr = { success: true, imagesProcessed: 0, lines: [], combinedText: "" };
+  if (productImages && productImages.length > 0) {
+    try {
+      imageOcr = await runOcrOnProductImages(productImages);
+    } catch (ocrErr) {
+      console.warn(`[compliancePipeline] Product image OCR warning: ${ocrErr.message}`);
+    }
+  }
+
+  const ocrResult = prepareOcrResultFromText(
+    rawText,
+    context.structuredData,
+    imageOcr.lines
+  );
+
+  // 2. Stage 5/6: Declaration Extraction / Mapping (Groq or regex fallback)
   const declarations = await extract(ocrResult, null);
 
-  // 2. Stage 5: Font & Label Metrics
+  // 3. Stage 5: Font & Label Metrics
   const labelMetrics = analyzeFont(ocrResult);
 
-  // 3. Package Record Construction (Marked as digital marketplace per Legal Metrology Rule 6(10))
+  // 4. Package Record Construction (Marked as digital marketplace per Legal Metrology Rule 6(10))
   const packageRecord = buildPackageRecord(declarations, labelMetrics, {
     isDigitalMarketplace: true,
     isEcommerce: true,
@@ -280,8 +310,36 @@ export async function runCompliancePipeline(rawText, context = {}) {
     packageRecord.commodity.isEcommerce = true;
   }
 
-  // 4. Stage 6/7: Codified Legal Metrology Rule Engine
+  // 5. Stage 6/7: Codified Legal Metrology Rule Engine
   const compliance = runComplianceCheck(packageRecord);
+
+  // 6. Enforce Rule 6(10) Exemption for Digital Marketplace / E-Commerce:
+  // Month and year of manufacture/packaging is explicitly exempt on online product listings.
+  if (compliance && Array.isArray(compliance.violations)) {
+    compliance.violations = compliance.violations.filter((v) => {
+      const field = (v.field || "").toLowerCase();
+      const rule = (v.rule || "").toLowerCase();
+      const desc = (v.description || "").toLowerCase();
+      if (
+        field === "mfgdate" ||
+        field === "manufacture_date" ||
+        rule.includes("6(1)(d)") ||
+        rule.includes("6(1)(g)") ||
+        (desc.includes("manufacture") && (desc.includes("month") || desc.includes("date")))
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    compliance.summary = {
+      total: compliance.violations.length,
+      critical: compliance.violations.filter((v) => (v.severity || "").toLowerCase() === "critical").length,
+      major: compliance.violations.filter((v) => (v.severity || "").toLowerCase() === "major").length,
+      minor: compliance.violations.filter((v) => (v.severity || "").toLowerCase() === "minor").length,
+    };
+    compliance.compliant = compliance.violations.length === 0;
+  }
 
   // Compute a unified summary for easy UI consumption
   const summary = {
@@ -303,6 +361,7 @@ export async function runCompliancePipeline(rawText, context = {}) {
     netQuantity: declarations.netQuantity?.value != null
       ? `${declarations.netQuantity.value} ${declarations.netQuantity.unit || ""}`.trim()
       : null,
+    imageOcrScanned: imageOcr.imagesProcessed,
   };
 
   return {
@@ -313,6 +372,12 @@ export async function runCompliancePipeline(rawText, context = {}) {
     packageRecord,
     compliance,
     summary,
+    imageOcr: {
+      imagesProcessed: imageOcr.imagesProcessed,
+      linesCount: imageOcr.lines.length,
+      combinedText: imageOcr.combinedText,
+      results: imageOcr.results,
+    },
     ocrResult: {
       lineCount: ocrResult.lines.length,
       textLength: ocrResult.text.length,

@@ -15,7 +15,7 @@ const router = express.Router();
  * from ComplianceEngine.
  */
 router.post("/", async (req, res) => {
-  const { url, text, platform, structuredData, metadata } = req.body;
+  const { url, text, platform, structuredData, metadata, productImages, images } = req.body;
 
   if (!url) {
     return res.status(400).json({ error: "url is required." });
@@ -45,6 +45,12 @@ router.post("/", async (req, res) => {
 
     const resolvedStructuredData = structuredData || listingData?.structuredData || null;
     const resolvedMetadata = metadata || listingData?.metadata || null;
+    const resolvedProductImages =
+      productImages ||
+      listingData?.images?.productImages ||
+      images ||
+      listingData?.images?.items ||
+      [];
 
     console.log(`⚖️  [compliance] Running ComplianceEngine post-OCR mapping & rule engine for: ${finalUrl}`);
     const pipelineResult = await runCompliancePipeline(rawText, {
@@ -53,6 +59,7 @@ router.post("/", async (req, res) => {
       crawledAt,
       structuredData: resolvedStructuredData,
       metadata: resolvedMetadata,
+      productImages: resolvedProductImages,
     });
 
     return res.json({
@@ -64,9 +71,11 @@ router.post("/", async (req, res) => {
       packageRecord: pipelineResult.packageRecord,
       compliance: pipelineResult.compliance,
       summary: pipelineResult.summary,
+      imageOcr: pipelineResult.imageOcr,
       listing: listingData ? {
         title: listingData.metadata?.title || null,
         images: listingData.images?.items || [],
+        productImages: listingData.images?.productImages || [],
         imageCount: listingData.images?.count || 0,
       } : null,
     });

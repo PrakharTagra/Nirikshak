@@ -34,7 +34,23 @@ export default function ComplianceReport({ report }) {
   const commodity = packageRecord.commodity || declarations.commodityClassification || {};
   const summary = report.summary || compliance.summary || {};
 
-  const rawViolations = compliance.violations || report.violations || [];
+  // DMI is Digital Marketplace Inspection: Rule 6(10) exempts month & year of manufacture
+  const rawViolations = (compliance.violations || report.violations || []).filter((v) => {
+    const field = (v.field || "").toLowerCase();
+    const rule = (v.rule || "").toLowerCase();
+    const desc = (v.description || "").toLowerCase();
+    if (
+      field === "mfgdate" ||
+      field === "manufacture_date" ||
+      rule.includes("6(1)(d)") ||
+      rule.includes("6(1)(g)") ||
+      (desc.includes("manufacture") && (desc.includes("month") || desc.includes("date"))) ||
+      desc.includes("mfg date")
+    ) {
+      return false;
+    }
+    return true;
+  });
   const isApplicable = compliance.applicable !== false;
   const isCompliant = compliance.compliant === true || (rawViolations.length === 0 && isApplicable);
   const statusStr = !isApplicable ? "EXEMPT" : isCompliant ? "COMPLIANT" : "NON-COMPLIANT";
@@ -197,13 +213,13 @@ export default function ComplianceReport({ report }) {
     },
     {
       sr: 5,
-      clause: "Rule 6(1)(g)",
+      clause: "Rule 6(1)(d) / Rule 6(10)",
       id: "COMP-DMI-MFG-DATE",
       req: "Declaration of Month and Year of Manufacture",
       obs: mfgDecl.value
         ? `Month and year of packaging declared: ${mfgDecl.value}`
-        : "Month/year of manufacture missing on packaging.",
-      status: mfgDecl.present ? "COMPLIANT" : "NON-COMPLIANT",
+        : "Exempt from mandatory display on digital marketplace listings pursuant to Rule 6(10) of Legal Metrology (Packaged Commodities) Rules, 2011.",
+      status: mfgDecl.present ? "COMPLIANT" : "NOT APPLICABLE",
     },
     {
       sr: 6,
