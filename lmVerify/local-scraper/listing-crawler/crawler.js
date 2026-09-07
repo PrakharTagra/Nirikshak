@@ -422,6 +422,13 @@ export async function loadProductPage(url) {
         log.warning("[listing-crawler] domcontentloaded wait exceeded 25s — proceeding with rendered DOM");
       }
 
+      // Gracefully wait for external stylesheets (load state) so screenshots have full CSS styling
+      try {
+        await page.waitForLoadState("load", { timeout: 12000 });
+      } catch {
+        log.warning("[listing-crawler] load wait timed out — proceeding with current CSS render state");
+      }
+
       // If intercepted by anti-bot challenge or redirected to root homepage, reload once
       let title = await page.title();
       if (title === "Robot Check" || title === "Amazon.in") {

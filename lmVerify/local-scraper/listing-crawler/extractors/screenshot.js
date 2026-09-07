@@ -10,6 +10,18 @@
  * for long product pages; pass `{ type: "png" }` for lossless capture.
  */
 export async function captureScreenshot(page, { type = "jpeg", quality = 80 } = {}) {
+  // Ensure document fonts and external CSS layout have finished rendering
+  try {
+    await page.evaluate(async () => {
+      if (document.fonts && document.fonts.ready) {
+        await Promise.race([
+          document.fonts.ready,
+          new Promise((r) => setTimeout(r, 2000)),
+        ]);
+      }
+    });
+  } catch {}
+
   const options = { fullPage: true, type };
   if (type === "jpeg") {
     options.quality = quality;

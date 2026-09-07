@@ -146,11 +146,22 @@ export async function extractVisibleText(page) {
     const priorityContainers = document.querySelectorAll(prioritySelectors.join(", "));
     priorityContainers.forEach((container) => {
       if (isInsideNoise(container)) return;
-      const text = (container.innerText || container.textContent || "").trim();
+      // Clone container and strip style, script, noscript, svg to prevent raw CSS code leakage
+      const clone = container.cloneNode(true);
+      clone.querySelectorAll("style, script, noscript, svg").forEach((el) => el.remove());
+      const text = (clone.innerText || clone.textContent || "").trim();
       if (!text) return;
       text.split("\n").forEach((line) => {
         const clean = line.replace(/\s+/g, " ").trim();
-        if (clean.length > 1 && !NOISE_HEADING_REGEX.test(clean) && !seen.has(clean.toLowerCase())) {
+        if (
+          clean.length > 1 &&
+          !NOISE_HEADING_REGEX.test(clean) &&
+          !seen.has(clean.toLowerCase()) &&
+          !/^(?:[.#][\w-]+\s*\{|[a-z-]+:\s*[^;]+;|!important|\})/i.test(clean) &&
+          !clean.includes("!important") &&
+          !clean.includes("{") &&
+          !clean.includes("}")
+        ) {
           seen.add(clean.toLowerCase());
           lines.push(clean);
         }
@@ -163,6 +174,7 @@ export async function extractVisibleText(page) {
         const parent = node.parentElement;
         if (!parent) return NodeFilter.FILTER_REJECT;
         if (HIDDEN_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        if (parent.closest("style, script, noscript, svg")) return NodeFilter.FILTER_REJECT;
         if (!node.textContent || !node.textContent.trim()) return NodeFilter.FILTER_REJECT;
         if (isInsideNoise(parent)) return NodeFilter.FILTER_REJECT;
         if (!isVisible(parent)) return NodeFilter.FILTER_REJECT;
@@ -174,7 +186,15 @@ export async function extractVisibleText(page) {
     // eslint-disable-next-line no-cond-assign
     while ((node = walker.nextNode())) {
       const clean = node.textContent.replace(/\s+/g, " ").trim();
-      if (clean.length > 2 && !NOISE_HEADING_REGEX.test(clean) && !seen.has(clean.toLowerCase())) {
+      if (
+        clean.length > 2 &&
+        !NOISE_HEADING_REGEX.test(clean) &&
+        !seen.has(clean.toLowerCase()) &&
+        !/^(?:[.#][\w-]+\s*\{|[a-z-]+:\s*[^;]+;|!important|\})/i.test(clean) &&
+        !clean.includes("!important") &&
+        !clean.includes("{") &&
+        !clean.includes("}")
+      ) {
         seen.add(clean.toLowerCase());
         lines.push(clean);
       }
