@@ -172,7 +172,7 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
   const declarations = await extract(ocrResult, null);
 
   // 5. Stage 7: Codified Legal Metrology rule engine
-  const packageRecord = buildPackageRecord(declarations, labelMetrics);
+  const packageRecord = buildPackageRecord(declarations, labelMetrics, options);
   const complianceResult = runComplianceCheck(packageRecord);
 
   // 6. Use an ephemeral workspace in OS tmpdir (zero disk footprint on backend)

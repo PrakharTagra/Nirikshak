@@ -71,11 +71,10 @@ FIELD_RULE_MAP: Dict[str, Dict[str, str]] = {
         'suffix':       'MFG-DATE',
         'requirement':  'Declaration of Month and Year of Manufacture',
         'law':          'Legal Metrology (Packaged Commodities) Rules, 2011',
-        'clause':       'Rule 6(1)(g)',
+        'clause':       'Rule 6(1)(d) / Rule 6(10)',
         'description':  (
             'Month and year in which the commodity is manufactured or pre-packaged '
-            'shall be declared. For food articles, date of expiry or best-before '
-            'date must also be declared.'
+            'shall be declared. For digital marketplace listings, exempt under Rule 6(10).'
         ),
     },
     'consumerCare': {
@@ -345,6 +344,29 @@ def build_model(
     annotated_img = json_data.get('annotatedNetQuantityImage', '')
 
     # -----------------------------------------------------------------------
+    # E-Commerce / Digital Marketplace Detection & Rule 6(10) Exemption
+    # -----------------------------------------------------------------------
+    is_ecommerce = bool(
+        _safe(json_data, 'commodity', 'isDigitalMarketplace', default=False) or
+        _safe(json_data, 'commodity', 'isEcommerce', default=False) or
+        _safe(json_data, 'packageRecord', 'commodity', 'isDigitalMarketplace', default=False) or
+        _safe(json_data, 'packageRecord', 'commodity', 'isEcommerce', default=False) or
+        _safe(json_data, 'declarations', 'commodityClassification', 'isDigitalMarketplace', default=False) or
+        _safe(json_data, 'declarations', 'commodityClassification', 'isEcommerce', default=False) or
+        json_data.get('channel') == 'ecommerce' or
+        json_data.get('listing_url') or
+        json_data.get('url')
+    )
+
+    if is_ecommerce:
+        raw_violations = [
+            v for v in raw_violations
+            if (v.get('field') or '').lower() not in ('mfgdate', 'manufacture_date')
+            and '6(1)(d)' not in (v.get('rule') or '')
+            and '6(1)(g)' not in (v.get('rule') or '')
+        ]
+
+    # -----------------------------------------------------------------------
     # Map violations to fields
     # -----------------------------------------------------------------------
     violated_fields: Dict[str, List[Dict]] = {}
@@ -366,6 +388,24 @@ def build_model(
         # Determine applicability
         is_imported = _safe(json_data, 'declarations', 'commodityClassification',
                             'isImported', default=False)
+
+        # Rule 6(10) exemption for e-commerce mfgDate
+        if field_key == 'mfgDate' and is_ecommerce and not (isinstance(field_decl, dict) and field_decl.get('present')):
+            status = 'NOT APPLICABLE'
+            assessment = 'Exempt from mandatory display on digital marketplace listings pursuant to Rule 6(10) of Legal Metrology (Packaged Commodities) Rules, 2011.'
+            remarks = 'Statutory exemption under Rule 6(10).'
+            finding_ids = []
+            compliances.append(ComplianceRecord(
+                sr_no=sr, compliance_id=comp_id,
+                legal_requirement=rule_info['requirement'],
+                applicable_law=rule_info['law'],
+                section_clause='Rule 6(1)(d) / Rule 6(10)',
+                description=rule_info['description'],
+                status=status, assessment=assessment,
+                remarks=remarks, finding_ids=finding_ids,
+            ))
+            sr += 1
+            continue
 
         # Skip importer check for non-imported products
         if field_key == 'importer' and not is_imported:
