@@ -7,7 +7,7 @@ Under The Legal Metrology Act, 2009 & The Legal Metrology (Packaged Commodities)
 
 Strict Design Principles:
   1. Under 6 pages total (strictly 5-page legal inspection memorandum).
-  2. Authentic government regulatory document appearance with State Emblem of India on top left.
+  2. Authentic government regulatory document appearance with Nirikshak logo on top left.
   3. All extracted particulars (Manufacturer, Packer, Importer, MRP, Net Qty, Mfg Date, Consumer Care)
      prominently displayed in a dedicated verified declarations schedule.
   4. Restrained, dignified, ink-efficient Government of India palette (no loud neon colors).
@@ -39,8 +39,9 @@ import image_handler as IH
 from compliance_mapper import ComplianceModel, ComplianceRecord, ViolationRecord, EvidenceRecord
 
 
-# Path to official State Emblem of India asset
-EMBLEM_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'emblem_of_india.png')
+# Path to official Nirikshak logo asset
+LOGO_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'logo.png')
+EMBLEM_PATH = LOGO_PATH if os.path.isfile(LOGO_PATH) else os.path.join(os.path.dirname(__file__), 'assets', 'emblem_of_india.png')
 
 
 # ---------------------------------------------------------------------------
@@ -137,16 +138,16 @@ def _draw_header_footer(c: rl_canvas.Canvas, doc):
     c.setFillColor(S.C_GOV_NAVY)
     c.rect(0, h - 9.5 * mm, w, 9.5 * mm, fill=1, stroke=0)
 
-    # State Emblem on top-left of running header
+    # Nirikshak Logo on top-left of running header
     if os.path.isfile(EMBLEM_PATH):
         try:
-            c.drawImage(EMBLEM_PATH, S.MARGIN_LEFT, h - 8.5 * mm, width=4.5 * mm, height=7.2 * mm, mask='auto')
+            c.drawImage(EMBLEM_PATH, S.MARGIN_LEFT, h - 8.2 * mm, width=6.8 * mm, height=6.8 * mm, mask='auto')
         except Exception:
             pass
 
     c.setFont(S.FONT_BOLD, 7)
     c.setFillColor(S.C_WHITE)
-    c.drawString(S.MARGIN_LEFT + 6.5 * mm, h - 6.0 * mm,
+    c.drawString(S.MARGIN_LEFT + 8.5 * mm, h - 6.0 * mm,
                  'GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY')
     c.setFont(S.FONT_REGULAR, 6.2)
     c.drawRightString(w - S.MARGIN_RIGHT, h - 6.0 * mm,
@@ -187,10 +188,10 @@ def _build_cover_page(model: ComplianceModel) -> List:
     story.append(NextPageTemplate('main'))
     story.append(_spacer(2))
 
-    # Official National Header with Ashoka Emblem on Top-Left
+    # Official National Header with Nirikshak Logo on Top-Left
     if os.path.isfile(EMBLEM_PATH):
         try:
-            emblem_img = RLImage(EMBLEM_PATH, width=22 * mm, height=35 * mm)
+            emblem_img = RLImage(EMBLEM_PATH, width=26 * mm, height=26 * mm)
             header_text = [
                 _p('<b>GOVERNMENT OF INDIA</b>', S.PS_GOV_HEADER_LARGE),
                 _p('<b>MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION</b>', S.PS_GOV_HEADER),
@@ -199,7 +200,7 @@ def _build_cover_page(model: ComplianceModel) -> List:
                 _p('<b>STATUTORY COMPLIANCE ASSESSMENT REPORT</b>', S.PS_COVER_TITLE),
                 _p('AUDIT MEMORANDUM UNDER THE LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011', S.PS_COVER_SUBTITLE),
             ]
-            header_tbl = Table([[emblem_img, header_text]], colWidths=[26 * mm, S.CONTENT_WIDTH - 26 * mm])
+            header_tbl = Table([[emblem_img, header_text]], colWidths=[30 * mm, S.CONTENT_WIDTH - 30 * mm])
             header_tbl.setStyle(TableStyle([
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                 ('ALIGN', (0, 0), (0, 0), 'CENTER'),
@@ -876,7 +877,7 @@ def generate_pdf(model: ComplianceModel, output_path: str) -> str:
 
     story: List = []
 
-    # Page 1: Cover Page with Emblem on top left
+    # Page 1: Cover Page with Nirikshak Logo on top left
     story.extend(_build_cover_page(model))
 
     # Page 2: Executive Summary & Extracted Statutory Declarations Schedule

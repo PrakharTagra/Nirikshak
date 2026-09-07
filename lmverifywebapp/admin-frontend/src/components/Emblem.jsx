@@ -1,11 +1,8 @@
 import React from "react";
-import { EMBLEM_BASE64 } from "../assets/emblemBase64.js";
+import { EMBLEM_BASE64, LOGO_BASE64 } from "../assets/emblemBase64.js";
 
 export default function Emblem({ size = 48, className = "", style = {} }) {
-  const src = EMBLEM_BASE64;
-
-  // Aspect ratio of the official emblem is 500 : 797 (~ 1 : 1.594)
-  const width = Math.round(size * (500 / 797));
+  const src = LOGO_BASE64 || EMBLEM_BASE64;
 
   return (
     <div 
@@ -14,13 +11,14 @@ export default function Emblem({ size = 48, className = "", style = {} }) {
     >
       <img
         src={src}
-        alt="State Emblem of India — Satyameva Jayate"
-        width={width}
+        alt="NIRIKSHAK — Legal Metrology Inspection & Compliance App"
+        width={size}
         height={size}
         style={{
           height: `${size}px`,
-          width: "auto",
+          width: `${size}px`,
           maxHeight: `${size}px`,
+          maxWidth: `${size}px`,
           objectFit: "contain",
         }}
         className="transition-transform duration-200"
@@ -31,3 +29,5 @@ export default function Emblem({ size = 48, className = "", style = {} }) {
     </div>
   );
 }
+
+export { Emblem as Logo };

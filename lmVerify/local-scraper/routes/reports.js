@@ -2,6 +2,7 @@ import { Router } from "express";
 import mongoose from "mongoose";
 import { chromium } from "playwright";
 import { generatePdfReportBuffer } from "../services/pdfReportGenerator.js";
+import { EMBLEM_BASE64 } from "../services/emblemBase64.js";
 
 const router = Router();
 
@@ -511,16 +512,9 @@ function generateStatutoryReportHtml(report, reqId) {
     <div class="top-navy-stripe"></div>
     <div class="top-slate-stripe"></div>
 
-    <!-- State Emblem & GoI Header -->
-    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
-      <svg width="45" height="55" viewBox="0 0 100 120" fill="#0b2545">
-        <circle cx="50" cy="50" r="40" stroke="#0b2545" stroke-width="3" fill="none"/>
-        <circle cx="50" cy="50" r="8" fill="#0b2545"/>
-        <line x1="50" y1="10" x2="50" y2="90" stroke="#0b2545" stroke-width="2"/>
-        <line x1="10" y1="50" x2="90" y2="50" stroke="#0b2545" stroke-width="2"/>
-        <rect x="25" y="98" width="50" height="6" fill="#0b2545"/>
-        <text x="50" y="116" font-size="9" font-family="sans-serif" font-weight="bold" text-anchor="middle" fill="#0b2545">TRUTH ALONE TRIUMPHS</text>
-      </svg>
+    <!-- Nirikshak Official Logo & GoI Header -->
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+      <img src="${EMBLEM_BASE64}" width="58" height="58" style="object-fit: contain; border-radius: 50%;" alt="NIRIKSHAK Logo" />
       <div>
         <h1 style="margin: 0; font-size: 12pt; font-weight: 800; color: #0b2545; letter-spacing: 0.05em; text-transform: uppercase;">
           Government of India

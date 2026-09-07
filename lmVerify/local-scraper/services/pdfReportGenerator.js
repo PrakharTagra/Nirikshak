@@ -490,32 +490,32 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   // PAGE 1: FORMAL STATUTORY COVER & RECORD OF INSPECTION (Exact Match)
   // =========================================================================
 
-  // State Emblem of India Image on Top-Left
+  // Nirikshak Official Logo on Top-Left
   if (EMBLEM_BASE64) {
     try {
-      // Dimensions: 42 pt wide, ~67 pt high (aspect ratio 500:797)
-      doc.addImage(EMBLEM_BASE64, "PNG", margin, 32, 42, 67, undefined, "FAST");
+      // Dimensions: 48 pt wide, 48 pt high (1:1 circular aspect ratio)
+      doc.addImage(EMBLEM_BASE64, "PNG", margin, 26, 48, 48, undefined, "FAST");
     } catch (e) {
-      console.warn("Could not render base64 emblem:", e);
+      console.warn("Could not render base64 logo:", e);
     }
   }
 
-  // Institutional Header to the right of Emblem
-  const headerLeft = margin + 50;
+  // Institutional Header to the right of Logo
+  const headerLeft = margin + 56;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.setTextColor(...C_CHARCOAL);
-  doc.text("GOVERNMENT OF INDIA", headerLeft, 44);
+  doc.text("GOVERNMENT OF INDIA", headerLeft, 42);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.5);
   doc.setTextColor(...C_CHARCOAL);
-  doc.text("MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION", headerLeft, 56);
+  doc.text("MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION", headerLeft, 53);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C_SLATE);
-  doc.text("DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION", headerLeft, 67);
+  doc.text("DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION", headerLeft, 64);
 
   // Memorandum Title & Subtitle (Centered)
   doc.setFont("helvetica", "bold");
