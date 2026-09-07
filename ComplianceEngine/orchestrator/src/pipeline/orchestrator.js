@@ -59,9 +59,14 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
     classification.isEcommerce
   );
 
-  // Infer physicalForm if not provided or reconcile for combination packages
+  // Infer physicalForm if not provided or reconcile for combination/semi-solid packages
   let physicalForm = classification.physicalForm || null;
-  if (declarations.commodityName?.perProductBreakdown || classification.physicalForm === 'combination') {
+  const isSemiSolidCommodity = /\b(?:face\s*wash|facewash|cleanser|scrub|cream|gel|paste|lotion|ointment|wax|balm)\b/i.test(
+    `${declarations.commodityName?.value || ''} ${classification.genericName || ''} ${classification.brandName || ''} ${declarations.netQuantity?.rawText || ''} ${options?.text || ''}`
+  );
+  if (isSemiSolidCommodity) {
+    physicalForm = 'semi_solid';
+  } else if (declarations.commodityName?.perProductBreakdown || classification.physicalForm === 'combination') {
     physicalForm = 'combination';
   } else if (!physicalForm) {
     if (qty.unitKind === 'number' || ['unit', 'units', 'n', 'u', 'piece', 'pieces', 'nos'].includes((unit || '').toLowerCase())) {

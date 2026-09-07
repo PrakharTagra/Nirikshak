@@ -358,7 +358,9 @@ function regexExtract(ocrResult, detection) {
       brandName: brandName,
       genericName: nameValue,
       scheduleCategory: null,
-      physicalForm: qty.unitKind === 'number' ? 'countable' : (qty.unit === 'g' || qty.unit === 'kg' ? 'solid' : (qty.unit === 'ml' || qty.unit === 'l' ? 'liquid' : null)),
+      physicalForm: /\b(?:face\s*wash|facewash|cleanser|scrub|cream|gel|paste|lotion|ointment|wax|balm)\b/i.test(`${nameValue} ${brandName} ${fullText}`)
+        ? 'semi_solid'
+        : (qty.unitKind === 'number' ? 'countable' : (qty.unit === 'g' || qty.unit === 'kg' ? 'solid' : (qty.unit === 'ml' || qty.unit === 'l' ? 'liquid' : null))),
       isFoodArticle: false,
       isIndustrialOrInstitutional: false,
       isImported: !!impName,

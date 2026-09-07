@@ -348,7 +348,7 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 - "brandName": extracted commercial brand (e.g., "Scalpe Pro").
 - "genericName": generic commodity name (e.g., "Anti dandruff shampoo").
 - "scheduleCategory": matching Second Schedule category if applicable, else null.
-- "physicalForm": "liquid" (for shampoo, oil, juice), "solid", "countable", "semi_solid", "viscous", "linear", or "area".
+- "physicalForm": "semi_solid" (for face wash, cleansers, creams, gels, scrubs, pastes, lotions, wax, ointments), "viscous" (for honey, condensed milk, heavy syrup), "liquid" (for shampoo, oil, juice, water, thin fluid), "solid" (for soap, tablets, powder), "countable", "linear", or "area". IMPORTANT: Face wash, cleansers, scrubs, creams, lotions, and gels MUST be classified as "semi_solid".
 - "isFoodArticle": true if food or beverage, false otherwise.
 - "isImported": true if manufactured outside India.
 - "countryOfOrigin": e.g., "India" if declared.
@@ -601,6 +601,8 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     classification.physicalForm = 'combination';
   } else if (classification.physicalForm === 'countable' && unitKind === 'volume' && /(?:refill|liquid|ml\b|l\b)/i.test(rawOcrText)) {
     classification.physicalForm = 'combination';
+  } else if (/\b(?:face\s*wash|facewash|cleanser|scrub|cream|gel|paste|lotion|ointment|wax|balm)\b/i.test(`${d.commodityName?.value || ''} ${classification.genericName || ''} ${rawOcrText}`)) {
+    classification.physicalForm = 'semi_solid';
   }
 
   // 5. Manufacturing / Packing Date (Rule 6(1)(d) strictly requires statutory labeling)

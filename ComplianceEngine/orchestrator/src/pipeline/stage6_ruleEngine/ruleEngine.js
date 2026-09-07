@@ -589,7 +589,12 @@ function checkQuantityMannerAndUnits(pkg) {
 
       if (!isCountableWithLiquidRefills) {
         const expected = expectedByPhysicalForm[c.physicalForm];
-        if (expected && d.netQuantity?.unitKind && d.netQuantity.unitKind !== expected) {
+        // Under Rule 12(2) proviso (a), solid/semi-solid/viscous commodities customarily sold by measure may be expressed in terms of measure
+        const isSemiSolidOrViscousMeasureAllowed =
+          (c.physicalForm === 'semi_solid' || c.physicalForm === 'viscous') &&
+          (d.netQuantity?.unitKind === 'mass' || d.netQuantity?.unitKind === 'volume');
+
+        if (!isSemiSolidOrViscousMeasureAllowed && expected && d.netQuantity?.unitKind && d.netQuantity.unitKind !== expected) {
           v.push(
             violation(
               'Rule 12(2)',
