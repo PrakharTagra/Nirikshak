@@ -1,4 +1,5 @@
-import { loadProductPage } from "./crawler.js";
+import { loadProductPage, normalizeListingUrl } from "./crawler.js";
+export { normalizeListingUrl };
 
 /**
  * RawListingData — the crawler's complete, final output contract.

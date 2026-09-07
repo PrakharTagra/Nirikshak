@@ -8,10 +8,86 @@ import { extractStructuredData } from "./extractors/structuredData.js";
 import { extractImages } from "./extractors/images.js";
 import { captureScreenshot } from "./extractors/screenshot.js";
 
-const REQUEST_HANDLER_TIMEOUT_SECS = 60;
-const NETWORK_IDLE_TIMEOUT_MS = 15000;
+const REQUEST_HANDLER_TIMEOUT_SECS = 90;
+const NETWORK_IDLE_TIMEOUT_MS = 4000;
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+
+/**
+ * Normalizes e-commerce URLs by converting mobile deep links (e.g. dl.flipkart.com/dl/...)
+ * into canonical desktop URLs and stripping app-intent redirect parameters that cause
+ * network hangs and net::ERR_TIMED_OUT.
+ *
+ * @param {string} rawUrl
+ * @returns {string} normalized canonical product URL
+ */
+export function normalizeListingUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== "string") return rawUrl;
+  try {
+    const u = new URL(rawUrl.trim());
+
+    // 1. Flipkart mobile app deep-link normalization (dl.flipkart.com/dl/...)
+    if (u.hostname.includes("flipkart.com")) {
+      // Normalize mobile deep link host
+      if (u.hostname === "dl.flipkart.com" || u.hostname === "m.flipkart.com") {
+        u.hostname = "www.flipkart.com";
+      }
+      // Strip /dl/ prefix
+      if (u.pathname.startsWith("/dl/")) {
+        u.pathname = u.pathname.replace(/^\/dl/, "");
+      }
+      // Strip mobile app intent & tracking params that cause redirect loops or connection timeouts
+      const FLIPKART_TRACKING_PARAMS = [
+        "ov_redirect",
+        "_refId",
+        "_appId",
+        "otracker",
+        "otracker1",
+        "fm",
+        "iid",
+        "ppt",
+        "ppn",
+        "ssid",
+        "srno",
+        "qH",
+        "affid",
+      ];
+      for (const p of FLIPKART_TRACKING_PARAMS) {
+        u.searchParams.delete(p);
+      }
+      return u.toString();
+    }
+
+    // 2. Amazon URL normalization
+    if (u.hostname.includes("amazon.")) {
+      const AMAZON_TRACKING = [
+        "ref",
+        "ref_",
+        "tag",
+        "linkCode",
+        "creative",
+        "creativeASIN",
+        "ascsubtag",
+        "keywords",
+        "sprefix",
+        "sr",
+        "crid",
+        "qid",
+        "dib",
+        "dib_tag",
+      ];
+      for (const p of AMAZON_TRACKING) {
+        u.searchParams.delete(p);
+      }
+      u.pathname = u.pathname.replace(/\/ref=[^/]+.*$/, "");
+      return u.toString();
+    }
+
+    return u.toString();
+  } catch {
+    return rawUrl;
+  }
+}
 
 /**
  * Scrolls the page to the bottom in small steps so that lazy-loaded content
@@ -136,19 +212,21 @@ export async function loadProductPage(url) {
     launchOptions.executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
   }
 
+  const targetUrl = normalizeListingUrl(url);
+
   // Open an ephemeral queue so scans never hit cached/stale request states on disk
   const queueName = `crawl-${crypto.randomUUID()}`;
   const requestQueue = await RequestQueue.open(queueName);
   await requestQueue.addRequest({
-    url,
-    uniqueKey: `${url}-${Date.now()}-${Math.random()}`,
+    url: targetUrl,
+    uniqueKey: `${targetUrl}-${Date.now()}-${Math.random()}`,
   });
 
   const crawler = new PlaywrightCrawler({
     requestQueue,
     maxRequestsPerCrawl: 1,
     maxConcurrency: 1,
-    navigationTimeoutSecs: 45,
+    navigationTimeoutSecs: 75,
     requestHandlerTimeoutSecs: REQUEST_HANDLER_TIMEOUT_SECS,
     launchContext: {
       launchOptions,
@@ -158,12 +236,15 @@ export async function loadProductPage(url) {
       async ({ page }, gotoOptions) => {
         if (gotoOptions) {
           gotoOptions.waitUntil = "domcontentloaded";
-          gotoOptions.timeout = 45000;
+          gotoOptions.timeout = 75000;
         }
+
+        // Abort mobile app intent protocols if triggered by redirects
+        await page.route(/^(intent|android-app|flipkart|market):/i, (route) => route.abort()).catch(() => {});
 
         // Block third-party ad/analytics domains that cause datacenter hangs & ERR_TIMED_OUT
         await page.route(
-          /(googletagmanager|google-analytics|doubleclick|facebook|criteo|branch\.io|hotjar|scorecardresearch)/i,
+          /(googletagmanager|google-analytics|doubleclick|facebook|criteo|branch\.io|hotjar|scorecardresearch|analytics\.flipkart|telemetry)/i,
           (route) => route.abort()
         ).catch(() => {});
 

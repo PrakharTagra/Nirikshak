@@ -18,8 +18,8 @@ const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
   netQuantity: /\bnet\s*(wt\.?|weight|qty\.?|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
   mfgDate: /\b(?:mfd|mfg|pkd|packed|manufactured|imported)\b|\bdate\s+of\s+(?:mfg|manufacture|packing|import)\b|\b(?:manufactured|packing|import|mfg)\s+date\b|\bmonth\s*(?:&|and)\s*year\s*of\s*(?:manufacture|packing|import)\b/i,
-  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|packed\s+by/i,
-  packer: /\bpacked\s+by\b|\bpacker\b/i,
+  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|manufactured\s*(?:and|&)\s*packed\s*by|mfd\.?\s*(?:and|&)\s*pkd\.?\s*by/i,
+  packer: /\bpacked\s+by\b|\bpacker\b|\bpkd\.?\s*by\b/i,
   importer: /\bimported\s+by\b|\bimporter\b/i,
   consumerCare: /complaint|customer\s*care|helpline|toll[\s-]?free|@[\w.-]+\.[a-z]{2,}|\b\d{4}[- ]?\d{3}[- ]?\d{4}\b|\b1800[- ]?\d{3}[- ]?\d{4}\b/i,
 };
@@ -28,8 +28,8 @@ function classifyLine(text) {
   if (PATTERNS.mrp.test(text)) return 'mrp';
   if (PATTERNS.netQuantity.test(text)) return 'netQuantity';
   if (PATTERNS.importer.test(text)) return 'importer';
-  if (PATTERNS.packer.test(text)) return 'packer';
   if (PATTERNS.manufacturer.test(text)) return 'manufacturer';
+  if (PATTERNS.packer.test(text)) return 'packer';
   if (PATTERNS.mfgDate.test(text)) return 'mfgDate';
   if (PATTERNS.consumerCare.test(text)) return 'consumerCare';
   return 'commodityName';
@@ -191,9 +191,17 @@ function regexExtract(ocrResult, detection) {
   if (mfgRaw.length > 250) mfgRaw = mfgRaw.slice(0, 250);
 
   // 4. Manufacturer
-  const mfrIdx = getIndex('manufacturer');
+  let mfrIdx = getIndex('manufacturer');
+  if (mfrIdx === -1) {
+    const pkrIdx = getIndex('packer');
+    if (pkrIdx !== -1 && /manufactur|mfd/i.test(lines[pkrIdx].text)) {
+      mfrIdx = pkrIdx;
+    }
+  }
   const mfrLine = mfrIdx !== -1 ? lines[mfrIdx] : null;
-  let mfrName = mfrLine?.text || null;
+  let mfrName = mfrLine?.text
+    ? mfrLine.text.replace(/^(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by)[\s:]*/i, '').trim()
+    : null;
   let mfrAddress = false;
   if (mfrLine) {
     const combinedMfrText = lines
@@ -202,12 +210,12 @@ function regexExtract(ocrResult, detection) {
       .join(' ');
     const hasAddressSignal =
       /\b[1-9]\d{5}\b/i.test(combinedMfrText) ||
-      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa/i.test(combinedMfrText) ||
+      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa|kolkata|bengaluru/i.test(combinedMfrText) ||
       combinedMfrText.length > 35;
     mfrAddress = hasAddressSignal ? combinedMfrText.slice(0, 300) : false;
   }
   if (!mfrName) {
-    const globalMfr = fullText.match(/(?:manufacturer|mfd\.?\s*by|manufactured\s+by)[\s:]+([^\n\r]+)/i);
+    const globalMfr = fullText.match(/(?:manufacturer|mfd\.?\s*(?:&|and)?\s*pkd\.?\s*by|manufactured\s*(?:&|and)?\s*packed\s*by|mfd\.?\s*by|manufactured\s+by)[\s:]+([^\n\r]+)/i);
     if (globalMfr) {
       mfrName = globalMfr[1].slice(0, 150).trim();
       mfrAddress = mfrName;
@@ -221,6 +229,15 @@ function regexExtract(ocrResult, detection) {
   if (globalPkr) {
     pkrName = globalPkr[1].slice(0, 150).trim();
     pkrAddress = pkrName;
+  }
+
+  // If manufacturer and packer are jointly declared ("Manufactured and Packed by")
+  if (mfrName && /packed|pkd/i.test(mfrLine?.text || fullText) && (!pkrName || pkrName === mfrName)) {
+    pkrName = mfrName;
+    pkrAddress = mfrAddress;
+  } else if (pkrName && /manufactur|mfd/i.test(pkrName || fullText) && (!mfrName || mfrName === pkrName)) {
+    mfrName = pkrName;
+    mfrAddress = pkrAddress;
   }
 
   let impName = null;
@@ -290,7 +307,7 @@ function regexExtract(ocrResult, detection) {
       isImported: !!impName,
       countryOfOrigin: countryOfOrigin,
       dimensionsRelevant: !!dimLine,
-      manufacturerIsNotPacker: !!(mfrName && pkrName && mfrName.toLowerCase() !== pkrName.toLowerCase()),
+      manufacturerIsNotPacker: !!(mfrName && pkrName && mfrName.toLowerCase().replace(/[^a-z0-9]/g, '') !== pkrName.toLowerCase().replace(/[^a-z0-9]/g, '')),
     },
     manufacturer: { present: !!mfrName, name: mfrName, address: mfrAddress, mark: null },
     packer: { present: !!pkrName, name: pkrName, address: pkrAddress, mark: null },
