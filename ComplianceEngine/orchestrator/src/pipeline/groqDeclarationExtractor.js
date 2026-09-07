@@ -674,11 +674,15 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   let mrpRaw = String(rawMrp.rawText || '');
 
   if (!mrpVal && rawOcrText) {
-    const mrpMatch = rawOcrText.match(
-      /(?:Maximum\s+Retail\s+Price|MRP|M\.R\.P\.)[^:\n]*[:\s]+(?:for\s+[^\n:]+[:\s]+)?(?:Rs\.?|₹|INR)?\s*(\d+(?:\.\d{1,2})?)/i
-    );
+    const mrpMatch =
+      rawOcrText.match(
+        /(?:Maximum\s+Retail\s+Price|MRP|M\.R\.P\.)[^:\n]*[:\s]+(?:for\s+[^\n:]+[:\s]+)?(?:Rs\.?|₹|INR)?\s*(\d+(?:\.\d{1,2})?)/i
+      ) ||
+      rawOcrText.match(/(?:MRP|Price)?[:\s]*(?:Rs\.?|₹|INR)?\s*(\d+(?:\.\d{1,2})?)\s*(?:\(Inclusive\s+of\s+all\s+taxes\)|inclusive)/i) ||
+      rawOcrText.match(/(\d+)%\s+(\d+(?:\.\d{1,2})?)\s*(?:₹|Rs\.?)\s*(\d+(?:\.\d{1,2})?)/i) ||
+      rawOcrText.match(/(?:₹|Rs\.?)\s*(\d+(?:\.\d{1,2})?)\s+(\d+)%\s+(\d+(?:\.\d{1,2})?)/i);
     if (mrpMatch) {
-      mrpVal = parseFloat(mrpMatch[1]);
+      mrpVal = parseFloat(mrpMatch[2] || mrpMatch[1]);
       if (!mrpRaw) mrpRaw = mrpMatch[0].trim();
     }
   }

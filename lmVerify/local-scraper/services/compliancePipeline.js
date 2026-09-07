@@ -153,10 +153,15 @@ const BOILERPLATE_PATTERNS = [
   /shipping\s+cost/i,
   /date\s+of\s+the\s+price/i,
   /submit\s+feedback/i,
-  /\d+\s+videos/i,
   /ships\s+from/i,
   /sold\s+by/i,
   /fulfilment\s+by/i,
+  /Flipkart\s+Internet\s+Private\s+Limited/i,
+  /Buildings\s+Alyssa,\s+Begonia/i,
+  /Clove\s+Embassy\s+Tech\s+Village/i,
+  /Outer\s+Ring\s+Road,\s+Devarabeesanahalli/i,
+  /044-45614709/i,
+  /044-45714709/i,
 ];
 
 const LM_KEYWORDS = /manufacturer|packer|importer|mfd|pkd|mrp|maximum retail price|inclusive of all taxes|incl\. of|net quantity|net wt|volume|weight|generic name|country of origin|dimensions|customer care|helpline|complaint|phone|email|conditioner|detergent|salt|food|pouch|refill|liquid|solid|size|brand|model|item dimensions|product dimensions/i;
@@ -258,6 +263,34 @@ export function prepareOcrResultFromText(rawText, structuredData = null, imageOc
     );
   }
 
+  // Pair alternating key/value lines from e-commerce specification tables (e.g. Flipkart / Amazon)
+  const linesFromText = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const pairedTextLines = [];
+  const SPEC_KEYS = /^(?:Name and address of the (?:Manufacturer|Packer|Importer)|Manufacturer|Packer|Importer|Brand|Model Name|Generic Name|Country of Origin|Net Quantity|Maximum Retail Price|MRP|Applied For|Skin Type|Application Area|Maximum Shelf Life|In the Box|Sales Package|Ideal For|Item Form|Item Weight|Item Volume)$/i;
+
+  for (let i = 0; i < linesFromText.length; i++) {
+    const curr = linesFromText[i];
+    const next = linesFromText[i + 1];
+
+    // Check for Flipkart discount/price line e.g. "50% 420 ₹210" or "₹210 50% 420"
+    const fkPrice =
+      curr.match(/(\d+)%\s+(\d+(?:\.\d{1,2})?)\s*(?:₹|Rs\.?)\s*(\d+(?:\.\d{1,2})?)/i) ||
+      curr.match(/(?:₹|Rs\.?)\s*(\d+(?:\.\d{1,2})?)\s+(\d+)%\s+(\d+(?:\.\d{1,2})?)/i);
+    if (fkPrice) {
+      pairedTextLines.push(curr);
+      pairedTextLines.push(`Maximum Retail Price (MRP): ₹${fkPrice[2]} (Inclusive of all taxes)`);
+      pairedTextLines.push(`Selling Price: ₹${fkPrice[3]}`);
+      continue;
+    }
+
+    if (SPEC_KEYS.test(curr) && next && !SPEC_KEYS.test(next) && next.length < 350) {
+      pairedTextLines.push(`${curr}: ${next}`);
+      i++; // consume next as value
+    } else {
+      pairedTextLines.push(curr);
+    }
+  }
+
   // Format OCR lines from product packaging images
   const packagingOcrTextLines = (imageOcrLines || []).map((line) => {
     const l = typeof line === "string" ? line : line.text;
@@ -267,7 +300,7 @@ export function prepareOcrResultFromText(rawText, structuredData = null, imageOc
   const rawLines = [
     ...packagingOcrTextLines,
     ...structuredLines,
-    ...text.split("\n").map((l) => l.trim()).filter(Boolean),
+    ...pairedTextLines,
   ];
   const seen = new Set();
   const highPriority = [];

@@ -18,9 +18,9 @@ const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
   netQuantity: /\bnet\s*(wt\.?|weight|qty\.?|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
   mfgDate: /\b(?:mfd|mfg|pkd|packed|manufactured|imported)\b|\bdate\s+of\s+(?:mfg|manufacture|packing|import)\b|\b(?:manufactured|packing|import|mfg)\s+date\b|\bmonth\s*(?:&|and)\s*year\s*of\s*(?:manufacture|packing|import)\b/i,
-  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|manufactured\s*(?:and|&)\s*packed\s*by|mfd\.?\s*(?:and|&)\s*pkd\.?\s*by|\bmanufacturer\s*:\b|\bmanufacturer\s+contact\s+information\b/i,
-  packer: /\bpacked\s+by\b|\bpacker\b|\bpkd\.?\s*by\b/i,
-  importer: /\bimported\s+by\b|\bimporter\b/i,
+  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|manufactured\s*(?:and|&)\s*packed\s*by|mfd\.?\s*(?:and|&)\s*pkd\.?\s*by|\bmanufacturer\s*:\b|\bmanufacturer\s+contact\s+information\b|name\s+and\s+address\s+of\s+(?:the\s+)?manufacturer|\bmanufacturer\b/i,
+  packer: /\bpacked\s+by\b|\bpacker\b|\bpkd\.?\s*by\b|name\s+and\s+address\s+of\s+(?:the\s+)?packer/i,
+  importer: /\bimported\s+by\b|\bimporter\b|name\s+and\s+address\s+of\s+(?:the\s+)?importer/i,
   consumerCare: /complaint|customer\s*care|helpline|toll[\s-]?free|@[\w.-]+\.[a-z]{2,}|\b\d{4}[- ]?\d{3}[- ]?\d{4}\b|\b1800[- ]?\d{3}[- ]?\d{4}\b/i,
 };
 
