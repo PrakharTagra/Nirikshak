@@ -1,7 +1,14 @@
 require('dotenv').config();
 const dns = require('dns');
-// Set public DNS to prevent Windows/VPN querySrv ECONNREFUSED error
-dns.setServers(['8.8.8.8', '1.1.1.1']);
+
+// Optional public DNS override (useful for Windows/VPN querySrv ECONNREFUSED error)
+if (process.env.DNS_OVERRIDE === 'true' || (!process.env.DNS_OVERRIDE && process.platform === 'win32')) {
+  try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  } catch (err) {
+    console.warn('⚠️ Custom DNS servers could not be set:', err.message);
+  }
+}
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -13,7 +20,12 @@ const app = express();
 // ---------------------------------------------------
 // 1. MIDDLEWARES
 // ---------------------------------------------------
-app.use(express.json()); // Parses incoming JSON bodies
+// Trust upstream reverse proxy (Nginx / Cloudflare / AWS ALB)
+app.set('trust proxy', 1);
+
+// Parses incoming JSON and URL-encoded bodies with extended limit for evidence photos/reports
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(cors());         // Enables Cross-Origin requests for Android app
 
 // ---------------------------------------------------
@@ -132,6 +144,32 @@ const Jurisdiction = mongoose.model('Jurisdiction', jurisdictionSchema, 'jurisdi
 // ROOT CHECK
 app.get('/', (req, res) => {
   res.send('🏛️ Nirikshak Legal Metrology API Server Running');
+});
+
+// HEALTH CHECK (Used by AWS / Nginx / Monitoring)
+app.get('/health', (req, res) => {
+  const dbStatusMap = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  const isDbConnected = mongoose.connection.readyState === 1;
+
+  res.status(isDbConnected ? 200 : 503).json({
+    status: isDbConnected ? 'healthy' : 'degraded',
+    service: 'nirikshak-backend',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    database: {
+      status: dbStatusMap[mongoose.connection.readyState] || 'unknown',
+      connected: isDbConnected
+    },
+    memory: {
+      rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB`,
+      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`
+    }
+  });
 });
 
 // A. OFFICER REGISTRATION
@@ -667,13 +705,43 @@ app.get('/api/officer/profile', async (req, res) => {
 });
 
 // ---------------------------------------------------
-// 5. START EXPRESS SERVER
+// 5. START EXPRESS SERVER & GRACEFUL SHUTDOWN
 // ---------------------------------------------------
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`===========================================`);
   console.log(`🚀 Nirikshak Backend running on port ${PORT}`);
   console.log(`🌐 Local URL: http://localhost:${PORT}`);
-  console.log(`📱 Android Emulator URL: http://10.0.2.2:${PORT}`);
+  console.log(`📱 Health Check: http://localhost:${PORT}/health`);
   console.log(`===========================================`);
 });
+
+// Graceful shutdown handling for PM2 / EC2 process manager
+const handleGracefulShutdown = async (signal) => {
+  console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
+
+  // Stop accepting new connections
+  server.close(async () => {
+    console.log('🔒 Closed incoming HTTP connections.');
+    try {
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close(false);
+        console.log('🍃 Disconnected from MongoDB Atlas.');
+      }
+      console.log('✅ Graceful shutdown completed cleanly.');
+      process.exit(0);
+    } catch (err) {
+      console.error('❌ Error during shutdown:', err);
+      process.exit(1);
+    }
+  });
+
+  // Force exit if connections don't drain within 10s
+  setTimeout(() => {
+    console.error('⚠️ Forcing shutdown after timeout.');
+    process.exit(1);
+  }, 10000).unref();
+};
+
+process.on('SIGTERM', () => handleGracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
