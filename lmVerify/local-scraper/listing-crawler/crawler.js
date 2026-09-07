@@ -205,6 +205,8 @@ export async function loadProductPage(url) {
       "--disable-dev-shm-usage",
       "--disable-blink-features=AutomationControlled",
       "--disable-infobars",
+      "--disable-features=IsolateOrigins,site-per-process",
+      "--window-size=1366,900",
     ],
   };
 
@@ -224,8 +226,8 @@ export async function loadProductPage(url) {
 
   const crawler = new PlaywrightCrawler({
     requestQueue,
-    maxRequestsPerCrawl: 1,
     maxConcurrency: 1,
+    maxRequestRetries: 2,
     navigationTimeoutSecs: 75,
     requestHandlerTimeoutSecs: REQUEST_HANDLER_TIMEOUT_SECS,
     launchContext: {
@@ -235,8 +237,10 @@ export async function loadProductPage(url) {
     preNavigationHooks: [
       async ({ page }, gotoOptions) => {
         if (gotoOptions) {
-          gotoOptions.waitUntil = "domcontentloaded";
-          gotoOptions.timeout = 75000;
+          // 'commit' ensures page.goto completes as soon as HTTP response headers arrive,
+          // preventing network timeouts caused by delayed third-party tracking scripts.
+          gotoOptions.waitUntil = "commit";
+          gotoOptions.timeout = 60000;
         }
 
         // Abort mobile app intent protocols if triggered by redirects
@@ -256,7 +260,15 @@ export async function loadProductPage(url) {
         });
         await page.setViewportSize({ width: 1366, height: 900 });
         await page.setExtraHTTPHeaders({
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
           "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+          "Sec-Ch-Ua": '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+          "Sec-Ch-Ua-Mobile": "?0",
+          "Sec-Ch-Ua-Platform": '"Windows"',
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1",
           "Upgrade-Insecure-Requests": "1",
         });
       },
@@ -265,7 +277,12 @@ export async function loadProductPage(url) {
     async requestHandler({ request, page, response, log }) {
       log.info(`[listing-crawler] Loading product page: ${request.url}`);
 
-      await page.waitForLoadState("domcontentloaded");
+      // Gracefully wait for DOMContentLoaded
+      try {
+        await page.waitForLoadState("domcontentloaded", { timeout: 25000 });
+      } catch {
+        log.warning("[listing-crawler] domcontentloaded wait exceeded 25s — proceeding with rendered DOM");
+      }
 
       // If intercepted by anti-bot challenge or redirected to root homepage, reload once
       let title = await page.title();
