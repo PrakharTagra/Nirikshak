@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getReport, STATUS_LABEL, CHANNEL_LABEL } from '../lib/adminApi.js';
-import { StatusBadge, PdfLink, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
+import { StatusBadge, PdfLink, PdfButton, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
+import ComplianceReport from '../components/ComplianceReport.jsx';
+import { generatePdfReport } from '../lib/pdfReportGenerator.js';
 
 function Field({ label, children }) {
   return (
@@ -58,10 +60,18 @@ export default function ReportDetail() {
             <span>📄</span> Official Inspection Report Document
           </h2>
           <p className="mt-1 text-sm text-slate-700 font-medium">
-            This signed PDF document contains the complete details of the package declarations checked during inspection.
+            This signed statutory assessment dossier contains the complete package declarations verified under Legal Metrology Rules.
           </p>
         </div>
-        <PdfLink url={report.pdf_url} label="Open Official PDF" />
+        <div className="flex flex-wrap items-center gap-3">
+          {report.channel === 'ecommerce' && (
+            <PdfButton
+              onClick={() => generatePdfReport(report, { name: report.officer_name, role: report.officer_role })}
+              label="Download Official PDF"
+            />
+          )}
+          <PdfLink url={report.pdf_url} label="Open Official PDF" />
+        </div>
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-2">
@@ -115,6 +125,20 @@ export default function ReportDetail() {
           )}
         </Panel>
       </div>
+
+      {report.channel === 'ecommerce' && (
+        <div className="mt-8 pt-6 border-t-2 border-slate-300">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-govt-navy">
+              Official Digital Marketplace Inspection Dossier
+            </span>
+            <h2 className="text-xl font-bold text-slate-900">
+              Complete Statutory Compliance Memorandum
+            </h2>
+          </div>
+          <ComplianceReport report={report} officer={{ name: report.officer_name, role: report.officer_role }} />
+        </div>
+      )}
     </div>
   );
 }

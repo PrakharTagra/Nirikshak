@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 import * as autotableModule from "jspdf-autotable";
-import { EMBLEM_BASE64 } from "../assets/emblemBase64.js";
+import { EMBLEM_BASE64 } from "./emblemBase64.js";
 
 // Ensure autoTable plugin is registered on jsPDF in Node.js / bundling environments
 if (autotableModule.applyPlugin) {

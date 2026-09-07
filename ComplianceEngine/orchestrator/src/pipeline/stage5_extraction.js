@@ -18,7 +18,7 @@ const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
   netQuantity: /\bnet\s*(wt\.?|weight|qty\.?|quantity)\b|\b\d+(?:\.\d+)?\s*(unit|units|n\b|u\b|piece|pieces|g|kg|ml|l|litre|liter)\b/i,
   mfgDate: /\b(?:mfd|mfg|pkd|packed|manufactured|imported)\b|\bdate\s+of\s+(?:mfg|manufacture|packing|import)\b|\b(?:manufactured|packing|import|mfg)\s+date\b|\bmonth\s*(?:&|and)\s*year\s*of\s*(?:manufacture|packing|import)\b/i,
-  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|manufactured\s*(?:and|&)\s*packed\s*by|mfd\.?\s*(?:and|&)\s*pkd\.?\s*by/i,
+  manufacturer: /\bmfd\.?\s*by\b|manufactured\s+by|manufactured\s+for|marketed\s+by|marketed\s*,\s*supported\s+by|manufactured\s*(?:and|&)\s*packed\s*by|mfd\.?\s*(?:and|&)\s*pkd\.?\s*by|\bmanufacturer\s*:\b|\bmanufacturer\s+contact\s+information\b/i,
   packer: /\bpacked\s+by\b|\bpacker\b|\bpkd\.?\s*by\b/i,
   importer: /\bimported\s+by\b|\bimporter\b/i,
   consumerCare: /complaint|customer\s*care|helpline|toll[\s-]?free|@[\w.-]+\.[a-z]{2,}|\b\d{4}[- ]?\d{3}[- ]?\d{4}\b|\b1800[- ]?\d{3}[- ]?\d{4}\b/i,
@@ -200,11 +200,11 @@ function regexExtract(ocrResult, detection) {
   }
   const mfrLine = mfrIdx !== -1 ? lines[mfrIdx] : null;
   let mfrName = mfrLine?.text
-    ? mfrLine.text.replace(/^(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by)[\s:]*/i, '').trim()
+    ? mfrLine.text.replace(/^(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by|manufacturer\s+contact\s+information|manufacturer)[\s:]*/i, '').trim()
     : null;
   if (mfrLine && (!mfrName || mfrName.length < 2) && mfrIdx + 1 < lines.length) {
     const nextLineText = lines[mfrIdx + 1].text.trim();
-    if (nextLineText && !classifyLine(nextLineText).includes('mrp') && nextLineText.length < 150) {
+    if (nextLineText && !classifyLine(nextLineText).includes('mrp') && nextLineText.length < 150 && !/color\s*:\s*#|!important/i.test(nextLineText)) {
       mfrName = nextLineText;
     }
   }
@@ -213,20 +213,23 @@ function regexExtract(ocrResult, detection) {
     const combinedMfrText = lines
       .slice(mfrIdx, Math.min(lines.length, mfrIdx + 5))
       .map((l) => l.text)
+      .filter((t) => !/color\s*:\s*#|!important|\{[^}]*\}/i.test(t))
       .join(' ');
     const hasAddressSignal =
-      /\b[1-9]\d{5}\b/i.test(combinedMfrText) ||
+      /(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(combinedMfrText) ||
       /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa|kolkata|bengaluru|jodhpur|rajasthan/i.test(combinedMfrText) ||
-      combinedMfrText.length > 35;
-    mfrAddress = hasAddressSignal ? combinedMfrText.slice(0, 300) : false;
+      (combinedMfrText.length > 35 && !/color\s*:\s*#|!important/i.test(combinedMfrText));
+    mfrAddress = hasAddressSignal && !/color\s*:\s*#|!important|\{[^}]*\}/i.test(combinedMfrText)
+      ? combinedMfrText.slice(0, 300)
+      : false;
   }
   if (!mfrName || /^(?:info|details|contact|website)$/i.test(mfrName)) {
-    const globalMfr = fullText.match(/(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by)[\s:]+([^\n\r]+)/i);
-    if (globalMfr && !/^(?:info|details|contact)$/i.test(globalMfr[1].trim())) {
+    const globalMfr = fullText.match(/(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|manufacturer\s*:)[\s:]+([^\n\r]+)/i);
+    if (globalMfr && !/^(?:info|details|contact)$/i.test(globalMfr[1].trim()) && !/color\s*:\s*#|!important/i.test(globalMfr[1])) {
       mfrName = globalMfr[1].slice(0, 150).trim();
       mfrAddress = mfrName;
     } else {
-      const packMfr = lines.find((l) => /\[Product Packaging Label\].*(?:co\.|pvt|ltd|mfd|mfg|manufactur)/i.test(l.text) && !/@|care|phone/i.test(l.text));
+      const packMfr = lines.find((l) => /\[Product Packaging Label\].*(?:co\.|pvt|ltd|mfd|mfg|manufactur)/i.test(l.text) && !/@|care|phone|color\s*:#/i.test(l.text));
       if (packMfr) {
         mfrName = packMfr.text.replace(/^\[Product Packaging Label\]:?\s*/i, '').trim();
       }
@@ -234,14 +237,17 @@ function regexExtract(ocrResult, detection) {
   }
 
   // Address fallback from packaging OCR or lines if not found
-  if (!mfrAddress || mfrAddress === 'info' || mfrAddress.length < 5) {
+  if (!mfrAddress || mfrAddress === 'info' || mfrAddress.length < 5 || /color\s*:\s*#|!important/i.test(mfrAddress)) {
     const addrLine = lines.find((l) =>
-      /\b[1-9]\d{5}\b/i.test(l.text) ||
-      /\b(?:jodhpur|rajasthan|delhi|mumbai|bangalore|bengaluru|kolkata|chennai|hyderabad|pune|ahmedabad|surat|jaipur|indore|nagpur)\b/i.test(l.text)
+      !/color\s*:\s*#|!important|\.savingPriceOverride/i.test(l.text) &&
+      (/(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(l.text) ||
+      /\b(?:jodhpur|rajasthan|delhi|mumbai|bangalore|bengaluru|kolkata|chennai|hyderabad|pune|ahmedabad|surat|jaipur|indore|nagpur)\b/i.test(l.text))
     );
     if (addrLine) {
       const cleanAddr = addrLine.text.replace(/^\[Product Packaging Label\]:?\s*/i, '').trim();
       mfrAddress = mfrName ? `${mfrName}, ${cleanAddr}` : cleanAddr;
+    } else {
+      mfrAddress = false;
     }
   }
 
@@ -306,8 +312,10 @@ function regexExtract(ocrResult, detection) {
       .map((l) => l.text)
       .join(' ');
     careRaw = careText;
-    const phoneMatch = careText.match(/(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|\b0?\d{2,4}[- ]?\d{6,8}\b/);
-    if (phoneMatch) phone = phoneMatch[0];
+    const phoneMatch = careText.match(/(?<!\d)(?:(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|0?\d{2,4}[- ]?\d{6,8})(?!\d)/);
+    if (phoneMatch && !/^890\d{7,10}$/.test(phoneMatch[0].replace(/\D/g, ''))) {
+      phone = phoneMatch[0];
+    }
     const emailMatch = careText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
     if (emailMatch) email = emailMatch[0];
   }
@@ -319,8 +327,8 @@ function regexExtract(ocrResult, detection) {
     }
   }
   if (!phone) {
-    const globalPhone = fullText.match(/(?:1800[\s-]?\d{3,4}[\s-]?\d{3,4}|(?:\+?91[\s-]?)?[6-9]\d{9})/);
-    if (globalPhone) {
+    const globalPhone = fullText.match(/(?<!\d)(?:1800[\s-]?\d{3,4}[\s-]?\d{3,4}|(?:\+?91[\s-]?)?[6-9]\d{9})(?!\d)/);
+    if (globalPhone && !/^890\d{7,10}$/.test(globalPhone[0].replace(/\D/g, ''))) {
       phone = globalPhone[0];
       if (!careRaw) careRaw = phone;
     }
@@ -330,8 +338,20 @@ function regexExtract(ocrResult, detection) {
   const standardLine = lines.find((l) => /non[\s-]?standard\s+size|not\s+a\s+standard\s+pack\s+size/i.test(l.text));
   const dimLine = lines.find((l) => /\b\d+\s*x\s*\d+\s*(?:x\s*\d+)?\s*(?:mm|cm|m|inch|in)\b|box\s+size|dimensions?/i.test(l.text));
 
+  let brandName = null;
   const brandMatch = fullText.match(/\bbrand[\s:]+([^\n\r,;|]+)/i);
-  const brandName = brandMatch ? brandMatch[1].trim() : null;
+  if (brandMatch) {
+    const cand = brandMatch[1].trim();
+    if (!/top brand/i.test(cand) && !cand.toLowerCase().includes('indicates high quality')) {
+      brandName = cand;
+    }
+  }
+  if (!brandName) {
+    const storeMatch = fullText.match(/visit\s+the\s+([A-Za-z0-9&'\s]+?)\s+store/i);
+    if (storeMatch) {
+      brandName = storeMatch[1].trim();
+    }
+  }
 
   return {
     commodityClassification: {

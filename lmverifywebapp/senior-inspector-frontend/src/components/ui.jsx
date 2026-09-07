@@ -64,6 +64,21 @@ export function PdfLink({ url, label = 'Open PDF' }) {
   );
 }
 
+export function PdfButton({ onClick, loading, label = "Download Official PDF Report" }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      className="inline-flex items-center gap-2 rounded-sm bg-govt-navy px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-govt-navy disabled:opacity-60 transition-colors cursor-pointer"
+    >
+      <span aria-hidden="true" className="text-sm">📄</span>
+      <span>{loading ? "Generating PDF…" : label}</span>
+      <span aria-hidden="true">⬇</span>
+    </button>
+  );
+}
+
 export function Panel({ title, note, children, action }) {
   return (
     <section className="border border-slate-300 bg-white border-t-[3px] border-t-govt-navy shadow-xs rounded-xs overflow-hidden">

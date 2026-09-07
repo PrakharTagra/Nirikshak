@@ -112,6 +112,8 @@ reportsRouter.get('/:id', async (req, res) => {
       compliance_result: r.compliance_result || r.complianceResult || null,
       summary: r.summary || {},
       declared_values: r.declared_values || {},
+      packageRecord: r.packageRecord || r.package_record || {},
+      compliance: r.compliance || {},
       evidenceImages: r.evidenceImages || [],
       is_edible: r.is_edible,
       is_imported: r.is_imported,

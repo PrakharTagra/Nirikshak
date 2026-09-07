@@ -19,6 +19,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "groq-sdk": "^0.9.1",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "mongoose": "^9.9.5",
     "playwright": "^1.61.0",
     "sharp": "file:./stubs/sharp"

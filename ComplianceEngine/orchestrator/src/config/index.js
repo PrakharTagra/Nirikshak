@@ -12,11 +12,13 @@ const ROOT = path.resolve(__dirname, '..', '..');
 
 // Multi-path dotenv resolution so env vars load regardless of execution directory
 const candidateEnvPaths = [
+  path.resolve(ROOT, '..', '..', 'lmVerify', 'local-scraper', '.env'),
   path.join(ROOT, '.env'),
   path.resolve(ROOT, '..', '.env'),
   path.resolve(ROOT, '..', '..', '.env'),
   path.resolve(process.cwd(), 'ComplianceEngine', 'orchestrator', '.env'),
   path.resolve(process.cwd(), 'orchestrator', '.env'),
+  path.resolve(process.cwd(), 'local-scraper', '.env'),
   path.resolve(process.cwd(), '.env'),
 ];
 
@@ -50,7 +52,8 @@ module.exports = {
     minContrastRatio: process.env.MIN_CONTRAST_RATIO ? Number(process.env.MIN_CONTRAST_RATIO) : 2.5,
   },
   groq: {
-    model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+    model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
+    fallbackModel: process.env.GROQ_FALLBACK_MODEL || 'openai/gpt-oss-20b',
     fallbackToRegex: process.env.GROQ_FALLBACK_TO_REGEX !== 'false',
   },
   report: {

@@ -4,7 +4,9 @@ import {
   getReport, decide, DECIDABLE, REASON_REQUIRED, ACTION_LABEL,
   STATUS_LABEL, CHANNEL_LABEL,
 } from '../lib/acApi.js';
-import { StatusBadge, ComplianceBadge, PdfLink, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
+import { StatusBadge, ComplianceBadge, PdfLink, PdfButton, Panel, Loading, formatDate, formatDateTime, Breadcrumb } from '../components/ui.jsx';
+import ComplianceReport from '../components/ComplianceReport.jsx';
+import { generatePdfReport } from '../lib/pdfReportGenerator.js';
 
 const ACTION_STYLE = {
   approved: 'bg-emerald-700 hover:bg-emerald-800 focus-visible:outline-emerald-700',
@@ -176,7 +178,15 @@ export default function ReportReview() {
             Contains all statutory rule checks, computer vision declarations, and cropped violation evidence.
           </p>
         </div>
-        <PdfLink url={report.pdf_url} label="View Full Report PDF" />
+        <div className="flex flex-wrap items-center gap-3">
+          {report.channel === 'ecommerce' && (
+            <PdfButton
+              onClick={() => generatePdfReport(report, { name: report.officer_name, role: report.officer_role })}
+              label="Download Official PDF"
+            />
+          )}
+          <PdfLink url={report.pdf_url} label="View Full Report PDF" />
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -220,6 +230,20 @@ export default function ReportReview() {
           <DecisionPanel report={report} onDecided={load} />
         </div>
       </div>
+
+      {report.channel === 'ecommerce' && (
+        <div className="mt-8 pt-6 border-t-2 border-slate-300">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-govt-navy">
+              Official Digital Marketplace Inspection Dossier
+            </span>
+            <h2 className="text-xl font-bold text-slate-900">
+              Complete Statutory Compliance Memorandum
+            </h2>
+          </div>
+          <ComplianceReport report={report} officer={{ name: report.officer_name, role: report.officer_role }} />
+        </div>
+      )}
     </div>
   );
 }

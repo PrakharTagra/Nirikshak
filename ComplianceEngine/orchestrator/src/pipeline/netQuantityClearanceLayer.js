@@ -299,14 +299,28 @@ function extractMultiPieceFacts(clusterLines) {
 
   for (const line of clusterLines) {
     const txt = String(line.text || '');
+    if (isOtherStatutoryOrSpecLine(txt)) continue;
+
+    // Discard dimension lines like "7.3 x 4 x 17.5 cm" or "10 x 5 cm"
+    const isDimensionLine =
+      /\b(?:dimensions?|cm\b|mm\b|inches?|depth|height|width)\b/i.test(txt) ||
+      /\d+\s*[xX*×]\s*\d+\s*[xX*×]\s*\d+/i.test(txt);
+    if (isDimensionLine) continue;
 
     // Check for multiplier / breakdown (e.g. "(2 Numbers x 45 ml)", "2U x 25ml", "3 x 100 g")
     const mMatch = txt.match(MULTIPLIER_RE);
     if (mMatch) {
       if (mMatch[1] && mMatch[2]) {
+        const rawUnit = mMatch[3];
+        // Multipliers must declare mass/volume unit or piece count prefix, never bare numbers or linear units
+        if (!rawUnit && !/(?:numbers?|units?|pieces?|n\b|u\b|refills?|nos?)/i.test(mMatch[0])) {
+          continue;
+        }
+        const unit = (rawUnit || 'ml').toLowerCase();
+        if (['cm', 'mm', 'm', 'inch', 'in'].includes(unit)) continue;
+
         const count = parseDigit(mMatch[1]) || 1;
         const eachVal = parseFloat(mMatch[2]);
-        const unit = (mMatch[3] || 'ml').toLowerCase();
         pieces.push({ count, value: eachVal, unit, rawText: mMatch[0] });
         if (!totalValue) {
           totalValue = +(count * eachVal).toFixed(2);

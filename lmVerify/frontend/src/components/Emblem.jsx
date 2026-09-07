@@ -1,15 +1,8 @@
 import React from "react";
-import emblemWhite from "../assets/emblem-white.png";
-import emblemDark from "../assets/emblem-dark.png";
-import emblemGold from "../assets/emblem-gold.png";
+import { EMBLEM_BASE64 } from "../assets/emblemBase64.js";
 
-export default function Emblem({ size = 48, className = "", light = false, variant, style = {} }) {
-  // Determine variant: default to 'white' if light={true}, else 'dark', or explicit variant
-  const selectedVariant = variant || (light ? "white" : "dark");
-
-  let src = emblemDark;
-  if (selectedVariant === "white") src = emblemWhite;
-  else if (selectedVariant === "gold") src = emblemGold;
+export default function Emblem({ size = 48, className = "", style = {} }) {
+  const src = EMBLEM_BASE64;
 
   // Aspect ratio of the official emblem is 500 : 797 (~ 1 : 1.594)
   const width = Math.round(size * (500 / 797));

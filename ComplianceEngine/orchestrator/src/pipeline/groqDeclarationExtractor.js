@@ -267,48 +267,50 @@ Top-level JSON keys MUST be exactly:
 CRITICAL INSTRUCTIONS BY DECLARATION:
 
 1. COMMODITY NAME vs. BRAND NAME (Rule 6(1)(b)):
-- Brand Name: The commercial brand or trademark (e.g., "INTEX", "Cadbury", "Britannia", "Samsung", "boAt", "Sony", "Parle").
-- Generic Commodity Name: The generic or common identity of the commodity (e.g., "Wireless Mini USB Adapter", "Milk Chocolate", "Biscuits", "Bluetooth Earphones", "LED Television", "Wheat Flour").
+- Brand Name: The commercial brand or trademark (e.g., "Scalpe Pro", "INTEX", "Cadbury", "Britannia", "Samsung", "boAt", "Sony", "Parle").
+  * Look for "Brand: <Name>", "Brand <Name>", or "Visit the <Name> Store".
+  * STRICT PROHIBITION: NEVER extract marketing badges, trust slogans, or advertising copy such as "Top Brand indicates high quality", "Top Brand", "Best Seller", or "Amazon's Choice" as the Brand Name!
+- Generic Commodity Name: The generic or common identity of the commodity (e.g., "Anti dandruff shampoo", "Wireless Mini USB Adapter", "Milk Chocolate", "Biscuits", "Bluetooth Earphones", "LED Television", "Wheat Flour", "Cashew Kernels").
+  * Do NOT include leading colons, hyphens, or labels like "Generic Name:" in the value. E.g. return "Anti dandruff shampoo", NOT ": Anti dandruff shampoo".
 - "commodityName.perProductBreakdown": true for multi-product or combination packages containing distinct commodities (e.g., machine/device + refills, shaver + foam, kit) that declare names and numbers/quantities of each product.
 - If a package contains multiple pieces of the SAME commodity (e.g. 3 refills of vaporiser), perProductBreakdown is false.
 
 2. MANUFACTURER, PACKER, IMPORTER (Rule 6(1)(a)):
-- Look for "Manufactured by", "Mfd. by", "Mfg by", "Produced by", "Marketed by", "Manufactured For", "Supported By", "Packed by", "Pkd. by", "Imported by", "Imp. by".
-- In Indian retail packages, brands commonly state "Marketed, Supported By and Manufactured For: <Company Name>, Address: <Address>". Under Rule 6(1)(a) Explanation 1, if a brand/marketer assumes manufacturer responsibility ("Manufactured For" / "Marketed By"), extract it under "manufacturer" (and if a separate contract packer/manufacturer is also declared, extract them under "packer").
-- "name": Full legal company name (e.g., "Intex Technologies (India) Ltd.").
-- "address": The complete postal address string observed in text (building, street, industrial area, city, pin code, state, country, e.g., "A-61, Okhla Ind. Area, Phase II, New Delhi-110020 (India)").
-- If an entity is present but no address is printed, set address to false.
-- If a separate packer is declared, populate "packer". If imported, populate "importer".
+- Look for "Manufacturer:", "Manufacturer Contact Information:", "Manufactured by", "Mfd. by", "Mfg by", "Produced by", "Marketed by", "Manufactured For", "Supported By", "Packed by", "Pkd. by", "Imported by", "Imp. by".
+- "name": Full legal company name (e.g., "Glenmark Pharmaceuticals Ltd.", "Intex Technologies (India) Ltd.").
+- "address": The complete postal address string observed in text (building, street, city, pin code, state, country).
+  * If only the manufacturer name is provided on an online listing without a separate street address, set address to false.
+  * STRICT PROHIBITION: NEVER extract CSS code, styling rules (e.g. "color:#565959!important;"), or HTML markup as an address!
+- In Indian retail packages, if a brand assumes manufacturer responsibility ("Manufactured For" / "Marketed By"), extract it under "manufacturer".
+- If a separate contract packer is declared, populate "packer". If imported, populate "importer".
 
 3. NET QUANTITY (Rule 6(1)(c), Rule 11, Rule 12, Rule 13, Rule 24, Rule 28):
-- PRIMARY Net Quantity: The declared total quantity of commodity sold in the package (e.g., "Net Quantity: 1 Unit", "Net Qty: 1 N", "100 g", "500 ml", "90 ml").
+- PRIMARY Net Quantity: The declared quantity of the specific commodity sold in the package (e.g., "200 ml", "200.0 Milliliters", "Net Quantity: 1 Unit", "Net Qty: 1 N", "100 g", "500 ml", "90 ml").
+- CRITICAL E-COMMERCE VARIANT / MULTI-SIZE RULE:
+  * Online product pages often show selectable buttons for multiple size options (e.g. "100 ml", "200 ml", "400 ml", "650 ml").
+  * You MUST extract the net quantity of the CURRENT PRODUCT VARIANT being inspected (declared under "Size:", "Net Quantity:", "Liquid Volume:", "Item Weight:", or in the main product title).
+  * NEVER sum up multiple alternate size options, and NEVER treat multiple size buttons as piece counts!
+  * For a single container/bottle, "pieceCount" MUST be 1.
 - CRITICAL MULTI-PIECE / MULTI-PRODUCT PACK INSTRUCTION:
-    * If a packaged commodity contains multiple pieces/units (e.g., 3 pieces inside, 2 numbers x 45 ml = 90 ml, 3 x 100 g = 300 g):
-    * NEVER map only the first piece or only one piece!
-    * "value": MUST be the TOTAL aggregated net quantity of the package (e.g. 90, NOT 45; 300, NOT 100; or 3 if sold by 3 units/pieces).
-    * "pieceCount": total number of pieces inside (e.g. 2, 3, 4).
-    * "rawText": MUST include the full declaration including piece counts and breakdown (e.g. "Net Quantity: 90 ml (2 Numbers x 45 ml)").
-- DO NOT confuse auxiliary box specifications (e.g., "Box Size: 85x14x85 mm, Net Weight: 6 gm, Gross Weight: 18 gm") with the primary net quantity for a countable electronic/hardware item (which is "1 Unit" or "1 N").
-- "value": numeric float (e.g. 1, 100, 500, 1.5, 90).
-- "unit": normalized unit string (e.g. "unit", "n", "u", "g", "kg", "ml", "l", "m", "cm", "piece").
-- "unitKind":
-    * "number" for countable items sold by piece/count/unit/N/U.
-    * "mass" for weight in g or kg.
-    * "volume" for liquid measure in ml or l.
-    * "length" for linear measure in m or cm.
-    * "area" for area in sq.m or sq.cm.
-- "symbolUsed": The exact unit symbol as printed on the package (e.g., "Unit", "N", "U", "g", "gm", "kg", "ml", "piece").
+  * ONLY when a packaged commodity explicitly declares multiple identical items inside (e.g., "Pack of 3", "2 Numbers x 45 ml = 90 ml", "3 x 100 g = 300 g"):
+  * "value": MUST be the TOTAL aggregated net quantity of the package (e.g. 90, NOT 45; 300, NOT 100).
+  * "pieceCount": total number of pieces inside (e.g. 2, 3, 4).
+  * "rawText": include the full declaration including piece counts and breakdown.
+- DO NOT confuse dimensions or box specifications (e.g., "Item Dimensions: 7.3 x 4 x 17.5 cm", "Box Size: 85x14x85 mm") with net quantity!
+- "value": numeric float (e.g. 200, 1, 100, 500, 1.5).
+- "unit": normalized unit string (e.g. "ml", "l", "g", "kg", "unit", "n", "u", "piece").
+- "unitKind": "volume" for liquids (ml/l), "mass" for weight (g/kg), "number" for countable items (unit/piece/N).
+- "symbolUsed": The exact unit symbol as printed on the package (e.g., "Milliliters", "ml", "Unit", "N", "g").
 - "qualifiedWhenPacked": true only if accompanied by words like "when packed" or "when packaged".
 
 4. RETAIL SALE PRICE / MRP (Rule 6(1)(e), Rule 2(m)):
-- Look for "MRP", "M.R.P.", "Maximum Retail Price", "Max. Retail Price", "Rs.", "₹", "INR", and stamped/inkjet price markings.
-- CRITICAL ANTI-CONFUSION RULE: Do NOT confuse unit counts (e.g., "for 1 Unit: 999.00/-" or "per unit") with the price! The price is 999.00, NOT 1!
-- "value": numeric float of the retail price in Rupees (e.g., 999 or 999.00).
+- Look for "MRP", "M.R.P.", "Maximum Retail Price", "Max. Retail Price", "Rs.", "₹", "INR", and stamped price markings.
+- "value": numeric float of the retail price in Rupees (e.g., 336 or 336.00). Do NOT confuse discount prices or per-ml unit rates with the primary MRP.
 - "currency": "INR", "Rs.", or "₹".
-- "inclusiveOfTaxesStated": true if "inclusive of all taxes", "incl. of all taxes", "incl. of taxes", "incl. all taxes", "(Inclusive of all taxes)", etc. is stated near the MRP.
-- "rawText": Full raw text snippet.
+- "inclusiveOfTaxesStated": true if "inclusive of all taxes", "incl. of all taxes", "incl. of taxes", "incl. all taxes", "(Inclusive of all taxes)", etc. is stated near the price.
+- "rawText": Full raw price snippet.
 
-5. MONTH & YEAR OF MANUFACTURE / PACKING (Rule 6(1)(d)):
+5. MONTH & YEAR OF MANUFACTURE / PACKING (Rule 6(1)(d), Rule 6(10)):
 - STATUTORY REQUIREMENT: The date MUST strictly be accompanied by an explicit statutory label such as:
   * "Manufactured date" / "Date of manufacture" / "Mfg Date" / "MFD" / "MFG" / "Manufactured on"
   * "Month & Year of Manufacture" / "Month and Year of Manufacture"
@@ -319,42 +321,38 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
   * NEVER extract shipping/delivery estimates (e.g. "Get it Sep 8 - 10", "Delivery by Friday").
   * NEVER extract "Best Before", "Expiry Date", "Use By", or warranty/shelf-life dates as manufacturing date.
   * NEVER extract bare numbers or date stamps that lack an explicit statutory manufacturing/packing label.
-- If no explicit statutory manufacturing or packing label ("MFD", "Manufactured date", "PKD", etc.) is declared, you MUST return:
+- On Digital Marketplace / E-Commerce listings, month and year of manufacture is EXEMPT per Rule 6(10). If not explicitly declared on the webpage with a statutory label, you MUST return:
   "mfgDate": { "present": false, "value": null, "rawText": null, "usedIndividualSticker": false, "isMrpReductionSticker": false }
-- "value": the extracted date string (e.g., "February 2026" or "02/2026").
-- "usedIndividualSticker": false by default. Only true if an actual adhesive paper sticker was affixed over the surface to alter the date. Direct inkjet coding or stamping is NOT a sticker.
 
 6. CONSUMER CARE / COMPLAINTS (Rule 6(2)):
 - Look for "Consumer Complaints", "Customer Care", "Helpline", "Contact:", phone numbers, emails, addresses.
-- "present": true if any consumer complaint contact is provided.
-- "name": company or designation (e.g., "Customer Care Cell, Intex Technologies (India) Ltd.").
+- STRICT PROHIBITION: Barcodes, EAN-13 codes, ASINs, model numbers, or part numbers (e.g., "8904091136056", "B0BLM3Q44F") are NOT telephone numbers! NEVER extract an EAN barcode or model number as telephone!
+- "present": true if any customer care contact is provided.
+- "name": company or designation (e.g., "Customer Care Cell, Glenmark Pharmaceuticals Ltd.").
 - "address": postal address for consumer complaints.
 - "telephone": customer care phone number (e.g., "0120-489-5555", "1800-...").
-- "email": customer care email (e.g., "info@intex.in").
-- "website": customer care website if declared (e.g., "www.intex.in").
-- "rawText": entire consumer care paragraph.
+- "email": customer care email (e.g., "customercare@glenmark.com").
+- "website": customer care website if declared.
+- "rawText": entire consumer care snippet.
 
 7. DIMENSIONS (Rule 6(1)(f), Rules 14-17):
-- Look for sizes like "Box Size: 85 x 14 x 85 mm", "Dimensions: ...", finished sizes of garments/fabrics.
+- Look for sizes like "Item Dimensions: 7.3 x 4 x 17.5 cm", "Box Size: ...", finished sizes.
 - "present": true if dimensions are declared.
-- "rawText": full dimension declaration.
-- "lengthWidthDepth": e.g., "85 x 14 x 85 mm".
-- "linearDimensions": e.g., "85 x 14 x 85 mm".
+- "lengthWidthDepth": e.g., "7.3 x 4 x 17.5 cm".
+- "linearDimensions": e.g., "7.3 x 4 x 17.5 cm".
 
 8. STANDARD PACK DECLARATION (Rule 5 proviso):
-- "present": ONLY true if the package explicitly states "Not a standard pack size" or "Non standard size under the Legal Metrology (Packaged Commodities) Rules, 2011".
-- General compliance statements like "In compliance with Legal Metrology Act" or "Rule 2 of Legal Metrology" are NOT standard pack declarations. Leave standardPackDeclaration.present: false for general statements!
+- "present": ONLY true if the package explicitly states "Not a standard pack size" or "Non standard size under the Legal Metrology (Packaged Commodities) Rules, 2011". Leave false for general compliance statements.
 
 9. COMMODITY CLASSIFICATION:
-- "brandName": extracted brand (e.g., "INTEX").
-- "genericName": generic commodity name (e.g., "Wireless Mini USB Adapter").
-- "scheduleCategory": If the product matches an item in the Second Schedule, give the exact key:
-  ("baby food", "weaning food", "biscuits", "bread (including brown bread, excluding bun)", "butter and margarine (un-canned)", "cereals and pulses", "coffee", "tea", "reconstituted beverage materials", "edible oils, vanaspati, ghee, butter oil", "milk powder", "non-soapy detergents (powder)", "rice (powdered), flour, atta, rawa, suji", "salt", "soap - laundry", "soap - non-soapy detergent cakes/bars", "soap - toilet (incl. bath soap cakes)", "aerated soft drinks / non-alcoholic beverages", "mineral water and drinking water", "cement in bags", "paint, varnish etc. - (a) paint (other than paste/solid), varnish, stains, enamels", "paint, varnish etc. - (b) paste paint and solid paint", "paint, varnish etc. - (c) base paint"). Otherwise null.
-- "physicalForm": "combination" (for kits or combo packs containing distinct items of different forms, e.g. a countable device/machine + liquid refills), "countable" (for single items sold by piece/count/units), "solid", "liquid", "semi_solid", "viscous", "linear", or "area".
+- "brandName": extracted commercial brand (e.g., "Scalpe Pro").
+- "genericName": generic commodity name (e.g., "Anti dandruff shampoo").
+- "scheduleCategory": matching Second Schedule category if applicable, else null.
+- "physicalForm": "liquid" (for shampoo, oil, juice), "solid", "countable", "semi_solid", "viscous", "linear", or "area".
 - "isFoodArticle": true if food or beverage, false otherwise.
 - "isImported": true if manufactured outside India.
-- "countryOfOrigin": e.g., "India", "China", etc. if declared.
-- "dimensionsRelevant": true if dimensions are declared or typically required for this item.`;
+- "countryOfOrigin": e.g., "India" if declared.
+- "dimensionsRelevant": true if dimensions are declared.`;
 
 function buildUserPrompt(ocrResult) {
   const isMulti = ocrResult?.isMultiImage || (ocrResult?.lines || []).some((l) => l.imageIndex > 0);
@@ -367,26 +365,25 @@ function buildUserPrompt(ocrResult) {
     .filter((l) => l.length > 2)
     .join('\n');
 
-  const rawParagraphs = ocrResult?.text ? `\n\nFULL EXTRACTED TEXT ACROSS PANELS:\n${ocrResult.text}` : '';
+  // If formattedLines is present, use it directly without duplicating full text to stay within TPM limits
+  const contentText = formattedLines.length > 0 ? formattedLines : (ocrResult?.text || '');
 
   return [
-    'Extract Legal Metrology mandatory package declarations and commodity classification from the OCR lines below.',
+    'Extract Legal Metrology mandatory package declarations and commodity classification from the listing/OCR lines below.',
     isMulti
-      ? 'The input contains OCR text extracted from MULTIPLE PANELS of a single packaged commodity. Combine all panels into one unified declaration.'
-      : 'All lines are from the package label/surfaces.',
+      ? 'The input contains text extracted from MULTIPLE PANELS or sections. Combine all into one unified declaration.'
+      : 'All lines are from the product listing/package.',
     '',
     'CRITICAL REMINDERS:',
-    '1. Set commodityName to the GENERIC/COMMON product name (e.g. "Wireless Mini USB Adapter"), NOT the brand name (e.g. "INTEX").',
-    '2. For countable commodities (e.g. adapters, cables, electronics), net quantity is the sold unit count ("1 Unit", unitKind: "number"), NOT the package gross/net weight ("6 gm").',
-    '3. For multi-piece packages (e.g. 3 pieces inside, or 2 Numbers x 45 ml = 90 ml), net quantity value MUST be the TOTAL package quantity (90 ml), NOT just one piece (45 ml). Record pieceCount.',
-    '4. For MRP, do not confuse the unit count with the price figure (e.g. "for 1 Unit: 999.00" has price 999.00, not 1).',
-    '5. Populate consumer care telephone and email into their individual fields if present.',
-    '6. General legal disclaimers like "In compliance with Legal Metrology Act" are NOT standard pack declarations (Rule 5). Keep standardPackDeclaration.present: false unless it explicitly says "Not a standard pack size".',
-    '7. Return strictly valid JSON conforming to the schema.',
+    '1. Set brandName to the actual brand (e.g. "Scalpe Pro"). NEVER use marketing slogans like "Top Brand indicates high quality".',
+    '2. Set commodityName to the GENERIC product identity (e.g. "Anti dandruff shampoo"), NOT the brand name.',
+    '3. For e-commerce listings with multiple size variants, extract the NET QUANTITY of the currently selected item (e.g. 200 ml), NOT other variant sizes or a sum of options.',
+    '4. Extract Manufacturer legal name (e.g. "Glenmark Pharmaceuticals Ltd."). Do not output CSS as address.',
+    '5. Barcodes and model numbers (e.g. 8904091136056) are NOT phone numbers.',
+    '6. Return strictly valid JSON conforming to the schema.',
     '',
-    'OCR TEXT LINES:',
-    formattedLines,
-    rawParagraphs,
+    'PRODUCT TEXT / OCR LINES:',
+    contentText,
   ].join('\n');
 }
 
@@ -425,8 +422,19 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
 
   // 1. Commodity Classification
   const cClas = d.commodityClassification || {};
+  let brandName = cClas.brandName || null;
+  if (brandName && /top\s+brand\s+indicates|indicates\s+high\s+quality|top\s+brand/i.test(brandName)) {
+    const brandMatch = rawOcrText.match(/(?:visit\s+the\s+([A-Za-z0-9\s&'-]+?)\s+store|\bbrand[\s:]+([A-Za-z0-9\s&'-]+))/i);
+    if (brandMatch) {
+      const candidate = (brandMatch[1] || brandMatch[2] || '').trim();
+      brandName = !/indicates|trusted|about|high\s+quality/i.test(candidate) ? candidate : null;
+    } else {
+      brandName = null;
+    }
+  }
+
   const classification = {
-    brandName: cClas.brandName || null,
+    brandName: brandName,
     genericName: cClas.genericName || null,
     scheduleCategory: cClas.scheduleCategory || null,
     physicalForm: cClas.physicalForm || null,
@@ -438,7 +446,7 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     manufacturerIsNotPacker: !!cClas.manufacturerIsNotPacker,
   };
 
-  // 2. Commodity Name: ensure generic name is prioritized over brand
+  // 2. Commodity Name: ensure generic name is prioritized over brand and clean of punctuation
   const comm = d.commodityName || {};
   let commValue = comm.value || classification.genericName || null;
   if (
@@ -448,6 +456,9 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     classification.genericName
   ) {
     commValue = classification.genericName;
+  }
+  if (commValue) {
+    commValue = commValue.replace(/^[\s:·•_—-]+/, '').replace(/[\s:·•_—-]+$/, '').trim();
   }
   d.commodityName = {
     present: !!(comm.present || commValue),
@@ -465,15 +476,27 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
 
   // 3. Manufacturer, Packer, Importer
   const normalizeAddress = (addr) => {
-    if (typeof addr === 'string' && addr.trim().length > 0) return addr.trim();
+    if (typeof addr === 'string' && addr.trim().length > 0) {
+      const trimmed = addr.trim();
+      if (/color:|!important|#[0-9a-f]{6}|\{|\}/i.test(trimmed)) return false;
+      return trimmed;
+    }
     if (addr === true) return true;
     return false;
   };
 
-  const mfrPresent = !!(rawMfr.present || rawMfr.name || rawMfr.address);
+  let mfrName = rawMfr.name || null;
+  if (!mfrName && rawOcrText) {
+    const mfrMatch = rawOcrText.match(/(?:Manufacturer\s*Contact\s*Information|Manufacturer)[\s:]+([^\n\r,;]+)/i);
+    if (mfrMatch && !/info|details|contact/i.test(mfrMatch[1])) {
+      mfrName = mfrMatch[1].trim();
+    }
+  }
+
+  const mfrPresent = !!(rawMfr.present || mfrName || rawMfr.address);
   d.manufacturer = {
     present: mfrPresent,
-    name: rawMfr.name || null,
+    name: mfrName,
     address: normalizeAddress(rawMfr.address),
     mark: rawMfr.mark || null,
     rawText: rawMfr.rawText || '',
@@ -702,11 +725,18 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   const combinedCareText = `${careRaw}\n${rawOcrText}`;
 
   let telephone = care.telephone || null;
+  // Discard if telephone is actually an EAN barcode or model number (e.g. 8904091136056 or 11+ digits)
+  if (telephone && (/\b\d{11,14}\b/.test(telephone) || /8904091136/.test(telephone))) {
+    telephone = null;
+  }
   if (!telephone) {
+    // Only match phone numbers with word boundaries and not part of a model/part number line
     const phoneMatch = combinedCareText.match(
-      /(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|\b0\d{2,4}[- ]?\d{6,8}\b/
+      /(?:\+?91[\s-]?)?[6-9]\d{9}(?!\d)|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|\b0\d{2,4}[- ]?\d{6,8}\b/
     );
-    if (phoneMatch) telephone = phoneMatch[0].trim();
+    if (phoneMatch && !/model|part|asin|barcode|ean|upc|fssai|lic/i.test(phoneMatch[0])) {
+      telephone = phoneMatch[0].trim();
+    }
   }
 
   let email = care.email || null;
@@ -764,18 +794,38 @@ async function extractDeclarationsWithGroq(ocrResult) {
   const Groq = require('groq-sdk');
   const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const modelToUse = getGroqModel();
+  const fallbackModel = config?.groq?.fallbackModel || (modelToUse === 'openai/gpt-oss-120b' ? 'openai/gpt-oss-20b' : 'openai/gpt-oss-120b');
 
   logger.info('groqDeclarationExtractor', `Calling Groq chat completions using model ${modelToUse}...`);
 
-  const response = await client.chat.completions.create({
-    model: modelToUse,
-    temperature: 0,
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(ocrResult) },
-    ],
-    response_format: { type: 'json_object' },
-  });
+  let response;
+  try {
+    response = await client.chat.completions.create({
+      model: modelToUse,
+      temperature: 0,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: buildUserPrompt(ocrResult) },
+      ],
+      response_format: { type: 'json_object' },
+    });
+  } catch (err) {
+    const isRateOrTokenLimit = err.status === 413 || err.status === 429 || /rate_limit|too large|tpm/i.test(err.message);
+    if (isRateOrTokenLimit && fallbackModel && fallbackModel !== modelToUse) {
+      logger.warn('groqDeclarationExtractor', `Model ${modelToUse} rate/TPM limit reached (${err.message}). Retrying with fallback model ${fallbackModel}...`);
+      response = await client.chat.completions.create({
+        model: fallbackModel,
+        temperature: 0,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: buildUserPrompt(ocrResult) },
+        ],
+        response_format: { type: 'json_object' },
+      });
+    } else {
+      throw err;
+    }
+  }
 
   const content = response.choices?.[0]?.message?.content;
   if (!content) throw new Error('Groq returned an empty extraction response.');
