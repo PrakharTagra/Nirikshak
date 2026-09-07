@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { PlaywrightCrawler, RequestQueue } from "crawlee";
+import { PlaywrightCrawler, RequestQueue, ProxyConfiguration } from "crawlee";
 import { detectPlatform } from "./platforms/index.js";
 import { extractHtml } from "./extractors/html.js";
 import { extractVisibleText } from "./extractors/text.js";
@@ -224,8 +224,21 @@ export async function loadProductPage(url) {
     uniqueKey: `${targetUrl}-${Date.now()}-${Math.random()}`,
   });
 
+  const proxyUrl =
+    process.env.PROXY_URL ||
+    process.env.CRAWLEE_PROXY_URL ||
+    process.env.HTTP_PROXY ||
+    process.env.HTTPS_PROXY;
+  let proxyConfiguration = undefined;
+  if (proxyUrl) {
+    proxyConfiguration = new ProxyConfiguration({
+      proxyUrls: [proxyUrl],
+    });
+  }
+
   const crawler = new PlaywrightCrawler({
     requestQueue,
+    proxyConfiguration,
     maxConcurrency: 1,
     maxRequestRetries: 2,
     navigationTimeoutSecs: 75,
