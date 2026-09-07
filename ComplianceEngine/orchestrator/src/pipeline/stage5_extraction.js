@@ -268,9 +268,10 @@ function regexExtract(ocrResult, detection) {
   }
 
   // Address fallback from packaging OCR or lines if not found
-  if (!mfrAddress || mfrAddress === 'info' || mfrAddress === 'address.' || mfrAddress.length < 5 || /color\s*:\s*#|!important/i.test(mfrAddress)) {
+  const isInvalidAddr = (a) => !a || a === 'info' || a === 'address.' || a.length < 5 || /color\s*:\s*#|!important/i.test(a) || /\b(?:expiry|cir-\d+|transfluthrin|active\s*ingredient)\b/i.test(a);
+  if (isInvalidAddr(mfrAddress)) {
     const addrLine = lines.find((l) =>
-      !/color\s*:\s*#|!important|\.savingPriceOverride/i.test(l.text) &&
+      !/color\s*:\s*#|!important|\.savingPriceOverride|\b(?:expiry|cir-\d+|transfluthrin)\b/i.test(l.text) &&
       (/(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(l.text) ||
       /\b(?:jodhpur|rajasthan|delhi|mumbai|bangalore|bengaluru|kolkata|chennai|hyderabad|pune|ahmedabad|surat|jaipur|indore|nagpur|haryana|gurugram|guwahati|assam|solan|himachal)\b/i.test(l.text))
     );

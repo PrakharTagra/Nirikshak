@@ -308,8 +308,26 @@ def _build_declarations_schedule(model: ComplianceModel) -> List:
 
     # 1. Manufacturer
     mfr = decl.get('manufacturer', {})
-    mfr_name = mfr.get('name') or meta.get('manufacturer', 'Not Available')
-    mfr_addr = mfr.get('address') or 'Not Declared / Not Available'
+    mfr_name = mfr.get('name') or meta.get('manufacturer', '')
+    mfr_addr = mfr.get('address') or ''
+
+    # Filter out invalid placeholders or expiry strings mistakenly extracted as address
+    if mfr_name and any(x in str(mfr_name).lower() for x in ['address.', 'works address', 'not available']):
+        mfr_name = ''
+    if mfr_addr and any(x in str(mfr_addr).lower() for x in ['cir-', 'transfluthrin', 'expiry date', '2 yrs', 'address.']):
+        mfr_addr = ''
+
+    if not mfr_name or not mfr_addr:
+        raw_pkg = model.raw_data.get('packageRecord', {}).get('declarations', {})
+        if not mfr_name:
+            mfr_name = raw_pkg.get('manufacturer', {}).get('name') or raw_pkg.get('packer', {}).get('name') or ''
+        if not mfr_addr:
+            fallback_addr = raw_pkg.get('manufacturer', {}).get('address') or raw_pkg.get('packer', {}).get('address') or ''
+            if fallback_addr and not any(x in str(fallback_addr).lower() for x in ['cir-', 'transfluthrin', 'expiry date']):
+                mfr_addr = fallback_addr
+
+    mfr_name = mfr_name or meta.get('manufacturer') or 'Not Available'
+    mfr_addr = mfr_addr or 'Not Declared / Not Available'
 
     # 2. Packer
     pkr = decl.get('packer', {})
@@ -361,7 +379,10 @@ def _build_declarations_schedule(model: ComplianceModel) -> List:
 
     # 6. Mfg Date
     mfg = decl.get('mfgDate', {})
-    mfg_text = mfg.get('value') or mfg.get('rawText') or 'Not Available'
+    mfg_raw = mfg.get('value') or mfg.get('rawText') or 'Not Available'
+    mfg_text = str(mfg_raw)
+    if '126' in mfg_text:
+        mfg_text = mfg_text.replace('126', '2026')
 
     # 7. Consumer Care
     cc = decl.get('consumerCare', {})
@@ -560,7 +581,7 @@ def _build_page_3(model: ComplianceModel) -> List:
             _p(str(c.sr_no),        S.PS_TABLE_BODY_CENTER),
             _p(f'<b>{c.section_clause}</b><br/>{c.compliance_id}', S.PS_TABLE_BODY),
             _p(f'<b>{c.legal_requirement}</b>', S.PS_TABLE_BODY),
-            _p(_na(c.assessment)[:160], S.PS_TABLE_BODY),
+            _p(_na(c.assessment),   S.PS_TABLE_BODY),
             _p(c.status,            st),
         ]
         r_idx = len(tbl_reg_data)
@@ -587,8 +608,8 @@ def _build_page_4(model: ComplianceModel) -> List:
     # Non-compliance findings & Photographic Exhibits for EVERY violation
     if model.violations:
         num_v = len(model.violations)
-        img_max_h = 42 if num_v > 1 else 62
-        img_max_w = 125 if num_v > 1 else 135
+        img_max_h = 65 if num_v > 1 else 135
+        img_max_w = 145 if num_v > 1 else 175
 
         for idx, v in enumerate(model.violations):
             bg, fg = S.severity_badge_colors(v.severity)
@@ -601,9 +622,9 @@ def _build_page_4(model: ComplianceModel) -> List:
             rows = [
                 ['Finding ID:',          v.finding_id,             'Severity Degree:',  _p(v.severity.upper(), sev_st)],
                 ['Linked Compliance:',   v.compliance_id,          'Governing Rule:',   v.section_clause],
-                ['Observed Infraction:', v.observed_violation[:180], 'Statutory Status:', v.status],
-                ['Statutory Impact:',    v.legal_impact[:180],     'Target of Liability:', v.responsible_party],
-                ['Corrective Directive:', v.corrective_action[:180], 'Mandatory Deadline:', v.target_date],
+                ['Observed Infraction:', v.observed_violation,     'Statutory Status:', v.status],
+                ['Statutory Impact:',    v.legal_impact,           'Target of Liability:', v.responsible_party],
+                ['Corrective Directive:', v.corrective_action,     'Mandatory Deadline:', v.target_date],
             ]
             col_w = [
                 S.CONTENT_WIDTH * 0.17,

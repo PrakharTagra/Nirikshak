@@ -514,13 +514,32 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     }
   }
 
+  const isInvalidMfrAddress = (addr) => {
+    if (!addr || typeof addr !== 'string') return true;
+    const trimmed = addr.trim().toLowerCase();
+    return (
+      trimmed.length < 5 ||
+      trimmed === 'address.' ||
+      trimmed === 'address' ||
+      trimmed === 'info' ||
+      trimmed === 'details' ||
+      /color\s*:\s*#|!important|\{[^}]*\}/i.test(trimmed) ||
+      /\b(?:expiry|best\s*before|use\s*by|regn\.?\s*no|cir-\d+|transfluthrin|active\s*ingredient)\b/i.test(trimmed)
+    );
+  };
+
   let mfrAddress = normalizeAddress(rawMfr.address);
-  if ((!mfrAddress || mfrAddress === 'address.' || typeof mfrAddress === 'string' && mfrAddress.length < 5) && rawOcrText) {
-    const addrMatch = rawOcrText.match(/(?:Regd\.?\s*Office|Office|Works|Factory)?[\s:]*([^\n\r]+(?:Haryana|Delhi|Gujarat|Maharashtra|Karnataka|Tamil\s*Nadu|Telangana|Uttar\s*Pradesh|Rajasthan|Punjab|Assam|Himachal\s*Pradesh|West\s*Bengal|India)[^\n\r]*\b\d{6}\b[^\n\r]*)/i) ||
+  if (isInvalidMfrAddress(mfrAddress) && rawOcrText) {
+    const addrMatch =
+      rawOcrText.match(/(?:Regd\.?\s*Office|Office|Works|Factory)?[\s:]*([^\n\r]+(?:Haryana|Delhi|Gujarat|Maharashtra|Karnataka|Tamil\s*Nadu|Telangana|Uttar\s*Pradesh|Rajasthan|Punjab|Assam|Himachal\s*Pradesh|West\s*Bengal|India)[^\n\r]*\b\d{6}\b[^\n\r]*)/i) ||
       rawOcrText.match(/([^\n\r]+(?:\b\d{6}\b|\b[1-9]\d{2}\s*\d{3}\b)[^\n\r]*)/);
-    if (addrMatch) {
+    if (addrMatch && !isInvalidMfrAddress(addrMatch[0])) {
       mfrAddress = addrMatch[0].trim();
+    } else {
+      mfrAddress = false;
     }
+  } else if (isInvalidMfrAddress(mfrAddress)) {
+    mfrAddress = false;
   }
 
   const mfrPresent = !!(rawMfr.present || mfrName || mfrAddress);
