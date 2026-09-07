@@ -77,7 +77,7 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
       physicalForm = 'liquid';
     }
   } else if (physicalForm === 'countable' && (unit === 'ml' || unit === 'l' || qty.unitKind === 'volume')) {
-    physicalForm = 'combination';
+    physicalForm = 'liquid';
   }
 
   // Manufacturer is not packer check
@@ -86,7 +86,9 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
   const mfrNotPacker = !!classification.manufacturerIsNotPacker ||
     (declarations.manufacturer?.present && declarations.packer?.present && mfrName && pkrName && mfrName.toLowerCase() !== pkrName.toLowerCase());
 
-  const hasMultiplePieces = (qty.pieceCount != null && qty.pieceCount > 1) || !!declarations.commodityName?.perProductBreakdown;
+  // Multi-product (Rule 6(1)(b)) applies ONLY to packages containing two or more distinct products (combination kits).
+  // Identical multi-piece packages (e.g. 2 refills, 3 soap bars) are governed by Rule 24.
+  const isMultiProductPackage = !!(declarations.commodityName?.perProductBreakdown || classification.physicalForm === 'combination');
 
   return {
     commodity: {
@@ -102,7 +104,9 @@ function buildPackageRecord(declarations, labelMetrics, options = {}) {
       isIndustrialConsumer: !!classification.isIndustrialOrInstitutional,
       isInstitutionalConsumer: !!classification.isIndustrialOrInstitutional,
       isFoodArticle: !!classification.isFoodArticle,
-      isMultiProductPackage: hasMultiplePieces,
+      isMultiPiecePackage: (qty.pieceCount != null && qty.pieceCount > 1),
+      hasMultiplePieces: (qty.pieceCount != null && qty.pieceCount > 1),
+      isMultiProductPackage: isMultiProductPackage,
       manufacturerIsNotPacker: mfrNotPacker,
       isImportedPackage: !!declarations.importer?.present || !!classification.isImported,
       countryOfOrigin: classification.countryOfOrigin || null,

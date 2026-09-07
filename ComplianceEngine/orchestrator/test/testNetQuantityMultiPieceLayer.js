@@ -164,7 +164,7 @@ MRP Rs. 260.00
   });
   assert.strictEqual(pkgRecord.commodity.netQuantityValue, 135);
   assert.strictEqual(pkgRecord.commodity.pieceCount, 3);
-  assert.strictEqual(pkgRecord.commodity.isMultiProductPackage, true);
+  assert.strictEqual(pkgRecord.commodity.isMultiPiecePackage, true);
   console.log('✓ Test 4: LLM partial mapping healed from 45ml to 135ml across 3 pieces in declarations & packageRecord');
 }
 

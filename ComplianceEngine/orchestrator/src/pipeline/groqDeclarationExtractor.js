@@ -320,6 +320,7 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
   * NEVER extract "Date First Available" (this is an Amazon web catalog listing date, NOT a manufacturing date under Legal Metrology Rules!).
   * NEVER extract shipping/delivery estimates (e.g. "Get it Sep 8 - 10", "Delivery by Friday").
   * NEVER extract "Best Before", "Expiry Date", "Use By", or warranty/shelf-life dates as manufacturing date.
+  * NEVER extract registration numbers, license numbers, or certificate numbers (e.g. "Regn. No.: CIR-131142/2015", "Lic No. 100...") as a manufacturing date!
   * NEVER extract bare numbers or date stamps that lack an explicit statutory manufacturing/packing label.
 - On Digital Marketplace / E-Commerce listings, month and year of manufacture is EXEMPT per Rule 6(10). If not explicitly declared on the webpage with a statutory label, you MUST return:
   "mfgDate": { "present": false, "value": null, "rawText": null, "usedIndividualSticker": false, "isMrpReductionSticker": false }
@@ -485,19 +486,48 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     return false;
   };
 
+  const isInvalidMfrName = (name) => {
+    if (!name || typeof name !== 'string') return true;
+    const trimmed = name.trim().toLowerCase();
+    return (
+      trimmed.length < 3 ||
+      /^(?:address\.?|works\s+address|manufacturer\s+address|contact|info|details|see\s+first.*|refer\s+first.*|for\s+works.*)$/i.test(trimmed) ||
+      /refer\s+first.*batch/i.test(trimmed) ||
+      trimmed === 'address.' ||
+      trimmed === 'address' ||
+      trimmed === 'works'
+    );
+  };
+
   let mfrName = rawMfr.name || null;
-  if (!mfrName && rawOcrText) {
-    const mfrMatch = rawOcrText.match(/(?:Manufacturer\s*Contact\s*Information|Manufacturer)[\s:]+([^\n\r,;]+)/i);
-    if (mfrMatch && !/info|details|contact/i.test(mfrMatch[1])) {
-      mfrName = mfrMatch[1].trim();
+  if (isInvalidMfrName(mfrName) && rawOcrText) {
+    const legalMfrMatch =
+      rawOcrText.match(/(?:manufactured\s*(?:&|and)?\s*marketed\s*by|manufactured\s+by|marketed\s+by|mfd\.?\s*by|mfg\.?\s*by|produced\s*by)[\s:]*([^\n\r,;]+(?:pvt\.?\s*ltd\.?|ltd\.?|limited|dairy|products|technologies|corporation|industries|enterprises|co\.)?)/i) ||
+      rawOcrText.match(/([A-Z][A-Za-z0-9\s&'-]+(?:Pvt\.?\s*Ltd\.?|Ltd\.?|Limited|Dairy|Products|Technologies|Enterprises|Corporation|Industries))/);
+    if (legalMfrMatch && !isInvalidMfrName(legalMfrMatch[1])) {
+      mfrName = legalMfrMatch[1].trim();
+    } else {
+      const mfrMatch = rawOcrText.match(/(?:Manufacturer\s*Contact\s*Information|Manufacturer)[\s:]+([^\n\r,;]+)/i);
+      if (mfrMatch && !isInvalidMfrName(mfrMatch[1])) {
+        mfrName = mfrMatch[1].trim();
+      }
     }
   }
 
-  const mfrPresent = !!(rawMfr.present || mfrName || rawMfr.address);
+  let mfrAddress = normalizeAddress(rawMfr.address);
+  if ((!mfrAddress || mfrAddress === 'address.' || typeof mfrAddress === 'string' && mfrAddress.length < 5) && rawOcrText) {
+    const addrMatch = rawOcrText.match(/(?:Regd\.?\s*Office|Office|Works|Factory)?[\s:]*([^\n\r]+(?:Haryana|Delhi|Gujarat|Maharashtra|Karnataka|Tamil\s*Nadu|Telangana|Uttar\s*Pradesh|Rajasthan|Punjab|Assam|Himachal\s*Pradesh|West\s*Bengal|India)[^\n\r]*\b\d{6}\b[^\n\r]*)/i) ||
+      rawOcrText.match(/([^\n\r]+(?:\b\d{6}\b|\b[1-9]\d{2}\s*\d{3}\b)[^\n\r]*)/);
+    if (addrMatch) {
+      mfrAddress = addrMatch[0].trim();
+    }
+  }
+
+  const mfrPresent = !!(rawMfr.present || mfrName || mfrAddress);
   d.manufacturer = {
     present: mfrPresent,
     name: mfrName,
-    address: normalizeAddress(rawMfr.address),
+    address: mfrAddress,
     mark: rawMfr.mark || null,
     rawText: rawMfr.rawText || '',
   };
@@ -600,7 +630,8 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     d.commodityName.perProductBreakdown = true;
     classification.physicalForm = 'combination';
   } else if (classification.physicalForm === 'countable' && unitKind === 'volume' && /(?:refill|liquid|ml\b|l\b)/i.test(rawOcrText)) {
-    classification.physicalForm = 'combination';
+    // If package has multiple refills of the same liquid, physical form is liquid under Rule 24 (multi-piece)
+    classification.physicalForm = 'liquid';
   } else if (/\b(?:face\s*wash|facewash|cleanser|scrub|cream|gel|paste|lotion|ointment|wax|balm)\b/i.test(`${d.commodityName?.value || ''} ${classification.genericName || ''} ${rawOcrText}`)) {
     classification.physicalForm = 'semi_solid';
   }
@@ -612,10 +643,18 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   let mfgVal = rawMfg.value || null;
   let mfgRaw = String(rawMfg.rawText || '');
 
-  // Reject delivery windows or bare number ranges (e.g. "8 - 10")
+  // Reject delivery windows, registration numbers, or invalid month values (> 12)
   if (typeof mfgVal === 'string') {
     const cleanMfg = mfgVal.trim();
-    if (/^\d{1,2}\s*-\s*\d{1,2}$/.test(cleanMfg) || !/\d{4}|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b/i.test(cleanMfg)) {
+    const slashParts = cleanMfg.split(/[/-]/);
+    if (slashParts.length === 2 && parseInt(slashParts[0], 10) > 12) {
+      mfgVal = null;
+      mfgRaw = '';
+    } else if (
+      /^\d{1,2}\s*-\s*\d{1,2}$/.test(cleanMfg) ||
+      !/\d{2,4}|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b/i.test(cleanMfg) ||
+      /regn|cir-|lic\b|no\.\s*:/i.test(mfgRaw)
+    ) {
       mfgVal = null;
       mfgRaw = '';
     }
@@ -627,40 +666,32 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     mfgRaw = '';
   }
 
-  // Enforce that candidate value/rawText actually has statutory labeling
+  const hasStatutoryInOcr = rawOcrText && STATUTORY_MFG_LABELS.test(rawOcrText);
+  let isMfgValid = false;
+
   if (mfgVal) {
-    const hasStatutoryLabel = STATUTORY_MFG_LABELS.test(mfgRaw) || STATUTORY_MFG_LABELS.test(mfgVal);
-    if (!hasStatutoryLabel) {
-      if (rawOcrText && STATUTORY_MFG_LABELS.test(rawOcrText)) {
-        const statutoryMatch = rawOcrText.match(
-          new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{2,4})', 'i')
-        );
-        if (statutoryMatch) {
-          mfgVal = statutoryMatch[1].trim();
-          mfgRaw = statutoryMatch[0].trim();
-        } else {
-          mfgVal = null;
-          mfgRaw = '';
-        }
-      } else {
-        mfgVal = null;
-        mfgRaw = '';
-      }
+    const hasStatutoryLabel = STATUTORY_MFG_LABELS.test(mfgRaw) || STATUTORY_MFG_LABELS.test(mfgVal) || hasStatutoryInOcr;
+    if (hasStatutoryLabel && !DISALLOWED_DATE_CONTEXTS.test(mfgRaw)) {
+      isMfgValid = true;
+      if (!mfgRaw) mfgRaw = `Mfg. Date: ${mfgVal}`;
+    } else {
+      mfgVal = null;
+      mfgRaw = '';
     }
   }
 
-  // Fallback only if rawOcrText explicitly has a statutory label
-  if (!mfgVal && rawOcrText && STATUTORY_MFG_LABELS.test(rawOcrText)) {
-    const statutoryMatch = rawOcrText.match(
-      new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{2,4})', 'i')
-    );
+  // Fallback if mfgVal was not extracted by LLM but rawOcrText explicitly has statutory label and date
+  if (!mfgVal && hasStatutoryInOcr) {
+    const statutoryMatch =
+      rawOcrText.match(new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*(?:[A-Za-z0-9_.-]+[\\s:]*)*?([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|\\d{1,2}[/-]\\d{2,4})', 'i')) ||
+      rawOcrText.match(/(?:mfg\.?\s*date|mfd\.?|date\s+of\s+mfg)[\s\S]{1,40}?(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}[/-]\d{2,4})/i) ||
+      rawOcrText.match(/(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/);
     if (statutoryMatch) {
       mfgVal = statutoryMatch[1].trim();
-      if (!mfgRaw) mfgRaw = statutoryMatch[0].trim();
+      mfgRaw = statutoryMatch[0].trim();
+      isMfgValid = true;
     }
   }
-
-  const isMfgValid = !!(mfgVal && STATUTORY_MFG_LABELS.test(mfgRaw || mfgVal));
 
   d.mfgDate = {
     present: isMfgValid,

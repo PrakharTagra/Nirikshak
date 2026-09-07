@@ -118,15 +118,15 @@ function checkMandatoryDeclarations(pkg) {
       }
     } else {
       if (!hasManufacturer) {
-        v.push(violation('Rule 6(1)(a)', 'Missing name & address of the manufacturer.', 'critical', 'manufacturer'));
+        v.push(violation('Rule 6(1)(c)', 'Missing name & address of the manufacturer.', 'critical', 'manufacturer'));
       } else if (!d.manufacturer.address) {
-        v.push(violation('Rule 6(1)(a) / Rule 10(1)', 'Manufacturer name present but complete address missing.', 'critical', 'manufacturer'));
+        v.push(violation('Rule 6(1)(c)', 'Manufacturer name present but complete address missing.', 'critical', 'manufacturer'));
       }
       if (c.manufacturerIsNotPacker && !hasPacker) {
-        v.push(violation('Rule 6(1)(a)', 'Manufacturer is not the packer — packer name & address must also be declared.', 'critical', 'packer'));
+        v.push(violation('Rule 6(1)(c)', 'Manufacturer is not the packer — packer name & address must also be declared.', 'critical', 'packer'));
       }
       if (c.isImportedPackage && !hasImporter) {
-        v.push(violation('Rule 6(1)(a)', 'Imported package missing importer name & address.', 'critical', 'importer'));
+        v.push(violation('Rule 6(1)(c)', 'Imported package missing importer name & address.', 'critical', 'importer'));
       }
       if (c.isImportedPackage && c.manufacturedOutsideIndiaButPackedInIndia && !hasPacker && !hasImporter) {
         v.push(
@@ -164,9 +164,9 @@ function checkMandatoryDeclarations(pkg) {
     }
   }
 
-  // 6(1)(c) — net quantity
+  // 6(1)(e) — net quantity
   if (!d.netQuantity || !d.netQuantity.present) {
-    v.push(violation('Rule 6(1)(c)', 'Missing net quantity declaration.', 'critical', 'netQuantity'));
+    v.push(violation('Rule 6(1)(e)', 'Missing net quantity declaration.', 'critical', 'netQuantity'));
   }
 
   // 6(1)(d) — month & year of manufacture/pre-packing/import
@@ -202,21 +202,25 @@ function checkMandatoryDeclarations(pkg) {
     );
   }
 
-  // 6(1)(e) — retail sale price (MRP)
+  // 6(1)(f) — retail sale price (MRP)
   const exemptFromMRP =
     c.isBidiPackage || (c.isLPGCylinder && c.priceUnderAdministrativePriceMechanism);
   if (!exemptFromMRP) {
     if (!d.mrp || !d.mrp.present) {
-      v.push(violation('Rule 6(1)(e)', 'Missing Retail Sale Price (MRP) declaration.', 'critical', 'mrp'));
+      v.push(violation('Rule 6(1)(f)', 'Missing Retail Sale Price (MRP) declaration.', 'critical', 'mrp'));
     } else if (!d.mrp.inclusiveOfTaxesStated) {
-      v.push(
-        violation(
-          'Rule 2(m)',
-          'MRP must be declared as "Maximum/Max. retail price ... inclusive of all taxes" or "MRP Rs.../₹... incl. of all taxes".',
-          'major',
-          'mrp'
-        )
-      );
+      const raw = (d.mrp.rawText || '').toLowerCase();
+      const hasTaxContext = /incl|tax|all\s*taxes|\(incl|m\.?r\.?p/i.test(raw);
+      if (!hasTaxContext) {
+        v.push(
+          violation(
+            'Rule 2(m)',
+            'MRP must be declared as "Maximum/Max. retail price ... inclusive of all taxes" or "MRP Rs.../₹... incl. of all taxes".',
+            'major',
+            'mrp'
+          )
+        );
+      }
     }
     if (c.isAlcoholicBeverage && !c.stateExciseLawsRequireRSP) {
       // Fine per PDF proviso: state excise applies; if it doesn't require RSP, these rules do.

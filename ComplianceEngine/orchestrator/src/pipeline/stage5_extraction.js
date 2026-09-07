@@ -175,7 +175,7 @@ function regexExtract(ocrResult, detection) {
         mfgDateVal = dateMatch[0];
         mfgRaw = candidateLine;
       } else {
-        for (let j = Math.max(0, mfgIdx - 1); j <= Math.min(lines.length - 1, mfgIdx + 2); j++) {
+        for (let j = Math.max(0, mfgIdx - 2); j <= Math.min(lines.length - 1, mfgIdx + 6); j++) {
           if (DISALLOWED_DATE_REGEX.test(lines[j].text)) continue;
           const adjMatch = lines[j].text.match(DATE_REGEX);
           if (adjMatch) {
@@ -187,11 +187,40 @@ function regexExtract(ocrResult, detection) {
       }
     }
   }
-  // NEVER fall back to bare dates or catalog dates without an explicit statutory manufacturing label!
+
+  // Fallback if mfgDate label is in the text and date is anywhere within proximity
+  if (!mfgDateVal && STATUTORY_MFG_LABELS.test(fullText)) {
+    const globalMatch = fullText.match(new RegExp(STATUTORY_MFG_LABELS.source + '[\\s\\S]{1,60}?(' + DATE_REGEX.source + ')', 'i'));
+    if (globalMatch) {
+      mfgDateVal = globalMatch[1].trim();
+      mfgRaw = globalMatch[0].trim();
+    }
+  }
   if (mfgRaw.length > 250) mfgRaw = mfgRaw.slice(0, 250);
 
   // 4. Manufacturer
-  let mfrIdx = getIndex('manufacturer');
+  const isInvalidMfrName = (name) => {
+    if (!name || typeof name !== 'string') return true;
+    const trimmed = name.trim().toLowerCase();
+    return (
+      trimmed.length < 3 ||
+      /^(?:address\.?|works\s+address|manufacturer\s+address|details|info|contact|see\s+first.*|refer\s+first.*|for\s+works.*)$/i.test(trimmed) ||
+      trimmed === 'address.' ||
+      trimmed === 'address' ||
+      trimmed === 'works'
+    );
+  };
+
+  let mfrIdx = lines.findIndex((l) => {
+    const t = l.text || '';
+    return (
+      /(?:manufactured\s*(?:&|and)?\s*marketed\s*by|manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by|manufacturer\s*:)/i.test(t) &&
+      !/(?:refer\s+first|see\s+first|for\s+works\s+address|for\s+manufacturer\s+address)/i.test(t)
+    );
+  });
+  if (mfrIdx === -1) {
+    mfrIdx = getIndex('manufacturer');
+  }
   if (mfrIdx === -1) {
     const pkrIdx = getIndex('packer');
     if (pkrIdx !== -1 && /manufactur|mfd/i.test(lines[pkrIdx].text)) {
@@ -200,9 +229,9 @@ function regexExtract(ocrResult, detection) {
   }
   const mfrLine = mfrIdx !== -1 ? lines[mfrIdx] : null;
   let mfrName = mfrLine?.text
-    ? mfrLine.text.replace(/^(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by|manufacturer\s+contact\s+information|manufacturer)[\s:]*/i, '').trim()
+    ? mfrLine.text.replace(/^(?:manufactured\s*(?:&|and)?\s*marketed\s*by|manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by|packed\s+by|manufacturer\s+contact\s+information|manufacturer\s*:)[\s:]*/i, '').trim()
     : null;
-  if (mfrLine && (!mfrName || mfrName.length < 2) && mfrIdx + 1 < lines.length) {
+  if (mfrLine && (!mfrName || isInvalidMfrName(mfrName)) && mfrIdx + 1 < lines.length) {
     const nextLineText = lines[mfrIdx + 1].text.trim();
     if (nextLineText && !classifyLine(nextLineText).includes('mrp') && nextLineText.length < 150 && !/color\s*:\s*#|!important/i.test(nextLineText)) {
       mfrName = nextLineText;
@@ -217,17 +246,19 @@ function regexExtract(ocrResult, detection) {
       .join(' ');
     const hasAddressSignal =
       /(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(combinedMfrText) ||
-      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa|kolkata|bengaluru|jodhpur|rajasthan/i.test(combinedMfrText) ||
+      /india|road|street|estate|sector|phase|nagar|delhi|mumbai|bangalore|silvassa|kolkata|bengaluru|jodhpur|rajasthan|haryana|gurugram|guwahati|assam/i.test(combinedMfrText) ||
       (combinedMfrText.length > 35 && !/color\s*:\s*#|!important/i.test(combinedMfrText));
     mfrAddress = hasAddressSignal && !/color\s*:\s*#|!important|\{[^}]*\}/i.test(combinedMfrText)
       ? combinedMfrText.slice(0, 300)
       : false;
   }
-  if (!mfrName || /^(?:info|details|contact|website)$/i.test(mfrName)) {
-    const globalMfr = fullText.match(/(?:manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|manufacturer\s*:)[\s:]+([^\n\r]+)/i);
-    if (globalMfr && !/^(?:info|details|contact)$/i.test(globalMfr[1].trim()) && !/color\s*:\s*#|!important/i.test(globalMfr[1])) {
+  if (!mfrName || isInvalidMfrName(mfrName)) {
+    const globalMfr =
+      fullText.match(/(?:manufactured\s*(?:&|and)?\s*marketed\s*by|manufactured\s*(?:and|&)?\s*packed\s*by|mfd\.?\s*(?:and|&)?\s*pkd\.?\s*by|manufactured\s+by|mfd\.?\s*by|marketed\s+by)[\s:]+([^\n\r,;]+(?:pvt\.?\s*ltd\.?|ltd\.?|limited|dairy|products|technologies|corporation|industries|enterprises|co\.)?)/i) ||
+      fullText.match(/([A-Z][A-Za-z0-9\s&'-]+(?:Pvt\.?\s*Ltd\.?|Ltd\.?|Limited|Dairy|Products|Technologies|Enterprises|Corporation|Industries))/);
+    if (globalMfr && !isInvalidMfrName(globalMfr[1])) {
       mfrName = globalMfr[1].slice(0, 150).trim();
-      mfrAddress = mfrName;
+      if (!mfrAddress) mfrAddress = mfrName;
     } else {
       const packMfr = lines.find((l) => /\[Product Packaging Label\].*(?:co\.|pvt|ltd|mfd|mfg|manufactur)/i.test(l.text) && !/@|care|phone|color\s*:#/i.test(l.text));
       if (packMfr) {
@@ -237,11 +268,11 @@ function regexExtract(ocrResult, detection) {
   }
 
   // Address fallback from packaging OCR or lines if not found
-  if (!mfrAddress || mfrAddress === 'info' || mfrAddress.length < 5 || /color\s*:\s*#|!important/i.test(mfrAddress)) {
+  if (!mfrAddress || mfrAddress === 'info' || mfrAddress === 'address.' || mfrAddress.length < 5 || /color\s*:\s*#|!important/i.test(mfrAddress)) {
     const addrLine = lines.find((l) =>
       !/color\s*:\s*#|!important|\.savingPriceOverride/i.test(l.text) &&
       (/(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(l.text) ||
-      /\b(?:jodhpur|rajasthan|delhi|mumbai|bangalore|bengaluru|kolkata|chennai|hyderabad|pune|ahmedabad|surat|jaipur|indore|nagpur)\b/i.test(l.text))
+      /\b(?:jodhpur|rajasthan|delhi|mumbai|bangalore|bengaluru|kolkata|chennai|hyderabad|pune|ahmedabad|surat|jaipur|indore|nagpur|haryana|gurugram|guwahati|assam|solan|himachal)\b/i.test(l.text))
     );
     if (addrLine) {
       const cleanAddr = addrLine.text.replace(/^\[Product Packaging Label\]:?\s*/i, '').trim();

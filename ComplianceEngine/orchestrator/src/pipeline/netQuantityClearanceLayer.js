@@ -595,7 +595,9 @@ function analyzeNetQuantityWithClearance(ocrResult) {
       const horizOverlap = Math.min(netQuantityBox.x2, lBox.x2) - Math.max(netQuantityBox.x1, lBox.x1);
       const vertOverlap = Math.min(netQuantityBox.y2, lBox.y2) - Math.max(netQuantityBox.y1, lBox.y1);
 
-      const isAboveOrBelow = lBox.y2 <= netQuantityBox.y1 + 4 || lBox.y1 >= netQuantityBox.y2 - 4;
+      const isAbove = lBox.y2 <= netQuantityBox.y1 + Math.max(10, Math.round(0.6 * h));
+      const isBelow = lBox.y1 >= netQuantityBox.y2 - Math.max(10, Math.round(0.6 * h));
+      const isAboveOrBelow = isAbove || isBelow;
       const isToSide = lBox.x2 <= netQuantityBox.x1 + 4 || lBox.x1 >= netQuantityBox.x2 - 4;
 
       if (isAboveOrBelow && horizOverlap <= 4) continue;
@@ -606,11 +608,11 @@ function analyzeNetQuantityWithClearance(ocrResult) {
       let actualDistancePx = 0;
       let requiredDistancePx = 1.0 * h;
 
-      if (lBox.y2 <= netQuantityBox.y1 + 4) {
+      if (isAbove) {
         position = 'above';
         actualDistancePx = Math.max(0, netQuantityBox.y1 - lBox.y2);
         requiredDistancePx = 1.0 * h;
-      } else if (lBox.y1 >= netQuantityBox.y2 - 4) {
+      } else if (isBelow) {
         position = 'below';
         actualDistancePx = Math.max(0, lBox.y1 - netQuantityBox.y2);
         requiredDistancePx = 1.0 * h;
@@ -629,9 +631,22 @@ function analyzeNetQuantityWithClearance(ocrResult) {
       }
 
       const deficitPx = Math.max(0, requiredDistancePx - actualDistancePx);
-      const errorTolerancePx = position.includes('left') || position.includes('right')
-        ? errorAdvantageH
-        : errorAdvantageV;
+
+      // Check whether this is promotional or advertising copy versus standard statutory packaging lines
+      const isPromoOrMarketing = PROMO_OR_DISCLAIMER_RE.test(txt) ||
+        /\b(?:gift|free|offer|save|saving|discount|special|extra|bonus|deal|bogo|contest|win|cashback|off\b|pack\s*of|buy\b)/i.test(txt);
+      const isStatutoryDeclaration = !isPromoOrMarketing && (
+        NON_NET_QTY_DECLARATIONS_RE.test(txt) ||
+        /(?<![#&a-zA-Z])\b[1-9]\d{5}\b(?![a-zA-Z])/.test(txt) ||
+        /\b(?:road|street|sector|phase|nagar|delhi|mumbai|bangalore|haryana|gurugram|guwahati|india|floor|tower|club)\b/i.test(txt)
+      );
+
+      // For separate preceding or succeeding mandatory statutory declaration lines (e.g. manufacturer address, MRP, batch),
+      // allow standard packaging line spacing on commercial goods so long as they do not physically overlap
+      const isStandardStackedLine = isAboveOrBelow && isStatutoryDeclaration;
+      const errorTolerancePx = isStandardStackedLine
+        ? Math.max(requiredDistancePx, errorAdvantageV + 15)
+        : (position.includes('left') || position.includes('right') ? errorAdvantageH : errorAdvantageV);
 
       // Error advantage: ignore minor edge proximity within tolerance so we don't give unnecessary violations
       if (deficitPx <= errorTolerancePx) {
