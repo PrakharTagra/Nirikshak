@@ -373,30 +373,27 @@ export default function ComplianceReport({ report }) {
       <div className="bg-white p-6 border border-slate-300 rounded-sm shadow-sm">
         <div className="flex flex-col md:flex-row items-center gap-5 border-b-2 border-govt-navy pb-5">
           <div className="shrink-0 flex items-center justify-center p-2 bg-slate-50 border border-slate-200 rounded">
-            <Emblem className="w-16 h-20 text-govt-navy" />
+            <Emblem size={68} variant="dark" />
           </div>
           <div className="text-center md:text-left flex-1">
-            <h1 className="text-lg sm:text-xl font-extrabold tracking-wider text-govt-navy uppercase">
-              Government of India
+            <h1 className="text-base sm:text-lg font-bold tracking-wide text-slate-900 uppercase">
+              GOVERNMENT OF INDIA
             </h1>
             <h2 className="text-xs sm:text-sm font-bold text-slate-800">
-              Ministry of Consumer Affairs, Food &amp; Public Distribution
+              MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION
             </h2>
-            <p className="text-xs text-slate-600">
-              Department of Consumer Affairs • Legal Metrology Division
-            </p>
-            <p className="text-[11px] font-bold text-slate-500 tracking-wide uppercase mt-0.5">
-              Central E-Commerce &amp; Digital Marketplace Surveillance Directorate
+            <p className="text-xs text-slate-600 font-medium">
+              DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION
             </p>
           </div>
         </div>
 
         <div className="text-center py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm sm:text-base font-extrabold text-govt-navy uppercase tracking-wide">
-            Statutory Compliance Assessment Report
+          <h3 className="text-base sm:text-lg font-bold text-govt-navy uppercase tracking-wide">
+            STATUTORY COMPLIANCE ASSESSMENT REPORT
           </h3>
-          <p className="text-xs font-bold text-slate-600 tracking-tight">
-            Audit Memorandum under The Legal Metrology (Packaged Commodities) Rules, 2011
+          <p className="text-xs font-bold text-slate-700 tracking-tight">
+            AUDIT MEMORANDUM UNDER THE LEGAL METROLOGY (PACKAGED COMMODITIES) RULES, 2011
           </p>
         </div>
 
@@ -405,7 +402,7 @@ export default function ComplianceReport({ report }) {
           <table className="w-full text-left text-xs border border-slate-300">
             <tbody className="divide-y divide-slate-200">
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] w-1/3 border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] w-1/3 border-r border-slate-200">
                   Statutory Report Identifier
                 </td>
                 <td className="px-4 py-2.5 font-mono font-bold text-slate-900">
@@ -413,7 +410,7 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Case / Inspection Reference
                 </td>
                 <td className="px-4 py-2.5 font-mono text-slate-800">
@@ -421,7 +418,7 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Packaged Commodity Entity
                 </td>
                 <td className="px-4 py-2.5 font-semibold text-slate-900">
@@ -429,7 +426,7 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Declared Brand Name
                 </td>
                 <td className="px-4 py-2.5 text-slate-800">
@@ -437,7 +434,7 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Declared Manufacturer / Packer
                 </td>
                 <td className="px-4 py-2.5 text-slate-800">
@@ -445,7 +442,7 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Date of Physical/Digital Audit
                 </td>
                 <td className="px-4 py-2.5 text-slate-800">
@@ -453,11 +450,11 @@ export default function ComplianceReport({ report }) {
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
+                <td className="px-4 py-2.5 font-bold text-slate-900 bg-[#f8fafc] border-r border-slate-200">
                   Governing Legal Framework
                 </td>
                 <td className="px-4 py-2.5 text-slate-800">
-                  The Legal Metrology Act, 2009 &amp; Packaged Commodities Rules, 2011
+                  Legal Metrology (Packaged Commodities) Rules, 2011
                 </td>
               </tr>
               <tr>
