@@ -30,6 +30,7 @@ router.post("/", async (req, res) => {
         crawledAt: data.crawledAt,
         structuredData: data.structuredData,
         metadata: data.metadata,
+        productImages: data.images?.productImages || data.images?.items || [],
       });
     }
 
@@ -41,6 +42,7 @@ router.post("/", async (req, res) => {
         packageRecord: complianceResult.packageRecord,
         compliance: complianceResult.compliance,
         summary: complianceResult.summary,
+        imageOcr: complianceResult.imageOcr,
       } : null,
     });
   } catch (err) {

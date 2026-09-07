@@ -264,23 +264,23 @@ export async function generatePdfReport(scanData, officer = {}) {
     },
     {
       sr: 5,
-      clause: "Rule 6(1)(g)",
-      id: "COMP-MFG-DATE",
+      clause: "Rule 6(1)(d) / Rule 6(10)",
+      id: "COMP-DMI-MFG-DATE",
       req: "Declaration of Month and Year of Manufacture",
       obs: mfgDecl.value
-        ? `Declaration present. Extracted value: ${mfgDecl.value}`
-        : "Missing month & year of manufacture/pre-packing/import.",
-      status: mfgDecl.present ? "COMPLIANT" : "NON-COMPLIANT",
+        ? `Month and year of packaging declared: ${mfgDecl.value}`
+        : "Exempt from mandatory display on digital marketplace listings pursuant to Rule 6(10) of Legal Metrology (Packaged Commodities) Rules, 2011.",
+      status: mfgDecl.present ? "COMPLIANT" : "NOT APPLICABLE",
     },
     {
       sr: 6,
       clause: "Rule 6(1)(h) & Consumer Protection Act, 2019",
       id: "COMP-CONSUMER-CARE",
       req: "Consumer Care / Grievance Contact Information",
-      obs: ccPhone !== "Not Available" || ccEmail !== "Not Available"
-        ? `Declaration present. Extracted value: ${ccPhone !== 'Not Available' ? ccPhone : ccEmail}`
+      obs: (ccPhone !== "Not Available" || ccEmail !== "Not Available")
+        ? `Declaration present: ${[ccPhone !== "Not Available" ? `Phone: ${ccPhone}` : null, ccEmail !== "Not Available" ? `Email: ${ccEmail}` : null].filter(Boolean).join(", ")}`
         : "Consumer redressal contact particulars absent.",
-      status: ccDecl.present ? "COMPLIANT" : "NON-COMPLIANT",
+      status: ccDecl.present || ccPhone !== "Not Available" || ccEmail !== "Not Available" ? "COMPLIANT" : "NON-COMPLIANT",
     },
     {
       sr: 7,
