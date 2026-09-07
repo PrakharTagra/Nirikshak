@@ -428,6 +428,17 @@ export async function runCompliancePipeline(rawText, context = {}) {
       ) {
         return false;
       }
+      // Consumer complaints: do not flag as non-compliant / violation per user requirement
+      if (
+        field === "consumercare" ||
+        field === "consumer_care" ||
+        rule.includes("6(2)") ||
+        rule.includes("6(1)(h)") ||
+        desc.includes("consumer complaints") ||
+        desc.includes("consumer care")
+      ) {
+        return false;
+      }
       return true;
     });
 

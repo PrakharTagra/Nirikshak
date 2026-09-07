@@ -9,7 +9,15 @@ export default function ScanResultView({ data }) {
     { id: 3, label: "Net Quantity & Standard Unit", value: data?.declarations?.netQuantity?.value ? `${data.declarations.netQuantity.value} ${data.declarations.netQuantity.unit || ""}` : null, found: !!data?.declarations?.netQuantity?.present },
     { id: 4, label: "Retail Sale Price (MRP)", value: data?.declarations?.mrp?.value ? `₹ ${data.declarations.mrp.value}` : null, found: !!data?.declarations?.mrp?.present },
     { id: 5, label: "Month & Year of Manufacture", value: data?.declarations?.mfgDate?.value, found: !!data?.declarations?.mfgDate?.present },
-    { id: 6, label: "Consumer Grievance Particulars", value: data?.declarations?.consumerCare?.telephone || data?.declarations?.consumerCare?.email, found: !!data?.declarations?.consumerCare?.present },
+    {
+      id: 6,
+      label: "Consumer Grievance Particulars",
+      value: (data?.declarations?.consumerCare?.telephone || data?.declarations?.consumerCare?.email)
+        ? [data?.declarations?.consumerCare?.telephone, data?.declarations?.consumerCare?.email].filter(Boolean).join(", ")
+        : "Missing",
+      found: !!(data?.declarations?.consumerCare?.present && (data?.declarations?.consumerCare?.telephone || data?.declarations?.consumerCare?.email)),
+      isAdvisoryMissing: !(data?.declarations?.consumerCare?.present && (data?.declarations?.consumerCare?.telephone || data?.declarations?.consumerCare?.email)),
+    },
     { id: 7, label: "Country of Origin", value: data?.declarations?.commodityClassification?.countryOfOrigin, found: !!data?.declarations?.commodityClassification?.countryOfOrigin },
   ];
   const foundCount = extractedFields.filter((f) => f.found).length;
@@ -104,6 +112,10 @@ export default function ScanResultView({ data }) {
                       {f.found ? (
                         <span className="rounded-sm bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-900 border border-emerald-300">
                           ✓ DECLARED
+                        </span>
+                      ) : f.isAdvisoryMissing ? (
+                        <span className="rounded-sm bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900 border border-amber-300">
+                          — MISSING
                         </span>
                       ) : (
                         <span className="rounded-sm bg-red-100 px-2 py-0.5 text-xs font-bold text-red-900 border border-red-300">

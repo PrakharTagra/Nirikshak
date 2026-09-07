@@ -55,7 +55,13 @@ export default function ComplianceReport({ report, officer }) {
       rule.includes("6(1)(d)") ||
       rule.includes("6(1)(g)") ||
       (desc.includes("manufacture") && (desc.includes("month") || desc.includes("date"))) ||
-      desc.includes("mfg date")
+      desc.includes("mfg date") ||
+      field === "consumercare" ||
+      field === "consumer_care" ||
+      rule.includes("6(2)") ||
+      rule.includes("6(1)(h)") ||
+      desc.includes("consumer complaints") ||
+      desc.includes("consumer care")
     ) {
       return false;
     }
@@ -183,11 +189,20 @@ export default function ComplianceReport({ report, officer }) {
   const mfgText = mfgDecl.value || mfgDecl.rawText || "Not Available";
 
   const ccDecl = declarations.consumerCare || pkgDecl.consumerCare || {};
-  const ccName = ccDecl.name || "Customer Care Cell";
-  const ccPhone = ccDecl.telephone || ccDecl.phone || "Not Available";
-  const ccEmail = ccDecl.email || "Not Available";
-  const ccWeb = ccDecl.website || "Not Available";
-  const ccAddr = ccDecl.address || "Registered Office / Factory Address";
+  const hasCc = !!(
+    (ccDecl.present && (ccDecl.telephone || ccDecl.phone || ccDecl.email || ccDecl.address)) ||
+    (ccDecl.telephone && ccDecl.telephone !== "Not Available" && ccDecl.telephone !== "Missing") ||
+    (ccDecl.phone && ccDecl.phone !== "Not Available" && ccDecl.phone !== "Missing") ||
+    (ccDecl.email && ccDecl.email !== "Not Available" && ccDecl.email !== "Missing")
+  );
+  const ccName = hasCc ? (ccDecl.name || "Customer Care Cell") : "Missing";
+  let ccPhone = hasCc && (ccDecl.telephone || ccDecl.phone) ? (ccDecl.telephone || ccDecl.phone) : "Missing";
+  if (ccPhone !== "Missing" && /^\d{11,14}$/.test(String(ccPhone).replace(/\D/g, "")) && !String(ccPhone).startsWith("1800")) {
+    ccPhone = "Missing";
+  }
+  const ccEmail = hasCc && ccDecl.email ? ccDecl.email : "Missing";
+  const ccWeb = hasCc && ccDecl.website ? ccDecl.website : "";
+  const ccAddr = hasCc && ccDecl.address ? ccDecl.address : (hasCc ? "Registered Office / Factory Address" : "Missing");
 
   const dimsDecl = declarations.dimensions || pkgDecl.dimensions || {};
   const dimsText = dimsDecl.linearDimensions || dimsDecl.lengthWidthDepth || dimsDecl.rawText || "Standard Dimensions";
@@ -253,10 +268,10 @@ export default function ComplianceReport({ report, officer }) {
       clause: "Rule 6(1)(h) & CPA 2019",
       id: "COMP-DMI-CONSUMER-CARE",
       req: "Consumer Care / Grievance Contact Information",
-      obs: ccPhone !== "Not Available" || ccEmail !== "Not Available"
-        ? `Grievance details present: Phone: ${ccPhone}, Email: ${ccEmail}`
+      obs: (ccPhone !== "Missing" || ccEmail !== "Missing")
+        ? `Grievance details present: ${[ccPhone !== "Missing" ? `Phone: ${ccPhone}` : null, ccEmail !== "Missing" ? `Email: ${ccEmail}` : null].filter(Boolean).join(", ")}`
         : "Consumer redressal contact particulars absent.",
-      status: ccDecl.present ? "COMPLIANT" : "NON-COMPLIANT",
+      status: (hasCc && (ccPhone !== "Missing" || ccEmail !== "Missing")) ? "COMPLIANT" : "MISSING",
     },
     {
       sr: 7,
@@ -329,7 +344,7 @@ export default function ComplianceReport({ report, officer }) {
   const totalAudited = complianceRules.length;
   const compliantCount = complianceRules.filter((r) => r.status === "COMPLIANT").length;
   const nonCompliantCount = complianceRules.filter((r) => r.status === "NON-COMPLIANT").length;
-  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT").length;
+  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT" || r.status === "MISSING").length;
   const effectiveDenominator = totalAudited - naCount;
   const complianceScore = effectiveDenominator > 0 ? ((compliantCount / effectiveDenominator) * 100).toFixed(1) : "100.0";
 
@@ -657,7 +672,7 @@ export default function ComplianceReport({ report, officer }) {
                   Consumer Care E-mail &amp; Web
                 </td>
                 <td className="px-4 py-3 text-slate-800 border-r border-slate-200">
-                  {ccWeb !== "Not Available" ? `${ccEmail} | ${ccWeb}` : ccEmail}
+                  {ccWeb && ccWeb !== "Not Available" && ccWeb !== "Missing" ? `${ccEmail} | ${ccWeb}` : ccEmail}
                 </td>
                 <td className="px-4 py-3 font-bold text-govt-navy bg-[#f8fafc] border-r border-slate-200">
                   Consumer Care Address
@@ -688,10 +703,10 @@ export default function ComplianceReport({ report, officer }) {
       {/* SECTION 3: STATUTORY COMPLIANCE REGISTER (Rule-by-Rule Audit Schedule) */}
       <Panel
         title="Section 3: Statutory Compliance Register (Rule-by-Rule Audit Schedule)"
-        note="Schedule of statutory requirements under the Legal Metrology (Packaged Commodities) Rules, 2011"
+        note="Schedule of statutory compliance determinations pursuant to The Legal Metrology Act, 2009 & Packaged Commodities Rules, 2011"
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border border-slate-200">
             <thead className="bg-[#1e293b] text-white uppercase text-[10px] tracking-wider font-bold">
               <tr>
                 <th className="px-3 py-2.5 text-center w-10">Sr.</th>
@@ -706,6 +721,7 @@ export default function ComplianceReport({ report, officer }) {
                 const isPass = r.status === "COMPLIANT";
                 const isFail = r.status === "NON-COMPLIANT";
                 const isReview = r.status === "REQUIRES REVIEW";
+                const isMissing = r.status === "MISSING";
 
                 return (
                   <tr key={r.sr} className="hover:bg-slate-50">
@@ -729,7 +745,7 @@ export default function ComplianceReport({ report, officer }) {
                             ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
                             : isFail
                             ? "bg-red-100 text-red-900 border border-red-300"
-                            : isReview
+                            : isReview || isMissing
                             ? "bg-amber-100 text-amber-900 border border-amber-300"
                             : "bg-slate-100 text-slate-700 border border-slate-300"
                         }`}

@@ -141,7 +141,13 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
       rule.includes("6(1)(d)") ||
       rule.includes("6(1)(g)") ||
       (desc.includes("manufacture") && (desc.includes("month") || desc.includes("date"))) ||
-      desc.includes("mfg date")
+      desc.includes("mfg date") ||
+      field === "consumercare" ||
+      field === "consumer_care" ||
+      rule.includes("6(2)") ||
+      rule.includes("6(1)(h)") ||
+      desc.includes("consumer complaints") ||
+      desc.includes("consumer care")
     ) {
       return false;
     }
@@ -284,14 +290,20 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   }
 
   const ccDecl = declarations.consumerCare || pkgDecl.consumerCare || {};
-  const ccName = cleanPdfString(ccDecl.name, "Customer Care Cell");
-  let ccPhone = cleanPdfString(ccDecl.telephone || ccDecl.phone, "Not Available");
-  if (/^\d{11,14}$/.test(ccPhone.replace(/\D/g, "")) && !ccPhone.startsWith("1800")) {
-    ccPhone = "Not Available";
+  const hasCc = !!(
+    (ccDecl.present && (ccDecl.telephone || ccDecl.phone || ccDecl.email || ccDecl.address)) ||
+    (ccDecl.telephone && ccDecl.telephone !== "Not Available" && ccDecl.telephone !== "Missing") ||
+    (ccDecl.phone && ccDecl.phone !== "Not Available" && ccDecl.phone !== "Missing") ||
+    (ccDecl.email && ccDecl.email !== "Not Available" && ccDecl.email !== "Missing")
+  );
+  const ccName = hasCc ? cleanPdfString(ccDecl.name, "Customer Care Cell") : "Missing";
+  let ccPhone = hasCc && (ccDecl.telephone || ccDecl.phone) ? cleanPdfString(ccDecl.telephone || ccDecl.phone, "Missing") : "Missing";
+  if (ccPhone !== "Missing" && /^\d{11,14}$/.test(ccPhone.replace(/\D/g, "")) && !ccPhone.startsWith("1800")) {
+    ccPhone = "Missing";
   }
-  const ccEmail = cleanPdfString(ccDecl.email, "Not Available");
-  const ccWeb = cleanPdfString(ccDecl.website, "");
-  const ccAddr = cleanPdfString(ccDecl.address, "Registered Office / Factory Address");
+  const ccEmail = hasCc && ccDecl.email ? cleanPdfString(ccDecl.email, "Missing") : "Missing";
+  const ccWeb = hasCc && ccDecl.website ? cleanPdfString(ccDecl.website, "") : "";
+  const ccAddr = hasCc && ccDecl.address ? cleanPdfString(ccDecl.address, "Registered Office / Factory Address") : (hasCc ? "Registered Office / Factory Address" : "Missing");
 
   const dimsDecl = declarations.dimensions || pkgDecl.dimensions || {};
   const dimsText = cleanPdfString(dimsDecl.linearDimensions || dimsDecl.lengthWidthDepth || dimsDecl.rawText, "Standard Dimensions");
@@ -359,10 +371,10 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
       clause: "Rule 6(1)(h) & Consumer Protection Act, 2019",
       id: "COMP-CONSUMER-CARE",
       req: "Consumer Care / Grievance Contact Information",
-      obs: (ccPhone !== "Not Available" || ccEmail !== "Not Available")
-        ? `Declaration present: ${[ccPhone !== "Not Available" ? `Phone: ${ccPhone}` : null, ccEmail !== "Not Available" ? `Email: ${ccEmail}` : null].filter(Boolean).join(", ")}`
+      obs: (ccPhone !== "Missing" || ccEmail !== "Missing")
+        ? `Declaration present: ${[ccPhone !== "Missing" ? `Phone: ${ccPhone}` : null, ccEmail !== "Missing" ? `Email: ${ccEmail}` : null].filter(Boolean).join(", ")}`
         : "Consumer redressal contact particulars absent.",
-      status: ccDecl.present || ccPhone !== "Not Available" || ccEmail !== "Not Available" ? "COMPLIANT" : "NON-COMPLIANT",
+      status: (hasCc && (ccPhone !== "Missing" || ccEmail !== "Missing")) ? "COMPLIANT" : "MISSING",
     },
     {
       sr: 7,
@@ -426,7 +438,7 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   const totalAudited = complianceRules.length;
   const compliantCount = complianceRules.filter((r) => r.status === "COMPLIANT").length;
   const nonCompliantCount = complianceRules.filter((r) => r.status === "NON-COMPLIANT").length;
-  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT").length;
+  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT" || r.status === "MISSING").length;
   const effectiveDenominator = totalAudited - naCount;
   const complianceScore = effectiveDenominator > 0 ? ((compliantCount / effectiveDenominator) * 100).toFixed(1) : "100.0";
 
@@ -782,6 +794,7 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   const regBody = complianceRules.map((r) => {
     const isPass = r.status === "COMPLIANT";
     const isFail = r.status === "NON-COMPLIANT";
+    const isMissing = r.status === "MISSING";
 
     return [
       { content: String(r.sr), styles: { halign: "center", fontStyle: "bold" } },
@@ -794,8 +807,8 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
           halign: "center",
           fontStyle: "bold",
           fontSize: 7.5,
-          textColor: isPass ? C_GREEN_DARK : isFail ? C_RED_DARK : C_SLATE,
-          fillColor: isPass ? C_GREEN_BG : isFail ? C_RED_BG : C_LIGHT_GRAY,
+          textColor: isPass ? C_GREEN_DARK : isFail ? C_RED_DARK : isMissing ? C_AMBER_DARK : C_SLATE,
+          fillColor: isPass ? C_GREEN_BG : isFail ? C_RED_BG : isMissing ? C_AMBER_BG : C_LIGHT_GRAY,
         },
       },
     ];

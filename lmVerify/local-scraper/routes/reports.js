@@ -64,7 +64,13 @@ function generateStatutoryReportHtml(report, reqId) {
       rule.includes("6(1)(d)") ||
       rule.includes("6(1)(g)") ||
       (desc.includes("manufacture") && (desc.includes("month") || desc.includes("date"))) ||
-      desc.includes("mfg date")
+      desc.includes("mfg date") ||
+      field === "consumercare" ||
+      field === "consumer_care" ||
+      rule.includes("6(2)") ||
+      rule.includes("6(1)(h)") ||
+      desc.includes("consumer complaints") ||
+      desc.includes("consumer care")
     ) {
       return false;
     }
@@ -140,11 +146,20 @@ function generateStatutoryReportHtml(report, reqId) {
   const mfgText = mfgDecl.value || mfgDecl.rawText || "Not Available";
 
   const ccDecl = declarations.consumerCare || pkgDecl.consumerCare || {};
-  const ccName = ccDecl.name || "Customer Care Cell";
-  const ccPhone = ccDecl.telephone || ccDecl.phone || "Not Available";
-  const ccEmail = ccDecl.email || "Not Available";
-  const ccWeb = ccDecl.website || "Not Available";
-  const ccAddr = ccDecl.address || "Registered Office / Factory Address";
+  const hasCc = !!(
+    (ccDecl.present && (ccDecl.telephone || ccDecl.phone || ccDecl.email || ccDecl.address)) ||
+    (ccDecl.telephone && ccDecl.telephone !== "Not Available" && ccDecl.telephone !== "Missing") ||
+    (ccDecl.phone && ccDecl.phone !== "Not Available" && ccDecl.phone !== "Missing") ||
+    (ccDecl.email && ccDecl.email !== "Not Available" && ccDecl.email !== "Missing")
+  );
+  const ccName = hasCc ? (ccDecl.name || "Customer Care Cell") : "Missing";
+  let ccPhone = hasCc && (ccDecl.telephone || ccDecl.phone) ? (ccDecl.telephone || ccDecl.phone) : "Missing";
+  if (ccPhone !== "Missing" && /^\d{11,14}$/.test(String(ccPhone).replace(/\D/g, "")) && !String(ccPhone).startsWith("1800")) {
+    ccPhone = "Missing";
+  }
+  const ccEmail = hasCc && ccDecl.email ? ccDecl.email : "Missing";
+  const ccWeb = hasCc && ccDecl.website ? ccDecl.website : "";
+  const ccAddr = hasCc && ccDecl.address ? ccDecl.address : (hasCc ? "Registered Office / Factory Address" : "Missing");
 
   const dimsDecl = declarations.dimensions || pkgDecl.dimensions || {};
   const dimsText = dimsDecl.linearDimensions || dimsDecl.lengthWidthDepth || dimsDecl.rawText || "Standard Dimensions";
@@ -210,10 +225,10 @@ function generateStatutoryReportHtml(report, reqId) {
       clause: "Rule 6(1)(h) & CPA 2019",
       id: "COMP-DMI-CONSUMER-CARE",
       req: "Consumer Care / Grievance Contact Information",
-      obs: ccPhone !== "Not Available" || ccEmail !== "Not Available"
-        ? `Grievance details present: Phone: ${ccPhone}, Email: ${ccEmail}`
+      obs: (ccPhone !== "Missing" || ccEmail !== "Missing")
+        ? `Grievance details present: ${[ccPhone !== "Missing" ? `Phone: ${ccPhone}` : null, ccEmail !== "Missing" ? `Email: ${ccEmail}` : null].filter(Boolean).join(", ")}`
         : "Consumer redressal contact particulars absent.",
-      status: ccDecl.present ? "COMPLIANT" : "NON-COMPLIANT",
+      status: (hasCc && (ccPhone !== "Missing" || ccEmail !== "Missing")) ? "COMPLIANT" : "MISSING",
     },
     {
       sr: 7,
@@ -286,7 +301,7 @@ function generateStatutoryReportHtml(report, reqId) {
   const totalAudited = complianceRules.length;
   const compliantCount = complianceRules.filter((r) => r.status === "COMPLIANT").length;
   const nonCompliantCount = complianceRules.filter((r) => r.status === "NON-COMPLIANT").length;
-  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT").length;
+  const naCount = complianceRules.filter((r) => r.status === "NOT APPLICABLE" || r.status === "EXEMPT" || r.status === "MISSING").length;
   const effectiveDenominator = totalAudited - naCount;
   const complianceScore = effectiveDenominator > 0 ? ((compliantCount / effectiveDenominator) * 100).toFixed(1) : "100.0";
 
@@ -467,6 +482,7 @@ function generateStatutoryReportHtml(report, reqId) {
     .badge-compliant { background: #f0fdf4; color: #15803d; border: 0.5px solid #86efac; }
     .badge-non-compliant { background: #fef2f2; color: #991b1b; border: 0.5px solid #fca5a5; }
     .badge-na { background: #f8fafc; color: #4b5563; border: 0.5px solid #cbd5e1; }
+    .badge-missing { background: #fff7ed; color: #c2410c; border: 0.5px solid #fed7aa; }
     .badge-review { background: #fffbeb; color: #854d0e; border: 0.5px solid #fde68a; }
   </style>
 </head>
@@ -726,7 +742,7 @@ function generateStatutoryReportHtml(report, reqId) {
             <td style="font-weight: 600;">${r.req}</td>
             <td>${r.obs}</td>
             <td style="text-align: center;">
-              <span class="badge ${r.status === "COMPLIANT" ? "badge-compliant" : r.status === "NON-COMPLIANT" ? "badge-non-compliant" : r.status === "REQUIRES REVIEW" ? "badge-review" : "badge-na"}">
+              <span class="badge ${r.status === "COMPLIANT" ? "badge-compliant" : r.status === "NON-COMPLIANT" ? "badge-non-compliant" : r.status === "MISSING" ? "badge-missing" : r.status === "REQUIRES REVIEW" ? "badge-review" : "badge-na"}">
                 ${r.status}
               </span>
             </td>
