@@ -40,7 +40,7 @@ services:
       - PREPROCESSOR_URL=http://preprocessor:8000
       - SHARED_OUTPUT_DIR=/app/output
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - GROQ_MODEL=${GROQ_MODEL:-openai/gpt-oss-20b}
+      - GROQ_MODEL=${GROQ_MODEL:-openai/gpt-oss-120b}
       - GROQ_FALLBACK_TO_REGEX=true
       - PYTHON_CMD=python3
       - MONGODB_URI=${MONGODB_URI}

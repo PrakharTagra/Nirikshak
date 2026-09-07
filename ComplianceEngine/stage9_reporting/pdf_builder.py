@@ -318,7 +318,8 @@ def _build_declarations_schedule(model: ComplianceModel) -> List:
         mfr_addr = ''
 
     if not mfr_name or not mfr_addr:
-        raw_pkg = model.raw_data.get('packageRecord', {}).get('declarations', {})
+        raw_json = getattr(model, 'raw_json', None) or {}
+        raw_pkg = raw_json.get('packageRecord', {}).get('declarations', {})
         if not mfr_name:
             mfr_name = raw_pkg.get('manufacturer', {}).get('name') or raw_pkg.get('packer', {}).get('name') or ''
         if not mfr_addr:
