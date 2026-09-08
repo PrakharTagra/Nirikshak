@@ -23,5 +23,26 @@ const { regexExtract } = require('../src/pipeline/stage5_extraction');
   assert.strictEqual(result.mfgDate.present, true);
   assert.strictEqual(result.consumerCare.present, true);
   assert.ok(result.dimensions && result.standardPackDeclaration && result.sheetCount);
-  console.log('Stage 6 extraction contract test: PASS');
+
+  // ReDoS regression test for ensureFieldDefaults
+  const { ensureFieldDefaults } = require('../src/pipeline/groqDeclarationExtractor');
+  const largeOcrText = `
+    Some branding text here and there.
+    Product: Premium Biscuits
+    Packed by ABC Foods Ltd
+    Mfg. Date: Packed on 08/2026 Batch 49821
+    Address: Plot 123, Sector 4, Industrial Area, Gurugram, Haryana 122001
+    Net Weight: 120 g
+    MRP: Rs. 30 (Inclusive of all taxes)
+    Customer Care: 1800-111-2222 care@example.com
+  `.repeat(10);
+
+  const tStart = Date.now();
+  const defaults = ensureFieldDefaults({ mfgDate: { value: null, rawText: '' } }, largeOcrText);
+  const elapsed = Date.now() - tStart;
+  assert.ok(elapsed < 200, `ensureFieldDefaults took too long: ${elapsed}ms (potential ReDoS)`);
+  assert.strictEqual(defaults.mfgDate.present, true);
+  assert.strictEqual(defaults.mfgDate.value, '08/2026');
+
+  console.log(`Stage 6 extraction contract test: PASS (ReDoS test completed in ${elapsed}ms)`);
 })();

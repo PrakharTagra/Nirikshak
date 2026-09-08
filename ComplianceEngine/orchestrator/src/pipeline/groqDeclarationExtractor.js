@@ -702,7 +702,7 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   // Fallback if mfgVal was not extracted by LLM but rawOcrText explicitly has statutory label and date
   if (!mfgVal && hasStatutoryInOcr) {
     const statutoryMatch =
-      rawOcrText.match(new RegExp(STATUTORY_MFG_LABELS.source + '[\\s:]*(?:[A-Za-z0-9_.-]+[\\s:]*)*?([A-Za-z]+\\s+\\d{4}|\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|\\d{1,2}[/-]\\d{2,4})', 'i')) ||
+      rawOcrText.match(new RegExp('(?:' + STATUTORY_MFG_LABELS.source + ')[\\s\\S]{0,50}?(\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|\\d{1,2}[/-]\\d{2,4}|[A-Za-z]+\\s+\\d{4})', 'i')) ||
       rawOcrText.match(/(?:mfg\.?\s*date|mfd\.?|date\s+of\s+mfg)[\s\S]{1,40}?(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}[/-]\d{2,4})/i) ||
       rawOcrText.match(/(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/);
     if (statutoryMatch) {
@@ -848,7 +848,11 @@ async function extractDeclarationsWithGroq(ocrResult) {
   }
 
   const Groq = require('groq-sdk');
-  const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  const client = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+    timeout: 60 * 1000,
+    maxRetries: 2,
+  });
   const modelToUse = getGroqModel();
   const fallbackModel = config?.groq?.fallbackModel || (modelToUse === 'openai/gpt-oss-120b' ? 'openai/gpt-oss-20b' : 'openai/gpt-oss-120b');
 
