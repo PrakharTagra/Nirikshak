@@ -199,6 +199,7 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
   let cloudViolationEvidences = [];
   let annotatedNetQuantityUrl = null;
   let pdfCloudinaryUrl = null;
+  let finalLocalReportPath = null;
 
   try {
     fs.writeFileSync(path.join(tempProductDir, 'raw_extracted_text.txt'), ocrResult.text || '', 'utf8');
@@ -309,6 +310,14 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     }
 
     if (reportPath && fs.existsSync(reportPath)) {
+      const localProductDir = path.join(config.paths.outputRoot, `product_${productId}`);
+      try {
+        ensureDirs(localProductDir);
+        finalLocalReportPath = path.join(localProductDir, 'report.pdf');
+        fs.copyFileSync(reportPath, finalLocalReportPath);
+      } catch (err) {
+        logger.warn('orchestrator', `Failed to copy report to local output dir: ${err.message}`);
+      }
       pdfCloudinaryUrl = await uploadPdf(reportPath, 'compliance_reports');
     }
   } finally {
@@ -345,7 +354,9 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     productId,
     detectedProductName,
     status,
-    pdfUrl: pdfCloudinaryUrl,
+    productDir: path.join(config.paths.outputRoot, `product_${productId}`),
+    reportPath: finalLocalReportPath || pdfCloudinaryUrl,
+    pdfUrl: pdfCloudinaryUrl || finalLocalReportPath,
     cloudinaryUrl: pdfCloudinaryUrl,
     preprocessedImages: uploadedPreprocessedUrls,
     annotatedNetQuantityUrl,

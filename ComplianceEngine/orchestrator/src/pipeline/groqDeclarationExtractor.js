@@ -355,7 +355,7 @@ CRITICAL INSTRUCTIONS BY DECLARATION:
 - "countryOfOrigin": e.g., "India" if declared.
 - "dimensionsRelevant": true if dimensions are declared.`;
 
-function buildUserPrompt(ocrResult) {
+function buildUserPrompt(ocrResult, regexAnchors = null) {
   const isMulti = ocrResult?.isMultiImage || (ocrResult?.lines || []).some((l) => l.imageIndex > 0);
 
   const formattedLines = (ocrResult?.lines || [])
@@ -369,11 +369,43 @@ function buildUserPrompt(ocrResult) {
   // If formattedLines is present, use it directly without duplicating full text to stay within TPM limits
   const contentText = formattedLines.length > 0 ? formattedLines : (ocrResult?.text || '');
 
+  let anchorSection = '';
+  if (regexAnchors) {
+    const parts = [];
+    if (regexAnchors.mrp?.present && regexAnchors.mrp?.value != null) {
+      parts.push(`- Retail Sale Price (MRP): Rs. ${regexAnchors.mrp.value} (raw: "${regexAnchors.mrp.rawText}", inclusiveOfTaxesStated: ${regexAnchors.mrp.inclusiveOfTaxesStated})`);
+    }
+    if (regexAnchors.netQuantity?.present && regexAnchors.netQuantity?.value != null) {
+      parts.push(`- Net Quantity: ${regexAnchors.netQuantity.value} ${regexAnchors.netQuantity.unit} (unitKind: "${regexAnchors.netQuantity.unitKind}", pieceCount: ${regexAnchors.netQuantity.pieceCount || 1}, raw: "${regexAnchors.netQuantity.rawText}")`);
+    }
+    if (regexAnchors.mfgDate?.present && regexAnchors.mfgDate?.value) {
+      parts.push(`- Date of Mfg/Packing/Import: "${regexAnchors.mfgDate.value}" (raw: "${regexAnchors.mfgDate.rawText}")`);
+    }
+    if (regexAnchors.consumerCare?.telephone || regexAnchors.consumerCare?.email) {
+      parts.push(`- Consumer Care Contacts: Phone: ${regexAnchors.consumerCare.telephone || 'N/A'}, Email: ${regexAnchors.consumerCare.email || 'N/A'}, PIN Code: ${regexAnchors.consumerCare.pinCode || 'N/A'}`);
+    }
+    if (regexAnchors.dimensions?.present && regexAnchors.dimensions?.rawText) {
+      parts.push(`- Dimensions: "${regexAnchors.dimensions.rawText}"`);
+    }
+    if (regexAnchors.sheetCount?.present && regexAnchors.sheetCount?.value != null) {
+      parts.push(`- Sheet Count: ${regexAnchors.sheetCount.value}`);
+    }
+    if (parts.length > 0) {
+      anchorSection = [
+        '',
+        'VERIFIED STATUTORY ANCHORS (Grounded in Legal Metrology 2011 Rules - DO NOT CONTRADICT):',
+        ...parts,
+        'Use these statutory anchors as verified ground truth. Focus your extraction primarily on semantic/unstructured declarations: Manufacturer & Packer legal names and addresses, Generic Commodity Name vs Brand Name, and Physical Form.',
+      ].join('\n');
+    }
+  }
+
   return [
     'Extract Legal Metrology mandatory package declarations and commodity classification from the listing/OCR lines below.',
     isMulti
       ? 'The input contains text extracted from MULTIPLE PANELS or sections. Combine all into one unified declaration.'
       : 'All lines are from the product listing/package.',
+    anchorSection,
     '',
     'CRITICAL REMINDERS:',
     '1. Set brandName to the actual brand (e.g. "Scalpe Pro"). NEVER use marketing slogans like "Top Brand indicates high quality".',
@@ -385,7 +417,7 @@ function buildUserPrompt(ocrResult) {
     '',
     'PRODUCT TEXT / OCR LINES:',
     contentText,
-  ].join('\n');
+  ].filter((s) => s != null && s !== '').join('\n');
 }
 
 function cleanBooleans(obj) {
@@ -418,7 +450,7 @@ function cleanBooleans(obj) {
  * Normalizes and heals raw LLM output, applying deterministic safeguards
  * against common extraction pitfalls (e.g. unit/mrp confusion, regex recovery).
  */
-function ensureFieldDefaults(parsed, rawOcrText = '') {
+function ensureFieldDefaults(parsed, rawOcrText = '', regexAnchors = null) {
   const d = parsed || {};
 
   // 1. Commodity Classification
@@ -620,6 +652,17 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     else symbolUsed = unit;
   }
 
+  // Deterministic statutory regex reconciliation for Net Quantity
+  if (regexAnchors?.netQuantity?.confidence === 'HIGH' && regexAnchors.netQuantity.value != null) {
+    if (numVal == null || isNaN(numVal)) {
+      numVal = regexAnchors.netQuantity.value;
+      unit = regexAnchors.netQuantity.unit || unit;
+      unitKind = regexAnchors.netQuantity.unitKind || unitKind;
+      symbolUsed = regexAnchors.netQuantity.symbolUsed || symbolUsed;
+      pieceCount = regexAnchors.netQuantity.pieceCount || pieceCount;
+    }
+  }
+
   d.netQuantity = {
     present: !!(qty.present || numVal != null),
     value: numVal,
@@ -712,6 +755,13 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     }
   }
 
+  // Deterministic statutory regex reconciliation for Mfg Date
+  if (!isMfgValid && regexAnchors?.mfgDate?.confidence === 'HIGH' && regexAnchors.mfgDate.value) {
+    mfgVal = regexAnchors.mfgDate.value;
+    mfgRaw = regexAnchors.mfgDate.rawText;
+    isMfgValid = true;
+  }
+
   d.mfgDate = {
     present: isMfgValid,
     value: isMfgValid ? mfgVal : null,
@@ -746,9 +796,17 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     }
   }
 
+  // Deterministic statutory regex reconciliation for MRP
+  if (regexAnchors?.mrp?.confidence === 'HIGH' && regexAnchors.mrp.value != null) {
+    if (mrpVal == null || mrpVal <= 5 || Math.abs(mrpVal - regexAnchors.mrp.value) > 0.01) {
+      mrpVal = regexAnchors.mrp.value;
+      if (!mrpRaw || mrpRaw.length < 5) mrpRaw = regexAnchors.mrp.rawText;
+    }
+  }
+
   const inclusiveOfTaxesStated = rawMrp.inclusiveOfTaxesStated != null
     ? !!rawMrp.inclusiveOfTaxesStated
-    : /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(`${mrpRaw} ${rawOcrText}`);
+    : (regexAnchors?.mrp?.inclusiveOfTaxesStated ?? /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(`${mrpRaw} ${rawOcrText}`));
 
   d.mrp = {
     present: !!(mrpVal != null || rawMrp.present),
@@ -801,6 +859,19 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
     if (emailMatch) email = emailMatch[0].trim();
   }
 
+  // Deterministic statutory regex reconciliation for Consumer Care
+  if (regexAnchors?.consumerCare) {
+    if (!telephone && regexAnchors.consumerCare.telephone) {
+      telephone = regexAnchors.consumerCare.telephone;
+    }
+    if (!email && regexAnchors.consumerCare.email) {
+      email = regexAnchors.consumerCare.email;
+    }
+    if (!care.website && regexAnchors.consumerCare.website) {
+      care.website = regexAnchors.consumerCare.website;
+    }
+  }
+
   d.consumerCare = {
     present: !!(care.present || telephone || email || care.address || careRaw),
     name: care.name || null,
@@ -823,17 +894,31 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   ) {
     isTrueStdPack = false;
   }
+  if (regexAnchors?.standardPackDeclaration?.confidence === 'HIGH' && !isTrueStdPack) {
+    isTrueStdPack = regexAnchors.standardPackDeclaration.present;
+  }
+
   d.standardPackDeclaration = {
     present: isTrueStdPack,
-    rawText: stdRaw,
+    rawText: stdRaw || (isTrueStdPack ? (regexAnchors?.standardPackDeclaration?.rawText || '') : ''),
   };
 
   // 10. Sheet count
+  let sheetPresent = !!d.sheetCount?.present;
+  let sheetValue = d.sheetCount?.value != null ? Number(d.sheetCount.value) : null;
+  let sheetRaw = d.sheetCount?.rawText || '';
+
+  if (regexAnchors?.sheetCount?.confidence === 'HIGH' && (sheetValue == null || !sheetPresent)) {
+    sheetPresent = regexAnchors.sheetCount.present;
+    sheetValue = regexAnchors.sheetCount.value;
+    sheetRaw = regexAnchors.sheetCount.rawText;
+  }
+
   d.sheetCount = {
-    present: !!d.sheetCount?.present,
-    value: d.sheetCount?.value != null ? Number(d.sheetCount.value) : null,
+    present: sheetPresent,
+    value: sheetValue,
     dimensionsPerSheet: d.sheetCount?.dimensionsPerSheet || null,
-    rawText: d.sheetCount?.rawText || '',
+    rawText: sheetRaw,
   };
 
   d.multiComponentDeclarationHandled = !!d.multiComponentDeclarationHandled;
@@ -842,7 +927,7 @@ function ensureFieldDefaults(parsed, rawOcrText = '') {
   return cleanBooleans(d);
 }
 
-async function extractDeclarationsWithGroq(ocrResult) {
+async function extractDeclarationsWithGroq(ocrResult, regexAnchors = null) {
   if (!process.env.GROQ_API_KEY) {
     throw new Error('GROQ_API_KEY is not set. Set it in the environment before using EXTRACTION_PROVIDER=groq.');
   }
@@ -865,7 +950,7 @@ async function extractDeclarationsWithGroq(ocrResult) {
       temperature: 0,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: buildUserPrompt(ocrResult) },
+        { role: 'user', content: buildUserPrompt(ocrResult, regexAnchors) },
       ],
       response_format: { type: 'json_object' },
     });
@@ -878,7 +963,7 @@ async function extractDeclarationsWithGroq(ocrResult) {
         temperature: 0,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(ocrResult) },
+          { role: 'user', content: buildUserPrompt(ocrResult, regexAnchors) },
         ],
         response_format: { type: 'json_object' },
       });
@@ -898,7 +983,7 @@ async function extractDeclarationsWithGroq(ocrResult) {
   }
 
   const rawOcrText = ocrResult?.text || (ocrResult?.lines || []).map((l) => l.text).join('\n');
-  return ensureFieldDefaults(parsed, rawOcrText);
+  return ensureFieldDefaults(parsed, rawOcrText, regexAnchors);
 }
 
 module.exports = {

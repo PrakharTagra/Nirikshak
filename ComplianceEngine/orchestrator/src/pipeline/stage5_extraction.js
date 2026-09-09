@@ -13,6 +13,7 @@
 const logger = require('../utils/logger');
 const config = require('../config');
 const { extractDeclarationsWithGroq } = require('./groqDeclarationExtractor');
+const { deterministicExtract } = require('./deterministicExtractor');
 
 const PATTERNS = {
   mrp: /\bm\.?r\.?p\.?\b|maximum\s+retail\s+price|max\.?\s*retail\s*price/i,
@@ -63,8 +64,9 @@ function normalizeToKgOrL(value, unit) {
 
 const DATE_REGEX = /\b(?:0?[1-9]|[12]\d|3[01])\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b|\b(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:\d{2}|\d{4})\b|\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*[- ,.]*\s*\d{4}\b/i;
 
-function regexExtract(ocrResult, detection) {
-  logger.info('stage6_declarationExtraction', 'Using deterministic regex extraction fallback');
+function regexExtract(ocrResult, detection, precomputedAnchors = null) {
+  const anchors = precomputedAnchors || deterministicExtract(ocrResult);
+  logger.info('stage6_declarationExtraction', 'Using deterministic statutory regex extraction');
   const lines = (ocrResult.lines || []).map((l, idx) => ({
     ...l,
     index: idx,
@@ -74,126 +76,143 @@ function regexExtract(ocrResult, detection) {
   const fullText = lines.map((l) => l.text).join('\n');
   const getIndex = (hint) => lines.findIndex((l) => l.fieldHint === hint);
 
-  // 1. MRP: Look on the MRP line first to avoid grabbing quantity numbers from previous line
-  const mrpIdx = getIndex('mrp');
-  let mrpValue = null;
-  let mrpRaw = '';
-  if (mrpIdx !== -1) {
-    const mrpLineText = lines[mrpIdx].text;
-    mrpRaw = mrpLineText;
-    const directPriceMatch =
-      mrpLineText.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i) ||
-      mrpLineText.match(/(?:price|unit)?[\s:]+(\d+(?:\.\d{1,2})?)\s*(?:\/-|\b)/i) ||
-      mrpLineText.match(/(\d+(?:\.\d{1,2})?)\s*\/-/);
-    if (directPriceMatch && parseFloat(directPriceMatch[1]) > 0) {
-      mrpValue = parseFloat(directPriceMatch[1]);
-    } else {
-      // Look at subsequent lines (not previous line, which often has net quantity)
-      for (let j = mrpIdx + 1; j <= Math.min(lines.length - 1, mrpIdx + 2); j++) {
-        const nextMatch =
-          lines[j].text.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i) ||
-          lines[j].text.match(/(\d+(?:\.\d{1,2})?)\s*\/-/);
-        if (nextMatch && parseFloat(nextMatch[1]) > 0) {
-          mrpValue = parseFloat(nextMatch[1]);
-          mrpRaw = `${mrpRaw} ${lines[j].text}`;
-          break;
-        }
-      }
-    }
-  }
+  // 1. MRP: Prioritize statutory deterministic extraction
+  let mrpValue = anchors.mrp?.value ?? null;
+  let mrpRaw = anchors.mrp?.rawText || '';
 
-  // Global MRP fallback
   if (mrpValue == null) {
-    const globalMrpMatch =
-      fullText.match(/(?:m\.?r\.?p\.?|maximum\s+retail\s+price|price)[\s:]*(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d{1,2})?)/i) ||
-      fullText.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i);
-    if (globalMrpMatch && parseFloat(globalMrpMatch[1]) > 0) {
-      mrpValue = parseFloat(globalMrpMatch[1]);
-      mrpRaw = globalMrpMatch[0];
-    }
-  }
-  if (mrpRaw.length > 250) mrpRaw = mrpRaw.slice(0, 250);
-
-  const inclusiveOfTaxesStated = /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(fullText);
-
-  // 2. Net Quantity
-  const { extractMultiPieceFacts } = require('./netQuantityClearanceLayer');
-  const multiPiece = extractMultiPieceFacts(lines);
-
-  const qtyIdx = getIndex('netQuantity');
-  let qty = { value: null, unit: null, unitKind: null, symbolUsed: null, pieceCount: null, pieces: [] };
-  let qtyRaw = '';
-
-  if (multiPiece.totalValue != null) {
-    qty = {
-      value: multiPiece.totalValue,
-      unit: multiPiece.totalUnit || 'ml',
-      unitKind: ['ml', 'l'].includes(multiPiece.totalUnit) ? 'volume' : (['g', 'kg'].includes(multiPiece.totalUnit) ? 'mass' : 'number'),
-      symbolUsed: multiPiece.totalUnit,
-      pieceCount: multiPiece.pieceCount,
-      pieces: multiPiece.pieces,
-    };
-    qtyRaw = multiPiece.rawText;
-  } else if (qtyIdx !== -1) {
-    for (let j = Math.max(0, qtyIdx - 1); j <= Math.min(lines.length - 1, qtyIdx + 2); j++) {
-      const parsed = parseNetQuantity(lines[j].text);
-      if (parsed.value != null) {
-        qty = { ...parsed, pieceCount: multiPiece.pieceCount || null, pieces: [] };
-        qtyRaw = lines[j].text;
-        break;
-      }
-    }
-  }
-  if (qty.value == null) {
-    // Global fallback across full text (first check countable, then weight/volume)
-    const globalCountMatch = fullText.match(/(?:net\s*(?:quantity|qty)?[:\s]*)?(\d+(?:\.\d+)?)\s*(units?|u\b|n\b|pieces?|pcs?)\b/i);
-    if (globalCountMatch) {
-      qty = { ...parseNetQuantity(globalCountMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
-      qtyRaw = globalCountMatch[0];
-    } else {
-      const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|milliliters?|litres?|liters?)\b/i);
-      if (globalMatch) {
-        qty = { ...parseNetQuantity(globalMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
-        qtyRaw = globalMatch[0];
-      }
-    }
-  }
-  if (qtyRaw.length > 250) qtyRaw = qtyRaw.slice(0, 250);
-
-  // 3. Manufacturing Date (Legal Metrology Rule 6(1)(d) strictly requires statutory labeling)
-  const STATUTORY_MFG_LABELS = /\b(?:manufactur(?:ed\s+date|e\s+date|ed\s+on)|date\s+of\s+manufacture|mfg\.?\s*date|date\s+of\s+mfg|\bmfd\b|\bmfg\b|month\s*(?:&|and)\s*year\s*of\s*manufacture|packed\s+on|date\s+of\s+packing|\bpkd\b|pre-?packed\s+on|imported\s+on|date\s+of\s+import)\b/i;
-  const DISALLOWED_DATE_REGEX = /\b(?:date\s+first\s+available|delivery|get\s+it|order\s+within|best\s+before|expiry|exp\.?\s*date|use\s+by|validity|shelf\s+life)\b/i;
-
-  const mfgIdx = getIndex('mfgDate');
-  let mfgDateVal = null;
-  let mfgRaw = '';
-  if (mfgIdx !== -1) {
-    const candidateLine = lines[mfgIdx].text;
-    if (STATUTORY_MFG_LABELS.test(candidateLine) && !DISALLOWED_DATE_REGEX.test(candidateLine)) {
-      const dateMatch = candidateLine.match(DATE_REGEX);
-      if (dateMatch) {
-        mfgDateVal = dateMatch[0];
-        mfgRaw = candidateLine;
+    const mrpIdx = getIndex('mrp');
+    if (mrpIdx !== -1) {
+      const mrpLineText = lines[mrpIdx].text;
+      mrpRaw = mrpLineText;
+      const directPriceMatch =
+        mrpLineText.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i) ||
+        mrpLineText.match(/(?:price|unit)?[\s:]+(\d+(?:\.\d{1,2})?)\s*(?:\/-|\b)/i) ||
+        mrpLineText.match(/(\d+(?:\.\d{1,2})?)\s*\/-/);
+      if (directPriceMatch && parseFloat(directPriceMatch[1]) > 0) {
+        mrpValue = parseFloat(directPriceMatch[1]);
       } else {
-        for (let j = Math.max(0, mfgIdx - 2); j <= Math.min(lines.length - 1, mfgIdx + 6); j++) {
-          if (DISALLOWED_DATE_REGEX.test(lines[j].text)) continue;
-          const adjMatch = lines[j].text.match(DATE_REGEX);
-          if (adjMatch) {
-            mfgDateVal = adjMatch[0];
-            mfgRaw = `${candidateLine} ${lines[j].text}`.trim();
+        // Look at subsequent lines (not previous line, which often has net quantity)
+        for (let j = mrpIdx + 1; j <= Math.min(lines.length - 1, mrpIdx + 2); j++) {
+          const nextMatch =
+            lines[j].text.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i) ||
+            lines[j].text.match(/(\d+(?:\.\d{1,2})?)\s*\/-/);
+          if (nextMatch && parseFloat(nextMatch[1]) > 0) {
+            mrpValue = parseFloat(nextMatch[1]);
+            mrpRaw = `${mrpRaw} ${lines[j].text}`;
             break;
           }
         }
       }
     }
-  }
 
-  // Fallback if mfgDate label is in the text and date is anywhere within proximity
-  if (!mfgDateVal && STATUTORY_MFG_LABELS.test(fullText)) {
-    const globalMatch = fullText.match(new RegExp(STATUTORY_MFG_LABELS.source + '[\\s\\S]{1,60}?(' + DATE_REGEX.source + ')', 'i'));
-    if (globalMatch) {
-      mfgDateVal = globalMatch[1].trim();
-      mfgRaw = globalMatch[0].trim();
+    if (mrpValue == null) {
+      const globalMrpMatch =
+        fullText.match(/(?:m\.?r\.?p\.?|maximum\s+retail\s+price|price)[\s:]*(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d{1,2})?)/i) ||
+        fullText.match(/(?:₹|rs\.?|inr)\s*(\d+(?:\.\d{1,2})?)/i);
+      if (globalMrpMatch && parseFloat(globalMrpMatch[1]) > 0) {
+        mrpValue = parseFloat(globalMrpMatch[1]);
+        mrpRaw = globalMrpMatch[0];
+      }
+    }
+  }
+  if (mrpRaw.length > 250) mrpRaw = mrpRaw.slice(0, 250);
+
+  const inclusiveOfTaxesStated = anchors.mrp?.inclusiveOfTaxesStated ?? /incl(?:usive)?\.?\s*(?:of\s*)?all\s*t[a-z]*x/i.test(fullText);
+
+  // 2. Net Quantity: Prioritize statutory deterministic extraction
+  let qty = { value: null, unit: null, unitKind: null, symbolUsed: null, pieceCount: null, pieces: [] };
+  let qtyRaw = '';
+
+  if (anchors.netQuantity?.value != null) {
+    qty = {
+      value: anchors.netQuantity.value,
+      unit: anchors.netQuantity.unit,
+      unitKind: anchors.netQuantity.unitKind,
+      symbolUsed: anchors.netQuantity.symbolUsed,
+      pieceCount: anchors.netQuantity.pieceCount,
+      pieces: anchors.netQuantity.pieces || [],
+    };
+    qtyRaw = anchors.netQuantity.rawText || '';
+  } else {
+    const { extractMultiPieceFacts } = require('./netQuantityClearanceLayer');
+    const multiPiece = extractMultiPieceFacts(lines);
+
+    const qtyIdx = getIndex('netQuantity');
+    if (multiPiece.totalValue != null) {
+      qty = {
+        value: multiPiece.totalValue,
+        unit: multiPiece.totalUnit || 'ml',
+        unitKind: ['ml', 'l'].includes(multiPiece.totalUnit) ? 'volume' : (['g', 'kg'].includes(multiPiece.totalUnit) ? 'mass' : 'number'),
+        symbolUsed: multiPiece.totalUnit,
+        pieceCount: multiPiece.pieceCount,
+        pieces: multiPiece.pieces,
+      };
+      qtyRaw = multiPiece.rawText;
+    } else if (qtyIdx !== -1) {
+      for (let j = Math.max(0, qtyIdx - 1); j <= Math.min(lines.length - 1, qtyIdx + 2); j++) {
+        const parsed = parseNetQuantity(lines[j].text);
+        if (parsed.value != null) {
+          qty = { ...parsed, pieceCount: multiPiece.pieceCount || null, pieces: [] };
+          qtyRaw = lines[j].text;
+          break;
+        }
+      }
+    }
+    if (qty.value == null) {
+      // Global fallback across full text (first check countable, then weight/volume)
+      const globalCountMatch = fullText.match(/(?:net\s*(?:quantity|qty)?[:\s]*)?(\d+(?:\.\d+)?)\s*(units?|u\b|n\b|pieces?|pcs?)\b/i);
+      if (globalCountMatch) {
+        qty = { ...parseNetQuantity(globalCountMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
+        qtyRaw = globalCountMatch[0];
+      } else {
+        const globalMatch = fullText.match(/(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|milliliters?|litres?|liters?)\b/i);
+        if (globalMatch) {
+          qty = { ...parseNetQuantity(globalMatch[0]), pieceCount: multiPiece.pieceCount || null, pieces: [] };
+          qtyRaw = globalMatch[0];
+        }
+      }
+    }
+  }
+  if (qtyRaw.length > 250) qtyRaw = qtyRaw.slice(0, 250);
+
+  // 3. Manufacturing Date: Prioritize statutory deterministic extraction
+  let mfgDateVal = anchors.mfgDate?.value ?? null;
+  let mfgRaw = anchors.mfgDate?.rawText || '';
+
+  if (!mfgDateVal) {
+    const STATUTORY_MFG_LABELS = /\b(?:manufactur(?:ed\s+date|e\s+date|ed\s+on)|date\s+of\s+manufacture|mfg\.?\s*date|date\s+of\s+mfg|\bmfd\b|\bmfg\b|month\s*(?:&|and)\s*year\s*of\s*manufacture|packed\s+on|date\s+of\s+packing|\bpkd\b|pre-?packed\s+on|imported\s+on|date\s+of\s+import)\b/i;
+    const DISALLOWED_DATE_REGEX = /\b(?:date\s+first\s+available|delivery|get\s+it|order\s+within|best\s+before|expiry|exp\.?\s*date|use\s+by|validity|shelf\s+life)\b/i;
+
+    const mfgIdx = getIndex('mfgDate');
+    if (mfgIdx !== -1) {
+      const candidateLine = lines[mfgIdx].text;
+      if (STATUTORY_MFG_LABELS.test(candidateLine) && !DISALLOWED_DATE_REGEX.test(candidateLine)) {
+        const dateMatch = candidateLine.match(DATE_REGEX);
+        if (dateMatch) {
+          mfgDateVal = dateMatch[0];
+          mfgRaw = candidateLine;
+        } else {
+          for (let j = Math.max(0, mfgIdx - 2); j <= Math.min(lines.length - 1, mfgIdx + 6); j++) {
+            if (DISALLOWED_DATE_REGEX.test(lines[j].text)) continue;
+            const adjMatch = lines[j].text.match(DATE_REGEX);
+            if (adjMatch) {
+              mfgDateVal = adjMatch[0];
+              mfgRaw = `${candidateLine} ${lines[j].text}`.trim();
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Fallback if mfgDate label is in the text and date is anywhere within proximity
+    if (!mfgDateVal && STATUTORY_MFG_LABELS.test(fullText)) {
+      const globalMatch = fullText.match(new RegExp(STATUTORY_MFG_LABELS.source + '[\\s\\S]{1,60}?(' + DATE_REGEX.source + ')', 'i'));
+      if (globalMatch) {
+        mfgDateVal = globalMatch[1].trim();
+        mfgRaw = globalMatch[0].trim();
+      }
     }
   }
   if (mfgRaw.length > 250) mfgRaw = mfgRaw.slice(0, 250);
@@ -333,42 +352,54 @@ function regexExtract(ocrResult, detection) {
     nameValue = genMatch ? genMatch[1].trim() : nameValue.slice(0, 80).trim();
   }
 
-  // 6. Consumer Care
-  const careIdx = getIndex('consumerCare');
-  let phone = null;
-  let email = null;
-  let careRaw = '';
-  if (careIdx !== -1) {
-    const careText = lines
-      .slice(Math.max(0, careIdx - 1), Math.min(lines.length, careIdx + 4))
-      .map((l) => l.text)
-      .join(' ');
-    careRaw = careText;
-    const phoneMatch = careText.match(/(?<!\d)(?:(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|0?\d{2,4}[- ]?\d{6,8})(?!\d)/);
-    if (phoneMatch && !/^890\d{7,10}$/.test(phoneMatch[0].replace(/\D/g, ''))) {
-      phone = phoneMatch[0];
+  // 6. Consumer Care: Prioritize deterministic statutory regex
+  let phone = anchors.consumerCare?.telephone ?? null;
+  let email = anchors.consumerCare?.email ?? null;
+  let careRaw = anchors.consumerCare?.rawText || '';
+
+  if (!phone || !email) {
+    const careIdx = getIndex('consumerCare');
+    if (careIdx !== -1) {
+      const careText = lines
+        .slice(Math.max(0, careIdx - 1), Math.min(lines.length, careIdx + 4))
+        .map((l) => l.text)
+        .join(' ');
+      if (!careRaw) careRaw = careText;
+      if (!phone) {
+        const phoneMatch = careText.match(/(?<!\d)(?:(?:\+?91[\s-]?)?[6-9]\d{9}|1800[\s-]?\d{3,4}[\s-]?\d{3,4}|0?\d{2,4}[- ]?\d{6,8})(?!\d)/);
+        if (phoneMatch && !/^890\d{7,10}$/.test(phoneMatch[0].replace(/\D/g, ''))) {
+          phone = phoneMatch[0];
+        }
+      }
+      if (!email) {
+        const emailMatch = careText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
+        if (emailMatch) email = emailMatch[0];
+      }
     }
-    const emailMatch = careText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
-    if (emailMatch) email = emailMatch[0];
-  }
-  if (!email) {
-    const globalEmail = fullText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
-    if (globalEmail) {
-      email = globalEmail[0];
-      if (!careRaw) careRaw = email;
+    if (!email) {
+      const globalEmail = fullText.match(/[\w.-]+@[\w.-]+\.[a-z]{2,}/i);
+      if (globalEmail) {
+        email = globalEmail[0];
+        if (!careRaw) careRaw = email;
+      }
     }
-  }
-  if (!phone) {
-    const globalPhone = fullText.match(/(?<!\d)(?:1800[\s-]?\d{3,4}[\s-]?\d{3,4}|(?:\+?91[\s-]?)?[6-9]\d{9})(?!\d)/);
-    if (globalPhone && !/^890\d{7,10}$/.test(globalPhone[0].replace(/\D/g, ''))) {
-      phone = globalPhone[0];
-      if (!careRaw) careRaw = phone;
+    if (!phone) {
+      const globalPhone = fullText.match(/(?<!\d)(?:1800[\s-]?\d{3,4}[\s-]?\d{3,4}|(?:\+?91[\s-]?)?[6-9]\d{9})(?!\d)/);
+      if (globalPhone && !/^890\d{7,10}$/.test(globalPhone[0].replace(/\D/g, ''))) {
+        phone = globalPhone[0];
+        if (!careRaw) careRaw = phone;
+      }
     }
   }
 
-  const qualifiedWhenPacked = /when\s+packed/i.test(fullText);
+  const qualifiedWhenPacked = anchors.prohibitedWordsFound || /when\s+packed/i.test(fullText);
   const standardLine = lines.find((l) => /non[\s-]?standard\s+size|not\s+a\s+standard\s+pack\s+size/i.test(l.text));
-  const dimLine = lines.find((l) => /\b\d+\s*x\s*\d+\s*(?:x\s*\d+)?\s*(?:mm|cm|m|inch|in)\b|box\s+size|dimensions?/i.test(l.text));
+  const isStdPack = anchors.standardPackDeclaration?.present || !!standardLine;
+  const stdPackRaw = anchors.standardPackDeclaration?.rawText || standardLine?.text || '';
+
+  const dimLine = anchors.dimensions?.present
+    ? { text: anchors.dimensions.rawText }
+    : lines.find((l) => /\b\d+\s*x\s*\d+\s*(?:x\s*\d+)?\s*(?:mm|cm|m|inch|in)\b|box\s+size|dimensions?/i.test(l.text));
 
   let brandName = null;
   const brandMatch = fullText.match(/\bbrand[\s:]+([^\n\r,;|]+)/i);
@@ -384,6 +415,15 @@ function regexExtract(ocrResult, detection) {
       brandName = storeMatch[1].trim();
     }
   }
+
+  const sheetObj = anchors.sheetCount?.present
+    ? {
+        present: true,
+        value: anchors.sheetCount.value,
+        dimensionsPerSheet: null,
+        rawText: anchors.sheetCount.rawText || '',
+      }
+    : { present: false, value: null, dimensionsPerSheet: null, rawText: '' };
 
   return {
     commodityClassification: {
@@ -451,28 +491,41 @@ function regexExtract(ocrResult, detection) {
       address: null,
       telephone: phone,
       email: email,
+      website: anchors.consumerCare?.website || null,
       rawText: careRaw,
     },
-    standardPackDeclaration: { present: !!standardLine, rawText: standardLine?.text || '' },
-    sheetCount: { present: false, value: null, dimensionsPerSheet: null, rawText: '' },
+    standardPackDeclaration: { present: isStdPack, rawText: stdPackRaw },
+    sheetCount: sheetObj,
     multiComponentDeclarationHandled: false,
   };
 }
 
 async function extract(ocrResult, detection) {
-  const provider = config.providers.extraction || 'regex';
+  const provider = config.providers.extraction || 'hybrid';
+  const anchors = deterministicExtract(ocrResult);
 
-  if (provider === 'groq') {
-    logger.info('stage6_declarationExtraction', `Using Groq structured extraction (${config.groq.model})`);
+  if (provider === 'regex') {
+    logger.info('stage6_declarationExtraction', 'Using pure deterministic regex extraction');
+    return regexExtract(ocrResult, detection, anchors);
+  }
+
+  if (provider === 'hybrid' || provider === 'groq') {
+    if (!process.env.GROQ_API_KEY) {
+      logger.warn('stage6_declarationExtraction', 'GROQ_API_KEY not set; using deterministic statutory regex extraction');
+      return regexExtract(ocrResult, detection, anchors);
+    }
+
     try {
-      return await extractDeclarationsWithGroq(ocrResult);
+      logger.info('stage6_declarationExtraction', `Using Hybrid extraction with Groq (${config.groq.model}) and statutory regex anchors`);
+      return await extractDeclarationsWithGroq(ocrResult, anchors);
     } catch (error) {
       if (!config.groq.fallbackToRegex) throw error;
-      logger.warn('stage6_declarationExtraction', `Groq extraction failed; falling back to regex: ${error.message}`);
+      logger.warn('stage6_declarationExtraction', `Groq extraction failed; falling back to deterministic regex: ${error.message}`);
+      return regexExtract(ocrResult, detection, anchors);
     }
   }
 
-  return regexExtract(ocrResult, detection);
+  return regexExtract(ocrResult, detection, anchors);
 }
 
 module.exports = { extract, regexExtract, classifyLine };

@@ -41,7 +41,7 @@ module.exports = {
     preprocessed: process.env.PREPROCESSED_DIR || path.join(ROOT, 'temp', 'preprocessed'),
   },
   providers: {
-    extraction: process.env.EXTRACTION_PROVIDER || 'groq',
+    extraction: process.env.EXTRACTION_PROVIDER || 'hybrid',
   },
   integration: {
     preprocessorUrl: process.env.PREPROCESSOR_URL || 'http://127.0.0.1:8000',
