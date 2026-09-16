@@ -28,6 +28,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import Optional
 
 import cv2
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -116,6 +117,26 @@ def _get_ocr_runner():
     return run_ocr
 
 
+def _get_pdp_runner():
+    """Load Stage 3 PDP detector lazily so preprocessing can run without it."""
+    base_dir = Path(__file__).resolve().parents[2]
+    stage3_candidates = [
+        Path("/app/stage3_pdp"),
+        base_dir / "stage3_pdp",
+        Path(__file__).resolve().parents[1] / "stage3_pdp",
+    ]
+    for p in stage3_candidates:
+        if p.is_dir() and str(p.parent) not in sys.path:
+            sys.path.insert(0, str(p.parent))
+
+    try:
+        from stage3_pdp import run_pdp_stage
+        return run_pdp_stage
+    except Exception as exc:
+        logger.debug("Stage 3 PDP runner could not be loaded: %s", exc)
+        return None
+
+
 async def _read_and_validate(image: UploadFile) -> bytes:
     ext = Path(image.filename or "").suffix.lower()
     if image.content_type not in ALLOWED_CONTENT_TYPES and ext not in ALLOWED_EXTENSIONS:
@@ -180,6 +201,43 @@ async def preprocess_image(image: UploadFile = File(...)):
 
     headers = {"X-Preprocess-Metadata": json.dumps(meta.to_dict())}
     return StreamingResponse(io.BytesIO(buf.tobytes()), media_type="image/png", headers=headers)
+
+
+@app.post("/preprocess/pdp")
+async def preprocess_and_pdp(
+    image: UploadFile = File(...),
+    pkg_dimensions: Optional[str] = None,
+):
+    """
+    Stage 2 Preprocessing + Stage 3 PDP Detection, Perspective Unwarping,
+    Surface Area Metrology, and Statutory Classification.
+    """
+    data = await _read_and_validate(image)
+    try:
+        out_img, meta = preprocess(data)
+        pdp_runner = _get_pdp_runner()
+        if pdp_runner is None:
+            raise HTTPException(status_code=503, detail="Stage 3 PDP module not available.")
+
+        pdp_result = pdp_runner(out_img, pkg_dimensions=pkg_dimensions)
+        cropped_img = pdp_result.pop("cropped_image", out_img)
+
+        ok, buf = cv2.imencode(".png", cropped_img)
+        if not ok:
+            raise HTTPException(status_code=500, detail="Failed to encode cropped PDP image.")
+
+        return JSONResponse(
+            {
+                "pdp": pdp_result,
+                "metadata": meta.to_dict(),
+                "image_base64": base64.b64encode(buf.tobytes()).decode("ascii"),
+            }
+        )
+    except PreprocessingError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except Exception:
+        logger.exception("Unexpected PDP extraction failure")
+        raise HTTPException(status_code=500, detail="Internal PDP extraction error.")
 
 
 def _process_image_sync(data: bytes, filename: str, index: int) -> dict:

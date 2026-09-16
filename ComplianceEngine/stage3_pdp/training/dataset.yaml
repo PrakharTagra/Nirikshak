@@ -1,0 +1,14 @@
+# Nirikshak — Legal Metrology Principal Display Panel (PDP) Dataset Config
+# Compatible with Ultralytics YOLOv8-OBB and YOLOv11-OBB models
+
+path: ./datasets/pdp_packaging  # dataset root dir (relative or absolute)
+train: images/train            # train images (relative to 'path')
+val: images/val                # val images (relative to 'path')
+test: images/test              # test images (optional)
+
+# Class definitions for Legal Metrology packaging compliance
+names:
+  0: pdp_front          # Principal Display Panel (Brand, Artwork, Net Qty)
+  1: statutory_back      # Statutory Information (Manufacturer, MRP, Consumer Care)
+  2: batch_stamp_area   # Inkjet/laser batch stamp (Date, Batch No, MRP)
+  3: barcode_area       # 1D EAN-13 / 2D Barcode & QR code
