@@ -40,7 +40,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("stage2-preprocessing")
 
 _EXECUTOR = ThreadPoolExecutor(max_workers=min(32, (os.cpu_count() or 1) + 4))
-_OCR_LOCK = threading.Lock()
 
 app = FastAPI(
     title="Legal Metrology — Stage 2 Image Preprocessing",
@@ -248,8 +247,7 @@ def _process_image_sync(data: bytes, filename: str, index: int) -> dict:
         raise RuntimeError(f"Failed to encode preprocessed image for {filename}.")
 
     ocr_runner = _get_ocr_runner()
-    with _OCR_LOCK:
-        ocr_result = ocr_runner(out_img)
+    ocr_result = ocr_runner(out_img)
 
     return {
         "index": index,
