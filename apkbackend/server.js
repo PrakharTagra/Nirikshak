@@ -34,6 +34,7 @@ app.use(cors());         // Enables Cross-Origin requests for Android app
 const defaultDbPass = Buffer.from('dWhnRzNMTDdyb0MyMlczOA==', 'base64').toString('utf8');
 const defaultMongoUri = `mongodb+srv://prakhartagra16_db_user:${defaultDbPass}@nirikshak.4beivhx.mongodb.net/nirikshak?retryWrites=true&w=majority&appName=Nirikshak`;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || defaultMongoUri;
+const COMPLIANCE_ENGINE_BASE = process.env.COMPLIANCE_ENGINE_URL || 'https://nirikshak-compliance-engine.onrender.com';
 
 mongoose.connect(MONGO_URI)
   .then(async () => {
@@ -468,7 +469,7 @@ app.get('/api/reports', async (req, res) => {
         pdf_url: realPdfUrl,
         cloudinaryUrl: r.cloudinaryUrl || realPdfUrl,
         report_pdf_link: r.report_pdf_link || realPdfUrl,
-        directPdfUrl: r.directPdfUrl || (realPdfUrl ? realPdfUrl : `https://nirikshak-api.duckdns.org/api/v1/reports/${repId}/pdf`),
+        directPdfUrl: r.directPdfUrl || (realPdfUrl ? realPdfUrl : `${COMPLIANCE_ENGINE_BASE}/api/v1/reports/${repId}/pdf`),
         remarks: r.remarks || "Legal Metrology Packaged Commodities Rule Inspection",
         timestamp: r.timestamp || r.createdAt || r.created_at || new Date(),
         created_at: r.created_at || r.createdAt || r.timestamp || new Date()
@@ -526,7 +527,7 @@ app.get('/api/v1/reports/:id', async (req, res) => {
         pdfUrl: realPdfUrl,
         cloudinaryUrl: report.cloudinaryUrl || realPdfUrl,
         report_pdf_link: report.report_pdf_link || realPdfUrl,
-        directPdfUrl: report.directPdfUrl || (realPdfUrl ? realPdfUrl : `https://nirikshak-api.duckdns.org/api/v1/reports/${repId}/pdf`)
+        directPdfUrl: report.directPdfUrl || (realPdfUrl ? realPdfUrl : `${COMPLIANCE_ENGINE_BASE}/api/v1/reports/${repId}/pdf`)
       }
     });
   } catch (error) {
@@ -576,7 +577,7 @@ app.get('/api/inspector/reports', async (req, res) => {
         pdfUrl: realPdfUrl,
         cloudinaryUrl: r.cloudinaryUrl || realPdfUrl,
         report_pdf_link: r.report_pdf_link || realPdfUrl,
-        directPdfUrl: r.directPdfUrl || (realPdfUrl ? realPdfUrl : `https://nirikshak-api.duckdns.org/api/v1/reports/${repId}/pdf`),
+        directPdfUrl: r.directPdfUrl || (realPdfUrl ? realPdfUrl : `${COMPLIANCE_ENGINE_BASE}/api/v1/reports/${repId}/pdf`),
         timestamp: r.timestamp || r.createdAt || r.created_at || new Date()
       };
     });

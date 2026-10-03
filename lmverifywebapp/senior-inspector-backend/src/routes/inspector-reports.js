@@ -80,7 +80,7 @@ inspectorReportsRouter.post('/', async (req, res) => {
 
   const pdfUrl = data.pdf_url && data.pdf_url.startsWith('http')
     ? data.pdf_url
-    : `https://nirikshakscraper.duckdns.org/reports/dmi-${Date.now()}`;
+    : `https://lmverify-local-scraper.onrender.com/reports/dmi-${Date.now()}`;
 
   try {
     const reference_no = await nextReferenceNo();

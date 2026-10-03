@@ -1,5 +1,5 @@
 // Real API client connecting the DMI frontend to the Legal Metrology
-// backend ecosystem (MongoDB Atlas via nirikshakwebapi.duckdns.org).
+// backend ecosystem (MongoDB Atlas via lmverify-senior-inspector-backend.onrender.com).
 
 import { AUTH_API_BASE } from "../context/AuthContext.jsx";
 
@@ -192,7 +192,7 @@ export async function fileStatutoryReport(scanResult) {
     evidenceImages: rawImages.slice(0, 10),
     package_record: packageRecord,
     inspected_at: scanResult.crawledAt || new Date().toISOString(),
-    pdf_url: `https://nirikshakscraper.duckdns.org/reports/dmi-${Date.now()}`,
+    pdf_url: `https://lmverify-local-scraper.onrender.com/reports/dmi-${Date.now()}`,
   };
 
   const res = await fetch(`${AUTH_API_BASE}/inspector/reports`, {
