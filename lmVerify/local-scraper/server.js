@@ -18,11 +18,11 @@ app.use(cors({
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use("/api/scrape", scrapeRouter);
-app.use("/api/listing", listingRouter);
-app.use("/api/compliance", complianceRouter);
-app.use("/reports", reportsRouter);
-app.use("/api/reports", reportsRouter);
+// Mount routes supporting /api/..., /..., and duplicate /api/api/...
+app.use(["/api/scrape", "/scrape", "/api/api/scrape"], scrapeRouter);
+app.use(["/api/listing", "/listing", "/api/api/listing"], listingRouter);
+app.use(["/api/compliance", "/compliance", "/api/api/compliance"], complianceRouter);
+app.use(["/api/reports", "/reports", "/api/api/reports"], reportsRouter);
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", role: "local-scraper" }));
 app.get(["/", "/ping", "/api/ping"], (req, res) => {
