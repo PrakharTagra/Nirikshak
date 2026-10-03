@@ -1,0 +1,43 @@
+name: Nirikshak Render Keep-Alive Pinger
+
+on:
+  schedule:
+    # Ping every 10 minutes (Render free tier sleeps after 15 minutes of inactivity)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual one-click trigger from GitHub Actions tab
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping All Nirikshak Render Backends
+        shell: bash
+        run: |
+          echo "Starting Keep-Alive ping cycle at $(date -u)"
+          
+          # Add your Render deployed URLs here or via GitHub Secrets / Variables
+          TARGETS=(
+            "${{ vars.RENDER_APK_URL || secrets.RENDER_APK_URL }}"
+            "${{ vars.RENDER_ADMIN_URL || secrets.RENDER_ADMIN_URL }}"
+            "${{ vars.RENDER_SENIOR_INSP_URL || secrets.RENDER_SENIOR_INSP_URL }}"
+            "${{ vars.RENDER_SCRAPER_URL || secrets.RENDER_SCRAPER_URL }}"
+            "${{ vars.RENDER_COMPLIANCE_URL || secrets.RENDER_COMPLIANCE_URL }}"
+          )
+
+          for url in "${TARGETS[@]}"; do
+            if [ -n "$url" ]; then
+              # Clean URL: strip trailing slash and ensure /ping endpoint
+              base_url="${url%/}"
+              if [[ "$base_url" == *"/ping" ]]; then
+                ping_url="$base_url"
+              else
+                ping_url="$base_url/ping"
+              fi
+              
+              echo "--> Sending keep-alive ping to: $ping_url"
+              http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 35 "$ping_url" || echo "failed")
+              echo "    Response Status: $http_code"
+            fi
+          done
+          
+          echo "Keep-Alive ping cycle finished successfully."

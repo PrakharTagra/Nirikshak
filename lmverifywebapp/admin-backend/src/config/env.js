@@ -40,7 +40,7 @@ function parseOrigins(...inputs) {
 export const env = {
   role: 'CLM',
   serviceName: 'admin-backend',
-  port: Number(process.env.ADMIN_BACKEND_PORT || 4001),
+  port: Number(process.env.PORT || process.env.ADMIN_BACKEND_PORT || 4001),
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: mongodbUri,
   jwtSecret: required('JWT_SECRET'),

@@ -19,6 +19,8 @@
     "dev:clm-web": "npm run dev -w admin-frontend",
     "dev:ac-api": "npm run dev -w senior-inspector-backend",
     "dev:ac-web": "npm run dev -w senior-inspector-frontend",
+    "start:clm-api": "node admin-backend/src/index.js",
+    "start:ac-api": "node senior-inspector-backend/src/index.js",
     "build": "npm run build -w admin-frontend && npm run build -w senior-inspector-frontend",
     "db:test": "node scripts/test-connection.js",
     "db:indexes": "node scripts/init-indexes.js",

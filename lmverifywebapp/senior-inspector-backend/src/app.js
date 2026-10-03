@@ -29,6 +29,28 @@ export function createApp() {
   }));
   app.use(express.json({ limit: '2mb' }));
   app.use(morgan(env.nodeEnv === 'development' ? 'dev' : 'combined'));
+
+  // Keep-alive ping routes (Render anti-sleep & health checks - unthrottled)
+  app.get(['/ping', '/api/ping'], (_req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      message: 'pong',
+      service: env.serviceName,
+      role: env.role,
+      uptimeSeconds: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  app.get('/', (_req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      service: env.serviceName,
+      role: env.role,
+      message: 'Senior Inspector Backend is operational'
+    });
+  });
+
   app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
   app.use('/api', router);

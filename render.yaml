@@ -1,0 +1,118 @@
+# ==============================================================================
+# Nirikshak Render Blueprint (render.yaml)
+# Connect your GitHub repository to Render and deploy all backends simultaneously!
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Main Mobile APK App Backend
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: nirikshak-apk-backend
+    runtime: node
+    plan: free
+    rootDir: apkbackend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 2. LM-Verify CLM Admin Backend (Web Portal API)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-admin-backend
+    runtime: node
+    plan: free
+    rootDir: lmverifywebapp
+    buildCommand: npm install
+    startCommand: npm run start:clm-api
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: ADMIN_FRONTEND_ORIGIN
+        sync: false
+      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
+        sync: false
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 3. LM-Verify Senior Inspector (Assistant Controller) Backend
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-senior-inspector-backend
+    runtime: node
+    plan: free
+    rootDir: lmverifywebapp
+    buildCommand: npm install
+    startCommand: npm run start:ac-api
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: INSPECTOR_TOKEN_TTL
+        value: 7d
+      - key: ADMIN_FRONTEND_ORIGIN
+        sync: false
+      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
+        sync: false
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 4. LM-Verify Local Scraper & Chatbot Intelligence Backend
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-local-scraper
+    runtime: node
+    plan: free
+    rootDir: lmVerify/local-scraper
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 5. Nirikshak Compliance Engine Orchestrator Backend
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: nirikshak-compliance-engine
+    runtime: node
+    plan: free
+    rootDir: ComplianceEngine/orchestrator
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"

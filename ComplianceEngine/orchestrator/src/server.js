@@ -97,6 +97,17 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Keep-alive ping endpoint (Render anti-sleep & health checks)
+app.get(['/', '/ping', '/api/ping'], (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'pong',
+    service: 'compliance-engine-orchestrator',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Main Endpoint: Process Packaging Photos on Server & Store Only the Final PDF
 // ---------------------------------------------------------------------------
@@ -377,6 +388,27 @@ app.get('/api/v1/reports', async (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   logger.info('server', `ComplianceEngine API running on http://0.0.0.0:${PORT}`);
   logger.info('server', `Health check available at http://0.0.0.0:${PORT}/health`);
+  logger.info('server', `Ping route available at http://0.0.0.0:${PORT}/ping`);
+
+  // Automatic Keep-Alive Self-Pinger (prevents Render free tier from sleeping)
+  const keepAliveUrl = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
+  if (keepAliveUrl) {
+    const pingTarget = keepAliveUrl.endsWith('/ping') ? keepAliveUrl : `${keepAliveUrl.replace(/\/+$/, '')}/ping`;
+    const intervalMinutes = Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 12;
+    logger.info('keep-alive', `Self-ping active for ${pingTarget} every ${intervalMinutes} minutes`);
+    setTimeout(() => {
+      const doPing = async () => {
+        try {
+          const resp = await fetch(pingTarget);
+          logger.info('keep-alive', `Ping sent to ${pingTarget} -> ${resp.status}`);
+        } catch (err) {
+          logger.warn('keep-alive', `Ping error: ${err.message}`);
+        }
+      };
+      doPing();
+      setInterval(doPing, intervalMinutes * 60 * 1000);
+    }, 10000);
+  }
 });
 
 module.exports = app;

@@ -146,6 +146,17 @@ app.get('/', (req, res) => {
   res.send('🏛️ Nirikshak Legal Metrology API Server Running');
 });
 
+// KEEP-ALIVE PING (Used by Render / Uptime monitors to prevent sleeping)
+app.get(['/ping', '/api/ping'], (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'pong',
+    service: 'nirikshak-backend',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // HEALTH CHECK (Used by AWS / Nginx / Monitoring)
 app.get('/health', (req, res) => {
   const dbStatusMap = {
@@ -715,6 +726,26 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`📱 Health Check: http://localhost:${PORT}/health`);
   console.log(`===========================================`);
 });
+
+// Automatic Keep-Alive Self-Pinger (prevents Render free tier from sleeping after 15 min inactivity)
+const keepAliveUrl = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
+if (keepAliveUrl) {
+  const pingTarget = keepAliveUrl.endsWith('/ping') ? keepAliveUrl : `${keepAliveUrl.replace(/\/+$/, '')}/ping`;
+  const intervalMinutes = Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 12;
+  console.log(`📡 [Keep-Alive] Self-ping active for ${pingTarget} every ${intervalMinutes} minutes`);
+  setTimeout(() => {
+    const doPing = async () => {
+      try {
+        const resp = await fetch(pingTarget);
+        console.log(`[Keep-Alive] Ping sent to ${pingTarget} -> ${resp.status}`);
+      } catch (err) {
+        console.warn(`[Keep-Alive] Ping error:`, err.message);
+      }
+    };
+    doPing();
+    setInterval(doPing, intervalMinutes * 60 * 1000);
+  }, 10000);
+}
 
 // Graceful shutdown handling for PM2 / EC2 process manager
 const handleGracefulShutdown = async (signal) => {
