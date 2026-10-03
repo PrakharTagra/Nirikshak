@@ -1,11 +1,78 @@
 # ==============================================================================
 # Nirikshak Render Blueprint (render.yaml)
-# Connect your GitHub repository to Render and deploy all backends simultaneously!
+# Deploy all Nirikshak backends with 1-click on Render
 # ==============================================================================
+
+envVarGroups:
+  - name: lmverify-shared-env
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: ADMIN_FRONTEND_ORIGIN
+        value: "https://nirikshak-omega.vercel.app"
+      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
+        value: "https://nirikshak-y7y9.vercel.app"
+      - key: CORS_ORIGIN
+        value: "https://nirikshak-omega.vercel.app,https://nirikshak-y7y9.vercel.app,https://nirikshak-13jz.vercel.app"
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
 
 services:
   # ----------------------------------------------------------------------------
-  # 1. Main Mobile APK App Backend
+  # 1. LM-Verify CLM Admin Backend (Powers https://nirikshak-omega.vercel.app/)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-admin-backend
+    runtime: node
+    plan: free
+    rootDir: lmverifywebapp
+    buildCommand: npm install
+    startCommand: npm run start:clm-api
+    healthCheckPath: /ping
+    envVars:
+      - fromGroup: lmverify-shared-env
+
+  # ----------------------------------------------------------------------------
+  # 2. LM-Verify Senior Inspector / AC Backend (Powers https://nirikshak-y7y9.vercel.app/ & DMI Auth)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-senior-inspector-backend
+    runtime: node
+    plan: free
+    rootDir: lmverifywebapp
+    buildCommand: npm install
+    startCommand: npm run start:ac-api
+    healthCheckPath: /ping
+    envVars:
+      - fromGroup: lmverify-shared-env
+      - key: INSPECTOR_TOKEN_TTL
+        value: 7d
+
+  # ----------------------------------------------------------------------------
+  # 3. LM-Verify Local Scraper (Powers https://nirikshak-13jz.vercel.app/)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: lmverify-local-scraper
+    runtime: node
+    plan: free
+    rootDir: lmVerify/local-scraper
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 4. Nirikshak Mobile APK App Backend
   # ----------------------------------------------------------------------------
   - type: web
     name: nirikshak-apk-backend
@@ -20,79 +87,6 @@ services:
         value: production
       - key: MONGO_URI
         sync: false
-      - key: KEEP_ALIVE_INTERVAL_MINUTES
-        value: "12"
-
-  # ----------------------------------------------------------------------------
-  # 2. LM-Verify CLM Admin Backend (Web Portal API)
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: lmverify-admin-backend
-    runtime: node
-    plan: free
-    rootDir: lmverifywebapp
-    buildCommand: npm install
-    startCommand: npm run start:clm-api
-    healthCheckPath: /ping
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        sync: false
-      - key: JWT_SECRET
-        generateValue: true
-      - key: JWT_EXPIRES_IN
-        value: 8h
-      - key: ADMIN_FRONTEND_ORIGIN
-        sync: false
-      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
-        sync: false
-      - key: KEEP_ALIVE_INTERVAL_MINUTES
-        value: "12"
-
-  # ----------------------------------------------------------------------------
-  # 3. LM-Verify Senior Inspector (Assistant Controller) Backend
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: lmverify-senior-inspector-backend
-    runtime: node
-    plan: free
-    rootDir: lmverifywebapp
-    buildCommand: npm install
-    startCommand: npm run start:ac-api
-    healthCheckPath: /ping
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: JWT_EXPIRES_IN
-        value: 8h
-      - key: INSPECTOR_TOKEN_TTL
-        value: 7d
-      - key: ADMIN_FRONTEND_ORIGIN
-        sync: false
-      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
-        sync: false
-      - key: KEEP_ALIVE_INTERVAL_MINUTES
-        value: "12"
-
-  # ----------------------------------------------------------------------------
-  # 4. LM-Verify Local Scraper & Chatbot Intelligence Backend
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: lmverify-local-scraper
-    runtime: node
-    plan: free
-    rootDir: lmVerify/local-scraper
-    buildCommand: npm install
-    startCommand: npm start
-    healthCheckPath: /ping
-    envVars:
-      - key: NODE_ENV
-        value: production
       - key: KEEP_ALIVE_INTERVAL_MINUTES
         value: "12"
 
