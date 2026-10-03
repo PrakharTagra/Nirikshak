@@ -6,7 +6,17 @@
 
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv');
+
+let dotenv = null;
+try {
+  dotenv = require('dotenv');
+} catch (_) {
+  try {
+    dotenv = require(path.resolve(process.cwd(), 'node_modules', 'dotenv'));
+  } catch (_e) {
+    dotenv = null;
+  }
+}
 
 const ROOT = path.resolve(__dirname, '..', '..');
 
@@ -22,9 +32,11 @@ const candidateEnvPaths = [
   path.resolve(process.cwd(), '.env'),
 ];
 
-for (const envPath of candidateEnvPaths) {
-  if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath, override: false });
+if (dotenv) {
+  for (const envPath of candidateEnvPaths) {
+    if (fs.existsSync(envPath)) {
+      dotenv.config({ path: envPath, override: false });
+    }
   }
 }
 

@@ -932,7 +932,16 @@ async function extractDeclarationsWithGroq(ocrResult, regexAnchors = null) {
     throw new Error('GROQ_API_KEY is not set. Set it in the environment before using EXTRACTION_PROVIDER=groq.');
   }
 
-  const Groq = require('groq-sdk');
+  let Groq;
+  try {
+    Groq = require('groq-sdk');
+  } catch (_) {
+    try {
+      Groq = require(require('path').resolve(process.cwd(), 'node_modules', 'groq-sdk'));
+    } catch (_e) {
+      throw new Error('groq-sdk module not found. Run npm install groq-sdk');
+    }
+  }
   const client = new Groq({
     apiKey: process.env.GROQ_API_KEY,
     timeout: 60 * 1000,
