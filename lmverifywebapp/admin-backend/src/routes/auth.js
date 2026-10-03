@@ -64,6 +64,14 @@ function publicUser(user) {
   };
 }
 
+/* GET /api/auth/login */
+authRouter.get('/login', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'CLM Login endpoint is operational. Send a POST request with { username, password } to sign in.'
+  });
+});
+
 /* POST /api/auth/login */
 authRouter.post('/login', loginLimiter, async (req, res) => {
   const { username, password } = parse(loginSchema, req.body);

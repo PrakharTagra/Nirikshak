@@ -56,6 +56,13 @@ function publicUser(user) {
 export function createAuthRouter({ allowedRoles, wrongDoorMessage, expiresIn }) {
   const router = Router();
 
+  router.get('/login', (_req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      message: 'Login endpoint is operational. Send a POST request with { username, password } to sign in.'
+    });
+  });
+
   const loginLimiter = rateLimit({
     windowMs: 15 * 60_000,
     limit: 10,

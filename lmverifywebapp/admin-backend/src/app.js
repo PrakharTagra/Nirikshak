@@ -54,6 +54,7 @@ export function createApp() {
   app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
   app.use('/api', router);
+  app.use('/', router);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
