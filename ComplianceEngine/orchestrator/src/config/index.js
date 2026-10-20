@@ -22,14 +22,14 @@ const ROOT = path.resolve(__dirname, '..', '..');
 
 // Multi-path dotenv resolution so env vars load regardless of execution directory
 const candidateEnvPaths = [
-  path.resolve(ROOT, '..', '..', 'lmVerify', 'local-scraper', '.env'),
   path.join(ROOT, '.env'),
-  path.resolve(ROOT, '..', '.env'),
-  path.resolve(ROOT, '..', '..', '.env'),
   path.resolve(process.cwd(), 'ComplianceEngine', 'orchestrator', '.env'),
   path.resolve(process.cwd(), 'orchestrator', '.env'),
-  path.resolve(process.cwd(), 'local-scraper', '.env'),
+  path.resolve(ROOT, '..', '.env'),
+  path.resolve(ROOT, '..', '..', '.env'),
   path.resolve(process.cwd(), '.env'),
+  path.resolve(ROOT, '..', '..', 'lmVerify', 'local-scraper', '.env'),
+  path.resolve(process.cwd(), 'local-scraper', '.env'),
 ];
 
 if (dotenv) {

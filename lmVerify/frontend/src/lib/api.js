@@ -191,8 +191,7 @@ export async function fileStatutoryReport(scanResult) {
     },
     evidenceImages: rawImages.slice(0, 10),
     package_record: packageRecord,
-    inspected_at: scanResult.crawledAt || new Date().toISOString(),
-    pdf_url: `https://lmverify-local-scraper.onrender.com/reports/dmi-${Date.now()}`,
+    pdf_url: `${typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:5000" : "https://lmverify-local-scraper.onrender.com"}/reports/dmi-${Date.now()}`,
   };
 
   const res = await fetch(`${AUTH_API_BASE}/inspector/reports`, {

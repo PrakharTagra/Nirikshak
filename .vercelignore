@@ -1,0 +1,16 @@
+# ==============================================================================
+# Vercel Ignore File (.vercelignore)
+# Prevents Vercel from attempting to build heavy ML engines or crawlers on Vercel
+# ==============================================================================
+
+# Isolate heavy ML, OCR, and Python pipelines to Render
+ComplianceEngine/
+
+# Isolate Playwright headless browser crawler and local scraping to Render
+lmVerify/local-scraper/
+
+# Testing and development scratch directories
+temp/
+scratch/
+test/
+*.log

@@ -1,0 +1,18 @@
+{
+  "name": "nirikshak",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nirikshak: Autonomous Legal Metrology Compliance & E-Commerce Marketplace Surveillance Platform",
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix lmverifywebapp/admin-frontend run build && npm --prefix lmverifywebapp/senior-inspector-frontend run build && npm --prefix lmVerify/frontend run build",
+    "build:clm": "npm --prefix lmverifywebapp/admin-frontend run build",
+    "build:ac": "npm --prefix lmverifywebapp/senior-inspector-frontend run build",
+    "build:dmi": "npm --prefix lmVerify/frontend run build",
+    "start:clm-api": "node lmverifywebapp/admin-backend/src/index.js",
+    "start:ac-api": "node lmverifywebapp/senior-inspector-backend/src/index.js",
+    "start:apk-api": "node apkbackend/server.js",
+    "start:scraper": "node lmVerify/local-scraper/server.js",
+    "start:compliance": "node ComplianceEngine/orchestrator/src/server.js"
+  }
+}
