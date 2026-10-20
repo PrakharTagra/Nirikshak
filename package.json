@@ -5,6 +5,7 @@
   "description": "Nirikshak: Autonomous Legal Metrology Compliance & E-Commerce Marketplace Surveillance Platform",
   "type": "module",
   "scripts": {
+    "dev": "npm --prefix lmverifywebapp run dev",
     "build": "npm --prefix lmverifywebapp/admin-frontend run build && npm --prefix lmverifywebapp/senior-inspector-frontend run build && npm --prefix lmVerify/frontend run build",
     "build:clm": "npm --prefix lmverifywebapp/admin-frontend run build",
     "build:ac": "npm --prefix lmverifywebapp/senior-inspector-frontend run build",
