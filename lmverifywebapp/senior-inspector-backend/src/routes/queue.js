@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { notFound, jurisdictionScopeFor } from '@lm-verify/shared';
+import { notFound, jurisdictionScopeFor } from '../shared/index.js';
 import { Report, User } from '../config/db.js';
 import { authenticate, requireRole, blockUntilPasswordChanged } from '../middleware/auth.js';
 

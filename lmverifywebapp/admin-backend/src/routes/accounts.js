@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
-import { badRequest, notFound, conflict, forbidden, AppError, generateTemporaryPassword } from '@lm-verify/shared';
+import { badRequest, notFound, conflict, forbidden, AppError, generateTemporaryPassword } from '../shared/index.js';
 import { User, Jurisdiction, Report, AdminAuditLog, withTransaction } from '../config/db.js';
 import { authenticate, requireRole, blockUntilPasswordChanged } from '../middleware/auth.js';
 

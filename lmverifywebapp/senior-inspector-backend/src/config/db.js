@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { env } from './env.js';
-import { User, Jurisdiction, Report, AdminAuditLog, Rule } from '@lm-verify/shared';
+import { User, Jurisdiction, Report, AdminAuditLog, Rule } from '../shared/index.js';
 
 export { User, Jurisdiction, Report, AdminAuditLog, Rule };
 

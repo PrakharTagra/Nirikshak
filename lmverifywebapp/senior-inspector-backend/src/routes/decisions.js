@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   badRequest, notFound, reasonRequired, jurisdictionScopeFor,
   STATUSES_REQUIRING_REASON, AppError,
-} from '@lm-verify/shared';
+} from '../shared/index.js';
 import { Report } from '../config/db.js';
 import { authenticate, requireRole, blockUntilPasswordChanged } from '../middleware/auth.js';
 

@@ -56,7 +56,7 @@ app.use(async (_req, _res, next) => {
 const defaultDbPass = Buffer.from('dWhnRzNMTDdyb0MyMlczOA==', 'base64').toString('utf8');
 const defaultMongoUri = `mongodb+srv://prakhartagra16_db_user:${defaultDbPass}@nirikshak.4beivhx.mongodb.net/nirikshak?retryWrites=true&w=majority&appName=Nirikshak`;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || defaultMongoUri;
-const COMPLIANCE_ENGINE_BASE = process.env.COMPLIANCE_ENGINE_URL || 'http://localhost:3000';
+const COMPLIANCE_ENGINE_BASE = process.env.COMPLIANCE_ENGINE_URL || 'https://nirikshak-compliance-engine-9uj4.onrender.com';
 
 mongoose.connect(MONGO_URI)
   .then(async () => {

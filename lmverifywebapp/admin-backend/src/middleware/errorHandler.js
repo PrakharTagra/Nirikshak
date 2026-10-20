@@ -1,4 +1,4 @@
-import { AppError } from '@lm-verify/shared';
+import { AppError } from '../shared/index.js';
 import { env } from '../config/env.js';
 
 export function notFoundHandler(req, res) {

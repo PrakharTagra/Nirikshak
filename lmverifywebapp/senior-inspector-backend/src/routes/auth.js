@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 
-import { signToken, badRequest, unauthorized, forbidden, AppError } from '@lm-verify/shared';
+import { signToken, badRequest, unauthorized, forbidden, AppError } from '../shared/index.js';
 import { User } from '../config/db.js';
 import { env } from '../config/env.js';
 import { authenticate } from '../middleware/auth.js';

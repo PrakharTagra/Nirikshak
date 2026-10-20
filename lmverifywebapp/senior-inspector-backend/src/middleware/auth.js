@@ -2,7 +2,7 @@ import {
   authenticate as makeAuthenticate,
   requireRole,
   blockUntilPasswordChanged,
-} from '@lm-verify/shared';
+} from '../shared/index.js';
 import { env } from '../config/env.js';
 
 // Shared helpers secret nahi jaante; is service ka secret yahan ek baar bind

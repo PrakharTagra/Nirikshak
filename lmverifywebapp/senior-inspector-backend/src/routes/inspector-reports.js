@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { badRequest, notFound, forbidden, AppError } from '@lm-verify/shared';
+import { badRequest, notFound, forbidden, AppError } from '../shared/index.js';
 import { Report } from '../config/db.js';
 import { authenticate, requireRole, blockUntilPasswordChanged } from '../middleware/auth.js';
 
@@ -80,7 +80,7 @@ inspectorReportsRouter.post('/', async (req, res) => {
 
   const pdfUrl = data.pdf_url && data.pdf_url.startsWith('http')
     ? data.pdf_url
-    : (process.env.SCRAPER_SERVICE_URL ? `${process.env.SCRAPER_SERVICE_URL.replace(/\/+$/, '')}/reports/dmi-${Date.now()}` : `/reports/dmi-${Date.now()}`);
+    : (process.env.SCRAPER_SERVICE_URL ? `${process.env.SCRAPER_SERVICE_URL.replace(/\/+$/, '')}/reports/dmi-${Date.now()}` : 'https://lmverify-local-scraper-ibh1.onrender.com/reports/dmi-1792530595070');
 
   try {
     const reference_no = await nextReferenceNo();
