@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import crypto from "crypto";
 import { PlaywrightCrawler, RequestQueue, ProxyConfiguration } from "crawlee";
 import { detectPlatform } from "./platforms/index.js";
@@ -191,6 +192,194 @@ async function expandCollapsibleSections(page) {
  * @param {string} [originalUrl] - Original requested URL before normalization
  * @returns {Promise<object>} Raw listing page data
  */
+/**
+ * Direct high-fidelity stealth HTTP fetch for e-commerce marketplaces (Amazon, Flipkart).
+ * Bypasses headless browser bot-detection challenges and datacenter IP blocks.
+ *
+ * @param {string} targetUrl
+ * @param {string} [originalUrl]
+ * @returns {Promise<object|null>}
+ */
+export async function fetchDirectStealth(targetUrl, originalUrl) {
+  const userAgents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+  ];
+  const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+  try {
+    const resp = await fetch(targetUrl, {
+      headers: {
+        "User-Agent": ua,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Sec-Ch-Ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+        "Cache-Control": "max-age=0",
+      },
+      signal: AbortSignal.timeout(20000),
+    });
+
+    if (!resp || !resp.ok) return null;
+
+    const html = await resp.text();
+
+    // Verify it is NOT a captcha or bot-block challenge page
+    if (
+      html.includes("Click the button below to continue shopping") ||
+      html.includes("validateCaptcha") ||
+      html.includes("Type the characters you see in this image") ||
+      html.includes("Enter the characters you see below") ||
+      html.length < 8000
+    ) {
+      console.warn(`[listing-crawler] Direct stealth fetch intercepted by bot challenge (HTML length: ${html.length})`);
+      return null;
+    }
+
+    const $ = cheerio.load(html);
+
+    // Clean title
+    const rawTitle = $("#productTitle").text().trim() || $("title").text().trim();
+    const title = rawTitle.replace(/\s+/g, " ");
+
+    if (!title || title.toLowerCase() === "amazon.in" || title.toLowerCase() === "robot check") {
+      return null;
+    }
+
+    // Extract prices
+    const priceWhole = $(".a-price .a-offscreen").first().text().trim() ||
+                       $("#priceblock_ourprice, #priceblock_dealprice, .priceToPay .a-offscreen").first().text().trim();
+    const mrpWhole = $(".basisPrice .a-offscreen, .a-text-price .a-offscreen").first().text().trim();
+
+    // Collect text sections
+    const textParts = [];
+    textParts.push(`Product Title: ${title}`);
+    if (priceWhole) textParts.push(`Selling Price: ${priceWhole}`);
+    if (mrpWhole) textParts.push(`Maximum Retail Price (MRP): ${mrpWhole} (Inclusive of all taxes)`);
+
+    const brand = $("#bylineInfo").text().trim() || $(".po-brand .a-span9").text().trim();
+    if (brand) textParts.push(`Brand: ${brand}`);
+
+    // Feature Bullets
+    $("#feature-bullets li span.a-list-item").each((_, el) => {
+      const t = $(el).text().replace(/\s+/g, " ").trim();
+      if (t && !t.includes("P.when")) textParts.push(`• ${t}`);
+    });
+
+    // Technical Specifications & Detail Tables
+    $("table.a-keyvalue tr, #productDetails_techSpec_section_1 tr, #prodDetails tr, .product-specs tr").each((_, el) => {
+      const k = $(el).find("th").text().replace(/\s+/g, " ").trim();
+      const v = $(el).find("td").text().replace(/\s+/g, " ").trim();
+      if (k && v) textParts.push(`${k}: ${v}`);
+    });
+
+    // Detail Bullets (Manufacturer, Packer, Net Quantity, Country of Origin)
+    $("#detailBullets_feature_div li").each((_, el) => {
+      const t = $(el).text().replace(/\s+/g, " ").trim();
+      if (t) textParts.push(t);
+    });
+
+    // Product Description
+    const desc = $("#productDescription").text().replace(/\s+/g, " ").trim();
+    if (desc) textParts.push(`Description: ${desc}`);
+
+    let fullText = textParts.join("\n\n");
+    if (/(?:₹|Rs\.?|INR)\s*\d+/i.test(fullText) && !/inclusive\s+of\s+all\s+taxes/i.test(fullText)) {
+      fullText += "\nPrice is Inclusive of all taxes";
+    }
+
+    // Extract high-resolution packaging images
+    const imageItems = [];
+    const productImages = [];
+    const seenImageUrls = new Set();
+
+    // 1. Landing image dynamic JSON
+    const dynImg = $("#landingImage").attr("data-a-dynamic-image");
+    if (dynImg) {
+      try {
+        const parsed = JSON.parse(dynImg);
+        for (const k of Object.keys(parsed)) {
+          if (!seenImageUrls.has(k)) {
+            seenImageUrls.add(k);
+            const item = { url: k, alt: title, isPackagingImage: true, width: 1200, height: 1200 };
+            imageItems.push(item);
+            productImages.push(item);
+          }
+        }
+      } catch {}
+    }
+
+    // 2. All media-amazon high-resolution images
+    const imgMatches = [...html.matchAll(/https:\/\/m\.media-amazon\.com\/images\/I\/[a-zA-Z0-9_\-+%]+\.jpg/g)].map((m) => m[0]);
+    for (let imgUrl of imgMatches) {
+      if (imgUrl.includes("._SS") || imgUrl.includes("._AC_SR38,50_")) continue;
+      const highRes = imgUrl.replace(/\._[A-Z0-9_,]+_\./, "._AC_SL1500_.");
+      if (!seenImageUrls.has(highRes)) {
+        seenImageUrls.add(highRes);
+        const item = { url: highRes, alt: title, isPackagingImage: true, width: 1500, height: 1500 };
+        imageItems.push(item);
+        if (productImages.length < 12) productImages.push(item);
+      }
+    }
+
+    // Screenshot capture: Microlink edge proxy
+    let screenshot = { mimeType: "image/png", base64: null, byteLength: 0 };
+    try {
+      const mlUrl = `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false`;
+      const mlResp = await fetch(mlUrl, { signal: AbortSignal.timeout(12000) });
+      if (mlResp.ok) {
+        const mlData = await mlResp.json();
+        const imgUrl = mlData.data?.screenshot?.url;
+        if (imgUrl) {
+          const imgResp = await fetch(imgUrl, { signal: AbortSignal.timeout(8000) });
+          if (imgResp.ok) {
+            const buf = Buffer.from(await imgResp.arrayBuffer());
+            screenshot = { mimeType: "image/png", base64: buf.toString("base64"), byteLength: buf.length };
+          }
+        }
+      }
+    } catch {}
+
+    console.log(`[listing-crawler] Direct stealth fetch succeeded for ${targetUrl}: ${imageItems.length} images, ${fullText.length} chars text`);
+
+    return {
+      requestedUrl: originalUrl || targetUrl,
+      finalUrl: targetUrl,
+      statusCode: 200,
+      title,
+      platform: detectPlatform(targetUrl),
+      crawledAt: new Date().toISOString(),
+      html,
+      text: fullText,
+      metadata: {
+        title,
+        description: fullText.slice(0, 300),
+        canonical: targetUrl,
+        lang: "en-in",
+        ogTags: {},
+        twitterTags: {},
+      },
+      structuredData: { jsonLd: [], jsonLdErrors: [], scriptData: [] },
+      images: {
+        count: imageItems.length,
+        items: imageItems,
+        productImages: productImages.length > 0 ? productImages : imageItems.slice(0, 6),
+      },
+      screenshot,
+    };
+  } catch (err) {
+    console.warn(`[listing-crawler] Direct stealth fetch error: ${err.message}`);
+    return null;
+  }
+}
+
 export async function fetchViaCloudFallback(targetUrl, originalUrl) {
   const readerUrl = `https://r.jina.ai/${targetUrl}`;
   const resp = await fetch(readerUrl, {
@@ -205,6 +394,20 @@ export async function fetchViaCloudFallback(targetUrl, originalUrl) {
   }
 
   const raw = await resp.text();
+
+  // Guard against Amazon/Flipkart bot challenges returned by cloud proxies
+  if (
+    raw.includes("Click the button below to continue shopping") ||
+    raw.includes("validateCaptcha") ||
+    raw.includes("Robot Check") ||
+    raw.length < 500
+  ) {
+    console.warn(`[listing-crawler] Jina cloud fallback returned anti-bot challenge for ${targetUrl}. Attempting direct stealth fetch...`);
+    const directRes = await fetchDirectStealth(targetUrl, originalUrl);
+    if (directRes) return directRes;
+    throw new Error("Target marketplace served anti-bot CAPTCHA to cloud fallback proxy.");
+  }
+
 
   // Extract Title
   const titleMatch = raw.match(/Title:\s*([^\n\r]+)/i);
@@ -423,6 +626,18 @@ export async function loadProductPage(url) {
   let crawlError = null;
 
   const targetUrl = normalizeListingUrl(url);
+
+  // Tier 1: Try Direct Stealth HTTP Fetch first (super-fast, zero-overhead, bypasses datacenter blocks)
+  try {
+    const directResult = await fetchDirectStealth(targetUrl, url);
+    if (directResult) {
+      console.log(`[listing-crawler] Direct stealth fetch successfully captured product data for ${targetUrl}`);
+      return directResult;
+    }
+  } catch (err) {
+    console.warn(`[listing-crawler] Direct stealth fetch attempt notice: ${err.message}`);
+  }
+
 
   // If force fallback is configured, bypass Playwright directly
   if (process.env.FORCE_CLOUD_FALLBACK === "true") {
