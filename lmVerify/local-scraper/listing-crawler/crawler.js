@@ -245,7 +245,247 @@ export async function fetchDirectStealth(targetUrl, originalUrl) {
 
     const $ = cheerio.load(html);
 
-    // Clean title
+    // Platform-specific parsing: Flipkart
+    if (targetUrl.includes("flipkart.com")) {
+      // 1. JSON-LD
+      let jsonLdProduct = null;
+      $('script[type="application/ld+json"]').each((_, el) => {
+        try {
+          const data = JSON.parse($(el).text());
+          const item = Array.isArray(data) ? data[0] : data;
+          if (item && (item["@type"] === "Product" || item.name)) {
+            jsonLdProduct = item;
+          }
+        } catch {}
+      });
+
+      // 2. INITIAL_STATE
+      let initialState = null;
+      const isScript = $('#is_script').text() || $('script:contains("window.__INITIAL_STATE__")').text();
+      if (isScript) {
+        const match = isScript.match(/window\.__INITIAL_STATE__\s*=\s*(\{[\s\S]*?\});/);
+        if (match) {
+          try {
+            initialState = JSON.parse(match[1]);
+          } catch {}
+        }
+      }
+
+      const pageContext = initialState?.multiWidgetState?.pageDataResponse?.pageContext;
+      const psi = pageContext?.fdpEventTracking?.events?.psi;
+
+      const rawDocTitle = $("title").text().replace(/\s*\|\s*Flipkart.*$/i, "").replace(/Price in India.*$/i, "").trim();
+      const title = jsonLdProduct?.name ||
+                    (rawDocTitle && !rawDocTitle.toLowerCase().includes("online shopping india") ? rawDocTitle : (psi?.bd ? `${psi.bd} Product` : "Flipkart Product"));
+
+      if (!title || title.toLowerCase().includes("online shopping india") || title.toLowerCase() === "robot check") {
+        return null;
+      }
+
+      const sellingPrice = jsonLdProduct?.offers?.price || psi?.ppd?.finalPrice || psi?.ppd?.fsp;
+      const mrp = psi?.ppd?.mrp;
+      const brand = jsonLdProduct?.brand?.name || psi?.bd;
+
+      const textParts = [];
+      textParts.push(`Product Title: ${title}`);
+      if (brand) textParts.push(`Brand: ${brand}`);
+      if (sellingPrice) textParts.push(`Selling Price: ₹${sellingPrice}`);
+      if (mrp) textParts.push(`Maximum Retail Price (MRP): ₹${mrp} (Inclusive of all taxes)`);
+
+      // Net Quantity & product attributes from swa
+      if (psi?.swa && Array.isArray(psi.swa)) {
+        for (const attr of psi.swa) {
+          if (attr.attributeName && attr.attributeValue) {
+            textParts.push(`${attr.attributeName.charAt(0).toUpperCase() + attr.attributeName.slice(1)}: ${attr.attributeValue}`);
+          }
+        }
+      }
+
+      // Specifications and Legal Metrology from widgets
+      const slots = initialState?.multiWidgetState?.widgetsData?.slots || [];
+      const specsMap = new Map();
+
+      function scanWidgetForSpecs(node) {
+        if (!node || typeof node !== "object") return;
+        if (node.label_0?.value?.text && node.label_1?.value?.text) {
+          const k = String(node.label_0.value.text).trim();
+          let v = node.label_1.value.text;
+          if (Array.isArray(v)) v = v.join(", ").trim();
+          else v = String(v).trim();
+          if (k && v && !specsMap.has(k)) {
+            specsMap.set(k, v);
+          }
+        }
+        for (const childKey of Object.keys(node)) {
+          scanWidgetForSpecs(node[childKey]);
+        }
+      }
+
+      for (const slot of slots) {
+        const w = slot?.slotData?.widget;
+        if (w?.data) {
+          scanWidgetForSpecs(w.data);
+        }
+      }
+
+      if (specsMap.size > 0) {
+        textParts.push("--- Mandatory Specifications & Legal Metrology Declarations ---");
+        for (const [k, v] of specsMap.entries()) {
+          textParts.push(`${k}: ${v}`);
+        }
+      }
+
+      if (jsonLdProduct?.description) {
+        textParts.push(`Description: ${jsonLdProduct.description}`);
+      }
+
+      let fullText = textParts.join("\n\n");
+      if (!/inclusive\s+of\s+all\s+taxes/i.test(fullText)) {
+        fullText += "\nPrice is Inclusive of all taxes";
+      }
+
+      // Extract High-Res Images
+      const imageItems = [];
+      const productImages = [];
+      const seenImageUrls = new Set();
+
+      function addImage(rawImgUrl) {
+        if (!rawImgUrl || typeof rawImgUrl !== "string") return;
+        const highRes = rawImgUrl.replace(/\/image\/\d+\/\d+\//, "/image/1500/1500/");
+        if (!seenImageUrls.has(highRes) && !highRes.includes("surge") && !highRes.includes("promos/")) {
+          seenImageUrls.add(highRes);
+          const item = { url: highRes, alt: title, isPackagingImage: true, width: 1500, height: 1500 };
+          imageItems.push(item);
+          if (productImages.length < 12) productImages.push(item);
+        }
+      }
+
+      if (jsonLdProduct?.image && Array.isArray(jsonLdProduct.image)) {
+        jsonLdProduct.image.forEach(addImage);
+      }
+
+      const fkImgMatches = [...html.matchAll(/https:\/\/(?:rukminim\d?|img)\.flixcart\.com\/image\/[^\s"')\]]+/gi)].map((m) => m[0]);
+      for (const u of fkImgMatches) {
+        addImage(u);
+      }
+
+      // Screenshot capture: Microlink edge proxy or local fallback
+      let screenshot = { mimeType: "image/png", base64: null, byteLength: 0 };
+      try {
+        const mlUrl = `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false`;
+        const mlResp = await fetch(mlUrl, { signal: AbortSignal.timeout(12000) });
+        if (mlResp.ok) {
+          const mlData = await mlResp.json();
+          const imgUrl = mlData.data?.screenshot?.url;
+          if (imgUrl) {
+            const imgResp = await fetch(imgUrl, { signal: AbortSignal.timeout(8000) });
+            if (imgResp.ok) {
+              const buf = Buffer.from(await imgResp.arrayBuffer());
+              screenshot = { mimeType: "image/png", base64: buf.toString("base64"), byteLength: buf.length };
+            }
+          }
+        }
+      } catch {}
+
+      if (!screenshot.base64) {
+        try {
+          const { chromium } = await import("playwright");
+          const browser = await chromium.launch({
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+          });
+          const page = await browser.newPage();
+          await page.setViewportSize({ width: 1280, height: 800 });
+          const primaryImg = productImages[0]?.url || imageItems[0]?.url || "";
+          const synthHtml = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <title>${title}</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f3f6; margin: 0; padding: 24px; color: #212121; }
+                .header { background: #2874f0; color: #fff; padding: 12px 24px; font-weight: bold; font-size: 18px; border-radius: 4px; margin-bottom: 20px; }
+                .container { background: #fff; border-radius: 4px; padding: 24px; display: flex; gap: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+                .media { flex: 0 0 380px; text-align: center; }
+                .media img { max-width: 100%; max-height: 420px; object-fit: contain; border-radius: 4px; border: 1px solid #e0e0e0; }
+                .details { flex: 1; }
+                .title { font-size: 20px; font-weight: 600; line-height: 1.4; color: #212121; margin-bottom: 12px; }
+                .price-row { display: flex; align-items: baseline; gap: 12px; margin: 16px 0; }
+                .selling-price { font-size: 28px; font-weight: bold; color: #212121; }
+                .mrp { font-size: 16px; color: #878787; text-decoration: line-through; }
+                .taxes { font-size: 13px; color: #388e3c; font-weight: 500; }
+                .specs { margin-top: 24px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+                .specs pre { font-family: inherit; white-space: pre-wrap; font-size: 13px; color: #555; line-height: 1.6; }
+              </style>
+            </head>
+            <body>
+              <div class="header">Flipkart Official Inspection Snapshot</div>
+              <div class="container">
+                <div class="media">
+                  ${primaryImg ? `<img src="${primaryImg}" alt="${title}" />` : '<div style="padding:40px;color:#888;">Product Image</div>'}
+                </div>
+                <div class="details">
+                  <div class="title">${title}</div>
+                  <div class="price-row">
+                    ${sellingPrice ? `<span class="selling-price">₹${sellingPrice}</span>` : ''}
+                    ${mrp ? `<span class="mrp">₹${mrp}</span>` : ''}
+                    <span class="taxes">Price is Inclusive of all taxes</span>
+                  </div>
+                  <div class="specs">
+                    <strong>Mandatory Statutory Declarations & Specifications:</strong>
+                    <pre>${fullText.slice(0, 1500)}</pre>
+                  </div>
+                </div>
+              </div>
+            </body>
+            </html>
+          `;
+          await page.setContent(synthHtml, { waitUntil: "load" });
+          const snapBuffer = await page.screenshot({ fullPage: false });
+          await browser.close();
+          screenshot = {
+            mimeType: "image/png",
+            base64: snapBuffer.toString("base64"),
+            byteLength: snapBuffer.length,
+          };
+        } catch {}
+      }
+
+      console.log(`[listing-crawler] Direct stealth fetch succeeded for Flipkart ${targetUrl}: ${imageItems.length} images, ${fullText.length} chars text`);
+
+      return {
+        requestedUrl: originalUrl || targetUrl,
+        finalUrl: targetUrl,
+        statusCode: 200,
+        title,
+        platform: "flipkart",
+        crawledAt: new Date().toISOString(),
+        html,
+        text: fullText,
+        metadata: {
+          title,
+          description: fullText.slice(0, 300),
+          canonical: targetUrl,
+          lang: "en-in",
+          ogTags: {},
+          twitterTags: {},
+        },
+        structuredData: {
+          jsonLd: jsonLdProduct ? [jsonLdProduct] : [],
+          jsonLdErrors: [],
+          scriptData: [],
+        },
+        images: {
+          count: imageItems.length,
+          items: imageItems,
+          productImages: productImages.length > 0 ? productImages : imageItems.slice(0, 6),
+        },
+        screenshot,
+      };
+    }
+
+    // Platform-specific parsing: Amazon / Generic
     const rawTitle = $("#productTitle").text().trim() || $("title").text().trim();
     const title = rawTitle.replace(/\s+/g, " ");
 
@@ -395,23 +635,38 @@ export async function fetchViaCloudFallback(targetUrl, originalUrl) {
 
   const raw = await resp.text();
 
-  // Guard against Amazon/Flipkart bot challenges returned by cloud proxies
+  // Guard against Amazon/Flipkart bot challenges & 429 surge rooms returned by cloud proxies
   if (
     raw.includes("Click the button below to continue shopping") ||
     raw.includes("validateCaptcha") ||
     raw.includes("Robot Check") ||
+    raw.includes("Target URL returned error 429") ||
+    raw.includes("Too Many Requests") ||
+    raw.includes("looks like all of India is here") ||
+    raw.includes("offers are worth the wait") ||
     raw.length < 500
   ) {
-    console.warn(`[listing-crawler] Jina cloud fallback returned anti-bot challenge for ${targetUrl}. Attempting direct stealth fetch...`);
+    console.warn(`[listing-crawler] Jina cloud fallback returned anti-bot challenge or 429 surge block for ${targetUrl}. Attempting direct stealth fetch...`);
     const directRes = await fetchDirectStealth(targetUrl, originalUrl);
     if (directRes) return directRes;
-    throw new Error("Target marketplace served anti-bot CAPTCHA to cloud fallback proxy.");
+    throw new Error("Target marketplace served anti-bot challenge or 429 surge block to cloud fallback proxy.");
   }
 
 
   // Extract Title
   const titleMatch = raw.match(/Title:\s*([^\n\r]+)/i);
-  const title = titleMatch ? titleMatch[1].trim() : "E-Commerce Product Listing";
+  let title = titleMatch ? titleMatch[1].trim() : "E-Commerce Product Listing";
+
+  // If title is generic marketplace landing title, fallback to direct stealth
+  if (
+    title.toLowerCase().includes("online shopping india") ||
+    title.toLowerCase() === "robot check" ||
+    title.toLowerCase() === "amazon.in"
+  ) {
+    console.warn(`[listing-crawler] Generic marketplace fallback title detected ("${title}"). Attempting direct stealth fetch...`);
+    const directRes = await fetchDirectStealth(targetUrl, originalUrl);
+    if (directRes) return directRes;
+  }
 
   // Extract Genuine Product Packaging Photos
   const flixcartImgs = [
