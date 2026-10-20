@@ -11,32 +11,32 @@ Complete step-by-step production deployment guide for **lmverifywebapp**:
 
 ```text
                +--------------------------------------------------------+
-               ¦                   Vercel Edge CDN                      ¦
-               +--------------------------------------------------------¦
-               ¦   CLM Admin Portal         ¦  Senior Inspector Web     ¦
-               ¦   (lmverify-admin)         ¦  (lmverify-senior-insp)   ¦
+               ï¿½                   Vercel Edge CDN                      ï¿½
+               +--------------------------------------------------------ï¿½
+               ï¿½   CLM Admin Portal         ï¿½  Senior Inspector Web     ï¿½
+               ï¿½   (lmverify-admin)         ï¿½  (lmverify-senior-insp)   ï¿½
                +--------------------------------------------------------+
-                             ¦ HTTPS API                  ¦ HTTPS API
-                             ¦ Requests                   ¦ Requests
+                             ï¿½ HTTPS API                  ï¿½ HTTPS API
+                             ï¿½ Requests                   ï¿½ Requests
                              ?                            ?
                +--------------------------------------------------------+
-               ¦          AWS EC2 (m7i-flex.large, Ubuntu)              ¦
-               +--------------------------------------------------------¦
-               ¦  Nginx Gateway (Port 80 / 443 with Free SSL)           ¦
-               ¦    +-- /clm-api/  --> localhost:4001                   ¦
-               ¦    +-- /ac-api/   --> localhost:4002                   ¦
-               ¦    +-- /deploy-webhook --> localhost:4005 (optional)   ¦
-               +--------------------------------------------------------¦
-               ¦  PM2 Process Manager (with automatic log rotation)     ¦
-               ¦    +-- lmv-admin-backend            (Port 4001)        ¦
-               ¦    +-- lmv-senior-inspector-backend (Port 4002)        ¦
-               ¦    +-- lmv-webhook-listener         (Port 4005)        ¦
+               ï¿½          AWS EC2 (m7i-flex.large, Ubuntu)              ï¿½
+               +--------------------------------------------------------ï¿½
+               ï¿½  Nginx Gateway (Port 80 / 443 with Free SSL)           ï¿½
+               ï¿½    +-- /clm-api/  --> localhost:4001                   ï¿½
+               ï¿½    +-- /ac-api/   --> localhost:4002                   ï¿½
+               ï¿½    +-- /deploy-webhook --> localhost:4005 (optional)   ï¿½
+               +--------------------------------------------------------ï¿½
+               ï¿½  PM2 Process Manager (with automatic log rotation)     ï¿½
+               ï¿½    +-- lmv-admin-backend            (Port 4001)        ï¿½
+               ï¿½    +-- lmv-senior-inspector-backend (Port 4002)        ï¿½
+               ï¿½    +-- lmv-webhook-listener         (Port 4005)        ï¿½
                +--------------------------------------------------------+
-                                           ¦ Encrypted TLS
+                                           ï¿½ Encrypted TLS
                                            ?
                +--------------------------------------------------------+
-               ¦                 MongoDB Atlas Cluster                  ¦
-               ¦  Collections: users, reports, rules, inspectionreports ¦
+               ï¿½                 MongoDB Atlas Cluster                  ï¿½
+               ï¿½  Collections: users, reports, rules, inspectionreports ï¿½
                +--------------------------------------------------------+
 ```
 
@@ -143,8 +143,8 @@ ADMIN_BACKEND_PORT=4001
 SENIOR_INSPECTOR_BACKEND_PORT=4002
 
 # Allowed Frontend Origins (Automatic support for *.vercel.app is enabled)
-ADMIN_FRONTEND_ORIGIN=https://lmverify-admin.vercel.app
-SENIOR_INSPECTOR_FRONTEND_ORIGIN=https://lmverify-senior-inspector.vercel.app
+ADMIN_FRONTEND_ORIGIN=https://<your-admin-frontend>.vercel.app
+SENIOR_INSPECTOR_FRONTEND_ORIGIN=https://<your-senior-inspector-frontend>.vercel.app
 ```
 
 Save and exit (`Ctrl + O`, `Enter`, `Ctrl + X`).

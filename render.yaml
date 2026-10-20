@@ -15,17 +15,17 @@ envVarGroups:
       - key: JWT_EXPIRES_IN
         value: 8h
       - key: ADMIN_FRONTEND_ORIGIN
-        value: "https://nirikshak-omega.vercel.app"
+        sync: false
       - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
-        value: "https://nirikshak-y7y9.vercel.app"
+        sync: false
       - key: CORS_ORIGIN
-        value: "https://nirikshak-omega.vercel.app,https://nirikshak-y7y9.vercel.app,https://nirikshak-13jz.vercel.app"
+        value: "*"
       - key: KEEP_ALIVE_INTERVAL_MINUTES
         value: "12"
 
 services:
   # ----------------------------------------------------------------------------
-  # 1. LM-Verify CLM Admin Backend (Powers https://nirikshak-omega.vercel.app/)
+  # 1. LM-Verify CLM Admin Backend
   # ----------------------------------------------------------------------------
   - type: web
     name: lmverify-admin-backend
@@ -39,7 +39,7 @@ services:
       - fromGroup: lmverify-shared-env
 
   # ----------------------------------------------------------------------------
-  # 2. LM-Verify Senior Inspector / AC Backend (Powers https://nirikshak-y7y9.vercel.app/ & DMI Auth)
+  # 2. LM-Verify Senior Inspector / AC Backend
   # ----------------------------------------------------------------------------
   - type: web
     name: lmverify-senior-inspector-backend
@@ -55,7 +55,7 @@ services:
         value: 7d
 
   # ----------------------------------------------------------------------------
-  # 3. LM-Verify Local Scraper (Powers https://nirikshak-13jz.vercel.app/)
+  # 3. LM-Verify Local Scraper
   # ----------------------------------------------------------------------------
   - type: web
     name: lmverify-local-scraper

@@ -5,7 +5,7 @@ const rawBase =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_SCRAPER_API_URL ||
   (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
-    ? "https://lmverify-local-scraper.onrender.com"
+    ? ""
     : "http://localhost:5000");
 
 // Normalize: strip trailing slashes and trailing /api so appending /api/listing is never duplicate /api/api

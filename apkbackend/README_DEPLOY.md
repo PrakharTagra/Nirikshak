@@ -10,7 +10,7 @@ This guide covers deploying `apkbackend` on **Render** (Cloud Web Service) or an
 [Android APK Mobile App / Client]
          │  HTTPS (Port 443)
          ▼
-[Render Cloud Service (https://nirikshak-apk-backend.onrender.com)]
+[Render Cloud Service (https://<your-apk-backend>.onrender.com)]
          │  HTTP / Native Node.js Express (Port 5000)
          ▼
 [MongoDB Atlas Cloud Database]
@@ -31,12 +31,12 @@ This guide covers deploying `apkbackend` on **Render** (Cloud Web Service) or an
 7. **Environment Variables**:
    * `NODE_ENV`: `production`
    * `MONGO_URI`: `mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/nirikshak?retryWrites=true&w=majority`
-   * `COMPLIANCE_ENGINE_URL`: `https://nirikshak-compliance-engine.onrender.com`
+   * `COMPLIANCE_ENGINE_URL`: `https://<your-compliance-engine>.onrender.com`
 
 ### Live Production Endpoints:
-* **Base URL**: `https://nirikshak-apk-backend.onrender.com`
-* **Ping / Keep-Alive**: `https://nirikshak-apk-backend.onrender.com/ping`
-* **Health Check**: `https://nirikshak-apk-backend.onrender.com/health`
+* **Base URL**: `https://<your-apk-backend>.onrender.com`
+* **Ping / Keep-Alive**: `https://<your-apk-backend>.onrender.com/ping`
+* **Health Check**: `https://<your-apk-backend>.onrender.com/health`
 
 ---
 
@@ -47,14 +47,14 @@ In your Android application source code, configure the API base URL:
 ### Java (`Constants.java` / `RetrofitClient.java`):
 ```java
 public class ApiConfig {
-    public static final String BASE_URL = "https://nirikshak-apk-backend.onrender.com/";
+    public static final String BASE_URL = "https://<your-apk-backend>.onrender.com/";
 }
 ```
 
 ### Kotlin (`NetworkModule.kt`):
 ```kotlin
 object NetworkConfig {
-    const val BASE_URL = "https://nirikshak-apk-backend.onrender.com/"
+    const val BASE_URL = "https://<your-apk-backend>.onrender.com/"
 }
 ```
 

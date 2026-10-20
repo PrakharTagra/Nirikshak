@@ -42,7 +42,7 @@ Response:
 * **Bypasses Rate Limiting**: Excluded from strict API rate limits.
 
 ### 2. Built-in In-App Self-Pinger
-Render automatically injects the `RENDER_EXTERNAL_URL` environment variable into your running service (e.g., `https://nirikshak-apk-backend.onrender.com`).
+Render automatically injects the `RENDER_EXTERNAL_URL` environment variable into your running service (e.g., `https://<your-apk-backend>.onrender.com`).
 When started on Render, each backend automatically activates an internal keep-alive timer that pings itself via Render's public network every **12 minutes** (< 15 min limit), resetting Render's inactivity counter continuously.
 
 ### 3. Automated GitHub Actions Keep-Alive Workflow
@@ -168,33 +168,33 @@ If you prefer deploying services individually:
 
 ## 🌐 Updating Vercel Frontend Environment Variables
 
-Once Render finishes deploying your backend services, copy the public URL provided by Render (e.g. `https://lmverify-admin-backend.onrender.com`) and update your Vercel projects:
+Once Render finishes deploying your backend services, copy the public URL provided by Render (e.g. `https://<your-admin-backend>.onrender.com`) and update your Vercel projects:
 
 ### 1. `admin-frontend` on Vercel:
 In your Vercel Project Settings -> **Environment Variables**:
 ```env
-VITE_ADMIN_API_URL=https://lmverify-admin-backend.onrender.com/api
+VITE_ADMIN_API_URL=https://<your-admin-backend>.onrender.com/api
 ```
 *Trigger a Redeploy on Vercel after saving.*
 
 ### 2. `senior-inspector-frontend` on Vercel:
 In your Vercel Project Settings -> **Environment Variables**:
 ```env
-VITE_AC_API_URL=https://lmverify-senior-inspector-backend.onrender.com/api
+VITE_AC_API_URL=https://<your-senior-insp-backend>.onrender.com/api
 ```
 *Trigger a Redeploy on Vercel after saving.*
 
 ### 3. `lmVerify/frontend` on Vercel:
 In your Vercel Project Settings -> **Environment Variables**:
 ```env
-VITE_API_BASE_URL=https://lmverify-local-scraper.onrender.com
+VITE_API_BASE_URL=https://<your-scraper>.onrender.com
 ```
 *Trigger a Redeploy on Vercel after saving.*
 
 ### 4. Android App (APK):
 Update the base URL in your Android app configuration or build config to point to:
 ```
-https://nirikshak-apk-backend.onrender.com
+https://<your-apk-backend>.onrender.com
 ```
 
 ---
@@ -215,10 +215,10 @@ Render web services use dynamic outbound IP addresses on the free tier. To ensur
 To ensure the free services never sleep even after reboots:
 1. Go to your GitHub repository -> **Settings** -> **Secrets and variables** -> **Actions**.
 2. Under **Variables** (or Secrets), add:
-   - `RENDER_APK_URL`: `https://nirikshak-apk-backend.onrender.com`
-   - `RENDER_ADMIN_URL`: `https://lmverify-admin-backend.onrender.com`
-   - `RENDER_SENIOR_INSP_URL`: `https://lmverify-senior-inspector-backend.onrender.com`
-   - `RENDER_SCRAPER_URL`: `https://lmverify-local-scraper.onrender.com`
-   - `RENDER_COMPLIANCE_URL`: `https://nirikshak-compliance-engine.onrender.com`
+   - `RENDER_APK_URL`: `https://<your-apk-backend>.onrender.com`
+   - `RENDER_ADMIN_URL`: `https://<your-admin-backend>.onrender.com`
+   - `RENDER_SENIOR_INSP_URL`: `https://<your-senior-insp-backend>.onrender.com`
+   - `RENDER_SCRAPER_URL`: `https://<your-scraper>.onrender.com`
+   - `RENDER_COMPLIANCE_URL`: `https://<your-compliance-engine>.onrender.com`
 3. Go to the **Actions** tab on GitHub, select **Nirikshak Render Keep-Alive Pinger**, and click **Run workflow**.
 4. The workflow will run automatically every 10 minutes 24/7!

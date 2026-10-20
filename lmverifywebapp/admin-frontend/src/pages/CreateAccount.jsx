@@ -58,13 +58,19 @@ export default function CreateAccount() {
     }
   }
 
+  const getPortalUrl = (role) => {
+    if (role === 'DMI') {
+      return import.meta.env.VITE_DMI_PORTAL_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5173/login' : '/login');
+    }
+    if (role === 'AC') {
+      return import.meta.env.VITE_AC_PORTAL_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5172/login' : '/login');
+    }
+    return import.meta.env.VITE_ADMIN_PORTAL_URL || '/login';
+  };
+
   const handleCopyCredentials = () => {
     if (!created) return;
-    const portalUrl = created.role === 'DMI'
-      ? 'https://nirikshak-13jz.vercel.app/login'
-      : created.role === 'AC'
-      ? 'https://nirikshak-y7y9.vercel.app/login'
-      : 'https://nirikshak-omega.vercel.app/login';
+    const portalUrl = getPortalUrl(created.role);
 
     const text = [
       `🏛️ NIRIKSHAK OFFICIAL CREDENTIALS`,
@@ -82,11 +88,7 @@ export default function CreateAccount() {
 
   if (created) {
     const isDmi = created.role === 'DMI';
-    const targetPortalUrl = isDmi
-      ? 'https://nirikshak-13jz.vercel.app/login'
-      : created.role === 'AC'
-      ? 'https://nirikshak-y7y9.vercel.app/login'
-      : '/login';
+    const targetPortalUrl = getPortalUrl(created.role);
 
     return (
       <div className="max-w-2xl space-y-6 mx-auto">
