@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "npm --prefix lmverifywebapp run dev",
-    "build": "npm --prefix lmverifywebapp/admin-frontend run build && npm --prefix lmverifywebapp/senior-inspector-frontend run build && npm --prefix lmVerify/frontend run build",
+    "build": "npm --prefix portal-gateway run build && npm --prefix lmverifywebapp/admin-frontend run build && npm --prefix lmverifywebapp/senior-inspector-frontend run build && npm --prefix lmVerify/frontend run build",
+    "build:gateway": "npm --prefix portal-gateway run build",
     "build:clm": "npm --prefix lmverifywebapp/admin-frontend run build",
     "build:ac": "npm --prefix lmverifywebapp/senior-inspector-frontend run build",
     "build:dmi": "npm --prefix lmVerify/frontend run build",

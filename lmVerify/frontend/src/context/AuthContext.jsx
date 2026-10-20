@@ -8,7 +8,7 @@ const TOKEN_KEY = "lm_verify_dmi_token";
 export const AUTH_API_BASE =
   import.meta.env.VITE_AC_API_BASE_URL ||
   import.meta.env.VITE_AC_API_URL ||
-  (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:4002/api" : "/api");
+  (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port !== '3000' && window.location.port !== '80' ? "http://localhost:4002/api" : "/api/ac");
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

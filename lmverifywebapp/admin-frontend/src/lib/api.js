@@ -4,7 +4,10 @@ const TOKEN_KEY = 'lmv_admin_token';
 
 // Vite VITE_-prefixed vars padhta hai; vite.config.js mein envDir root par set
 // hai, to .env abhi bhi ek hi jagah rahega.
-const baseURL = import.meta.env.VITE_ADMIN_API_URL || 'http://localhost:4001/api';
+const baseURL = import.meta.env.VITE_ADMIN_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port !== '3000' && window.location.port !== '80'
+    ? 'http://localhost:4001/api'
+    : '/api/admin');
 
 export const api = axios.create({ baseURL, timeout: 20_000 });
 

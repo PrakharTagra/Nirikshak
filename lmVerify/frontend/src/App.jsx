@@ -16,9 +16,12 @@ const ScanDetail = lazy(() => import("./pages/ScanDetail.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 export default function App() {
+  const rawDmiBase = import.meta.env.BASE_URL || '/dmi';
+  const dmiBasename = rawDmiBase.replace(/\/+$/, '') || '/';
+
   return (
     <ErrorBoundary>
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <BrowserRouter basename={dmiBasename} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
           <Suspense fallback={<PageLoader />}>
             <Routes>

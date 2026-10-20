@@ -23,7 +23,7 @@ function spaFallbackPlugin() {
 }
 
 export default defineConfig({
-  base: '/',
+  base: process.env.VITE_BASE_PATH || '/admin/',
   plugins: [react(), tailwindcss(), spaFallbackPlugin()],
   envDir: '..',                 // VITE_ vars repo-root .env se
   server: { port: 5171, strictPort: true },

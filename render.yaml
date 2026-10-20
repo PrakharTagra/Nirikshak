@@ -1,61 +1,13 @@
 # ==============================================================================
 # Nirikshak Render Blueprint (render.yaml)
-# Deploy all Nirikshak backends with 1-click on Render
+# Hosts strictly the heavy microservices that cannot be deployed on Vercel
+# (Dynamic Puppeteer / Chromium crawler and OCR Compliance Engine)
 # ==============================================================================
-
-envVarGroups:
-  - name: lmverify-shared-env
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        sync: false
-      - key: JWT_SECRET
-        generateValue: true
-      - key: JWT_EXPIRES_IN
-        value: 8h
-      - key: ADMIN_FRONTEND_ORIGIN
-        sync: false
-      - key: SENIOR_INSPECTOR_FRONTEND_ORIGIN
-        sync: false
-      - key: CORS_ORIGIN
-        value: "*"
-      - key: KEEP_ALIVE_INTERVAL_MINUTES
-        value: "12"
 
 services:
   # ----------------------------------------------------------------------------
-  # 1. LM-Verify CLM Admin Backend
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: lmverify-admin-backend
-    runtime: node
-    plan: free
-    rootDir: lmverifywebapp
-    buildCommand: npm install
-    startCommand: npm run start:clm-api
-    healthCheckPath: /ping
-    envVars:
-      - fromGroup: lmverify-shared-env
-
-  # ----------------------------------------------------------------------------
-  # 2. LM-Verify Senior Inspector / AC Backend
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: lmverify-senior-inspector-backend
-    runtime: node
-    plan: free
-    rootDir: lmverifywebapp
-    buildCommand: npm install
-    startCommand: npm run start:ac-api
-    healthCheckPath: /ping
-    envVars:
-      - fromGroup: lmverify-shared-env
-      - key: INSPECTOR_TOKEN_TTL
-        value: 7d
-
-  # ----------------------------------------------------------------------------
-  # 3. LM-Verify Local Scraper
+  # 1. LM-Verify Local Scraper (Live E-Commerce Scraper & PDF Generator)
+  # Uses Puppeteer/Chromium for headless DOM evaluation & packaging analysis
   # ----------------------------------------------------------------------------
   - type: web
     name: lmverify-local-scraper
@@ -70,28 +22,14 @@ services:
         value: production
       - key: KEEP_ALIVE_INTERVAL_MINUTES
         value: "12"
-
-  # ----------------------------------------------------------------------------
-  # 4. Nirikshak Mobile APK App Backend
-  # ----------------------------------------------------------------------------
-  - type: web
-    name: nirikshak-apk-backend
-    runtime: node
-    plan: free
-    rootDir: apkbackend
-    buildCommand: npm install
-    startCommand: npm start
-    healthCheckPath: /ping
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGO_URI
+      - key: GROQ_API_KEY
         sync: false
-      - key: KEEP_ALIVE_INTERVAL_MINUTES
-        value: "12"
+      - key: MONGODB_URI
+        sync: false
 
   # ----------------------------------------------------------------------------
-  # 5. Nirikshak Compliance Engine Orchestrator Backend
+  # 2. Nirikshak Compliance Engine Orchestrator Backend
+  # Heavy OCR preprocessing, image vision analysis & legal rule verification
   # ----------------------------------------------------------------------------
   - type: web
     name: nirikshak-compliance-engine

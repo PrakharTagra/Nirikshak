@@ -4,7 +4,10 @@ import axios from 'axios';
 // hone par ek mein login karte hi doosre se chupchaap logout ho jaata.
 const TOKEN_KEY = 'lmv_ac_token';
 
-const baseURL = import.meta.env.VITE_AC_API_URL || 'http://localhost:4002/api';
+const baseURL = import.meta.env.VITE_AC_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port !== '3000' && window.location.port !== '80'
+    ? 'http://localhost:4002/api'
+    : '/api/ac');
 
 export const api = axios.create({ baseURL, timeout: 20_000 });
 

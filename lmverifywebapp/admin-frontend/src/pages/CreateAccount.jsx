@@ -60,12 +60,15 @@ export default function CreateAccount() {
 
   const getPortalUrl = (role) => {
     if (role === 'DMI') {
-      return import.meta.env.VITE_DMI_PORTAL_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5173/login' : '/login');
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      return import.meta.env.VITE_DMI_PORTAL_URL || `${origin}/dmi/login`;
     }
     if (role === 'AC') {
-      return import.meta.env.VITE_AC_PORTAL_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5172/login' : '/login');
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      return import.meta.env.VITE_AC_PORTAL_URL || `${origin}/ac/login`;
     }
-    return import.meta.env.VITE_ADMIN_PORTAL_URL || '/login';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    return import.meta.env.VITE_ADMIN_PORTAL_URL || `${origin}/admin/login`;
   };
 
   const handleCopyCredentials = () => {

@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 
 import { env } from './config/env.js';
+import { connectDB } from './config/db.js';
 import { router } from './routes/index.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
@@ -30,8 +31,18 @@ export function createApp() {
   app.use(express.json({ limit: '2mb' }));
   app.use(morgan(env.nodeEnv === 'development' ? 'dev' : 'combined'));
 
-  // Keep-alive ping routes (Render anti-sleep & health checks - unthrottled)
-  app.get(['/ping', '/api/ping'], (_req, res) => {
+  // Ensure database is connected in serverless environments
+  app.use(async (_req, _res, next) => {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.warn('MongoDB connection check:', err.message);
+    }
+    next();
+  });
+
+  // Keep-alive ping routes (health checks - unthrottled)
+  app.get(['/ping', '/api/ping', '/api/admin/ping', '/api/clm/ping'], (_req, res) => {
     res.status(200).json({
       status: 'ok',
       message: 'pong',
@@ -53,6 +64,10 @@ export function createApp() {
 
   app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
+  // Support direct, prefixed, and subpath rewrites
+  app.use('/api/admin', router);
+  app.use('/api/clm', router);
+  app.use('/admin', router);
   app.use('/api', router);
   app.use('/', router);
 

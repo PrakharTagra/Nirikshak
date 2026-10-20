@@ -1,0 +1,71 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "gateway-web": {
+      "root": "portal-gateway",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "admin-web": {
+      "root": "lmverifywebapp/admin-frontend",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "ac-web": {
+      "root": "lmverifywebapp/senior-inspector-frontend",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "dmi-web": {
+      "root": "lmVerify/frontend",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "admin-api": {
+      "root": "lmverifywebapp/admin-backend",
+      "framework": "express"
+    },
+    "ac-api": {
+      "root": "lmverifywebapp/senior-inspector-backend",
+      "framework": "express"
+    },
+    "apk-api": {
+      "root": "apkbackend",
+      "framework": "express"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/admin/(.*)", "destination": { "service": "admin-api", "path": "/api/$1" } },
+    { "source": "/api/admin", "destination": { "service": "admin-api", "path": "/api" } },
+    { "source": "/api/clm/(.*)", "destination": { "service": "admin-api", "path": "/api/$1" } },
+    { "source": "/api/clm", "destination": { "service": "admin-api", "path": "/api" } },
+
+    { "source": "/api/ac/(.*)", "destination": { "service": "ac-api", "path": "/api/$1" } },
+    { "source": "/api/ac", "destination": { "service": "ac-api", "path": "/api" } },
+    { "source": "/api/inspector/(.*)", "destination": { "service": "ac-api", "path": "/api/$1" } },
+    { "source": "/api/inspector", "destination": { "service": "ac-api", "path": "/api" } },
+
+    { "source": "/api/apk/(.*)", "destination": { "service": "apk-api", "path": "/api/$1" } },
+    { "source": "/api/apk", "destination": { "service": "apk-api", "path": "/api" } },
+    { "source": "/apk/(.*)", "destination": { "service": "apk-api", "path": "/$1" } },
+
+    { "source": "/admin/(.*)", "destination": { "service": "admin-web" } },
+    { "source": "/admin", "destination": { "service": "admin-web" } },
+
+    { "source": "/ac/(.*)", "destination": { "service": "ac-web" } },
+    { "source": "/ac", "destination": { "service": "ac-web" } },
+
+    { "source": "/dmi/(.*)", "destination": { "service": "dmi-web" } },
+    { "source": "/dmi", "destination": { "service": "dmi-web" } },
+
+    { "source": "/(.*)", "destination": { "service": "gateway-web" } }
+  ]
+}

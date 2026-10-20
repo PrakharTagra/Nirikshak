@@ -28,6 +28,28 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(cors());         // Enables Cross-Origin requests for Android app
 
+// URL prefix normalization for Vercel Services rewrites
+app.use((req, _res, next) => {
+  if (req.url.startsWith('/api/apk/')) {
+    req.url = req.url.replace('/api/apk', '/api');
+  } else if (req.url.startsWith('/apk/')) {
+    req.url = req.url.replace('/apk', '');
+  }
+  next();
+});
+
+// Ensure database connection in serverless execution
+app.use(async (_req, _res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await mongoose.connect(MONGO_URI);
+    } catch (err) {
+      console.warn('MongoDB reconnect check:', err.message);
+    }
+  }
+  next();
+});
+
 // ---------------------------------------------------
 // 2. CONNECT TO MONGODB ATLAS
 // ---------------------------------------------------
@@ -722,60 +744,60 @@ app.get('/api/officer/profile', async (req, res) => {
 // 5. START EXPRESS SERVER & GRACEFUL SHUTDOWN
 // ---------------------------------------------------
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`===========================================`);
-  console.log(`🚀 Nirikshak Backend running on port ${PORT}`);
-  console.log(`🌐 Local URL: http://localhost:${PORT}`);
-  console.log(`📱 Health Check: http://localhost:${PORT}/health`);
-  console.log(`===========================================`);
-});
-
-// Automatic Keep-Alive Self-Pinger (prevents Render free tier from sleeping after 15 min inactivity)
-const keepAliveUrl = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
-if (keepAliveUrl) {
-  const pingTarget = keepAliveUrl.endsWith('/ping') ? keepAliveUrl : `${keepAliveUrl.replace(/\/+$/, '')}/ping`;
-  const intervalMinutes = Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 12;
-  console.log(`📡 [Keep-Alive] Self-ping active for ${pingTarget} every ${intervalMinutes} minutes`);
-  setTimeout(() => {
-    const doPing = async () => {
-      try {
-        const resp = await fetch(pingTarget);
-        console.log(`[Keep-Alive] Ping sent to ${pingTarget} -> ${resp.status}`);
-      } catch (err) {
-        console.warn(`[Keep-Alive] Ping error:`, err.message);
-      }
-    };
-    doPing();
-    setInterval(doPing, intervalMinutes * 60 * 1000);
-  }, 10000);
-}
-
-// Graceful shutdown handling for PM2 / EC2 process manager
-const handleGracefulShutdown = async (signal) => {
-  console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
-
-  // Stop accepting new connections
-  server.close(async () => {
-    console.log('🔒 Closed incoming HTTP connections.');
-    try {
-      if (mongoose.connection.readyState !== 0) {
-        await mongoose.connection.close(false);
-        console.log('🍃 Disconnected from MongoDB Atlas.');
-      }
-      console.log('✅ Graceful shutdown completed cleanly.');
-      process.exit(0);
-    } catch (err) {
-      console.error('❌ Error during shutdown:', err);
-      process.exit(1);
-    }
+let server;
+if (!process.env.VERCEL) {
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log("===========================================");
+    console.log(`🚀 Nirikshak Backend running on port ${PORT}`);
+    console.log(`🌐 Local URL: http://localhost:${PORT}`);
+    console.log(`📱 Health Check: http://localhost:${PORT}/health`);
+    console.log("===========================================");
   });
 
-  // Force exit if connections don't drain within 10s
-  setTimeout(() => {
-    console.error('⚠️ Forcing shutdown after timeout.');
-    process.exit(1);
-  }, 10000).unref();
-};
+  const keepAliveUrl = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
+  if (keepAliveUrl) {
+    const pingTarget = keepAliveUrl.endsWith('/ping') ? keepAliveUrl : `${keepAliveUrl.replace(/\/+$/, '')}/ping`;
+    const intervalMinutes = Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 12;
+    console.log(`📡 [Keep-Alive] Self-ping active for ${pingTarget} every ${intervalMinutes} minutes`);
+    setTimeout(() => {
+      const doPing = async () => {
+        try {
+          const resp = await fetch(pingTarget);
+          console.log(`[Keep-Alive] Ping sent to ${pingTarget} -> ${resp.status}`);
+        } catch (err) {
+          console.warn("[Keep-Alive] Ping error:", err.message);
+        }
+      };
+      doPing();
+      setInterval(doPing, intervalMinutes * 60 * 1000);
+    }, 10000);
+  }
 
-process.on('SIGTERM', () => handleGracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
+  const handleGracefulShutdown = async (signal) => {
+    console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
+    server?.close(async () => {
+      console.log('🔒 Closed incoming HTTP connections.');
+      try {
+        if (mongoose.connection.readyState !== 0) {
+          await mongoose.connection.close(false);
+          console.log('🍃 Disconnected from MongoDB Atlas.');
+        }
+        console.log('✅ Graceful shutdown completed cleanly.');
+        process.exit(0);
+      } catch (err) {
+        console.error('❌ Error during shutdown:', err);
+        process.exit(1);
+      }
+    });
+
+    setTimeout(() => {
+      console.error('⚠️ Forcing shutdown after timeout.');
+      process.exit(1);
+    }, 10000).unref();
+  };
+
+  process.on('SIGTERM', () => handleGracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
+}
+
+module.exports = app;
