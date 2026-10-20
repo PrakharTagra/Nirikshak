@@ -2,7 +2,7 @@
   "name": "senior-inspector-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "nodemon --watch src --watch ../.env src/index.js",
     "start": "node src/index.js"
