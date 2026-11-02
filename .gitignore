@@ -10,4 +10,10 @@
 *.log
 .DS_Store
 
-
+# Decoded APK backups and temporary build artifacts
+APK-MODIFICATION/app-decoded/
+APK-MODIFICATION/app-decoded-backup/
+APK-MODIFICATION/app-decoded-modern/build/
+APK-MODIFICATION/framework/
+APK-MODIFICATION/release/
+APK-MODIFICATION/*-unsigned.apk
