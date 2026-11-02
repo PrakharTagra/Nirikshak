@@ -528,4 +528,4 @@ async function extract(ocrResult, detection) {
   return regexExtract(ocrResult, detection, anchors);
 }
 
-module.exports = { extract, regexExtract, classifyLine };
+module.exports = { extract, regexExtract, classifyLine, parseNetQuantity };

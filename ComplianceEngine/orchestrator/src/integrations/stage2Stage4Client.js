@@ -62,8 +62,8 @@ async function fallbackOcrForImage(imagePath, index = 0) {
   if (sharp) {
     try {
       visionBuffer = await sharp(data)
-        .resize({ width: 1280, height: 1280, fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 85 })
+        .resize({ width: 2048, height: 2048, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 90 })
         .toBuffer();
       visionMime = 'image/jpeg';
       logger.info(
@@ -79,27 +79,35 @@ async function fallbackOcrForImage(imagePath, index = 0) {
   const base64 = visionBuffer.toString('base64');
   let lines = [];
   let extractedText = '';
+  let detectedDeclarations = {};
 
   const groqApiKey = process.env.GROQ_API_KEY || config?.groq?.apiKey;
   if (groqApiKey && Groq) {
     try {
       const client = new Groq({ apiKey: groqApiKey, timeout: 45000 });
-      const prompt = `You are an optical character recognition (OCR) and Legal Metrology reader for Indian packaged commodities (Legal Metrology Packaged Commodities Rules 2011).
-Read ALL printed text on this packaging panel verbatim. Pay special attention to:
-- Commodity generic name & brand
-- Net quantity (e.g., 500 g, 1 kg, 100 ml, 1 Unit, 2 N, etc.)
+      const prompt = `You are a precision optical character recognition (OCR) engine for Indian packaged goods compliance.
+Transcribe EVERY line of text printed on this packaging panel verbatim, from top to bottom.
+Do not omit or truncate any text lines. Pay close attention to:
+- Generic commodity name, variant, and brand
+- Net quantity value & unit (e.g. 5 ml, 10 g, 1 N, 1 Unit)
 - MRP (Maximum Retail Price incl. of all taxes)
-- Dates (Mfg / Pkd / Best Before / Expiry month & year)
-- Manufacturer, Packer, and Importer details with full address
-- Consumer care helpline number, email, and address
+- Dates (Mfg, Pkd, Use before, Expiry, Batch number)
+- Complete Manufacturer / Packer address with Pincode
+- Consumer complaints contact (phone helpline, email, address)
 - Country of origin
 
-Output a single valid JSON object in this exact format:
+Output a single valid JSON object:
 {
   "lines": [
-    { "text": "Exact text line", "pixel_height": 24 }
+    {"t": "exact text line", "h": 16}
   ],
-  "full_text": "All text combined with newlines"
+  "detectedDeclarations": {
+    "commodityName": null,
+    "netQuantity": null,
+    "mrp": null,
+    "mfgDate": null,
+    "consumerCare": null
+  }
 }`;
 
       const candidates = [
@@ -114,7 +122,7 @@ Output a single valid JSON object in this exact format:
           res = await client.chat.completions.create({
             model: visionModel,
             temperature: 0,
-            max_tokens: 450,
+            max_tokens: 850,
             messages: [
               {
                 role: 'user',
@@ -138,7 +146,7 @@ Output a single valid JSON object in this exact format:
               res = await client.chat.completions.create({
                 model: visionModel,
                 temperature: 0,
-                max_tokens: 350,
+                max_tokens: 650,
                 messages: [
                   {
                     role: 'user',
@@ -160,10 +168,20 @@ Output a single valid JSON object in this exact format:
 
       if (res) {
         const raw = JSON.parse(res.choices[0]?.message?.content || '{}');
-        if (Array.isArray(raw.lines) && raw.lines.length > 0) {
-          lines = raw.lines;
-          extractedText = raw.full_text || lines.map(l => l.text).join('\n');
+        const rawLines = Array.isArray(raw.lines) ? raw.lines : (Array.isArray(raw.items) ? raw.items : []);
+        if (rawLines.length > 0) {
+          lines = rawLines
+            .map((l) => ({
+              text: String(typeof l === 'string' ? l : (l.text || l.t || '')).trim(),
+              pixel_height: Number(l.h || l.pixel_height || 18),
+            }))
+            .filter((l) => l.text);
+          extractedText = lines.map((l) => l.text).join('\n');
           logger.info('stage2Stage4Client', `Groq Vision successfully extracted ${lines.length} lines from ${filename}`);
+        }
+        if (raw.detectedDeclarations && typeof raw.detectedDeclarations === 'object') {
+          detectedDeclarations = raw.detectedDeclarations;
+          logger.info('stage2Stage4Client', `Groq Vision directly identified declarations on ${filename}`);
         }
       }
     } catch (visionErr) {
@@ -193,7 +211,7 @@ Output a single valid JSON object in this exact format:
     extracted_text: extractedText,
     regions,
     image_base64: base64,
-    declarations: {}
+    declarations: detectedDeclarations
   };
 }
 
@@ -332,12 +350,23 @@ async function callStage2And4Batch(imagePaths) {
       });
     });
 
+    const batchDeclarations = {};
+    items.forEach((item) => {
+      if (item.declarations) {
+        Object.keys(item.declarations).forEach((k) => {
+          if (item.declarations[k] && !batchDeclarations[k]) {
+            batchDeclarations[k] = item.declarations[k];
+          }
+        });
+      }
+    });
+
     return {
       product_id: null,
       items,
       combined_text: text_blocks.join('\n\n'),
       combined_regions,
-      declarations: {},
+      declarations: batchDeclarations,
     };
   } finally {
     clearTimeout(timeout);

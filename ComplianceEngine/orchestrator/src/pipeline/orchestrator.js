@@ -13,7 +13,7 @@
 const { preprocessImage, preprocessImagesBatch } = require('./stage2_preprocessing');
 const { extractText } = require('./stage4_ocr');
 const { analyzeFont } = require('./stage5_fontAnalysis');
-const { extract } = require('./stage5_extraction');
+const { extract, parseNetQuantity } = require('./stage5_extraction');
 const { runComplianceCheck } = require('./stage6_ruleEngine');
 const { generateReport } = require('./stage7_report');
 const { annotateNetQuantityImage } = require('./netQuantityImageAnnotator');
@@ -180,6 +180,71 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
 
   // 4. Stage 6: Unified declaration extraction (Groq / regex) across all panels
   const declarations = await extract(ocrResult, null);
+
+  // Resilient multi-layer safeguard: reconcile declarations directly observed by Vision AI
+  if (preprocessed?.declarations) {
+    const vDec = preprocessed.declarations;
+    if ((!declarations.netQuantity?.value || !declarations.netQuantity?.present) && vDec.netQuantity) {
+      const parsedQty = parseNetQuantity(String(vDec.netQuantity));
+      if (parsedQty.value != null) {
+        declarations.netQuantity = {
+          present: true,
+          value: parsedQty.value,
+          unit: parsedQty.unit,
+          unitKind: parsedQty.unitKind,
+          symbolUsed: parsedQty.symbolUsed,
+          pieceCount: 1,
+          rawText: String(vDec.netQuantity),
+          confidence: 'HIGH',
+        };
+        logger.info('orchestrator', 'Reconciled Net Quantity from Vision AI: ' + parsedQty.value + ' ' + parsedQty.unit);
+      }
+    }
+    if ((!declarations.mrp?.value || !declarations.mrp?.present) && vDec.mrp) {
+      const match = String(vDec.mrp).match(/(\d+(?:\.\d+)?)/);
+      if (match) {
+        declarations.mrp = {
+          present: true,
+          value: parseFloat(match[1]),
+          currency: 'INR',
+          rawText: String(vDec.mrp),
+          confidence: 'HIGH',
+        };
+        logger.info('orchestrator', 'Reconciled MRP from Vision AI: Rs. ' + match[1]);
+      }
+    }
+    if ((!declarations.mfgDate?.year || !declarations.mfgDate?.present) && vDec.mfgDate) {
+      const dMatch = String(vDec.mfgDate).match(/(?:(\d{1,2})[\/\-\.\s])?(\d{4})/);
+      if (dMatch) {
+        declarations.mfgDate = {
+          present: true,
+          month: dMatch[1] ? parseInt(dMatch[1], 10) : null,
+          year: parseInt(dMatch[2], 10),
+          rawText: String(vDec.mfgDate),
+          confidence: 'HIGH',
+        };
+        logger.info('orchestrator', 'Reconciled Mfg Date from Vision AI: ' + vDec.mfgDate);
+      }
+    }
+    if ((!declarations.consumerCare?.present) && vDec.consumerCare) {
+      const careStr = String(vDec.consumerCare);
+      declarations.consumerCare = {
+        present: true,
+        phone: (careStr.match(/\b(?:\d{4}[- ]?\d{3}[- ]?\d{4}|1800[- ]?\d{3}[- ]?\d{4}|\d{10,11})\b/) || [null])[0],
+        email: (careStr.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || [null])[0],
+        address: careStr,
+        rawText: careStr,
+      };
+      logger.info('orchestrator', 'Reconciled Consumer Care from Vision AI');
+    }
+    if ((!declarations.commodityName?.value) && vDec.commodityName) {
+      declarations.commodityName = {
+        value: String(vDec.commodityName),
+        confidence: 'HIGH',
+      };
+      logger.info('orchestrator', 'Reconciled Commodity Name from Vision AI: ' + vDec.commodityName);
+    }
+  }
 
   // 5. Stage 7: Codified Legal Metrology rule engine
   const packageRecord = buildPackageRecord(declarations, labelMetrics, options);
