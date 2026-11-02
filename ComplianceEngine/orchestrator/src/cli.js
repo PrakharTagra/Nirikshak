@@ -184,7 +184,7 @@ async function main() {
         : r.complianceResult.compliant
         ? 'COMPLIANT'
         : `NON-COMPLIANT (${r.complianceResult.summary.total} issue(s))`;
-      console.log(`${path.basename(r.imagePath)} -> ${status} -> ${r.reportPath}`);
+      console.log(`${path.basename(r.imagePath || r.reportPath || r.productDir || "product")} -> ${status} -> ${r.reportPath}`);
     });
   }
 }

@@ -44,13 +44,18 @@ if (dotenv) {
 // ComplianceEngine/output/product_<n>/ -- no per-service subfolders.
 const OUTPUT_ROOT = process.env.SHARED_OUTPUT_DIR || path.join(ROOT, '..', 'output');
 
+const resolvePath = (p, fallback) => {
+  if (!p) return fallback;
+  return path.isAbsolute(p) ? p : path.resolve(ROOT, p);
+};
+
 module.exports = {
   paths: {
-    input: process.env.INPUT_DIR || path.join(ROOT, 'input'),
+    input: resolvePath(process.env.INPUT_DIR, path.join(ROOT, 'input')),
     outputRoot: OUTPUT_ROOT,
-    output: process.env.OUTPUT_DIR || OUTPUT_ROOT,
-    temp: process.env.TEMP_DIR || path.join(ROOT, 'temp'),
-    preprocessed: process.env.PREPROCESSED_DIR || path.join(ROOT, 'temp', 'preprocessed'),
+    output: resolvePath(process.env.OUTPUT_DIR, OUTPUT_ROOT),
+    temp: resolvePath(process.env.TEMP_DIR, path.join(ROOT, 'temp')),
+    preprocessed: resolvePath(process.env.PREPROCESSED_DIR, path.join(ROOT, 'temp', 'preprocessed')),
   },
   providers: {
     extraction: process.env.EXTRACTION_PROVIDER || 'hybrid',
