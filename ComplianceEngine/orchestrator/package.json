@@ -10,7 +10,8 @@
     "server": "node src/server.js",
     "generate-samples": "node test/generateSampleImages.js",
     "test": "node test/generateSampleImages.js && node src/cli.js",
-    "test-extraction": "node test/testGroqExtractionContract.js"
+    "test-extraction": "node test/testGroqExtractionContract.js",
+    "postinstall": "pip3 install --break-system-packages reportlab pillow || pip install reportlab pillow || true"
   },
   "dependencies": {
     "cloudinary": "^2.5.1",

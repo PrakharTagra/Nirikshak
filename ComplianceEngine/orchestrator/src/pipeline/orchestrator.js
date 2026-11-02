@@ -24,6 +24,7 @@ const path = require('path');
 const config = require('../config');
 const { allocateProductId } = require('../utils/productId');
 const { ensureDirs } = require('../utils/fileHelpers');
+const { logComplianceAuditDiagnostics } = require('../utils/diagnosticLogger');
 
 function buildPackageRecord(declarations, labelMetrics, options = {}) {
   // Reconcile multi-piece facts from the intermediate layer if LLM extracted only the first piece
@@ -349,6 +350,22 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     'orchestrator',
     `--- Finished product_${productId} (${paths.length} panel(s)): ${status} (${complianceResult.summary?.total || 0} issues). All assets uploaded to Cloudinary. ---`
   );
+
+  try {
+    logComplianceAuditDiagnostics({
+      productId,
+      sourceImages: paths,
+      detectedProductName,
+      status,
+      ocrResult,
+      declarations,
+      packageRecord,
+      complianceResult,
+      labelMetrics,
+    });
+  } catch (diagErr) {
+    logger.warn('orchestrator', 'Diagnostic logger note: ' + diagErr.message);
+  }
 
   return {
     productId,
