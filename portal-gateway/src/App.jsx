@@ -1,30 +1,168 @@
 import React, { useState } from 'react';
 
+// Official SVG vector icon library (Zero emojis used)
+function IconPhone({ size = 16, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </svg>
+  );
+}
+
+function IconBuilding({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2l9 8H3l9-8z"/>
+    </svg>
+  );
+}
+
+function IconScale({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM7 21h10M12 3v18M3 7h18"/>
+    </svg>
+  );
+}
+
+function IconScanner({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  );
+}
+
+function IconMobile({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+      <line x1="12" y1="18" x2="12.01" y2="18"/>
+    </svg>
+  );
+}
+
+function IconShieldCheck({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      <polyline points="9 12 11 14 15 10"/>
+    </svg>
+  );
+}
+
+function IconLock({ size = 16, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+  );
+}
+
+function IconAlertTriangle({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  );
+}
+
+function IconFileText({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <polyline points="10 9 9 9 8 9"/>
+    </svg>
+  );
+}
+
+function IconCheckCircle({ size = 16, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+  );
+}
+
+function IconArrowRight({ size = 16, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  );
+}
+
+function IconChevronDown({ size = 14, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  );
+}
+
+function IconChevronUp({ size = 14, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  );
+}
+
+function IconServer({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+      <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+      <line x1="6" y1="6" x2="6.01" y2="6"/>
+      <line x1="6" y1="18" x2="6.01" y2="18"/>
+    </svg>
+  );
+}
+
+function IconClose({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  );
+}
+
+// Statutory GIGW Policies
 const POLICIES = {
   helpline: {
     title: 'National Consumer Helpline (NCH)',
     badge: 'Department of Consumer Affairs, Government of India',
     content: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
-        <div style={{ background: '#EFF6FF', borderLeft: '4px solid #06038D', padding: '0.85rem 1.25rem', borderRadius: '0 8px 8px 0' }}>
-          <p style={{ fontWeight: 800, color: '#06038D', fontSize: '1rem', margin: 0 }}>Toll-Free National Helpline: 1915</p>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#475569', fontSize: '0.82rem' }}>
-            Operated by the Department of Consumer Affairs, Ministry of Consumer Affairs, Food & Public Distribution.
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
+        <div style={{ background: '#EFF6FF', borderLeft: '4px solid #06038D', padding: '0.85rem 1.25rem', borderRadius: '0 4px 4px 0' }}>
+          <p style={{ fontWeight: 700, color: '#06038D', fontSize: '0.95rem', margin: 0 }}>Toll-Free National Helpline: 1915</p>
+          <p style={{ margin: '0.25rem 0 0 0', color: '#475569', fontSize: '0.8rem' }}>
+            Operated under the Department of Consumer Affairs, Ministry of Consumer Affairs, Food & Public Distribution.
           </p>
         </div>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Statutory Consumer Redressal Channels</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Statutory Consumer Redressal Channels</h4>
           <ul style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             <li><strong>Toll-Free Helpline:</strong> 1915 or 1800-11-4000 (Available 8:00 AM to 8:00 PM, all days except National Holidays)</li>
-            <li><strong>SMS Helpline:</strong> Send SMS to 8800001915</li>
+            <li><strong>SMS Redressal:</strong> Send SMS to 8800001915</li>
             <li><strong>National Consumer Portal:</strong> consumerhelpline.gov.in</li>
-            <li><strong>UMANG Mobile App:</strong> Integrated NCH Services available pan-India</li>
+            <li><strong>UMANG Mobile Integration:</strong> Integrated NCH Services available across all States & UTs</li>
           </ul>
         </div>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Report Legal Metrology Discrepancies</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Report Legal Metrology Non-Compliance</h4>
           <p>
-            Citizens may report discrepancies regarding non-standard weights, absence of mandatory declarations (MRP, Net Quantity, Country of Origin, Manufacturer Details), and overcharging on packaged commodities. Verified complaints are automatically routed to the designated State Controllers of Legal Metrology.
+            Citizens and consumers may report non-standard packaging, missing mandatory declarations (MRP, Net Quantity, Country of Origin, Manufacturer Details), or overcharging above printed Maximum Retail Price. Verified reports are automatically routed to jurisdictional State Controllers of Legal Metrology.
           </p>
         </div>
         <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
@@ -35,22 +173,22 @@ const POLICIES = {
   },
   privacy: {
     title: 'Official Privacy Policy',
-    badge: 'Guidelines for Indian Government Websites (GIGW)',
+    badge: 'Guidelines for Indian Government Websites (GIGW 3.0)',
     content: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
         <p>
-          This portal does not automatically capture personal identifiable information without explicit authorization. Administrative and officer sessions are strictly recorded for statutory audit trails mandated under the Legal Metrology Act, 2009.
+          This portal does not automatically collect personal identifiable information without explicit regulatory authorization. Departmental and officer sessions are recorded strictly for statutory audit trails mandated under the Legal Metrology Act, 2009.
         </p>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Information Recorded & Purpose</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Statutory Session Logging & Purpose</h4>
           <p>
-            For appointed officers and inspectors, this system cryptographically records administrative session IDs, inspection timestamps, geolocations, and statutory decisions strictly for verification logs mandated under Section 15 of the Act.
+            For appointed Controllers, Assistant Controllers, and inspection personnel, this system cryptographically records administrative session IDs, inspection timestamps, geolocations, and statutory decisions strictly for verification logs mandated under Section 15 of the Act.
           </p>
         </div>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Data Security & Storage</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Data Security & Storage</h4>
           <p>
-            All transmissions are secured via TLS 1.3 encryption. Inspection dossiers, packaging images, and violation registers are archived in secured National Informatics Centre (NIC) cloud infrastructure in compliance with the Information Technology Act, 2000.
+            All transmissions are secured via TLS 1.3 encryption. Inspection dossiers, packaging OCR data, and violation registers are archived in secured cloud infrastructure in compliance with the Information Technology Act, 2000.
           </p>
         </div>
         <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
@@ -63,23 +201,23 @@ const POLICIES = {
     title: 'Terms of Service & Regulatory Authorization',
     badge: 'Statutory Regulatory Platform',
     content: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
-        <div style={{ background: '#FFFBEB', borderLeft: '4px solid #D97706', padding: '0.85rem 1.25rem', borderRadius: '0 8px 8px 0' }}>
-          <p style={{ fontWeight: 800, color: '#78350F', margin: 0 }}>Restricted Official Government System</p>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#92400E', fontSize: '0.82rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
+        <div style={{ background: '#FFFBEB', borderLeft: '4px solid #D97706', padding: '0.85rem 1.25rem', borderRadius: '0 4px 4px 0' }}>
+          <p style={{ fontWeight: 700, color: '#78350F', margin: 0 }}>Restricted Official Government System</p>
+          <p style={{ margin: '0.25rem 0 0 0', color: '#92400E', fontSize: '0.8rem' }}>
             This platform is designated exclusively for appointed Controllers, Assistant Controllers, and authorized Legal Metrology Officers.
           </p>
         </div>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Evidentiary Legal Validity</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Evidentiary Legal Validity</h4>
           <p>
             Inspection dossiers, OCR extraction records, and sanction orders issued through NIRIKSHAK carry evidentiary value under the Legal Metrology Act, 2009 and the Bharatiya Sakshya Adhiniyam, 2023. Every decision, sanction, or compound notice is cryptographically signed and non-repudiable.
           </p>
         </div>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Penal Provisions for Unauthorized Access</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Penal Provisions for Unauthorized Access</h4>
           <p>
-            Unauthorized access, credential sharing, tampering with inspection records, or attempting unauthorized penetrations is an offense punishable under Sections 43 and 66 of the Information Technology Act, 2000 and Section 318 of BNS.
+            Unauthorized access, credential sharing, tampering with inspection records, or attempting unauthorized penetrations is an offense punishable under Sections 43 and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
           </p>
         </div>
         <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
@@ -90,17 +228,17 @@ const POLICIES = {
   },
   hyperlink: {
     title: 'Hyperlinking Policy',
-    badge: 'Government Web Standards',
+    badge: 'Government Web Standards (GIGW)',
     content: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
         <div>
-          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>Links to External Websites</h4>
+          <h4 style={{ fontWeight: 700, color: '#0F172A', marginBottom: '0.4rem', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '0.04em' }}>Links to External Government Portals</h4>
           <p>
-            Links to external government portals (such as BIS, FSSAI, National Consumer Helpline, and State Directorates) are provided strictly for official regulatory reference and statutory coordination. The Department does not endorse or guarantee the availability of external links.
+            Links to external statutory authorities (such as BIS, FSSAI, National Consumer Helpline, and State Directorates) are provided strictly for official regulatory reference. The Department does not endorse or guarantee the availability of external links.
           </p>
         </div>
         <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
-          Guidelines for Indian Government Websites (GIGW) Compliance.
+          Guidelines for Indian Government Websites (GIGW) Standard.
         </div>
       </div>
     ),
@@ -124,10 +262,11 @@ export default function App() {
   const closePolicy = () => setActivePolicy(null);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--govt-cream)' }}>
-      {/* Tier 1: Official National Utility Bar */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--govt-cream)' }}>
+      
+      {/* Tier 1 - Official Government Utility Bar */}
       <div style={{
-        background: '#012A4A',
+        backgroundColor: 'var(--govt-dark)',
         color: '#FFFFFF',
         fontSize: '0.75rem',
         padding: '0.35rem 1.5rem',
@@ -136,26 +275,34 @@ export default function App() {
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '0.75rem',
-        borderBottom: '1px solid rgba(255,255,255,0.1)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src="/emblem.png" alt="State Emblem of India" style={{ height: '16px', filter: 'brightness(0) invert(1)' }} />
+          <img
+            src="/emblem-white.png"
+            alt="State Emblem of India"
+            style={{ height: '16px', width: 'auto', display: 'block', opacity: 0.95 }}
+            onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+          />
           <span style={{ fontWeight: 600, letterSpacing: '0.04em' }}>
             भारत सरकार | GOVERNMENT OF INDIA
           </span>
         </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(0,0,0,0.2)', padding: '0.15rem 0.4rem', borderRadius: '4px' }}>
+          {/* Text size controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', backgroundColor: 'rgba(0,0,0,0.25)', padding: '0.15rem 0.4rem', borderRadius: '3px' }} aria-label="Text Size Controls">
             <button
+              type="button"
               onClick={() => handleFontSize(-1)}
-              title="Decrease text size"
+              title="Decrease font size"
               style={{
-                background: fontSizeLevel === -1 ? '#FFFFFF' : 'transparent',
-                color: fontSizeLevel === -1 ? '#012A4A' : '#FFFFFF',
+                backgroundColor: fontSizeLevel === -1 ? '#FFFFFF' : 'transparent',
+                color: fontSizeLevel === -1 ? 'var(--govt-dark)' : '#FFFFFF',
                 border: 'none',
                 borderRadius: '2px',
                 padding: '0.1rem 0.35rem',
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -163,15 +310,16 @@ export default function App() {
               A-
             </button>
             <button
+              type="button"
               onClick={() => handleFontSize(0)}
-              title="Reset text size"
+              title="Reset font size"
               style={{
-                background: fontSizeLevel === 0 ? '#FFFFFF' : 'transparent',
-                color: fontSizeLevel === 0 ? '#012A4A' : '#FFFFFF',
+                backgroundColor: fontSizeLevel === 0 ? '#FFFFFF' : 'transparent',
+                color: fontSizeLevel === 0 ? 'var(--govt-dark)' : '#FFFFFF',
                 border: 'none',
                 borderRadius: '2px',
                 padding: '0.1rem 0.35rem',
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -179,15 +327,16 @@ export default function App() {
               A
             </button>
             <button
+              type="button"
               onClick={() => handleFontSize(1)}
-              title="Increase text size"
+              title="Increase font size"
               style={{
-                background: fontSizeLevel === 1 ? '#FFFFFF' : 'transparent',
-                color: fontSizeLevel === 1 ? '#012A4A' : '#FFFFFF',
+                backgroundColor: fontSizeLevel === 1 ? '#FFFFFF' : 'transparent',
+                color: fontSizeLevel === 1 ? 'var(--govt-dark)' : '#FFFFFF',
                 border: 'none',
                 borderRadius: '2px',
                 padding: '0.1rem 0.35rem',
-                fontSize: '0.7rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -195,92 +344,112 @@ export default function App() {
               A+
             </button>
           </div>
-          <a href="#about" style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.75rem', fontWeight: 500 }}>
+
+          <a href="#main-content" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.75rem', fontWeight: 500 }}>
             Skip to Content
           </a>
-          <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+
+          <span style={{ color: 'rgba(255, 255, 255, 0.25)' }}>|</span>
+
           <button
+            type="button"
             onClick={openPolicy('helpline')}
-            style={{ background: 'none', border: 'none', color: '#FCD34D', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#FCD34D',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: 0
+            }}
           >
-            <span>📞</span> National Helpline: 1915
+            <IconPhone size={13} />
+            <span>National Helpline: 1915</span>
           </button>
         </div>
       </div>
 
-      {/* Tier 2: Main Ministry Brand Banner */}
+      {/* Tier 2 - Main Ministry Brand Banner (Matching GovtHeader in all Portals) */}
       <header style={{
-        background: '#06038D',
+        backgroundColor: 'var(--govt-navy)',
         color: '#FFFFFF',
-        padding: '1rem 2rem',
-        borderBottom: '1px solid rgba(255,255,255,0.08)'
+        padding: '0.85rem 1.5rem',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
+        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem', position: 'relative', zIndex: 1 }}>
           
-          {/* Left: Official Indian Emblem & Ministry Title */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          {/* Left: Official National Emblem + Ministry Stack */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{
-              background: '#FFFFFF',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
               padding: '0.35rem',
-              borderRadius: '8px',
+              borderRadius: '4px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.2)'
             }}>
               <img
-                src="/emblem.png"
+                src="/emblem-white.png"
                 alt="State Emblem of India"
-                style={{ height: '62px', width: 'auto', objectFit: 'contain' }}
+                style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
               />
             </div>
-            <div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.25 }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#FFFFFF', lineHeight: 1.25 }}>
                 उपभोक्ता मामले विभाग
-              </div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#FFFFFF', lineHeight: 1.25 }}>
+              </span>
+              <span style={{ fontSize: '0.92rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FFFFFF', lineHeight: 1.25 }}>
                 Department of Consumer Affairs
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)', marginTop: '0.15rem' }}>
+              </span>
+              <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '0.15rem' }}>
                 Ministry of Consumer Affairs, Food & Public Distribution · Government of India
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.3rem' }}>
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Legal Metrology Division
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem' }}>•</span>
-                <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)' }}>विधिक मापविज्ञान प्रभाग</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.72rem' }}>•</span>
+                <span style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.75)' }}>विधिक मापविज्ञान प्रभाग</span>
               </div>
             </div>
           </div>
 
-          {/* Right: Nirikshak Brand & Portal Seal */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.04em' }}>
+          {/* Right: Nirikshak System Brand Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.05em' }}>
                 निरीक्षक <span style={{ fontWeight: 400, opacity: 0.6 }}>·</span> NIRIKSHAK
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4rem' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#FF9933' }} />
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.15rem' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--saffron)' }} />
                 National Legal Metrology Digital Verification System
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.15rem' }}>
+              <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.7)', marginTop: '0.15rem' }}>
                 The Legal Metrology Act, 2009 & Packaged Commodities Rules, 2011
               </div>
             </div>
             <div style={{
-              background: '#FFFFFF',
-              padding: '0.35rem',
-              borderRadius: '8px',
+              backgroundColor: '#FFFFFF',
+              padding: '0.25rem',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
             }}>
               <img
                 src="/nirikshak_logo.png"
                 alt="Nirikshak Official Logo"
-                style={{ height: '62px', width: 'auto', objectFit: 'contain' }}
+                style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
               />
             </div>
           </div>
@@ -288,217 +457,259 @@ export default function App() {
         </div>
       </header>
 
-      {/* Tier 3: National Tricolor Ribbon */}
+      {/* Tier 3 - National Tricolor Ribbon (9px standard: 3px Saffron, 3px White, 3px Green) */}
       <div className="tricolor-stripe">
         <div className="saffron" />
         <div className="white" />
         <div className="green" />
       </div>
 
-      {/* Sticky Secondary Navigation Bar */}
+      {/* Official Secondary Navigation Bar */}
       <nav style={{
-        background: '#FFFFFF',
-        borderBottom: '1px solid #E2E8F0',
-        padding: '0.65rem 2rem',
+        backgroundColor: '#FFFFFF',
+        borderBottom: '1px solid var(--slate-300)',
+        padding: '0.55rem 1.5rem',
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+        boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
       }}>
-        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', flexWrap: 'wrap' }}>
-            <a href="#about" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              About NIRIKSHAK
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <a href="#portals" style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--govt-navy)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <IconBuilding size={14} />
+              <span>Officer Portals</span>
             </a>
-            <a href="#importance" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              Why It Matters
+            <a href="#declarations" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              Mandatory PCR Declarations
             </a>
-            <a href="#how-it-works" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              How It Functions
+            <a href="#pipeline" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              Verification Pipeline
             </a>
-            <a href="#statutory-rules" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              Statutory Declarations
+            <a href="#act" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              Legal Framework
             </a>
-            <a href="#portals" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              Officer Portals
-            </a>
-            <a href="#infrastructure" style={{ fontSize: '0.86rem', fontWeight: 600, color: '#1E293B' }}>
-              Infrastructure
+            <a href="#infrastructure" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              System Specifications
             </a>
           </div>
 
-          {/* Interactive Officer Sign-In Dropdown */}
+          {/* Officer Portal Gateway Access Button & Menu */}
           <div style={{ position: 'relative' }}>
             <button
+              type="button"
               onClick={() => setLoginMenuOpen(!loginMenuOpen)}
               style={{
-                background: '#06038D',
+                backgroundColor: 'var(--govt-navy)',
                 color: '#FFFFFF',
                 border: 'none',
-                padding: '0.6rem 1.25rem',
-                borderRadius: '6px',
+                padding: '0.5rem 1.15rem',
+                borderRadius: '3px',
                 fontWeight: 700,
-                fontSize: '0.86rem',
+                fontSize: '0.82rem',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.6rem',
-                boxShadow: '0 2px 8px rgba(6,3,141,0.25)',
-                transition: 'background 0.2s'
+                gap: '0.5rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
               }}
             >
-              <span>🏛️</span>
+              <IconBuilding size={14} />
               <span>Officer Login / पोर्टल लॉगिन</span>
-              <span style={{ fontSize: '0.7rem' }}>{loginMenuOpen ? '▲' : '▼'}</span>
+              {loginMenuOpen ? <IconChevronUp size={12} /> : <IconChevronDown size={12} />}
             </button>
 
-            {/* Dropdown Menu (Strictly 3 Official Options, No Demo Creds) */}
+            {/* Official Portal Dropdown */}
             {loginMenuOpen && (
-              <div style={{
-                position: 'absolute',
-                right: 0,
-                top: 'calc(100% + 8px)',
-                width: '340px',
-                background: '#FFFFFF',
-                borderRadius: '10px',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
-                border: '1px solid #CBD5E1',
-                overflow: 'hidden',
-                zIndex: 50,
-                animation: 'fadeIn 0.15s ease'
-              }}>
-                <div style={{ background: '#012A4A', padding: '0.75rem 1rem', color: '#FFFFFF' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#FCD34D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div
+                className="fade-in"
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 'calc(100% + 6px)',
+                  width: '330px',
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '3px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                  border: '1px solid var(--slate-300)',
+                  overflow: 'hidden',
+                  zIndex: 50
+                }}
+              >
+                <div style={{ backgroundColor: 'var(--govt-dark)', padding: '0.65rem 0.85rem', color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#FCD34D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Government Authorization Gateway
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>
-                    Select Designated Departmental Portal
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, marginTop: '0.1rem' }}>
+                    Select Designated Departmental Console
                   </div>
                 </div>
 
-                <div style={{ padding: '0.5rem' }}>
+                <div style={{ padding: '0.4rem' }}>
                   
-                  {/* Option 1: CLM Admin */}
+                  {/* CLM Admin */}
                   <a
-                    href="/admin/login"
+                    href="/admin"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.85rem',
-                      padding: '0.75rem 0.85rem',
-                      borderRadius: '6px',
-                      transition: 'background 0.15s',
-                      borderBottom: '1px solid #F1F5F9'
+                      gap: '0.75rem',
+                      padding: '0.65rem 0.75rem',
+                      borderRadius: '2px',
+                      borderBottom: '1px solid var(--slate-100)',
+                      transition: 'background 0.15s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#F8FAFC'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-100)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <div style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '8px',
-                      background: '#FEF3C7',
-                      color: '#92400E',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '3px',
+                      backgroundColor: '#FEF2F2',
+                      color: 'var(--govt-maroon)',
+                      border: '1px solid #FECACA',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.25rem',
                       flexShrink: 0
                     }}>
-                      🏛️
+                      <IconBuilding size={16} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#0F172A' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--slate-900)' }}>
                         CLM Admin Portal
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
                         Controller of Legal Metrology Directorate
                       </div>
                     </div>
                   </a>
 
-                  {/* Option 2: AC Review */}
+                  {/* Assistant Controller (AC) */}
                   <a
-                    href="/ac/login"
+                    href="/ac"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.85rem',
-                      padding: '0.75rem 0.85rem',
-                      borderRadius: '6px',
-                      transition: 'background 0.15s',
-                      borderBottom: '1px solid #F1F5F9'
+                      gap: '0.75rem',
+                      padding: '0.65rem 0.75rem',
+                      borderRadius: '2px',
+                      borderBottom: '1px solid var(--slate-100)',
+                      transition: 'background 0.15s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#F8FAFC'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-100)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <div style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '8px',
-                      background: '#DBEAFE',
-                      color: '#1E40AF',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '3px',
+                      backgroundColor: '#EFF6FF',
+                      color: 'var(--govt-navy)',
+                      border: '1px solid #BFDBFE',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.25rem',
                       flexShrink: 0
                     }}>
-                      ⚖️
+                      <IconScale size={16} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#0F172A' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--slate-900)' }}>
                         Assistant Controller (AC) Portal
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
                         Senior Enforcement & Adjudication Unit
                       </div>
                     </div>
                   </a>
 
-                  {/* Option 3: DMI Inspector */}
+                  {/* DMI Inspector */}
                   <a
-                    href="/dmi/login"
+                    href="/dmi"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.85rem',
-                      padding: '0.75rem 0.85rem',
-                      borderRadius: '6px',
+                      gap: '0.75rem',
+                      padding: '0.65rem 0.75rem',
+                      borderRadius: '2px',
+                      borderBottom: '1px solid var(--slate-100)',
                       transition: 'background 0.15s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#F8FAFC'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-100)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <div style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '8px',
-                      background: '#DCFCE7',
-                      color: '#166534',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '3px',
+                      backgroundColor: '#ECFDF5',
+                      color: '#065F46',
+                      border: '1px solid #A7F3D0',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.25rem',
                       flexShrink: 0
                     }}>
-                      🔍
+                      <IconScanner size={16} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#0F172A' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--slate-900)' }}>
                         Digital Inspector (DMI) Portal
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
-                        E-Commerce Crawling & Physical Package OCR
+                      <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
+                        E-Commerce Surveillance & Packaging OCR
+                      </div>
+                    </div>
+                  </a>
+
+                  {/* Android APK */}
+                  <a
+                    href="/api/apk/health"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.65rem 0.75rem',
+                      borderRadius: '2px',
+                      transition: 'background 0.15s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-100)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '3px',
+                      backgroundColor: '#FFFBEB',
+                      color: '#92400E',
+                      border: '1px solid #FDE68A',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <IconMobile size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--slate-900)' }}>
+                        Field Inspector Mobile APK
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
+                        Physical Package Inspection & API Gateway
                       </div>
                     </div>
                   </a>
 
                 </div>
 
-                <div style={{ background: '#F8FAFC', padding: '0.6rem 0.85rem', borderTop: '1px solid #E2E8F0', fontSize: '0.72rem', color: '#64748B', textAlign: 'center' }}>
-                  🔒 Authorized Officers Only · Encrypted TLS 1.3
+                <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.5rem 0.75rem', borderTop: '1px solid var(--slate-200)', fontSize: '0.68rem', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}>
+                  <IconLock size={12} />
+                  <span>Authorized Officers Only · Encrypted TLS 1.3</span>
                 </div>
               </div>
             )}
@@ -507,681 +718,1062 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Main Content Body */}
-      <main style={{ flex: 1 }}>
+      {/* Official Statutory Gazette Ribbon */}
+      <div style={{
+        backgroundColor: '#F8FAFC',
+        borderBottom: '1px solid var(--slate-200)',
+        padding: '0.45rem 1.5rem',
+        fontSize: '0.76rem',
+        color: 'var(--slate-700)'
+      }}>
+        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <span style={{
+            backgroundColor: 'var(--govt-navy)',
+            color: '#FFFFFF',
+            fontSize: '0.66rem',
+            fontWeight: 800,
+            padding: '0.15rem 0.5rem',
+            borderRadius: '2px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}>
+            Official Notice
+          </span>
+          <span style={{ fontWeight: 600 }}>
+            Mandatory Compliance Audit: E-commerce and physical packaged commodity inspections under Rule 6 of PCR, 2011 are active pan-India.
+          </span>
+          <span style={{ color: 'var(--slate-400)', marginLeft: 'auto', fontSize: '0.72rem' }}>
+            Ref: Legal Metrology (Packaged Commodities) Amendment Rules · MoCA
+          </span>
+        </div>
+      </div>
 
-        {/* HERO BANNER SECTION */}
+      {/* Main Content Area */}
+      <main id="main-content" style={{ flex: 1 }}>
+
+        {/* SECTION 1: OFFICIAL STATUTORY GATEWAY OVERVIEW */}
         <section style={{
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%)',
-          borderBottom: '1px solid #E2E8F0',
-          padding: '3.5rem 2rem 3rem 2rem'
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid var(--slate-300)',
+          padding: '2.5rem 1.5rem'
         }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+          <div className="container-govt" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '2.5rem', alignItems: 'start' }}>
             
+            {/* Left: Ministry Purpose & Directives */}
             <div>
               <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                background: '#FEF3C7',
-                border: '1px solid #FDE68A',
-                color: '#92400E',
-                fontSize: '0.75rem',
+                gap: '0.4rem',
+                backgroundColor: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                color: 'var(--govt-navy)',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '9999px',
-                marginBottom: '1.25rem'
+                letterSpacing: '0.05em',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '2px',
+                marginBottom: '1rem'
               }}>
-                <span>⚖️</span>
-                <span>Statutory Legal Metrology Digital Infrastructure</span>
+                <IconScale size={13} />
+                <span>Statutory Regulatory Infrastructure</span>
               </div>
+
               <h1 style={{
-                fontSize: 'clamp(2rem, 3.5vw, 2.85rem)',
+                fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)',
                 fontWeight: 800,
-                color: '#06038D',
-                lineHeight: 1.2,
-                marginBottom: '1rem',
-                letterSpacing: '-0.02em'
+                color: 'var(--govt-navy)',
+                lineHeight: 1.25,
+                marginBottom: '0.4rem',
+                letterSpacing: '-0.01em'
               }}>
-                National Legal Metrology Digital Verification & Enforcement Framework
+                National Legal Metrology Digital Verification & Surveillance Gateway
               </h1>
-              <p style={{ fontSize: '1.05rem', color: '#334155', lineHeight: 1.65, marginBottom: '2rem' }}>
-                NIRIKSHAK (निरीक्षक) is an indigenous, sovereign technology platform under the Department of Consumer Affairs, Government of India. Engineered to enforce <strong>The Legal Metrology Act, 2009</strong> and <strong>The Legal Metrology (Packaged Commodities) Rules, 2011</strong> across physical marketplaces and digital e-commerce ecosystems through automated computer vision, high-res packaging OCR, and evidentiary legal workflows.
+
+              <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '1.25rem' }}>
+                राष्ट्रीय विधिक मापविज्ञान डिजिटल सत्यापन एवं निगरानी पोर्टल
+              </div>
+
+              <p style={{ fontSize: '0.9rem', color: 'var(--slate-700)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                NIRIKSHAK is the sovereign compliance automation and regulatory enforcement platform instituted by the <strong>Department of Consumer Affairs, Government of India</strong>. Designed to ensure strict compliance with <strong>The Legal Metrology Act, 2009</strong> and <strong>The Legal Metrology (Packaged Commodities) Rules, 2011</strong> across physical supply chains and digital marketplace listings through neural packaging vision, OCR extraction, and multi-tier judicial adjudication workflows.
               </p>
 
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <a
                   href="#portals"
                   style={{
-                    background: '#06038D',
+                    backgroundColor: 'var(--govt-navy)',
                     color: '#FFFFFF',
-                    padding: '0.85rem 1.75rem',
-                    borderRadius: '8px',
+                    padding: '0.7rem 1.35rem',
+                    borderRadius: '2px',
                     fontWeight: 700,
-                    fontSize: '0.95rem',
+                    fontSize: '0.86rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    boxShadow: '0 4px 12px rgba(6,3,141,0.25)'
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                   }}
                 >
-                  <span>🏛️</span>
-                  <span>Enter Officer Portals</span>
+                  <IconBuilding size={15} />
+                  <span>Access Officer Portals</span>
+                  <IconArrowRight size={14} />
                 </a>
+
                 <a
-                  href="#how-it-works"
+                  href="#declarations"
                   style={{
-                    background: '#FFFFFF',
-                    color: '#0F172A',
-                    border: '1px solid #CBD5E1',
-                    padding: '0.85rem 1.75rem',
-                    borderRadius: '8px',
+                    backgroundColor: '#FFFFFF',
+                    color: 'var(--slate-800)',
+                    border: '1px solid var(--slate-300)',
+                    padding: '0.7rem 1.35rem',
+                    borderRadius: '2px',
                     fontWeight: 700,
-                    fontSize: '0.95rem',
+                    fontSize: '0.86rem',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
+                    gap: '0.5rem'
                   }}
                 >
-                  <span>📜</span>
-                  <span>System Architecture & Pipeline</span>
+                  <IconFileText size={15} />
+                  <span>Mandatory Declarations Matrix</span>
                 </a>
               </div>
             </div>
 
-            {/* Live Statutory Mandate Snapshot Card */}
+            {/* Right: National Compliance Ledger & Admissibility Status */}
             <div style={{
-              background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
-              borderRadius: '16px',
-              padding: '2rem',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
-              position: 'relative'
+              border: '1px solid var(--slate-300)',
+              backgroundColor: '#FFFFFF',
+              borderTop: '3px solid var(--govt-navy)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
             }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)' }} />
               
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                  <img src="/emblem.png" alt="Emblem" style={{ height: '36px' }} />
-                  <div>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0F172A' }}>STATUTORY RECOGNITION</div>
-                    <div style={{ fontSize: '0.72rem', color: '#64748B' }}>Evidentiary Legal Validity</div>
+              <div style={{
+                backgroundColor: '#F8F9FA',
+                padding: '0.75rem 1.25rem',
+                borderBottom: '1px solid var(--slate-200)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.5rem'
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--govt-dark)' }}>
+                    Statutory Compliance Registry
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
+                    Active Nationwide Enforcement Coverage
                   </div>
                 </div>
-                <span style={{ background: '#ECFDF5', color: '#065F46', padding: '0.25rem 0.65rem', borderRadius: '9999px', fontSize: '0.72rem', fontWeight: 700 }}>
-                  Active National System
-                </span>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.25rem' }}>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#06038D' }}>42+</div>
-                  <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 600 }}>Statutory Rules Audited</div>
-                </div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#138808' }}>100%</div>
-                  <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 600 }}>Standard Unit Enforcement</div>
-                </div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#D97706' }}>E-Commerce</div>
-                  <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 600 }}>Automated Crawler Engine</div>
-                </div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#7C3AED' }}>Offline APK</div>
-                  <div style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 600 }}>On-Ground Field Suite</div>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  backgroundColor: '#ECFDF5',
+                  color: '#065F46',
+                  border: '1px solid #A7F3D0',
+                  padding: '0.2rem 0.55rem',
+                  borderRadius: '2px',
+                  fontSize: '0.68rem',
+                  fontWeight: 700
+                }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                  ACTIVE PAN-INDIA
                 </div>
               </div>
 
-              <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '0.85rem', borderRadius: '8px', fontSize: '0.8rem', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>🛡️</span>
-                <span><strong>Section 15 & 36 Admissibility:</strong> Timestamped OCR dossiers generate tamper-proof digital evidence.</span>
-              </div>
-            </div>
+              <div style={{ padding: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                  
+                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
+                      Statutory Rules
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--govt-navy)', margin: '0.2rem 0' }}>
+                      42+
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
+                      Audited under PCR, 2011
+                    </div>
+                  </div>
 
-          </div>
-        </section>
+                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
+                      Metric Standard
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--india-green)', margin: '0.2rem 0' }}>
+                      100%
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
+                      Legal Metrology units (kg, g, l)
+                    </div>
+                  </div>
 
-        {/* SECTION 1: WHAT IS NIRIKSHAK */}
-        <section id="about" style={{ padding: '4rem 2rem', maxWidth: '1360px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3rem auto' }}>
-            <div style={{ color: '#06038D', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-              Statutory Overview & Purpose
-            </div>
-            <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-              What is NIRIKSHAK?
-            </h2>
-            <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-              NIRIKSHAK is the unified digital verification, surveillance, and enforcement infrastructure designed by the <strong>Department of Consumer Affairs, Government of India</strong>. Built to modernize the enforcement of the Legal Metrology (Packaged Commodities) Rules, 2011, Nirikshak eliminates manual bottlenecks by deploying high-throughput computer vision, optical character recognition (OCR), and hierarchical judicial notice management.
-            </p>
-          </div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
+                      Digital Marketplaces
+                    </div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#B45309', margin: '0.2rem 0' }}>
+                      Rule 6(10)
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
+                      E-Commerce surveillance active
+                    </div>
+                  </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
-            
-            <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: '#EEF2FF', color: '#06038D', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1.25rem' }}>
-                ⚖️
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.75rem' }}>
-                The Legal Metrology Mandate
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.65 }}>
-                Under The Legal Metrology Act, 2009, no person or corporate entity shall pre-pack, distribute, sell, or expose for sale any packaged commodity unless every package carries mandatory statutory declarations (MRP inclusive of all taxes, net quantity, unit sale price, month/year of manufacture, country of origin, and consumer care details).
-              </p>
-            </div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
+                      Field Inspection
+                    </div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--govt-navy)', margin: '0.2rem 0' }}>
+                      Android APK
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
+                      On-site offline verification
+                    </div>
+                  </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: '#ECFDF5', color: '#138808', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1.25rem' }}>
-                🌐
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.75rem' }}>
-                Omnichannel E-Commerce Audit
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.65 }}>
-                E-commerce marketplaces (Amazon, Flipkart, Quick-Commerce apps) are subject to Rule 6(10) of the Packaged Commodities Rules. Nirikshak crawls marketplace listings at machine speed, parsing structured JSON-LD and packaging photo carousels to verify that digital listings mirror physical packaging standards.
-              </p>
-            </div>
-
-            <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: '#FEF3C7', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1.25rem' }}>
-                📱
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.75rem' }}>
-                Field Enforcement Mobility
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.65 }}>
-                On-ground Legal Metrology Officers operate the companion Nirikshak Android Mobile Application. Equipped with offline barcode scanning, GPS geotagging, and camera packaging dimension verification, field inspection reports sync seamlessly into the state adjudication queue.
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* SECTION 2: WHY IS NIRIKSHAK IMPORTANT */}
-        <section id="importance" style={{ background: '#F1F5F9', padding: '4rem 2rem', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
-            
-            <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3rem auto' }}>
-              <div style={{ color: '#06038D', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                Consumer Protection & Economic Fairness
-              </div>
-              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-                Why is NIRIKSHAK Crucial for India?
-              </h2>
-              <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-                Ensuring precision, truthfulness, and transparency across consumer products is vital to national economic integrity and citizen welfare.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
-              
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '1.75rem' }}>
-                <div style={{ color: '#06038D', fontSize: '1.75rem', marginBottom: '0.75rem' }}>🛡️</div>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Protection of 1.4 Billion Consumers</h4>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6 }}>
-                  Guarantees that consumers are not shortchanged through deceptive packaging, short weight, concealed prices, or missing dates of expiry and manufacture.
-                </p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '1.75rem' }}>
-                <div style={{ color: '#06038D', fontSize: '1.75rem', marginBottom: '0.75rem' }}>🇮🇳</div>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Country of Origin Transparency</h4>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6 }}>
-                  Strictly enforces sovereign Country of Origin declarations across physical and online listings, protecting domestic manufacturers and informing buyer decisions.
-                </p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '1.75rem' }}>
-                <div style={{ color: '#06038D', fontSize: '1.75rem', marginBottom: '0.75rem' }}>🏷️</div>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Standardized MRP & No Hidden Taxes</h4>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6 }}>
-                  Under Rule 18, MRP is strictly inclusive of all taxes. Nirikshak prohibits arbitrary surge pricing above the printed maximum retail price.
-                </p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '12px', padding: '1.75rem' }}>
-                <div style={{ color: '#06038D', fontSize: '1.75rem', marginBottom: '0.75rem' }}>⚡</div>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Swift Adjudication & Compounding</h4>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6 }}>
-                  Reduces resolution times from months to days. Automatically formats statutory notices, hearing summons, and compounding orders under Section 49.
-                </p>
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* SECTION 3: HOW NIRIKSHAK FUNCTIONS (THE 4-STAGE PIPELINE) */}
-        <section id="how-it-works" style={{ padding: '4rem 2rem', maxWidth: '1360px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3.5rem auto' }}>
-            <div style={{ color: '#06038D', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-              End-to-End Operational Lifecycle
-            </div>
-            <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-              How NIRIKSHAK Functions
-            </h2>
-            <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-              From initial ingestion to judicial notice issuance, Nirikshak executes an automated 4-stage pipeline.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', position: 'relative' }}>
-            
-            {/* Step 1 */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', position: 'relative' }}>
-              <div style={{ background: '#06038D', color: '#FFFFFF', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>
-                1
-              </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                Surveillance & Ingestion
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6 }}>
-                Digital marketplace crawlers and field officers scan packaged products, streaming high-res photos, barcodes, and listing HTML into the processing queue.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', position: 'relative' }}>
-              <div style={{ background: '#06038D', color: '#FFFFFF', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>
-                2
-              </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                Multimodal Neural OCR
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6 }}>
-                ComplianceEngine microservice performs neural OCR, image text segmentation, and NLP key-value extraction across packaging angles.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', position: 'relative' }}>
-              <div style={{ background: '#06038D', color: '#FFFFFF', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>
-                3
-              </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                Rule Verification Engine
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6 }}>
-                Validates extracted declarations against statutory rules (Rule 6 declarations, Rule 26 standard weights, metric unit symbols, and tax inclusivity).
-              </p>
-            </div>
-
-            {/* Step 4 */}
-            <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', position: 'relative' }}>
-              <div style={{ background: '#06038D', color: '#FFFFFF', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem' }}>
-                4
-              </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                Adjudication & Notices
-              </h3>
-              <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6 }}>
-                Assistant Controllers review flagged violations, issue digital Show-Cause notices, approve compounding orders, or forward for legal prosecution.
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* SECTION 4: MANDATORY STATUTORY DECLARATIONS */}
-        <section id="statutory-rules" style={{ background: '#F8FAFC', padding: '4rem 2rem', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
-            
-            <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3rem auto' }}>
-              <div style={{ color: '#06038D', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                Legal Metrology (Packaged Commodities) Rules, 2011
-              </div>
-              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-                Mandatory Declarations on Every Pre-Packaged Commodity
-              </h2>
-              <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-                Under Rule 6 of PCR 2011, every pre-packed commodity sold in India must display the following 7 statutory declarations clearly on the principal display panel.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-              
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 1 · Rule 6(1)(a)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Name & Physical Address</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Complete physical address of the Manufacturer, Packer, or Importer with pin code and city.</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 2 · Rule 6(1)(aa)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Country of Origin</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Unambiguous Country of Origin declaration for both imported and domestically produced commodities.</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 3 · Rule 6(1)(b)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Generic Name of Commodity</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Common, trade, or generic name describing the actual nature of the enclosed commodity.</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 4 · Rule 6(1)(c) & (e)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Net Quantity & Unit Sale Price (USP)</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Net quantity declared in standard metric units (g, kg, ml, l, or number) alongside Unit Sale Price.</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 5 · Rule 6(1)(d)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Month & Year of Manufacture / Packing</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Month and year of manufacture, packing, or import clearly stated for consumer freshness verification.</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 6 · Rule 6(1)(da) & Rule 18</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Maximum Retail Price (MRP)</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Single consolidated MRP declared clearly with the statutory words "(Inclusive of all taxes)".</p>
-              </div>
-
-              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '1.5rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#06038D', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Mandate 7 · Rule 6(1)(n)</div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>Consumer Care & Redressal Info</h4>
-                <p style={{ fontSize: '0.85rem', color: '#64748B' }}>Name, physical address, telephone number, and email ID of the grievance redressal officer.</p>
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* SECTION 5: OFFICIAL OFFICER PORTALS (NO DEMO CREDS, PROPER GOVERNMENT LOOK) */}
-        <section id="portals" style={{ padding: '4.5rem 2rem', maxWidth: '1360px', margin: '0 auto' }}>
-          
-          <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3rem auto' }}>
-            <div style={{
-              display: 'inline-block',
-              background: '#06038D',
-              color: '#FFFFFF',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              padding: '0.3rem 0.85rem',
-              borderRadius: '4px',
-              marginBottom: '0.75rem'
-            }}>
-              OFFICER COMMAND ACCESS
-            </div>
-            <h2 style={{ fontSize: '2.35rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-              Designated Departmental Portals
-            </h2>
-            <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-              Select your assigned statutory jurisdiction to proceed to your departmental authentication console. Access is strictly governed under the Information Technology Act, 2000 and Section 15 of the Legal Metrology Act, 2009.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
-            
-            {/* Card 1: CLM Admin */}
-            <div style={{
-              background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
-              borderRadius: '16px',
-              padding: '2.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: '#FF9933' }} />
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '2.5rem' }}>🏛️</span>
-                  <span style={{ background: '#FEF3C7', color: '#92400E', padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.05em' }}>
-                    CENTRAL DIRECTIVE
-                  </span>
                 </div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                  Controller of Legal Metrology (CLM)
-                </h3>
-                <div style={{ fontSize: '0.82rem', color: '#06038D', fontWeight: 700, marginBottom: '1rem' }}>
-                  National Directorate Level Administration
-                </div>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.75rem' }}>
-                  Apex regulatory console. Issue sovereign policy directives, provision departmental inspector credentials, monitor national compliance indices across states, and supervise cryptographic audit logs.
-                </p>
-              </div>
 
-              <div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.85rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.78rem', color: '#64748B' }}>
-                  🔒 <strong>Restricted:</strong> Authorized Central & State Directorate Officers Only.
-                </div>
-                <a
-                  href="/admin/login"
-                  style={{
-                    display: 'block',
-                    textAlign: 'center',
-                    background: '#06038D',
-                    color: '#FFFFFF',
-                    padding: '0.9rem 1.25rem',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 4px 12px rgba(6,3,141,0.2)',
-                    transition: 'opacity 0.2s'
-                  }}
-                >
-                  Access CLM Admin Console →
-                </a>
-              </div>
-            </div>
-
-            {/* Card 2: Assistant Controller */}
-            <div style={{
-              background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
-              borderRadius: '16px',
-              padding: '2.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: '#2563EB' }} />
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '2.5rem' }}>⚖️</span>
-                  <span style={{ background: '#DBEAFE', color: '#1E40AF', padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.05em' }}>
-                    APPELLATE & REVIEW
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                  Assistant Controller (AC)
-                </h3>
-                <div style={{ fontSize: '0.82rem', color: '#2563EB', fontWeight: 700, marginBottom: '1rem' }}>
-                  Senior Enforcement & Adjudication Unit
-                </div>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.75rem' }}>
-                  Senior supervisory adjudication portal. Review live field and e-commerce statutory violation queues, approve digital Show-Cause notices, initiate compounding proceedings under Section 49, or dismiss invalid claims.
-                </p>
-              </div>
-
-              <div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.85rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.78rem', color: '#64748B' }}>
-                  🔒 <strong>Restricted:</strong> Appointed Assistant Controllers & Senior Inspectors Only.
-                </div>
-                <a
-                  href="/ac/login"
-                  style={{
-                    display: 'block',
-                    textAlign: 'center',
-                    background: '#1D4ED8',
-                    color: '#FFFFFF',
-                    padding: '0.9rem 1.25rem',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 4px 12px rgba(29,78,216,0.2)',
-                    transition: 'opacity 0.2s'
-                  }}
-                >
-                  Access AC Review Console →
-                </a>
-              </div>
-            </div>
-
-            {/* Card 3: DMI Scanner */}
-            <div style={{
-              background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
-              borderRadius: '16px',
-              padding: '2.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: '#138808' }} />
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '2.5rem' }}>🔍</span>
-                  <span style={{ background: '#DCFCE7', color: '#166534', padding: '0.3rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.05em' }}>
-                    MARKETPLACE ENFORCEMENT
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-                  Digital Metrology Inspector (DMI)
-                </h3>
-                <div style={{ fontSize: '0.82rem', color: '#138808', fontWeight: 700, marginBottom: '1rem' }}>
-                  E-Commerce Crawling & Physical Package OCR
-                </div>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.75rem' }}>
-                  Operational inspectorate console. Crawl live marketplace listings (Amazon, Flipkart, etc.), perform automated neural OCR on packaging image carousels, extract statutory declarations, and file violation dossiers.
-                </p>
-              </div>
-
-              <div>
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.85rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.78rem', color: '#64748B' }}>
-                  🔒 <strong>Restricted:</strong> Authorized Legal Metrology Inspection Officers Only.
-                </div>
-                <a
-                  href="/dmi/login"
-                  style={{
-                    display: 'block',
-                    textAlign: 'center',
-                    background: '#15803D',
-                    color: '#FFFFFF',
-                    padding: '0.9rem 1.25rem',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 4px 12px rgba(21,128,61,0.2)',
-                    transition: 'opacity 0.2s'
-                  }}
-                >
-                  Access DMI Web Scanner →
-                </a>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Official Security Disclaimer Warning */}
-          <div style={{
-            background: '#FFFBEB',
-            border: '1px solid #FCD34D',
-            borderRadius: '10px',
-            padding: '1.25rem 1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem'
-          }}>
-            <span style={{ fontSize: '1.5rem' }}>⚠️</span>
-            <div style={{ fontSize: '0.84rem', color: '#78350F', lineHeight: 1.5 }}>
-              <strong>RESTRICTED OFFICIAL SYSTEM NOTICE:</strong> This is a secure Government of India computing platform. Unauthorized access, probing, tampering, or credential sharing is strictly prohibited and constitutes a cognizable offense punishable under Sections 43, 65, and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
-            </div>
-          </div>
-
-        </section>
-
-        {/* SECTION 6: MULTI-SERVICE ARCHITECTURE & FIELD MOBILE APP */}
-        <section id="infrastructure" style={{ background: '#F1F5F9', padding: '4rem 2rem', borderTop: '1px solid #E2E8F0' }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
-            
-            <div style={{ textAlign: 'center', maxWidth: '860px', margin: '0 auto 3rem auto' }}>
-              <div style={{ color: '#06038D', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                Technology & Computing Architecture
-              </div>
-              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1rem' }}>
-                Sovereign Multi-Service Infrastructure
-              </h2>
-              <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.7 }}>
-                Decoupled microservice architecture designed for high-throughput compliance scanning and 24/7 uptime.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
-              
-              {/* Field APK Suite */}
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '2rem' }}>📱</span>
+                {/* Evidentiary Notice Banner */}
+                <div style={{
+                  backgroundColor: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  borderLeft: '4px solid var(--govt-navy)',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '0 2px 2px 0',
+                  fontSize: '0.78rem',
+                  color: '#1E3A8A',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.65rem'
+                }}>
+                  <div style={{ color: 'var(--govt-navy)', marginTop: '0.1rem', flexShrink: 0 }}>
+                    <IconShieldCheck size={18} />
+                  </div>
                   <div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A' }}>Nirikshak Android Field Inspector Suite</h3>
-                    <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Offline Mobile Enforcement Application</div>
+                    <strong style={{ display: 'block', marginBottom: '0.15rem' }}>Statutory Evidentiary Validity (Sections 15 & 36)</strong>
+                    Timestamped OCR packaging extractions and inspection records carry legal admissibility under the Legal Metrology Act, 2009 and Bharatiya Sakshya Adhiniyam, 2023.
                   </div>
                 </div>
-                <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                  Engineered specifically for field officers visiting physical manufacturing plants, distribution warehouses, and retail outlets. Features local SQLite offline caching, camera barcode decoding, GPS geo-stamping, and cryptographic sync.
-                </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        {/* SECTION 2: OFFICIAL DEPARTMENTAL PORTALS (CENTRAL CONNECTION HUB) */}
+        <section id="portals" style={{ padding: '3.5rem 1.5rem' }}>
+          <div className="container-govt">
+            
+            <div style={{ textAlign: 'center', maxWidth: '820px', margin: '0 auto 2.5rem auto' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                backgroundColor: 'var(--govt-navy)',
+                color: '#FFFFFF',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '2px',
+                marginBottom: '0.65rem'
+              }}>
+                <IconBuilding size={13} />
+                <span>Statutory Access Consoles</span>
+              </div>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.5rem' }}>
+                Designated Departmental Portals
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                Select your designated statutory jurisdiction to enter your departmental authentication console. System access is governed under Section 15 of the Legal Metrology Act, 2009 and the Information Technology Act, 2000.
+              </p>
+            </div>
+
+            <div className="grid-cols-auto-fit-360" style={{ marginBottom: '2rem' }}>
+              
+              {/* Card 1: CLM Admin (Controller of Legal Metrology) */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '4px solid var(--govt-maroon)',
+                borderRadius: '2px',
+                padding: '1.75rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <div style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '3px',
+                      backgroundColor: '#FEF2F2',
+                      color: 'var(--govt-maroon)',
+                      border: '1px solid #FECACA',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IconBuilding size={22} />
+                    </div>
+                    <span style={{
+                      backgroundColor: '#FEF2F2',
+                      color: 'var(--govt-maroon)',
+                      border: '1px solid #FCA5A5',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '2px',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.04em'
+                    }}>
+                      CENTRAL DIRECTIVE
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.25rem' }}>
+                    Controller of Legal Metrology (CLM)
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--govt-maroon)', fontWeight: 700, marginBottom: '0.85rem' }}>
+                    National Directorate Administration
+                  </div>
+
+                  <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                    Apex regulatory console. Issue sovereign policy directives, provision and manage departmental inspector credentials, monitor national compliance registers across states, and supervise cryptographic audit logs.
+                  </p>
+
+                  <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
+                      Key Administrative Functions:
+                    </div>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Nationwide compliance overview and reporting ledger</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Inspector account provisioning & access control</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Statutory audit trails & tamper-evident logs</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{
+                    backgroundColor: 'var(--slate-50)',
+                    border: '1px solid var(--slate-200)',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '2px',
+                    marginBottom: '1rem',
+                    fontSize: '0.72rem',
+                    color: 'var(--slate-600)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem'
+                  }}>
+                    <IconLock size={13} />
+                    <span><strong>Restricted:</strong> Authorized Central & State Directorate Officers Only.</span>
+                  </div>
+
+                  <a
+                    href="/admin"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      backgroundColor: 'var(--govt-maroon)',
+                      color: '#FFFFFF',
+                      padding: '0.75rem 1.25rem',
+                      borderRadius: '2px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <span>Enter CLM Admin Console</span>
+                    <IconArrowRight size={14} />
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 2: Assistant Controller (AC) */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '4px solid var(--govt-navy)',
+                borderRadius: '2px',
+                padding: '1.75rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <div style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '3px',
+                      backgroundColor: '#EFF6FF',
+                      color: 'var(--govt-navy)',
+                      border: '1px solid #BFDBFE',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IconScale size={22} />
+                    </div>
+                    <span style={{
+                      backgroundColor: '#EFF6FF',
+                      color: 'var(--govt-navy)',
+                      border: '1px solid #93C5FD',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '2px',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.04em'
+                    }}>
+                      APPELLATE & REVIEW
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.25rem' }}>
+                    Assistant Controller (AC)
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--govt-navy)', fontWeight: 700, marginBottom: '0.85rem' }}>
+                    Senior Enforcement & Adjudication Unit
+                  </div>
+
+                  <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                    Senior supervisory adjudication portal. Review live field and e-commerce statutory violation queues, approve digital Show-Cause notices, initiate compounding proceedings under Section 49, or dismiss invalid claims.
+                  </p>
+
+                  <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
+                      Key Adjudication Functions:
+                    </div>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Inspection docket evaluation & visual evidence review</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Issuance of digital Show-Cause statutory notices</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Compounding sanction or prosecution forwarding</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{
+                    backgroundColor: 'var(--slate-50)',
+                    border: '1px solid var(--slate-200)',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '2px',
+                    marginBottom: '1rem',
+                    fontSize: '0.72rem',
+                    color: 'var(--slate-600)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem'
+                  }}>
+                    <IconLock size={13} />
+                    <span><strong>Restricted:</strong> Appointed Assistant Controllers & Review Officers Only.</span>
+                  </div>
+
+                  <a
+                    href="/ac"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      backgroundColor: 'var(--govt-navy)',
+                      color: '#FFFFFF',
+                      padding: '0.75rem 1.25rem',
+                      borderRadius: '2px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <span>Enter AC Review Console</span>
+                    <IconArrowRight size={14} />
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 3: Digital Metrology Inspector (DMI) */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '4px solid #047857',
+                borderRadius: '2px',
+                padding: '1.75rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <div style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '3px',
+                      backgroundColor: '#ECFDF5',
+                      color: '#047857',
+                      border: '1px solid #A7F3D0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IconScanner size={22} />
+                    </div>
+                    <span style={{
+                      backgroundColor: '#ECFDF5',
+                      color: '#047857',
+                      border: '1px solid #6EE7B7',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '2px',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.04em'
+                    }}>
+                      MARKETPLACE SURVEILLANCE
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.25rem' }}>
+                    Digital Metrology Inspector (DMI)
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: '#047857', fontWeight: 700, marginBottom: '0.85rem' }}>
+                    E-Commerce Surveillance & Packaging OCR
+                  </div>
+
+                  <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                    Operational inspectorate console. Crawl live marketplace listings (Amazon, Flipkart, Quick-Commerce platforms), execute high-precision neural OCR on packaging image carousels, extract statutory declarations, and file violation dossiers.
+                  </p>
+
+                  <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
+                      Key Inspectorate Functions:
+                    </div>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Automated stealth scraping of marketplace listings</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Tesseract OCR & packaging declaration extraction</span>
+                      </li>
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <IconCheckCircle size={13} className="text-emerald-600" />
+                        <span>Instant docket submission to jurisdictional AC</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{
+                    backgroundColor: 'var(--slate-50)',
+                    border: '1px solid var(--slate-200)',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '2px',
+                    marginBottom: '1rem',
+                    fontSize: '0.72rem',
+                    color: 'var(--slate-600)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem'
+                  }}>
+                    <IconLock size={13} />
+                    <span><strong>Restricted:</strong> Authorized Legal Metrology Inspection Officers Only.</span>
+                  </div>
+
+                  <a
+                    href="/dmi"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      backgroundColor: '#047857',
+                      color: '#FFFFFF',
+                      padding: '0.75rem 1.25rem',
+                      borderRadius: '2px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <span>Enter DMI Scanner Portal</span>
+                    <IconArrowRight size={14} />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Mobile APK Suite & On-Ground Inspection Integration Card */}
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              border: '1px solid var(--slate-300)',
+              borderTop: '3px solid #D97706',
+              borderRadius: '2px',
+              padding: '1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '3px',
+                    backgroundColor: '#FEF3C7',
+                    color: '#B45309',
+                    border: '1px solid #FDE68A',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <IconMobile size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+                      Nirikshak Android Field Inspector Suite (Companion APK)
+                    </h3>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--slate-500)' }}>
+                      Mobile Enforcement Suite for Physical Marketplaces, Manufacturing Units & Warehouses
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{
+                    backgroundColor: '#ECFDF5',
+                    color: '#065F46',
+                    border: '1px solid #A7F3D0',
+                    padding: '0.2rem 0.55rem',
+                    borderRadius: '2px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                    API Online
+                  </span>
                   <a
                     href="/api/apk/health"
                     target="_blank"
                     rel="noreferrer"
                     style={{
+                      backgroundColor: 'var(--slate-100)',
+                      border: '1px solid var(--slate-300)',
+                      color: 'var(--slate-800)',
+                      padding: '0.45rem 0.85rem',
+                      borderRadius: '2px',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.5rem',
-                      background: '#F1F5F9',
-                      border: '1px solid #CBD5E1',
-                      color: '#0F172A',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '6px',
-                      fontSize: '0.8rem',
-                      fontWeight: 700
+                      gap: '0.4rem'
                     }}
                   >
-                    APK API Health Check ↗
+                    <span>Check APK Backend Service</span>
+                    <IconArrowRight size={12} />
                   </a>
                 </div>
               </div>
 
-              {/* High-Compute ML & Crawler Engine */}
-              <div style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '14px', padding: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '2rem' }}>⚡</span>
-                  <div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A' }}>Dedicated Neural & Crawler Microservices</h3>
-                    <div style={{ fontSize: '0.78rem', color: '#64748B' }}>High-Throughput Vision & Scraping Pipeline</div>
-                  </div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.55 }}>
+                Field inspectors utilize the dedicated Nirikshak Android application with local SQLite offline storage, camera-based barcode verification, GPS geotagged physical inspection reporting, and synchronization with the central Directorate server.
+              </div>
+            </div>
+
+            {/* Restricted Official Government Notice (Matching Login.jsx in Portals) */}
+            <div style={{
+              backgroundColor: '#FFFBEB',
+              border: '1px solid #FCD34D',
+              borderLeft: '4px solid #D97706',
+              borderRadius: '0 2px 2px 0',
+              padding: '1rem 1.25rem',
+              marginTop: '1.75rem',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.85rem'
+            }}>
+              <div style={{ color: '#D97706', marginTop: '0.1rem', flexShrink: 0 }}>
+                <IconAlertTriangle size={20} />
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#78350F', lineHeight: 1.55 }}>
+                <strong style={{ display: 'block', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                  Statutory Security Notice & Access Restriction:
+                </strong>
+                This is a secure Government of India computing platform designated exclusively for appointed Legal Metrology Officers. Unauthorized access, probing, tampering with inspection records, or attempting unauthorized data extraction is a cognizable offense punishable under Sections 43, 65, and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* SECTION 3: STATUTORY PCR DECLARATIONS (GIGW TABULAR MATRIX) */}
+        <section id="declarations" style={{
+          backgroundColor: '#FFFFFF',
+          borderTop: '1px solid var(--slate-300)',
+          borderBottom: '1px solid var(--slate-300)',
+          padding: '3.5rem 1.5rem'
+        }}>
+          <div className="container-govt">
+            
+            <div style={{ maxWidth: '840px', marginBottom: '2rem' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                backgroundColor: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                color: 'var(--govt-navy)',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                padding: '0.2rem 0.6rem',
+                borderRadius: '2px',
+                marginBottom: '0.5rem'
+              }}>
+                <IconFileText size={13} />
+                <span>Statutory Compliance Matrix</span>
+              </div>
+              <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
+                Mandatory Declarations on Pre-Packaged Commodities
+              </h2>
+              <p style={{ fontSize: '0.88rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                Under Rule 6 of the Legal Metrology (Packaged Commodities) Rules, 2011, every package distributed, sold, or offered for sale in physical retail or digital e-commerce must display the following statutory declarations clearly on the Principal Display Panel (PDP).
+              </p>
+            </div>
+
+            <div className="govt-table-wrap">
+              <table className="govt-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '15%' }}>Statutory Rule</th>
+                    <th style={{ width: '22%' }}>Mandatory Declaration</th>
+                    <th style={{ width: '38%' }}>Regulatory Requirement & Standard Format</th>
+                    <th style={{ width: '25%' }}>Audit Verification Rule</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Rule 6(1)(a)</strong></td>
+                    <td><strong>Manufacturer / Packer / Importer</strong></td>
+                    <td>Complete physical street address, corporate entity name, city, state, and pin code where goods are manufactured, packed, or imported.</td>
+                    <td>Absence of physical address or omission of pin code flagged as Non-Compliant.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(aa)</strong></td>
+                    <td><strong>Country of Origin</strong></td>
+                    <td>Unambiguous country of origin statement (e.g., "Country of Origin: India") without misleading abbreviations.</td>
+                    <td>Mandatory on both physical pre-packs and e-commerce listings under Rule 6(10).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(b)</strong></td>
+                    <td><strong>Generic / Common Commodity Name</strong></td>
+                    <td>Actual trade or generic name clearly identifying the contained commodity to prevent deceptive naming.</td>
+                    <td>Must match standard nomenclature prescribed in the First Schedule.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(c) & (e)</strong></td>
+                    <td><strong>Net Quantity & Unit Sale Price (USP)</strong></td>
+                    <td>Declared in legal standard metric units (g, kg, ml, l, or number). Packages &gt; 1kg / 1L must display Unit Sale Price (₹ per g / ₹ per ml).</td>
+                    <td>Non-metric units (lbs, oz, fluid oz) strictly prohibited under Section 11 of the Act.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(d)</strong></td>
+                    <td><strong>Month & Year of Manufacture / Packing</strong></td>
+                    <td>Month and Year of manufacture, packing, or import clearly printed on the outer display panel.</td>
+                    <td>Missing or ambiguous manufacturing/packing date constitutes statutory violation.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(da) & Rule 18</strong></td>
+                    <td><strong>Maximum Retail Price (MRP)</strong></td>
+                    <td>Consolidated retail price inclusive of all taxes. Mandatory statutory wording: "MRP ₹ ... (Inclusive of all taxes)".</td>
+                    <td>Arbitrary charging above printed MRP or missing tax inclusivity statement flagged for compounding.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rule 6(1)(n)</strong></td>
+                    <td><strong>Consumer Care / Redressal Details</strong></td>
+                    <td>Officer name or designation, complete physical postal address, telephone/helpline number, and active email address.</td>
+                    <td>Omission of telephone or email is a compoundable violation under Section 49.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ marginTop: '1rem', fontSize: '0.74rem', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <IconCheckCircle size={13} className="text-emerald-600" />
+              <span>Complies with the First and Second Schedules of the Legal Metrology (Packaged Commodities) Rules, 2011.</span>
+            </div>
+
+          </div>
+        </section>
+
+        {/* SECTION 4: 4-STAGE REGULATORY VERIFICATION PIPELINE */}
+        <section id="pipeline" style={{ padding: '3.5rem 1.5rem' }}>
+          <div className="container-govt">
+            
+            <div style={{ textAlign: 'center', maxWidth: '820px', margin: '0 auto 2.5rem auto' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                backgroundColor: 'var(--govt-navy)',
+                color: '#FFFFFF',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '2px',
+                marginBottom: '0.65rem'
+              }}>
+                <IconServer size={13} />
+                <span>Statutory Verification Lifecycle</span>
+              </div>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.5rem' }}>
+                Automated 4-Stage Verification Pipeline
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                Every physical product scan and digital listing crawl executes through an automated, cryptographically logged 4-stage pipeline.
+              </p>
+            </div>
+
+            <div className="grid-cols-auto-fit-280">
+              
+              {/* Step 1 */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '3px solid var(--govt-navy)',
+                borderRadius: '2px',
+                padding: '1.5rem'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '2px',
+                  backgroundColor: 'var(--govt-navy)',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem'
+                }}>
+                  01
                 </div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.88rem', color: '#475569' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
+                  Surveillance & Ingestion
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                  Digital marketplace stealth crawlers and on-ground field officers ingest high-resolution packaging photo carousels, barcode numbers, and merchant metadata into the processing queue.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '3px solid var(--govt-navy)',
+                borderRadius: '2px',
+                padding: '1.5rem'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '2px',
+                  backgroundColor: 'var(--govt-navy)',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem'
+                }}>
+                  02
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
+                  Surface Detection & Neural OCR
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                  ComplianceEngine microservice performs packaging surface distortion correction, multilingual text segmentation, and high-accuracy Tesseract OCR extraction across all packaging panels.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '3px solid var(--govt-navy)',
+                borderRadius: '2px',
+                padding: '1.5rem'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '2px',
+                  backgroundColor: 'var(--govt-navy)',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem'
+                }}>
+                  03
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
+                  Statutory Rule Verification
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                  Automated rule evaluation against PCR 2011 declarations (MRP inclusivity, metric unit adherence, country of origin presence, and unit sale price math), generating a structured compliance audit record.
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--slate-300)',
+                borderTop: '3px solid var(--govt-navy)',
+                borderRadius: '2px',
+                padding: '1.5rem'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '2px',
+                  backgroundColor: 'var(--govt-navy)',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem'
+                }}>
+                  04
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
+                  AC Adjudication & Notice Issuance
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
+                  Jurisdictional Assistant Controllers review flagged non-compliance dossiers, approve digital Show-Cause notices, schedule compounding proceedings under Section 49, or forward for legal prosecution.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        {/* SECTION 5: LEGAL FRAMEWORK & TECHNICAL SPECIFICATIONS */}
+        <section id="act" style={{
+          backgroundColor: '#FFFFFF',
+          borderTop: '1px solid var(--slate-300)',
+          padding: '3.5rem 1.5rem'
+        }}>
+          <div className="container-govt">
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '2.5rem' }}>
+              
+              {/* Statutory Legal Admissibility */}
+              <div style={{ border: '1px solid var(--slate-300)', borderTop: '3px solid var(--govt-maroon)', padding: '1.75rem', borderRadius: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
+                  <IconScale size={20} className="text-red-900" />
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+                    The Legal Metrology Act, 2009 (Evidentiary Provisions)
+                  </h3>
+                </div>
+                <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                  Nirikshak inspection records, OCR bounding boxes, and timestamped crawler dockets are engineered to satisfy evidentiary requirements under statutory law:
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem', color: 'var(--slate-700)' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ color: '#138808', fontWeight: 800 }}>✔</span>
-                    <span><strong>ComplianceEngine Microservice:</strong> High-precision Tesseract OCR, packaging surface distortion correction, and rule evaluation engine.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 15:</span>
+                    <span>Power of inspection, search, seizure, and forfeiture of non-conforming pre-packaged commodities.</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ color: '#138808', fontWeight: 800 }}>✔</span>
-                    <span><strong>Dynamic Marketplace Crawler:</strong> High-fidelity stealth HTTP crawling bypassing bot blocks to extract uncompressed 1500px packaging images.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 18:</span>
+                    <span>Prohibition on manufacture, packing, sale, distribution, or delivery of non-standard packaged goods.</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ color: '#138808', fontWeight: 800 }}>✔</span>
-                    <span><strong>Automated Keep-Alive Monitoring:</strong> 24/7 background self-pinging eliminating server dormancy.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 36:</span>
+                    <span>Penalties for selling non-standard packages, including statutory fines and subsequent offense imprisonment.</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 49:</span>
+                    <span>Statutory compounding of offenses before court filing upon payment of prescribed compounding sum.</span>
                   </li>
                 </ul>
+              </div>
+
+              {/* Technical Specifications & Microservice Pipeline */}
+              <div id="infrastructure" style={{ border: '1px solid var(--slate-300)', borderTop: '3px solid var(--govt-navy)', padding: '1.75rem', borderRadius: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
+                  <IconServer size={20} className="text-blue-900" />
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+                    System Architecture & Computing Services
+                  </h3>
+                </div>
+                <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                  Decoupled microservice architecture designed for high availability, 24/7 background keep-alive pings, and rapid horizontal scaling:
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.8rem', color: 'var(--slate-700)' }}>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <strong>CLM Directorate Admin API:</strong> Express.js multi-tier governance backend handling user provisioning, national metrics, and audit logs.
+                  </div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <strong>Senior Inspector Adjudication API:</strong> Dedicated decision engine managing violation queues, notice drafting, and Section 49 compounding registers.
+                  </div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <strong>ComplianceEngine Neural Microservice:</strong> High-precision Tesseract OCR, surface distortion mitigation, and rule analysis engine.
+                  </div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <strong>Stealth Marketplace Scraper:</strong> High-fidelity HTTP scraper extracting uncompressed 1500px packaging images bypassing bot verification.
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -1191,76 +1783,138 @@ export default function App() {
 
       </main>
 
-      {/* Official Government Footer */}
-      <footer style={{ background: '#012A4A', color: '#FFFFFF', borderTop: '3px solid #FF9933', padding: '3rem 2rem 1.5rem 2rem' }}>
-        <div style={{ maxWidth: '1360px', margin: '0 auto' }}>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '2rem', paddingBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+      {/* Official Government Footer (Matching GovtFooter across all Portals) */}
+      <footer style={{ marginTop: 'auto', userSelect: 'none' }}>
+        
+        {/* Tricolor Ribbon above Footer (9px: 3px Saffron, 3px White, 3px Green) */}
+        <div className="tricolor-stripe">
+          <div className="saffron" />
+          <div className="white" />
+          <div className="green" />
+        </div>
+
+        {/* Dark Navy Background (Matching GovtFooter in portals) */}
+        <div style={{
+          backgroundColor: 'var(--govt-dark)',
+          color: 'rgba(255, 255, 255, 0.85)',
+          padding: '2.5rem 1.5rem 1.5rem 1.5rem',
+          fontSize: '0.75rem'
+        }}>
+          <div className="container-govt">
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-              <div style={{ background: '#FFFFFF', padding: '0.35rem', borderRadius: '8px' }}>
-                <img src="/emblem.png" alt="Emblem" style={{ height: '54px' }} />
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: '1.5rem',
+              paddingBottom: '2rem',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
+            }}>
+              
+              {/* Left: Department Details */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <img
+                  src="/emblem-white.png"
+                  alt="Emblem"
+                  style={{ height: '44px', width: 'auto', display: 'block', opacity: 0.95 }}
+                  onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+                />
+                <div>
+                  <p style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.88rem', margin: 0 }}>
+                    Department of Consumer Affairs · उपभोक्ता मामले विभाग
+                  </p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.75)', margin: '0.2rem 0 0 0' }}>
+                    Ministry of Consumer Affairs, Food & Public Distribution, Government of India
+                  </p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: '0.7rem', margin: '0.2rem 0 0 0' }}>
+                    Administered under the Legal Metrology Act, 2009 & Legal Metrology (Packaged Commodities) Rules, 2011
+                  </p>
+                </div>
               </div>
+
+              {/* Right: NIC & Digital India Info */}
+              <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.3rem 0.65rem',
+                  borderRadius: '2px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
+                  fontWeight: 600,
+                  fontSize: '0.74rem',
+                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                }}>
+                  <IconBuilding size={13} />
+                  <span>Digital India Initiative</span>
+                </div>
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                  Designed, Developed & Maintained for National Regulatory Enforcement
+                </span>
+                <span style={{ fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+                  National Legal Metrology Digital Verification System (NIRIKSHAK)
+                </span>
+              </div>
+
+            </div>
+
+            {/* Bottom Row: Copyright & Policies */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              paddingTop: '1.25rem',
+              fontSize: '0.72rem',
+              color: 'rgba(255, 255, 255, 0.65)'
+            }}>
               <div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF' }}>Department of Consumer Affairs</div>
-                <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.8)' }}>Ministry of Consumer Affairs, Food & Public Distribution</div>
-                <div style={{ fontSize: '0.75rem', color: '#FCD34D', marginTop: '0.2rem' }}>Government of India</div>
+                © {new Date().getFullYear()} Government of India. All rights reserved. Content Owned by Department of Consumer Affairs.
               </div>
-            </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.08)', padding: '0.35rem 0.85rem', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 600, border: '1px solid rgba(255,255,255,0.15)' }}>
-                <span>🏛️</span> Digital India Initiative
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.5rem' }}>
-                Designed, Developed & Maintained for National Regulatory Enforcement
-              </div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
-                Guidelines for Indian Government Websites (GIGW) Standard
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={openPolicy('helpline')}
+                  style={{ background: 'none', border: 'none', color: '#FCD34D', cursor: 'pointer', fontWeight: 700, padding: 0 }}
+                >
+                  National Consumer Helpline (1915)
+                </button>
+                <span style={{ color: 'rgba(255, 255, 255, 0.25)' }}>•</span>
+                <button
+                  type="button"
+                  onClick={openPolicy('privacy')}
+                  style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', padding: 0 }}
+                >
+                  Privacy Policy
+                </button>
+                <span style={{ color: 'rgba(255, 255, 255, 0.25)' }}>•</span>
+                <button
+                  type="button"
+                  onClick={openPolicy('terms')}
+                  style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', padding: 0 }}
+                >
+                  Terms of Service
+                </button>
+                <span style={{ color: 'rgba(255, 255, 255, 0.25)' }}>•</span>
+                <button
+                  type="button"
+                  onClick={openPolicy('hyperlink')}
+                  style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', padding: 0 }}
+                >
+                  Hyperlink Policy
+                </button>
               </div>
             </div>
 
           </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', paddingTop: '1.5rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)' }}>
-            <div>
-              © {new Date().getFullYear()} Department of Consumer Affairs, Government of India. All Rights Reserved.
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-              <button
-                onClick={openPolicy('helpline')}
-                style={{ background: 'none', border: 'none', color: '#FCD34D', cursor: 'pointer', fontWeight: 600 }}
-              >
-                National Consumer Helpline (1915)
-              </button>
-              <span>•</span>
-              <button
-                onClick={openPolicy('privacy')}
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer' }}
-              >
-                Privacy Policy
-              </button>
-              <span>•</span>
-              <button
-                onClick={openPolicy('terms')}
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer' }}
-              >
-                Terms of Service
-              </button>
-              <span>•</span>
-              <button
-                onClick={openPolicy('hyperlink')}
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer' }}
-              >
-                Hyperlink Policy
-              </button>
-            </div>
-          </div>
-
         </div>
       </footer>
 
-      {/* Official Government Policy Dialog Modal */}
+      {/* Official Government Policy Dialog Modal (GIGW Compliant, Matching Portals) */}
       {activePolicy && POLICIES[activePolicy] && (
         <div
           role="dialog"
@@ -1269,8 +1923,8 @@ export default function App() {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(3px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(2px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1281,67 +1935,100 @@ export default function App() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#FFFFFF',
-              borderRadius: '12px',
-              maxWidth: '640px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '2px',
+              maxWidth: '620px',
               width: '100%',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
-              border: '1px solid #CBD5E1',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+              border: '1px solid var(--slate-300)',
               overflow: 'hidden'
             }}
           >
             {/* Modal Header */}
-            <div style={{ background: '#06038D', color: '#FFFFFF', padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <img src="/emblem.png" alt="Emblem" style={{ height: '32px', filter: 'brightness(0) invert(1)' }} />
+            <div style={{
+              backgroundColor: 'var(--govt-navy)',
+              color: '#FFFFFF',
+              padding: '0.85rem 1.25rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <img
+                  src="/emblem-white.png"
+                  alt="Emblem"
+                  style={{ height: '28px', width: 'auto', display: 'block' }}
+                  onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+                />
                 <div>
-                  <h3 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: '#FFFFFF' }}>
+                  <h3 style={{ fontSize: '0.88rem', fontWeight: 800, margin: 0, color: '#FFFFFF' }}>
                     {POLICIES[activePolicy].title}
                   </h3>
-                  <div style={{ fontSize: '0.72rem', color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {POLICIES[activePolicy].badge}
                   </div>
                 </div>
               </div>
               <button
+                type="button"
                 onClick={closePolicy}
                 aria-label="Close dialog"
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: '1.25rem', cursor: 'pointer', padding: '0.25rem' }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
               >
-                ✕
+                <IconClose size={18} />
               </button>
             </div>
 
-            {/* Modal Tricolor */}
-            <div className="tricolor-stripe">
-              <div className="saffron" />
-              <div className="white" />
-              <div className="green" />
+            {/* Modal Tricolor Bar */}
+            <div className="tricolor-stripe" style={{ height: '6px' }}>
+              <div className="saffron" style={{ height: '2px' }} />
+              <div className="white" style={{ height: '2px' }} />
+              <div className="green" style={{ height: '2px' }} />
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '1.5rem', maxHeight: '70vh', overflowY: 'auto' }}>
+            <div style={{ padding: '1.25rem', maxHeight: '68vh', overflowY: 'auto' }}>
               {POLICIES[activePolicy].content}
             </div>
 
             {/* Modal Footer */}
-            <div style={{ background: '#F8FAFC', borderTop: '1px solid #E2E8F0', padding: '0.75rem 1.25rem', textAlign: 'right' }}>
+            <div style={{
+              backgroundColor: 'var(--slate-50)',
+              borderTop: '1px solid var(--slate-200)',
+              padding: '0.65rem 1.25rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--slate-500)', fontWeight: 600 }}>
+                Government of India · भारत सरकार
+              </span>
               <button
+                type="button"
                 onClick={closePolicy}
                 style={{
-                  background: '#012A4A',
+                  backgroundColor: 'var(--govt-navy)',
                   color: '#FFFFFF',
                   border: 'none',
-                  padding: '0.5rem 1.25rem',
-                  borderRadius: '6px',
+                  padding: '0.45rem 1.15rem',
+                  borderRadius: '2px',
                   fontWeight: 600,
-                  fontSize: '0.82rem',
+                  fontSize: '0.78rem',
                   cursor: 'pointer'
                 }}
               >
-                Close / बंद करें
+                Close Window
               </button>
             </div>
+
           </div>
         </div>
       )}
