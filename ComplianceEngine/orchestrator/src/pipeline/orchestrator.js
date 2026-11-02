@@ -226,7 +226,7 @@ async function runPipelineForProduct(imagePaths = [], options = {}) {
     if (labelMetrics?.netQuantityBox && preprocessedImages.length > 0) {
       const pIdx = labelMetrics.panelIndex != null && labelMetrics.panelIndex < preprocessedImages.length ? labelMetrics.panelIndex : 0;
       const sourcePanelImg = preprocessedImages[pIdx] || preprocessedImages[0];
-      const outAnnotatedName = 'net_quantity_bounding_box.png';
+      const outAnnotatedName = 'net_quantity_bounding_box.jpg';
       const targetAnnotatedPath = path.join(tempProductDir, outAnnotatedName);
 
       annotatedImagePath = await annotateNetQuantityImage({

@@ -163,7 +163,7 @@ async function annotateNetQuantityImage({
 
     await sharp(imagePath)
       .composite([{ input: Buffer.from(svgOverlay), top: 0, left: 0 }])
-      .png()
+      .jpeg({ quality: 85 })
       .toFile(outputPath);
 
     logger.info('netQuantityImageAnnotator', `Successfully generated annotated green bounding box image: ${outputPath}`);

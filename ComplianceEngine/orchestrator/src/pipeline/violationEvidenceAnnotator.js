@@ -280,7 +280,7 @@ async function annotateSingleViolation({
     return null;
   }
 
-  const outFileName = `violation_evidence_${findingIndex + 1}.png`;
+  const outFileName = `violation_evidence_${findingIndex + 1}.jpg`;
   const outputPath = path.join(productDir, outFileName);
 
   try {
@@ -437,7 +437,7 @@ async function annotateSingleViolation({
 
     await sharp(sourceImage)
       .composite([{ input: Buffer.from(svgOverlay), top: 0, left: 0 }])
-      .png()
+      .jpeg({ quality: 85 })
       .toFile(outputPath);
 
     logger.info('violationEvidenceAnnotator', `Generated bounding-boxed evidence for Finding ${findingIndex + 1} (${violation.rule}): ${outputPath}`);

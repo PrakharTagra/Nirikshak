@@ -23,6 +23,13 @@ try {
   Groq = null;
 }
 
+let sharp;
+try {
+  sharp = require('sharp');
+} catch {
+  sharp = null;
+}
+
 function getMimeType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   const mimeTypes = {
@@ -42,15 +49,34 @@ function getMimeType(filePath) {
 
 /**
  * Resilient multimodal fallback when Python FastAPI on port 8000 is not running.
- * Uses Groq Vision (llama-3.2-11b-vision-preview / llama-3.2-90b-vision-preview)
- * or deterministic regex extraction.
+ * Uses Groq Vision (qwen/qwen3.8-27b) with image pre-scaling & token capping.
  */
 async function fallbackOcrForImage(imagePath, index = 0) {
   const data = await fs.readFile(imagePath);
   const mimeType = getMimeType(imagePath);
-  const base64 = data.toString('base64');
   const filename = path.basename(imagePath);
 
+  // Compress and resize large phone photos (e.g. 18MB -> 250KB) to prevent 429 token limits & network latency
+  let visionBuffer = data;
+  let visionMime = mimeType;
+  if (sharp) {
+    try {
+      visionBuffer = await sharp(data)
+        .resize({ width: 1280, height: 1280, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 85 })
+        .toBuffer();
+      visionMime = 'image/jpeg';
+      logger.info(
+        'stage2Stage4Client',
+        `Scaled ${filename} (${(data.length / (1024 * 1024)).toFixed(1)}MB -> ${(visionBuffer.length / 1024).toFixed(0)}KB) for rapid vision inference`
+      );
+    } catch (sharpErr) {
+      logger.warn('stage2Stage4Client', `Sharp pre-scale note for ${filename}: ${sharpErr.message}`);
+      visionBuffer = data;
+    }
+  }
+
+  const base64 = visionBuffer.toString('base64');
   let lines = [];
   let extractedText = '';
 
@@ -84,7 +110,7 @@ Output a single valid JSON object in this exact format:
       let res = null;
       for (const visionModel of candidates) {
         try {
-          logger.info('stage2Stage4Client', `Invoking Groq Vision (${visionModel}) OCR fallback for ${filename}...`);
+          logger.info('stage2Stage4Client', `Invoking Groq Vision (${visionModel}) OCR for ${filename}...`);
           res = await client.chat.completions.create({
             model: visionModel,
             temperature: 0,
@@ -94,7 +120,7 @@ Output a single valid JSON object in this exact format:
                 role: 'user',
                 content: [
                   { type: 'text', text: prompt },
-                  { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
+                  { type: 'image_url', image_url: { url: `data:${visionMime};base64,${base64}` } }
                 ]
               }
             ],
@@ -104,7 +130,31 @@ Output a single valid JSON object in this exact format:
             break;
           }
         } catch (modelErr) {
-          logger.warn('stage2Stage4Client', `Groq Vision model ${visionModel} failed for ${filename}: ${modelErr.message}`);
+          logger.warn('stage2Stage4Client', `Groq Vision model ${visionModel} error on ${filename}: ${modelErr.message}`);
+          if (modelErr.status === 429) {
+            logger.info('stage2Stage4Client', `Rate limit encounter on ${filename}. Backing off 2.5s before retry...`);
+            await new Promise((r) => setTimeout(r, 2500));
+            try {
+              res = await client.chat.completions.create({
+                model: visionModel,
+                temperature: 0,
+                max_tokens: 350,
+                messages: [
+                  {
+                    role: 'user',
+                    content: [
+                      { type: 'text', text: prompt },
+                      { type: 'image_url', image_url: { url: `data:${visionMime};base64,${base64}` } }
+                    ]
+                  }
+                ],
+                response_format: { type: 'json_object' }
+              });
+              if (res?.choices?.[0]?.message?.content) break;
+            } catch (retryErr) {
+              logger.warn('stage2Stage4Client', `Retry after backoff failed: ${retryErr.message}`);
+            }
+          }
         }
       }
 
@@ -267,7 +317,7 @@ async function callStage2And4Batch(imagePaths) {
   } catch (err) {
     logger.warn(
       'stage2Stage4Client',
-      `Python preprocessing service (${config.integration.preprocessorUrl}) unavailable (${err.message}). Activating fallback OCR pipeline...`
+      `Python preprocessing service (${config.integration.preprocessorUrl}) unavailable (${err.message}). Activating sequential fallback OCR pipeline...`
     );
     const items = [];
     for (let idx = 0; idx < imagePaths.length; idx++) {
