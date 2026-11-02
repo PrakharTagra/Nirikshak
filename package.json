@@ -15,6 +15,8 @@
     "start:ac-api": "node lmverifywebapp/senior-inspector-backend/src/index.js",
     "start:apk-api": "node apkbackend/server.js",
     "start:scraper": "node lmVerify/local-scraper/server.js",
-    "start:compliance": "node ComplianceEngine/orchestrator/src/server.js"
+    "start:compliance": "node ComplianceEngine/orchestrator/src/server.js",
+    "start:compliance-preprocessor": "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --app-dir ComplianceEngine/stage2_preprocessing",
+    "scan": "python scan.py"
   }
 }

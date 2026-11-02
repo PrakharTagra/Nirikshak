@@ -1,4 +1,6 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config(); // Fallback to current working directory .env if present
 const dns = require('dns');
 
 // Optional public DNS override (useful for Windows/VPN querySrv ECONNREFUSED error)
@@ -28,12 +30,16 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(cors());         // Enables Cross-Origin requests for Android app
 
-// URL prefix normalization for Vercel Services rewrites
+// URL prefix normalization for Vercel Services rewrites and direct gateway calls
 app.use((req, _res, next) => {
   if (req.url.startsWith('/api/apk/')) {
-    req.url = req.url.replace('/api/apk', '/api');
+    req.url = req.url.replace('/api/apk/', '/api/');
+  } else if (req.url === '/api/apk') {
+    req.url = '/';
   } else if (req.url.startsWith('/apk/')) {
-    req.url = req.url.replace('/apk', '');
+    req.url = req.url.replace('/apk/', '/');
+  } else if (req.url === '/apk') {
+    req.url = '/';
   }
   next();
 });
@@ -167,12 +173,17 @@ const Jurisdiction = mongoose.model('Jurisdiction', jurisdictionSchema, 'jurisdi
 // ---------------------------------------------------
 
 // ROOT CHECK
-app.get('/', (req, res) => {
-  res.send('🏛️ Nirikshak Legal Metrology API Server Running');
+app.get(['/', '/api', '/api/apk'], (req, res) => {
+  res.status(200).json({
+    name: 'Nirikshak Legal Metrology Mobile Backend API',
+    status: 'online',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // KEEP-ALIVE PING (Used by Render / Uptime monitors to prevent sleeping)
-app.get(['/ping', '/api/ping'], (req, res) => {
+app.get(['/ping', '/api/ping', '/api/apk/ping'], (req, res) => {
   res.status(200).json({
     status: 'ok',
     message: 'pong',
@@ -183,7 +194,7 @@ app.get(['/ping', '/api/ping'], (req, res) => {
 });
 
 // HEALTH CHECK (Used by AWS / Nginx / Monitoring)
-app.get('/health', (req, res) => {
+app.get(['/health', '/api/health', '/api/apk/health'], (req, res) => {
   const dbStatusMap = {
     0: 'disconnected',
     1: 'connected',

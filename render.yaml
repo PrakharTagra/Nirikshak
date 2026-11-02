@@ -1,7 +1,7 @@
 # ==============================================================================
 # Nirikshak Render Blueprint (render.yaml)
 # Hosts strictly the heavy microservices that cannot be deployed on Vercel
-# (Dynamic Puppeteer / Chromium crawler and OCR Compliance Engine)
+# (Dynamic Puppeteer / Chromium crawler, OCR Compliance Engine, & APK Mobile Backend)
 # ==============================================================================
 
 services:
@@ -46,5 +46,27 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
+      - key: KEEP_ALIVE_INTERVAL_MINUTES
+        value: "12"
+
+  # ----------------------------------------------------------------------------
+  # 3. Nirikshak APK Mobile Backend
+  # REST API for Android Mobile Inspection Application & Evidence Management
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: nirikshak-apk-backend
+    runtime: node
+    plan: free
+    rootDir: apkbackend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: COMPLIANCE_ENGINE_URL
+        value: https://nirikshak-compliance-engine-9uj4.onrender.com
       - key: KEEP_ALIVE_INTERVAL_MINUTES
         value: "12"
