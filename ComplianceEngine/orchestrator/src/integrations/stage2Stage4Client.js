@@ -76,29 +76,45 @@ Output a single valid JSON object in this exact format:
   "full_text": "All text combined with newlines"
 }`;
 
-      const visionModel = process.env.GROQ_VISION_MODEL || 'llama-3.2-11b-vision-preview';
-      logger.info('stage2Stage4Client', `Invoking Groq Vision (${visionModel}) OCR fallback for ${filename}...`);
+      const candidates = [
+        process.env.GROQ_VISION_MODEL,
+        'qwen/qwen3.8-27b',
+        'meta-llama/llama-4-scout-17b-preview'
+      ].filter(Boolean);
 
-      const res = await client.chat.completions.create({
-        model: visionModel,
-        temperature: 0,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: prompt },
-              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
-            ]
+      let res = null;
+      for (const visionModel of candidates) {
+        try {
+          logger.info('stage2Stage4Client', `Invoking Groq Vision (${visionModel}) OCR fallback for ${filename}...`);
+          res = await client.chat.completions.create({
+            model: visionModel,
+            temperature: 0,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: prompt },
+                  { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
+                ]
+              }
+            ],
+            response_format: { type: 'json_object' }
+          });
+          if (res?.choices?.[0]?.message?.content) {
+            break;
           }
-        ],
-        response_format: { type: 'json_object' }
-      });
+        } catch (modelErr) {
+          logger.warn('stage2Stage4Client', `Groq Vision model ${visionModel} failed for ${filename}: ${modelErr.message}`);
+        }
+      }
 
-      const raw = JSON.parse(res.choices[0]?.message?.content || '{}');
-      if (Array.isArray(raw.lines) && raw.lines.length > 0) {
-        lines = raw.lines;
-        extractedText = raw.full_text || lines.map(l => l.text).join('\n');
-        logger.info('stage2Stage4Client', `Groq Vision successfully extracted ${lines.length} lines from ${filename}`);
+      if (res) {
+        const raw = JSON.parse(res.choices[0]?.message?.content || '{}');
+        if (Array.isArray(raw.lines) && raw.lines.length > 0) {
+          lines = raw.lines;
+          extractedText = raw.full_text || lines.map(l => l.text).join('\n');
+          logger.info('stage2Stage4Client', `Groq Vision successfully extracted ${lines.length} lines from ${filename}`);
+        }
       }
     } catch (visionErr) {
       logger.warn('stage2Stage4Client', `Groq Vision OCR fallback failed for ${filename}: ${visionErr.message}`);
