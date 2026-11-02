@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// Official SVG vector icon library (Zero emojis used)
+// Official SVG vector icon library (Zero casual emojis used)
 function IconPhone({ size = 16, className = "" }) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -128,6 +128,15 @@ function IconServer({ size = 18, className = "" }) {
   );
 }
 
+function IconBookOpen({ size = 18, className = "" }) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+    </svg>
+  );
+}
+
 function IconClose({ size = 18, className = "" }) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -249,6 +258,7 @@ export default function App() {
   const [fontSizeLevel, setFontSizeLevel] = useState(0);
   const [loginMenuOpen, setLoginMenuOpen] = useState(false);
   const [activePolicy, setActivePolicy] = useState(null);
+  const [activeTab, setActiveTab] = useState('rules');
 
   const handleFontSize = (level) => {
     setFontSizeLevel(level);
@@ -433,7 +443,7 @@ export default function App() {
                 National Legal Metrology Digital Verification System
               </div>
               <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.7)', marginTop: '0.15rem' }}>
-                The Legal Metrology Act, 2009 & Packaged Commodities Rules, 2011
+                The Legal Metrology (Packaged Commodities) Rules, 2011 · G.S.R. 202(E)
               </div>
             </div>
             <div style={{
@@ -481,14 +491,14 @@ export default function App() {
               <IconBuilding size={14} />
               <span>Officer Portals</span>
             </a>
-            <a href="#declarations" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
-              Mandatory PCR Declarations
+            <a href="#gazette-masthead" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              Gazette Notification G.S.R. 202(E)
+            </a>
+            <a href="#statutory-rulebook" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
+              PCR 2011 Statutory Rulebook
             </a>
             <a href="#pipeline" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
               Verification Pipeline
-            </a>
-            <a href="#act" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
-              Legal Framework
             </a>
             <a href="#infrastructure" style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--slate-700)' }}>
               System Specifications
@@ -582,7 +592,7 @@ export default function App() {
                         CLM Admin Portal
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
-                        Controller of Legal Metrology Directorate
+                        Director / Controller (Rules 27-30 & 33)
                       </div>
                     </div>
                   </a>
@@ -621,7 +631,7 @@ export default function App() {
                         Assistant Controller (AC) Portal
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
-                        Senior Enforcement & Adjudication Unit
+                        Adjudication & Seizure (Rules 19, 20, 23 & Sec 49)
                       </div>
                     </div>
                   </a>
@@ -646,7 +656,7 @@ export default function App() {
                       height: '32px',
                       borderRadius: '3px',
                       backgroundColor: '#ECFDF5',
-                      color: '#065F46',
+                      color: '#047857',
                       border: '1px solid #A7F3D0',
                       display: 'flex',
                       alignItems: 'center',
@@ -660,7 +670,7 @@ export default function App() {
                         Digital Inspector (DMI) Portal
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
-                        E-Commerce Surveillance & Packaging OCR
+                        Marketplace Surveillance & OCR (Rules 6, 7 & 9)
                       </div>
                     </div>
                   </a>
@@ -700,7 +710,7 @@ export default function App() {
                         Field Inspector Mobile APK
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--slate-500)' }}>
-                        Physical Package Inspection & API Gateway
+                        On-Site Testing & Form A/B (Rules 19, 21 & Sched V-VII)
                       </div>
                     </div>
                   </a>
@@ -718,249 +728,177 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Official Statutory Gazette Ribbon */}
-      <div style={{
-        backgroundColor: '#F8FAFC',
-        borderBottom: '1px solid var(--slate-200)',
-        padding: '0.45rem 1.5rem',
-        fontSize: '0.76rem',
-        color: 'var(--slate-700)'
-      }}>
-        <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <span style={{
-            backgroundColor: 'var(--govt-navy)',
-            color: '#FFFFFF',
-            fontSize: '0.66rem',
-            fontWeight: 800,
-            padding: '0.15rem 0.5rem',
-            borderRadius: '2px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            Official Notice
-          </span>
-          <span style={{ fontWeight: 600 }}>
-            Mandatory Compliance Audit: E-commerce and physical packaged commodity inspections under Rule 6 of PCR, 2011 are active pan-India.
-          </span>
-          <span style={{ color: 'var(--slate-400)', marginLeft: 'auto', fontSize: '0.72rem' }}>
-            Ref: Legal Metrology (Packaged Commodities) Amendment Rules · MoCA
-          </span>
-        </div>
-      </div>
-
       {/* Main Content Area */}
       <main id="main-content" style={{ flex: 1 }}>
 
-        {/* SECTION 1: OFFICIAL STATUTORY GATEWAY OVERVIEW */}
-        <section style={{
+        {/* SECTION 1: OFFICIAL GAZETTE OF INDIA EXTRAORDINARY MASTHEAD & AUTHORITY */}
+        <section id="gazette-masthead" style={{
           backgroundColor: '#FFFFFF',
           borderBottom: '1px solid var(--slate-300)',
           padding: '2.5rem 1.5rem'
         }}>
-          <div className="container-govt" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '2.5rem', alignItems: 'start' }}>
+          <div className="container-govt">
             
-            {/* Left: Ministry Purpose & Directives */}
-            <div>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                backgroundColor: '#EFF6FF',
-                border: '1px solid #BFDBFE',
-                color: 'var(--govt-navy)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                padding: '0.25rem 0.65rem',
-                borderRadius: '2px',
-                marginBottom: '1rem'
-              }}>
-                <IconScale size={13} />
-                <span>Statutory Regulatory Infrastructure</span>
+            {/* The Gazette of India Notification Card (Directly based on PDF Page 1) */}
+            <div className="gazette-masthead" style={{ marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--slate-200)', paddingBottom: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--slate-700)', textTransform: 'uppercase' }}>
+                    [भाग II—खण्ड 3(i)] · भारत का राजपत्र : असाधारण · THE GAZETTE OF INDIA : EXTRAORDINARY
+                  </div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--govt-navy)', marginTop: '0.25rem' }}>
+                    MINISTRY OF CONSUMER AFFAIRS, FOOD AND PUBLIC DISTRIBUTION
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--slate-600)' }}>
+                    (Department of Consumer Affairs) · New Delhi, the 7th March, 2011
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <span className="gazette-tag">NOTIFICATION G.S.R. 202(E)</span>
+                  <span className="gazette-tag">Effective: 1st April, 2011</span>
+                  <span className="gazette-tag">Enacted u/s 52(1) &amp; (2)(j),(q)</span>
+                </div>
               </div>
 
-              <h1 style={{
-                fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)',
-                fontWeight: 800,
-                color: 'var(--govt-navy)',
-                lineHeight: 1.25,
-                marginBottom: '0.4rem',
-                letterSpacing: '-0.01em'
-              }}>
-                National Legal Metrology Digital Verification & Surveillance Gateway
-              </h1>
-
-              <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '1.25rem' }}>
-                राष्ट्रीय विधिक मापविज्ञान डिजिटल सत्यापन एवं निगरानी पोर्टल
-              </div>
-
-              <p style={{ fontSize: '0.9rem', color: 'var(--slate-700)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
-                NIRIKSHAK is the sovereign compliance automation and regulatory enforcement platform instituted by the <strong>Department of Consumer Affairs, Government of India</strong>. Designed to ensure strict compliance with <strong>The Legal Metrology Act, 2009</strong> and <strong>The Legal Metrology (Packaged Commodities) Rules, 2011</strong> across physical supply chains and digital marketplace listings through neural packaging vision, OCR extraction, and multi-tier judicial adjudication workflows.
-              </p>
-
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <a
-                  href="#portals"
-                  style={{
-                    backgroundColor: 'var(--govt-navy)',
-                    color: '#FFFFFF',
-                    padding: '0.7rem 1.35rem',
-                    borderRadius: '2px',
-                    fontWeight: 700,
-                    fontSize: '0.86rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                  }}
-                >
-                  <IconBuilding size={15} />
-                  <span>Access Officer Portals</span>
-                  <IconArrowRight size={14} />
-                </a>
-
-                <a
-                  href="#declarations"
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    color: 'var(--slate-800)',
-                    border: '1px solid var(--slate-300)',
-                    padding: '0.7rem 1.35rem',
-                    borderRadius: '2px',
-                    fontWeight: 700,
-                    fontSize: '0.86rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}
-                >
-                  <IconFileText size={15} />
-                  <span>Mandatory Declarations Matrix</span>
-                </a>
+              <div style={{ padding: '1rem 0 0.5rem 0', fontSize: '0.84rem', color: 'var(--slate-700)', lineHeight: 1.65 }}>
+                <p style={{ margin: 0 }}>
+                  <strong>Statutory Preamble:</strong> G.S.R. 202(E).—In exercise of the powers conferred by sub-section (1) read with clause (j) and (q) of sub-section (2) of section 52 of the <strong>Legal Metrology Act, 2009 (1 of 2010)</strong>, the Central Government hereby makes <strong>The Legal Metrology (Packaged Commodities) Rules, 2011</strong>. NIRIKSHAK serves as the sovereign digital surveillance, automated packaging OCR verification, and hierarchical adjudication platform enforcing these statutory rules.
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--slate-100)', fontSize: '0.75rem', color: 'var(--slate-500)' }}>
+                  <span>Published under Authority: RAKESH KACKER, Spl. Secy. [F. No. WM-9(6)/2010-Pt.]</span>
+                  <span>Enforcing Chapter I through Chapter VII &amp; Schedules I to VII</span>
+                </div>
               </div>
             </div>
 
-            {/* Right: National Compliance Ledger & Admissibility Status */}
-            <div style={{
-              border: '1px solid var(--slate-300)',
-              backgroundColor: '#FFFFFF',
-              borderTop: '3px solid var(--govt-navy)',
-              borderRadius: '2px',
-              overflow: 'hidden',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-            }}>
+            {/* Overview Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '2rem', alignItems: 'start' }}>
               
-              <div style={{
-                backgroundColor: '#F8F9FA',
-                padding: '0.75rem 1.25rem',
-                borderBottom: '1px solid var(--slate-200)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.5rem'
-              }}>
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--govt-dark)' }}>
-                    Statutory Compliance Registry
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
-                    Active Nationwide Enforcement Coverage
-                  </div>
-                </div>
+              <div>
                 <div style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
-                  backgroundColor: '#ECFDF5',
-                  color: '#065F46',
-                  border: '1px solid #A7F3D0',
-                  padding: '0.2rem 0.55rem',
+                  gap: '0.4rem',
+                  backgroundColor: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  color: 'var(--govt-navy)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '0.25rem 0.65rem',
                   borderRadius: '2px',
-                  fontSize: '0.68rem',
-                  fontWeight: 700
+                  marginBottom: '1rem'
                 }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                  ACTIVE PAN-INDIA
+                  <IconScale size={13} />
+                  <span>Statutory Digital Enforcement Architecture</span>
+                </div>
+
+                <h1 style={{
+                  fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)',
+                  fontWeight: 800,
+                  color: 'var(--govt-navy)',
+                  lineHeight: 1.25,
+                  marginBottom: '0.4rem',
+                  letterSpacing: '-0.01em'
+                }}>
+                  National Legal Metrology Digital Verification System (NIRIKSHAK)
+                </h1>
+
+                <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '1.25rem' }}>
+                  विधिक मापविज्ञान (पैकेज्ड कमोडिटीज) नियमावली, 2011 का स्वचालित प्रवर्तन
+                </div>
+
+                <p style={{ fontSize: '0.88rem', color: 'var(--slate-700)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                  Engineered to eliminate enforcement bottlenecks under the Legal Metrology (Packaged Commodities) Rules, 2011. NIRIKSHAK unifies marketplace computer vision, multi-panel neural packaging OCR, automated SI metric unit verification, and the Seventh Schedule statutory inspection data sheets into an integrated government portal connecting Controllers, Assistant Controllers, and Field Inspectors.
+                </p>
+
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <a
+                    href="#portals"
+                    style={{
+                      backgroundColor: 'var(--govt-navy)',
+                      color: '#FFFFFF',
+                      padding: '0.7rem 1.35rem',
+                      borderRadius: '2px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    <IconBuilding size={15} />
+                    <span>Enter Officer Portals</span>
+                    <IconArrowRight size={14} />
+                  </a>
+
+                  <a
+                    href="#statutory-rulebook"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      color: 'var(--slate-800)',
+                      border: '1px solid var(--slate-300)',
+                      padding: '0.7rem 1.35rem',
+                      borderRadius: '2px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                  >
+                    <IconBookOpen size={15} />
+                    <span>Explore PCR 2011 Rules &amp; Schedules</span>
+                  </a>
                 </div>
               </div>
 
-              <div style={{ padding: '1.25rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                  
-                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
-                      Statutory Rules
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--govt-navy)', margin: '0.2rem 0' }}>
-                      42+
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
-                      Audited under PCR, 2011
-                    </div>
-                  </div>
-
-                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
-                      Metric Standard
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--india-green)', margin: '0.2rem 0' }}>
-                      100%
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
-                      Legal Metrology units (kg, g, l)
-                    </div>
-                  </div>
-
-                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
-                      Digital Marketplaces
-                    </div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#B45309', margin: '0.2rem 0' }}>
-                      Rule 6(10)
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
-                      E-Commerce surveillance active
-                    </div>
-                  </div>
-
-                  <div style={{ backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', padding: '0.85rem', borderRadius: '2px' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-600)', letterSpacing: '0.03em' }}>
-                      Field Inspection
-                    </div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--govt-navy)', margin: '0.2rem 0' }}>
-                      Android APK
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--slate-500)' }}>
-                      On-site offline verification
-                    </div>
-                  </div>
-
+              {/* Gazette Key Provisions Panel */}
+              <div style={{
+                border: '1px solid var(--slate-300)',
+                backgroundColor: '#FFFFFF',
+                borderTop: '3px solid var(--govt-navy)',
+                borderRadius: '2px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                overflow: 'hidden'
+              }}>
+                <div style={{ backgroundColor: '#F8FAFC', padding: '0.75rem 1.25rem', borderBottom: '1px solid var(--slate-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--govt-dark)' }}>
+                    PCR 2011 Core Chapters &amp; Schedules
+                  </span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--india-green)', backgroundColor: '#ECFDF5', padding: '0.15rem 0.5rem', border: '1px solid #A7F3D0', borderRadius: '2px' }}>
+                    GAZETTE STANDARD
+                  </span>
                 </div>
 
-                {/* Evidentiary Notice Banner */}
-                <div style={{
-                  backgroundColor: '#EFF6FF',
-                  border: '1px solid #BFDBFE',
-                  borderLeft: '4px solid var(--govt-navy)',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '0 2px 2px 0',
-                  fontSize: '0.78rem',
-                  color: '#1E3A8A',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '0.65rem'
-                }}>
-                  <div style={{ color: 'var(--govt-navy)', marginTop: '0.1rem', flexShrink: 0 }}>
-                    <IconShieldCheck size={18} />
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.82rem' }}>
+                  <div style={{ padding: '0.65rem 0.85rem', backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>Chapter II: Retail Package Provisions (Rules 3 to 23)</div>
+                    <div style={{ color: 'var(--slate-600)', fontSize: '0.76rem', marginTop: '0.2rem' }}>
+                      Mandatory declarations (Rule 6), Numeral/Letter heights (Rule 7, Tables I &amp; II), Display area &amp; contrast (Rules 8 &amp; 9), Complete address with PIN code (Rule 10), Standard SI units (Rule 13), Pricing &amp; MRP (Rule 18), Deceptive packaging (Rule 23).
+                    </div>
                   </div>
-                  <div>
-                    <strong style={{ display: 'block', marginBottom: '0.15rem' }}>Statutory Evidentiary Validity (Sections 15 & 36)</strong>
-                    Timestamped OCR packaging extractions and inspection records carry legal admissibility under the Legal Metrology Act, 2009 and Bharatiya Sakshya Adhiniyam, 2023.
+
+                  <div style={{ padding: '0.65rem 0.85rem', backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>Chapter VI: Registration of Manufacturers &amp; Importers (Rules 27 to 30)</div>
+                    <div style={{ color: 'var(--slate-600)', fontSize: '0.76rem', marginTop: '0.2rem' }}>
+                      Application to Director/Controller with fee of ₹500, state-wise register maintenance, public register inspection, shorter address permission.
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '0.65rem 0.85rem', backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
+                    <div style={{ fontWeight: 700, color: '#047857' }}>Schedules I, II, V, VI &amp; VII (Forms A &amp; B)</div>
+                    <div style={{ color: 'var(--slate-600)', fontSize: '0.76rem', marginTop: '0.2rem' }}>
+                      Maximum Permissible Error (First Schedule), Standard pack sizes (Second Schedule), Lot sampling &lt;4000: 32 / &gt;4000: 80 (Fifth Schedule), Testing &amp; Tare method (Sixth Schedule), Form A/B Data Sheets (Seventh Schedule).
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '0.65rem 0.85rem', backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '2px', color: '#92400E', fontSize: '0.76rem' }}>
+                    <strong>Statutory Offences &amp; Penalties:</strong> Rule 32 fine up to ₹4,000 for Rules 27-31; ₹2,000 for other rules; Section 36 penalty for non-standard packages; Section 49 compounding proceedings.
                   </div>
                 </div>
-
               </div>
 
             </div>
@@ -988,13 +926,13 @@ export default function App() {
                 marginBottom: '0.65rem'
               }}>
                 <IconBuilding size={13} />
-                <span>Statutory Access Consoles</span>
+                <span>Statutory Departmental Consoles</span>
               </div>
               <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.5rem' }}>
-                Designated Departmental Portals
+                Designated Legal Metrology Departmental Portals
               </h2>
               <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                Select your designated statutory jurisdiction to enter your departmental authentication console. System access is governed under Section 15 of the Legal Metrology Act, 2009 and the Information Technology Act, 2000.
+                Statutory officers must access their designated consoles. Operations and inspection dossiers are legally binding under Section 15 of the Legal Metrology Act, 2009.
               </p>
             </div>
 
@@ -1037,7 +975,7 @@ export default function App() {
                       fontWeight: 800,
                       letterSpacing: '0.04em'
                     }}>
-                      CENTRAL DIRECTIVE
+                      DIRECTORATE / CONTROLLER
                     </span>
                   </div>
 
@@ -1045,29 +983,29 @@ export default function App() {
                     Controller of Legal Metrology (CLM)
                   </h3>
                   <div style={{ fontSize: '0.78rem', color: 'var(--govt-maroon)', fontWeight: 700, marginBottom: '0.85rem' }}>
-                    National Directorate Administration
+                    Rules 27–30 &amp; 33 Statutory Administration
                   </div>
 
                   <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                    Apex regulatory console. Issue sovereign policy directives, provision and manage departmental inspector credentials, monitor national compliance registers across states, and supervise cryptographic audit logs.
+                    Central regulatory console. Oversee statutory registers under Rule 29, maintain state-wise lists of registered manufacturers, packers, and importers under Rule 30, manage officer authorizations, and exercise relaxation powers under Rule 33.
                   </p>
 
                   <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
                     <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
-                      Key Administrative Functions:
+                      Statutory PCR Powers:
                     </div>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Nationwide compliance overview and reporting ledger</span>
+                        <span>Rule 29: Maintenance of Central Register of Manufacturers &amp; Packers</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Inspector account provisioning & access control</span>
+                        <span>Rule 30: State-wise list circulation to jurisdictional Controllers</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Statutory audit trails & tamper-evident logs</span>
+                        <span>Rule 33: Compounding &amp; power to relax packaging provisions</span>
                       </li>
                     </ul>
                   </div>
@@ -1087,7 +1025,7 @@ export default function App() {
                     gap: '0.4rem'
                   }}>
                     <IconLock size={13} />
-                    <span><strong>Restricted:</strong> Authorized Central & State Directorate Officers Only.</span>
+                    <span><strong>Restricted:</strong> Central &amp; State Legal Metrology Directorate Officers.</span>
                   </div>
 
                   <a
@@ -1149,7 +1087,7 @@ export default function App() {
                       fontWeight: 800,
                       letterSpacing: '0.04em'
                     }}>
-                      APPELLATE & REVIEW
+                      ADJUDICATION &amp; REVIEW
                     </span>
                   </div>
 
@@ -1157,29 +1095,29 @@ export default function App() {
                     Assistant Controller (AC)
                   </h3>
                   <div style={{ fontSize: '0.78rem', color: 'var(--govt-navy)', fontWeight: 700, marginBottom: '0.85rem' }}>
-                    Senior Enforcement & Adjudication Unit
+                    Rules 19, 20, 21, 23 &amp; Sec 49 Adjudication
                   </div>
 
                   <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                    Senior supervisory adjudication portal. Review live field and e-commerce statutory violation queues, approve digital Show-Cause notices, initiate compounding proceedings under Section 49, or dismiss invalid claims.
+                    Senior supervisory adjudication unit. Evaluate Seventh Schedule Form A &amp; Form B inspection findings, enforce seizure under Section 15 for non-compliant or deceptive packaging under Rule 23, issue Show-Cause notices, and execute compounding under Section 49.
                   </p>
 
                   <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
                     <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
-                      Key Adjudication Functions:
+                      Statutory PCR Powers:
                     </div>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Inspection docket evaluation & visual evidence review</span>
+                        <span>Rule 19 &amp; 20: Action on manufacturer/packer inspection reports</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Issuance of digital Show-Cause statutory notices</span>
+                        <span>Rule 23: Deceptive packaging orders (repacking vs seizure)</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Compounding sanction or prosecution forwarding</span>
+                        <span>Section 49: Compounding of offences &amp; sanctioning prosecution</span>
                       </li>
                     </ul>
                   </div>
@@ -1199,7 +1137,7 @@ export default function App() {
                     gap: '0.4rem'
                   }}>
                     <IconLock size={13} />
-                    <span><strong>Restricted:</strong> Appointed Assistant Controllers & Review Officers Only.</span>
+                    <span><strong>Restricted:</strong> Appointed Assistant Controllers &amp; Senior Inspectors.</span>
                   </div>
 
                   <a
@@ -1269,29 +1207,29 @@ export default function App() {
                     Digital Metrology Inspector (DMI)
                   </h3>
                   <div style={{ fontSize: '0.78rem', color: '#047857', fontWeight: 700, marginBottom: '0.85rem' }}>
-                    E-Commerce Surveillance & Packaging OCR
+                    Rules 6, 7, 8, 9, 10 &amp; 18 E-Commerce OCR Audit
                   </div>
 
                   <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                    Operational inspectorate console. Crawl live marketplace listings (Amazon, Flipkart, Quick-Commerce platforms), execute high-precision neural OCR on packaging image carousels, extract statutory declarations, and file violation dossiers.
+                    Automated market surveillance console. Crawl e-commerce marketplace listings, extract packaging image carousels, audit mandatory declarations under Rule 6, verify Table-I &amp; Table-II numeral heights under Rule 7, and check statutory MRP inclusivity.
                   </p>
 
                   <div style={{ borderTop: '1px solid var(--slate-200)', paddingTop: '0.85rem', marginBottom: '1.25rem' }}>
                     <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--slate-500)', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
-                      Key Inspectorate Functions:
+                      Statutory PCR Powers:
                     </div>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem', color: 'var(--slate-700)' }}>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Automated stealth scraping of marketplace listings</span>
+                        <span>Rule 6: Mandatory PDP declarations audit (Manufacturer, Origin, MRP)</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Tesseract OCR & packaging declaration extraction</span>
+                        <span>Rule 7: Table-I &amp; II numeral height and font dimension check</span>
                       </li>
                       <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <IconCheckCircle size={13} className="text-emerald-600" />
-                        <span>Instant docket submission to jurisdictional AC</span>
+                        <span>Rule 9: High-contrast display &amp; Hindi/English language verification</span>
                       </li>
                     </ul>
                   </div>
@@ -1311,7 +1249,7 @@ export default function App() {
                     gap: '0.4rem'
                   }}>
                     <IconLock size={13} />
-                    <span><strong>Restricted:</strong> Authorized Legal Metrology Inspection Officers Only.</span>
+                    <span><strong>Restricted:</strong> Authorized Legal Metrology Inspection Officers.</span>
                   </div>
 
                   <a
@@ -1371,7 +1309,7 @@ export default function App() {
                       Nirikshak Android Field Inspector Suite (Companion APK)
                     </h3>
                     <p style={{ fontSize: '0.78rem', color: 'var(--slate-500)' }}>
-                      Mobile Enforcement Suite for Physical Marketplaces, Manufacturing Units & Warehouses
+                      On-Ground Enforcement under Rules 19 &amp; 21 · Schedules V, VI &amp; VII (Forms A &amp; B)
                     </p>
                   </div>
                 </div>
@@ -1390,7 +1328,7 @@ export default function App() {
                     gap: '0.35rem'
                   }}>
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                    API Online
+                    API Active
                   </span>
                   <a
                     href="/api/apk/health"
@@ -1416,11 +1354,11 @@ export default function App() {
               </div>
 
               <div style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.55 }}>
-                Field inspectors utilize the dedicated Nirikshak Android application with local SQLite offline storage, camera-based barcode verification, GPS geotagged physical inspection reporting, and synchronization with the central Directorate server.
+                Equipped for physical visits to manufacturer premises, packing lines, and retail stores. Executes Fifth Schedule sample size picking (<span style={{ fontFamily: 'var(--font-family-mono)' }}>32 for lot &lt;4000; 80 for lot &gt;4000</span>), tare weight determinations under Sixth Schedule, and digitizes Seventh Schedule Form A (Weight) and Form B (Volume/Length) inspection sheets with cryptographic officer signature.
               </div>
             </div>
 
-            {/* Restricted Official Government Notice (Matching Login.jsx in Portals) */}
+            {/* Restricted Official Government Notice */}
             <div style={{
               backgroundColor: '#FFFBEB',
               border: '1px solid #FCD34D',
@@ -1437,7 +1375,7 @@ export default function App() {
               </div>
               <div style={{ fontSize: '0.8rem', color: '#78350F', lineHeight: 1.55 }}>
                 <strong style={{ display: 'block', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                  Statutory Security Notice & Access Restriction:
+                  Statutory Security Notice &amp; Access Restriction:
                 </strong>
                 This is a secure Government of India computing platform designated exclusively for appointed Legal Metrology Officers. Unauthorized access, probing, tampering with inspection records, or attempting unauthorized data extraction is a cognizable offense punishable under Sections 43, 65, and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
               </div>
@@ -1446,8 +1384,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 3: STATUTORY PCR DECLARATIONS (GIGW TABULAR MATRIX) */}
-        <section id="declarations" style={{
+        {/* SECTION 3: PCR 2011 STATUTORY RULEBOOK & SCHEDULES (DIRECT FROM GAZETTE PDF) */}
+        <section id="statutory-rulebook" style={{
           backgroundColor: '#FFFFFF',
           borderTop: '1px solid var(--slate-300)',
           borderBottom: '1px solid var(--slate-300)',
@@ -1455,7 +1393,7 @@ export default function App() {
         }}>
           <div className="container-govt">
             
-            <div style={{ maxWidth: '840px', marginBottom: '2rem' }}>
+            <div style={{ maxWidth: '840px', marginBottom: '1.5rem' }}>
               <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -1471,78 +1409,476 @@ export default function App() {
                 borderRadius: '2px',
                 marginBottom: '0.5rem'
               }}>
-                <IconFileText size={13} />
-                <span>Statutory Compliance Matrix</span>
+                <IconBookOpen size={13} />
+                <span>Gazette Notification G.S.R. 202(E) Statutory Provisions</span>
               </div>
               <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
-                Mandatory Declarations on Pre-Packaged Commodities
+                The Legal Metrology (Packaged Commodities) Rules, 2011 Rulebook
               </h2>
               <p style={{ fontSize: '0.88rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                Under Rule 6 of the Legal Metrology (Packaged Commodities) Rules, 2011, every package distributed, sold, or offered for sale in physical retail or digital e-commerce must display the following statutory declarations clearly on the Principal Display Panel (PDP).
+                Reference extracted directly from the official Gazette of India publication. Nirikshak automated algorithms strictly audit pre-packaged commodities against these statutory sections, tables, and schedules.
               </p>
             </div>
 
-            <div className="govt-table-wrap">
-              <table className="govt-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: '15%' }}>Statutory Rule</th>
-                    <th style={{ width: '22%' }}>Mandatory Declaration</th>
-                    <th style={{ width: '38%' }}>Regulatory Requirement & Standard Format</th>
-                    <th style={{ width: '25%' }}>Audit Verification Rule</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Rule 6(1)(a)</strong></td>
-                    <td><strong>Manufacturer / Packer / Importer</strong></td>
-                    <td>Complete physical street address, corporate entity name, city, state, and pin code where goods are manufactured, packed, or imported.</td>
-                    <td>Absence of physical address or omission of pin code flagged as Non-Compliant.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(aa)</strong></td>
-                    <td><strong>Country of Origin</strong></td>
-                    <td>Unambiguous country of origin statement (e.g., "Country of Origin: India") without misleading abbreviations.</td>
-                    <td>Mandatory on both physical pre-packs and e-commerce listings under Rule 6(10).</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(b)</strong></td>
-                    <td><strong>Generic / Common Commodity Name</strong></td>
-                    <td>Actual trade or generic name clearly identifying the contained commodity to prevent deceptive naming.</td>
-                    <td>Must match standard nomenclature prescribed in the First Schedule.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(c) & (e)</strong></td>
-                    <td><strong>Net Quantity & Unit Sale Price (USP)</strong></td>
-                    <td>Declared in legal standard metric units (g, kg, ml, l, or number). Packages &gt; 1kg / 1L must display Unit Sale Price (₹ per g / ₹ per ml).</td>
-                    <td>Non-metric units (lbs, oz, fluid oz) strictly prohibited under Section 11 of the Act.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(d)</strong></td>
-                    <td><strong>Month & Year of Manufacture / Packing</strong></td>
-                    <td>Month and Year of manufacture, packing, or import clearly printed on the outer display panel.</td>
-                    <td>Missing or ambiguous manufacturing/packing date constitutes statutory violation.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(da) & Rule 18</strong></td>
-                    <td><strong>Maximum Retail Price (MRP)</strong></td>
-                    <td>Consolidated retail price inclusive of all taxes. Mandatory statutory wording: "MRP ₹ ... (Inclusive of all taxes)".</td>
-                    <td>Arbitrary charging above printed MRP or missing tax inclusivity statement flagged for compounding.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rule 6(1)(n)</strong></td>
-                    <td><strong>Consumer Care / Redressal Details</strong></td>
-                    <td>Officer name or designation, complete physical postal address, telephone/helpline number, and active email address.</td>
-                    <td>Omission of telephone or email is a compoundable violation under Section 49.</td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Interactive Tab Navigation */}
+            <div className="statutory-tabs-nav" style={{ marginBottom: '1.5rem' }}>
+              <button
+                type="button"
+                className={`statutory-tab-btn ${activeTab === 'rules' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rules')}
+              >
+                <IconFileText size={14} />
+                <span>Rule 6: Mandatory Declarations</span>
+              </button>
+              <button
+                type="button"
+                className={`statutory-tab-btn ${activeTab === 'dimensions' ? 'active' : ''}`}
+                onClick={() => setActiveTab('dimensions')}
+              >
+                <IconScale size={14} />
+                <span>Rule 7: Tables I &amp; II (Font &amp; Numeral Height)</span>
+              </button>
+              <button
+                type="button"
+                className={`statutory-tab-btn ${activeTab === 'mpe' ? 'active' : ''}`}
+                onClick={() => setActiveTab('mpe')}
+              >
+                <IconShieldCheck size={14} />
+                <span>First Schedule: Maximum Permissible Error (MPE)</span>
+              </button>
+              <button
+                type="button"
+                className={`statutory-tab-btn ${activeTab === 'standard' ? 'active' : ''}`}
+                onClick={() => setActiveTab('standard')}
+              >
+                <IconCheckCircle size={14} />
+                <span>Second Schedule: Standard Pack Quantities</span>
+              </button>
+              <button
+                type="button"
+                className={`statutory-tab-btn ${activeTab === 'inspection' ? 'active' : ''}`}
+                onClick={() => setActiveTab('inspection')}
+              >
+                <IconServer size={14} />
+                <span>Schedules V, VI &amp; VII: Forms A &amp; B</span>
+              </button>
             </div>
 
-            <div style={{ marginTop: '1rem', fontSize: '0.74rem', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <IconCheckCircle size={13} className="text-emerald-600" />
-              <span>Complies with the First and Second Schedules of the Legal Metrology (Packaged Commodities) Rules, 2011.</span>
-            </div>
+            {/* TAB CONTENT 1: RULE 6 MANDATORY DECLARATIONS */}
+            {activeTab === 'rules' && (
+              <div className="fade-in">
+                <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.85rem 1.25rem', border: '1px solid var(--slate-300)', borderBottom: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--slate-900)' }}>
+                    Rule 6: Declarations to be Made on Every Package (Pages 6–10 of Gazette)
+                  </div>
+                  <span className="gazette-tag">Rule 6(1)(a) through Rule 6(3)</span>
+                </div>
+
+                <div className="govt-table-wrap">
+                  <table className="govt-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '18%' }}>Rule Clause</th>
+                        <th style={{ width: '22%' }}>Statutory Declaration</th>
+                        <th style={{ width: '38%' }}>Gazette Text Specification</th>
+                        <th style={{ width: '22%' }}>Statutory Legal Mandate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Rule 6(1)(a) &amp; Rule 10</strong></td>
+                        <td><strong>Name &amp; Address of Manufacturer / Packer / Importer</strong></td>
+                        <td>The name and complete address of the manufacturer, or where manufacturer is not packer, of manufacturer and packer; for imported packages, of the importer. Complete address means street, factory/premises number, city, State, and Postal Index Number (PIN) Code.</td>
+                        <td>Explanations I &amp; II: Marketer/brand owner held liable if manufacturer name omitted.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(1)(b)</strong></td>
+                        <td><strong>Generic / Common Name of Commodity</strong></td>
+                        <td>The common or generic names of the commodity contained in the package. In case of packages with more than one product, the name and number or quantity of each product shall be mentioned.</td>
+                        <td>Prevents misleading or fictitious commodity naming under Rule 11.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(1)(c) &amp; Rule 11</strong></td>
+                        <td><strong>Net Quantity in Standard Units</strong></td>
+                        <td>The net quantity, in terms of standard unit of weight or measure, of the commodity or where the commodity is packed or sold by number, the number contained in the package excluding packaging or wrappers.</td>
+                        <td>Standard SI units only (g, kg, ml, l, cm, m, N, U) under Rule 13.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(1)(d)</strong></td>
+                        <td><strong>Month &amp; Year of Manufacture / Packing</strong></td>
+                        <td>The month and year in which the commodity is manufactured or pre-packed or imported. May be indicated using rubber stamp without overwriting. Expressed in words, numerals, or both.</td>
+                        <td>Exempt: Domestic LPG cylinders (Rule 6(g)(A)(ii)) and bidi/incense sticks.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(1)(e) &amp; Rule 4(m)</strong></td>
+                        <td><strong>Retail Sale Price (MRP)</strong></td>
+                        <td>Strictly formatted as: <code style={{ backgroundColor: '#F1F5F9', padding: '0.1rem 0.3rem', borderRadius: '2px', fontWeight: 700 }}>Maximum or Max. retail price Rs.... / ₹ ... inclusive of all taxes</code> or <code style={{ backgroundColor: '#F1F5F9', padding: '0.1rem 0.3rem', borderRadius: '2px', fontWeight: 700 }}>MRP Rs.... / ₹ ... incl., of all taxes</code>.</td>
+                        <td>Rounding off: Fraction &lt;50 paise to preceding rupee; 50 to 95 paise to 50 paise.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(1)(f) &amp; Rules 14–17</strong></td>
+                        <td><strong>Dimensions of Commodity</strong></td>
+                        <td>Where sizes/dimensions are relevant (e.g. bed-sheets, sarees, napkins, aluminum foils, facial tissues, container bags/cups), the dimensions or number of usable sheets must be stated.</td>
+                        <td>Dimensions of each piece must also be declared if package contains varied sizes.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(2)</strong></td>
+                        <td><strong>Consumer Redressal Details</strong></td>
+                        <td>Every package shall bear the name, address, telephone number, E-mail address, if available, of the person who can be or the office which can be, contacted, in case of consumer complaints.</td>
+                        <td>Mandatory on all retail packaging pan-India under Rule 6(2).</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Rule 6(3)</strong></td>
+                        <td><strong>Prohibition on Stickers</strong></td>
+                        <td>It shall not be permissible to affix individual stickers on the package for altering or making declaration required under these rules.</td>
+                        <td>Exception: Permitted only for reducing MRP (inclusive of all taxes).</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 2: RULE 7 NUMERAL & LETTER HEIGHTS (TABLES I & II) */}
+            {activeTab === 'dimensions' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.85rem 1.25rem', border: '1px solid var(--slate-300)', borderBottom: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--slate-900)' }}>
+                      Rule 7(2)(i) — TABLE-I: Minimum Height of Numeral (Page 11 of Gazette)
+                    </div>
+                    <span className="gazette-tag">Net Quantity by Weight / Volume</span>
+                  </div>
+
+                  <div className="govt-table-wrap">
+                    <table className="govt-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: '15%' }}>Serial Number</th>
+                          <th style={{ width: '40%' }}>Net Quantity in Weight / Volume</th>
+                          <th style={{ width: '25%' }}>Minimum Height: Normal Case</th>
+                          <th style={{ width: '20%' }}>When Blown, Formed, Molded, Embossed or Perforated</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td><strong>Upto 200g / ml</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>1 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>2 mm</span></td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td><strong>Above 200g / ml and upto 500g / ml</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>2 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>4 mm</span></td>
+                        </tr>
+                        <tr>
+                          <td>3</td>
+                          <td><strong>Above 500g / ml</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>4 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>6 mm</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.85rem 1.25rem', border: '1px solid var(--slate-300)', borderBottom: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--slate-900)' }}>
+                      Rule 7(2)(ii) — TABLE-II: Minimum Height of Numeral (Page 12 of Gazette)
+                    </div>
+                    <span className="gazette-tag">Length, Area, Number or Area of Principal Display Panel</span>
+                  </div>
+
+                  <div className="govt-table-wrap">
+                    <table className="govt-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: '15%' }}>Serial Number</th>
+                          <th style={{ width: '40%' }}>Area of Principal Display Panel (PDP)</th>
+                          <th style={{ width: '25%' }}>Minimum Height: Normal Case</th>
+                          <th style={{ width: '20%' }}>When Blown, Formed, Molded, Embossed or Perforated</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td><strong>Upto 100 cm²</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>1 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>2 mm</span></td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td><strong>Above 100 cm² and upto 500 cm²</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>2 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>4 mm</span></td>
+                        </tr>
+                        <tr>
+                          <td>3</td>
+                          <td><strong>Above 500 cm² and upto 2500 cm²</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>4 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>6 mm</span></td>
+                        </tr>
+                        <tr>
+                          <td>4</td>
+                          <td><strong>Above 2500 cm²</strong></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-navy)' }}>6 mm</span></td>
+                          <td><span style={{ fontWeight: 700, color: 'var(--govt-maroon)' }}>6 mm</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div style={{ padding: '0.85rem 1rem', backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', borderTop: 'none', fontSize: '0.76rem', color: 'var(--slate-600)' }}>
+                    <strong>Rule 7(3) Width Ratio:</strong> The height of letters shall not be less than 1 mm (2 mm if molded). Width of letters or numerals shall not be less than one-third of height, except in the case of numeral '1' and letters 'i', 'I', and 'l'.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 3: FIRST SCHEDULE MAXIMUM PERMISSIBLE ERROR (MPE) */}
+            {activeTab === 'mpe' && (
+              <div className="fade-in">
+                <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.85rem 1.25rem', border: '1px solid var(--slate-300)', borderBottom: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--slate-900)' }}>
+                    THE FIRST SCHEDULE [See Rule 2(e)] — Maximum Permissible Errors on Net Quantity (Page 36 of Gazette)
+                  </div>
+                  <span className="gazette-tag">TABLE-I: Weight or Volume</span>
+                </div>
+
+                <div className="govt-table-wrap">
+                  <table className="govt-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '15%' }}>Sl. No.</th>
+                        <th style={{ width: '35%' }}>Declared Quantity (g or ml)</th>
+                        <th style={{ width: '25%' }}>As Percentage of Declared Quantity</th>
+                        <th style={{ width: '25%' }}>In Fixed Units (g or ml)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>(i)</td>
+                        <td><strong>Up to 50</strong></td>
+                        <td><strong>9.0%</strong></td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>(ii)</td>
+                        <td><strong>50 to 100</strong></td>
+                        <td>—</td>
+                        <td><strong>4.5 g / ml</strong></td>
+                      </tr>
+                      <tr>
+                        <td>(iii)</td>
+                        <td><strong>100 to 200</strong></td>
+                        <td><strong>4.5%</strong></td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>(iv)</td>
+                        <td><strong>200 to 300</strong></td>
+                        <td>—</td>
+                        <td><strong>9.0 g / ml</strong></td>
+                      </tr>
+                      <tr>
+                        <td>(v)</td>
+                        <td><strong>300 to 500</strong></td>
+                        <td><strong>3.0%</strong></td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>(vi)</td>
+                        <td><strong>500 to 1000</strong></td>
+                        <td>—</td>
+                        <td><strong>15.0 g / ml</strong></td>
+                      </tr>
+                      <tr>
+                        <td>(vii)</td>
+                        <td><strong>1000 to 10000</strong></td>
+                        <td><strong>1.5%</strong></td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>(viii)</td>
+                        <td><strong>10000 to 15000</strong></td>
+                        <td>—</td>
+                        <td><strong>150.0 g / ml</strong></td>
+                      </tr>
+                      <tr>
+                        <td>(ix)</td>
+                        <td><strong>More than 15000</strong></td>
+                        <td><strong>1.0%</strong></td>
+                        <td>—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style={{ padding: '0.85rem 1rem', backgroundColor: 'var(--slate-50)', border: '1px solid var(--slate-200)', borderTop: 'none', fontSize: '0.76rem', color: 'var(--slate-600)' }}>
+                  <strong>First Schedule Table-II (Other Quantities):</strong> Length declaration: 2% of declared quantity up to 10m and thereafter 1%; Area declaration: 4% of declared quantity up to 10 sq. metre and thereafter 1%; Number: 2% of declared quantity.
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 4: SECOND SCHEDULE STANDARD PACK QUANTITIES */}
+            {activeTab === 'standard' && (
+              <div className="fade-in">
+                <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.85rem 1.25rem', border: '1px solid var(--slate-300)', borderBottom: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--slate-900)' }}>
+                    THE SECOND SCHEDULE [See Rule 5] — Commodities to be Packed in Specified Quantities (Pages 37–39)
+                  </div>
+                  <span className="gazette-tag">Rule 5 Standard Pack Sizes</span>
+                </div>
+
+                <div className="govt-table-wrap">
+                  <table className="govt-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '12%' }}>Sl. No.</th>
+                        <th style={{ width: '30%' }}>Commodity</th>
+                        <th style={{ width: '58%' }}>Prescribed Quantities in Which to be Packed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td><strong>Baby Food</strong></td>
+                        <td>100g, 200g, 300g, 400g, 500g, 600g, 700g, 800g, 900g, 1 kg, 2 kg, 5 kg, 10 kg.</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td><strong>Biscuits</strong></td>
+                        <td>25g, 50g, 75g, 100g, 150g, 200g, 250g, 300g, and thereafter in multiples of 100g up to 1 kg.</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td><strong>Tea &amp; Coffee</strong></td>
+                        <td>Tea: 25g, 50g, 100g, 125g, 250g, 500g, 1kg and multiples of 1kg. Coffee: 25g, 50g, 100g, 200g, 250g, 500g, 1kg.</td>
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td><strong>Edible Oils, Vanaspati, Ghee, Butter Oil</strong></td>
+                        <td>50g, 100g, 200g, 500g, 1 kg, 2 kg, 3 kg, 5 kg and thereafter in multiples of 5 kg. If declared by volume, equivalent mass must be declared.</td>
+                      </tr>
+                      <tr>
+                        <td>5</td>
+                        <td><strong>Rice, Flour, Atta, Rawa &amp; Suji</strong></td>
+                        <td>100g, 200g, 500g, 1kg, 2kg, 5kg and thereafter in multiples of 5 kg.</td>
+                      </tr>
+                      <tr>
+                        <td>6</td>
+                        <td><strong>Salt</strong></td>
+                        <td>Below 50g in multiples of 10g; 50g, 100g, 200g, 500g, 750g, 1 kg, 2 kg, 5 kg and thereafter in multiples of 5 kg.</td>
+                      </tr>
+                      <tr>
+                        <td>7</td>
+                        <td><strong>Soaps (Laundry &amp; Toilet)</strong></td>
+                        <td>Laundry Soap: 50g, 75g, 100g, multiples of 50g. Toilet Soap: 25g, 50g, 75g, 100g, 125g, 150g, multiples of 50g.</td>
+                      </tr>
+                      <tr>
+                        <td>8</td>
+                        <td><strong>Cement in Bags</strong></td>
+                        <td>1 kg, 2 kg, 5 kg, 10 kg, 20 kg, 25 kg, 40 kg (white cement only), and 50 kg.</td>
+                      </tr>
+                      <tr>
+                        <td>9</td>
+                        <td><strong>Aerated Soft Drinks &amp; Mineral Water</strong></td>
+                        <td>Soft drinks: 65ml, 100ml, 125ml, 150ml, 200ml, 250ml, 300ml, 330ml (cans), 500ml, 750ml, 1L, 1.5L, 2L, 3L, 4L, 5L.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style={{ padding: '0.85rem 1rem', backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', borderTop: 'none', fontSize: '0.76rem', color: '#92400E' }}>
+                  <strong>Rule 5 Proviso on Non-Standard Pack Sizes:</strong> If a commodity specified in Second Schedule is packed in a non-standard size, a prominent declaration must be made on the label: <code style={{ fontWeight: 700 }}>'Not a standard pack size under the Legal Metrology (Packaged Commodities) Rules, 2011'</code>.
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 5: SCHEDULES V, VI & VII (INSPECTION PROTOCOLS & FORMS A & B) */}
+            {activeTab === 'inspection' && (
+              <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1rem' }}>
+                  
+                  <div className="schedule-card">
+                    <div className="schedule-card-header">
+                      <strong style={{ fontSize: '0.82rem', color: 'var(--slate-900)' }}>THE FIFTH SCHEDULE [See Rule 19]</strong>
+                      <span className="gazette-tag">Sample Size Protocol</span>
+                    </div>
+                    <div style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--slate-700)', lineHeight: 1.6 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid var(--slate-200)' }}>
+                        <span>Lot Size Less than 4,000 packages:</span>
+                        <strong style={{ color: 'var(--govt-navy)' }}>Sample Size = 32</strong>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid var(--slate-200)' }}>
+                        <span>Lot Size More than 4,000 packages:</span>
+                        <strong style={{ color: 'var(--govt-navy)' }}>Sample Size = 80</strong>
+                      </div>
+                      <p style={{ marginTop: '0.75rem', fontSize: '0.74rem', color: 'var(--slate-500)', margin: '0.75rem 0 0 0' }}>
+                        Samples must be selected at random from top, bottom, center, right, left, front and rear of stocks in warehouse or packing lines.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="schedule-card">
+                    <div className="schedule-card-header">
+                      <strong style={{ fontSize: '0.82rem', color: 'var(--slate-900)' }}>THE SIXTH SCHEDULE [See Rule 19]</strong>
+                      <span className="gazette-tag">Net Quantity Determination</span>
+                    </div>
+                    <div style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--slate-700)', lineHeight: 1.6 }}>
+                      <p style={{ margin: 0 }}>
+                        Specifies standard test equipment, verified weights, tare weight determination across sample packages, statistical average net quantity, and destructive/non-destructive testing methods at factory depots.
+                      </p>
+                      <div style={{ marginTop: '0.75rem', padding: '0.5rem', backgroundColor: 'var(--slate-50)', borderRadius: '2px', border: '1px solid var(--slate-200)', fontSize: '0.72rem', color: 'var(--slate-600)' }}>
+                        Tare weight must not exceed 0.3 of maximum permissible error; otherwise detailed 5-sample tare averaging applies.
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Form A & Form B Overview */}
+                <div className="schedule-card">
+                  <div className="schedule-card-header">
+                    <strong style={{ fontSize: '0.82rem', color: 'var(--slate-900)' }}>THE SEVENTH SCHEDULE — Statutory Inspection Data Sheets (Pages 46 &amp; 47)</strong>
+                    <span className="gazette-tag">Form A (Weight) &amp; Form B (Volume/Length)</span>
+                  </div>
+                  <div style={{ padding: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.25rem', fontSize: '0.8rem' }}>
+                    
+                    <div style={{ border: '1px solid var(--slate-200)', padding: '1rem', borderRadius: '2px', backgroundColor: 'var(--slate-50)' }}>
+                      <div style={{ fontWeight: 800, color: 'var(--govt-navy)', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                        FORM A: Weight Checking Data Sheet
+                      </div>
+                      <ul style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.3rem', color: 'var(--slate-600)' }}>
+                        <li><strong>Section A:</strong> Particulars of package, Manufacturer/Packer name, address, price, month, year</li>
+                        <li><strong>Section B:</strong> Commodity classification, lot size, sample size, MPE in percentage</li>
+                        <li><strong>Section C:</strong> 1 to 200 sample serial ledger (Gross Wt, Tare Wt, Net Wt, Error)</li>
+                        <li><strong>Section D:</strong> Results: Declared Wt vs Average Wt</li>
+                        <li><strong>Section E &amp; F:</strong> General compliance comments, Officer &amp; Witness signatures</li>
+                      </ul>
+                    </div>
+
+                    <div style={{ border: '1px solid var(--slate-200)', padding: '1rem', borderRadius: '2px', backgroundColor: 'var(--slate-50)' }}>
+                      <div style={{ fontWeight: 800, color: 'var(--govt-navy)', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                        FORM B: Volume / Length Checking Data Sheet
+                      </div>
+                      <ul style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.3rem', color: 'var(--slate-600)' }}>
+                        <li><strong>Section A:</strong> Particulars of liquid or linear package, Price, Month, Year</li>
+                        <li><strong>Section B:</strong> Lot size, sample size, MPE under Schedule I Table-I / Table-II</li>
+                        <li><strong>Section C:</strong> Volume at stated reference temperature, gross/tare measurements</li>
+                        <li><strong>Section D:</strong> Declared Volume/Length vs Average calculated quantity</li>
+                        <li><strong>Section E &amp; F:</strong> Verification remarks, Place, Date, Designation, Signatures</li>
+                      </ul>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            )}
 
           </div>
         </section>
@@ -1570,10 +1906,10 @@ export default function App() {
                 <span>Statutory Verification Lifecycle</span>
               </div>
               <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.5rem' }}>
-                Automated 4-Stage Verification Pipeline
+                PCR 2011 Automated Verification Pipeline
               </h2>
               <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                Every physical product scan and digital listing crawl executes through an automated, cryptographically logged 4-stage pipeline.
+                Every digital marketplace listing crawl and on-ground field inspection operates through an automated 4-stage pipeline directly enforcing G.S.R. 202(E) mandates.
               </p>
             </div>
 
@@ -1603,10 +1939,10 @@ export default function App() {
                   01
                 </div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
-                  Surveillance & Ingestion
+                  Surveillance &amp; Ingestion
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                  Digital marketplace stealth crawlers and on-ground field officers ingest high-resolution packaging photo carousels, barcode numbers, and merchant metadata into the processing queue.
+                  Stealth e-commerce scrapers and on-ground field officers ingest high-resolution packaging photo carousels, barcode numbers, and merchant metadata under Section 15 of the Act.
                 </p>
               </div>
 
@@ -1634,10 +1970,10 @@ export default function App() {
                   02
                 </div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
-                  Surface Detection & Neural OCR
+                  Surface Detection &amp; Neural OCR
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                  ComplianceEngine microservice performs packaging surface distortion correction, multilingual text segmentation, and high-accuracy Tesseract OCR extraction across all packaging panels.
+                  ComplianceEngine vision microservice executes packaging surface distortion correction, multilingual text segmentation, and high-accuracy Tesseract OCR across all packaging panels.
                 </p>
               </div>
 
@@ -1665,10 +2001,10 @@ export default function App() {
                   03
                 </div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
-                  Statutory Rule Verification
+                  PCR 2011 Rule Verification
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                  Automated rule evaluation against PCR 2011 declarations (MRP inclusivity, metric unit adherence, country of origin presence, and unit sale price math), generating a structured compliance audit record.
+                  Algorithms evaluate Rule 6 declarations, check Rule 7 Table-I &amp; Table-II numeral height ratios, verify Rule 13 standard SI units, and calculate First Schedule Maximum Permissible Error (MPE).
                 </p>
               </div>
 
@@ -1696,10 +2032,10 @@ export default function App() {
                   04
                 </div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '0.4rem' }}>
-                  AC Adjudication & Notice Issuance
+                  AC Adjudication &amp; Notice Issuance
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>
-                  Jurisdictional Assistant Controllers review flagged non-compliance dossiers, approve digital Show-Cause notices, schedule compounding proceedings under Section 49, or forward for legal prosecution.
+                  Assistant Controllers review flagged violation dossiers, issue digital Show-Cause notices under Rule 20, schedule Section 49 compounding proceedings, or sanction prosecution under Section 36.
                 </p>
               </div>
 
@@ -1708,8 +2044,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 5: LEGAL FRAMEWORK & TECHNICAL SPECIFICATIONS */}
-        <section id="act" style={{
+        {/* SECTION 5: LEGAL PENALTIES & SYSTEM SPECIFICATIONS */}
+        <section id="infrastructure" style={{
           backgroundColor: '#FFFFFF',
           borderTop: '1px solid var(--slate-300)',
           padding: '3.5rem 1.5rem'
@@ -1718,54 +2054,54 @@ export default function App() {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '2.5rem' }}>
               
-              {/* Statutory Legal Admissibility */}
+              {/* Statutory Legal Admissibility & Penalties */}
               <div style={{ border: '1px solid var(--slate-300)', borderTop: '3px solid var(--govt-maroon)', padding: '1.75rem', borderRadius: '2px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
                   <IconScale size={20} className="text-red-900" />
                   <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--slate-900)' }}>
-                    The Legal Metrology Act, 2009 (Evidentiary Provisions)
+                    Statutory Penalties (Rule 32 &amp; Legal Metrology Act, 2009)
                   </h3>
                 </div>
                 <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1rem' }}>
-                  Nirikshak inspection records, OCR bounding boxes, and timestamped crawler dockets are engineered to satisfy evidentiary requirements under statutory law:
+                  Contraventions of the Legal Metrology (Packaged Commodities) Rules, 2011 attract punitive actions under the Act:
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem', color: 'var(--slate-700)' }}>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 15:</span>
-                    <span>Power of inspection, search, seizure, and forfeiture of non-conforming pre-packaged commodities.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '100px' }}>Rule 32(1):</span>
+                    <span>Contravention of registration provisions (Rules 27 to 31) punishable with a fine of ₹4,000.</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 18:</span>
-                    <span>Prohibition on manufacture, packing, sale, distribution, or delivery of non-standard packaged goods.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '100px' }}>Rule 32(2):</span>
+                    <span>Contravention of any other provision punishable with a statutory fine of ₹2,000.</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 36:</span>
-                    <span>Penalties for selling non-standard packages, including statutory fines and subsequent offense imprisonment.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '100px' }}>Section 36(1):</span>
+                    <span>Selling, distributing or pre-packing non-standard packages punishable with fine up to ₹25,000 (first offense), up to ₹50,000 (second offense), and up to ₹1,00,000 or imprisonment up to 1 year for subsequent offenses.</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '85px' }}>Section 49:</span>
-                    <span>Statutory compounding of offenses before court filing upon payment of prescribed compounding sum.</span>
+                    <span style={{ fontWeight: 700, color: 'var(--govt-maroon)', minWidth: '100px' }}>Section 49:</span>
+                    <span>Compounding of offenses before trial by designated Legal Metrology Officers upon payment of statutory compounding sum.</span>
                   </li>
                 </ul>
               </div>
 
               {/* Technical Specifications & Microservice Pipeline */}
-              <div id="infrastructure" style={{ border: '1px solid var(--slate-300)', borderTop: '3px solid var(--govt-navy)', padding: '1.75rem', borderRadius: '2px' }}>
+              <div style={{ border: '1px solid var(--slate-300)', borderTop: '3px solid var(--govt-navy)', padding: '1.75rem', borderRadius: '2px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
                   <IconServer size={20} className="text-blue-900" />
                   <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--slate-900)' }}>
-                    System Architecture & Computing Services
+                    System Architecture &amp; Computing Services
                   </h3>
                 </div>
                 <p style={{ fontSize: '0.84rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '1rem' }}>
-                  Decoupled microservice architecture designed for high availability, 24/7 background keep-alive pings, and rapid horizontal scaling:
+                  Decoupled microservice architecture designed for high availability, 24/7 background keep-alive monitoring, and rapid horizontal scaling:
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.8rem', color: 'var(--slate-700)' }}>
                   <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
-                    <strong>CLM Directorate Admin API:</strong> Express.js multi-tier governance backend handling user provisioning, national metrics, and audit logs.
+                    <strong>CLM Directorate Admin API:</strong> Express.js multi-tier governance backend managing user provisioning, Rule 29 central register, and audit logs.
                   </div>
                   <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
-                    <strong>Senior Inspector Adjudication API:</strong> Dedicated decision engine managing violation queues, notice drafting, and Section 49 compounding registers.
+                    <strong>Senior Inspector Adjudication API:</strong> Decision engine managing violation queues, digital notice drafting, and Section 49 compounding registers.
                   </div>
                   <div style={{ backgroundColor: 'var(--slate-50)', padding: '0.65rem 0.85rem', border: '1px solid var(--slate-200)', borderRadius: '2px' }}>
                     <strong>ComplianceEngine Neural Microservice:</strong> High-precision Tesseract OCR, surface distortion mitigation, and rule analysis engine.
@@ -1825,10 +2161,10 @@ export default function App() {
                     Department of Consumer Affairs · उपभोक्ता मामले विभाग
                   </p>
                   <p style={{ color: 'rgba(255, 255, 255, 0.75)', margin: '0.2rem 0 0 0' }}>
-                    Ministry of Consumer Affairs, Food & Public Distribution, Government of India
+                    Ministry of Consumer Affairs, Food &amp; Public Distribution, Government of India
                   </p>
                   <p style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: '0.7rem', margin: '0.2rem 0 0 0' }}>
-                    Administered under the Legal Metrology Act, 2009 & Legal Metrology (Packaged Commodities) Rules, 2011
+                    Administered under The Legal Metrology (Packaged Commodities) Rules, 2011 · Notification G.S.R. 202(E)
                   </p>
                 </div>
               </div>
@@ -1851,7 +2187,7 @@ export default function App() {
                   <span>Digital India Initiative</span>
                 </div>
                 <span style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.65)' }}>
-                  Designed, Developed & Maintained for National Regulatory Enforcement
+                  Designed, Developed &amp; Maintained for National Regulatory Enforcement
                 </span>
                 <span style={{ fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.5)' }}>
                   National Legal Metrology Digital Verification System (NIRIKSHAK)
@@ -1914,7 +2250,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Official Government Policy Dialog Modal (GIGW Compliant, Matching Portals) */}
+      {/* Official Government Policy Dialog Modal */}
       {activePolicy && POLICIES[activePolicy] && (
         <div
           role="dialog"
