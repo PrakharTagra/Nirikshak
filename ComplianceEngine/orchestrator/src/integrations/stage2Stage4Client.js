@@ -78,8 +78,7 @@ Output a single valid JSON object in this exact format:
 
       const candidates = [
         process.env.GROQ_VISION_MODEL,
-        'qwen/qwen3.8-27b',
-        'meta-llama/llama-4-scout-17b-preview'
+        'qwen/qwen3.8-27b'
       ].filter(Boolean);
 
       let res = null;
@@ -89,6 +88,7 @@ Output a single valid JSON object in this exact format:
           res = await client.chat.completions.create({
             model: visionModel,
             temperature: 0,
+            max_tokens: 450,
             messages: [
               {
                 role: 'user',
@@ -267,9 +267,12 @@ async function callStage2And4Batch(imagePaths) {
   } catch (err) {
     logger.warn(
       'stage2Stage4Client',
-      `Python preprocessing service (${config.integration.preprocessorUrl}) unavailable (${err.message}). Activating concurrent fallback OCR pipeline...`
+      `Python preprocessing service (${config.integration.preprocessorUrl}) unavailable (${err.message}). Activating fallback OCR pipeline...`
     );
-    const items = await Promise.all(imagePaths.map((p, idx) => fallbackOcrForImage(p, idx)));
+    const items = [];
+    for (let idx = 0; idx < imagePaths.length; idx++) {
+      items.push(await fallbackOcrForImage(imagePaths[idx], idx));
+    }
     const combined_regions = [];
     const text_blocks = [];
     items.forEach((item, idx) => {
