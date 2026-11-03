@@ -55,7 +55,7 @@ function normalizeSeverity(sev) {
 }
 
 /**
- * Generates the official Government of India 5-page Statutory Inspection HTML
+ * Generates the official NIRIKSHAK Compliance Platform 5-page Statutory Inspection HTML
  * Exactly replicating ComplianceEngine/stage9_reporting/pdf_builder.py structure and styles.
  * Strictly without evidence images for Digital Marketplace Inspection (DMI).
  */
@@ -505,7 +505,7 @@ function generateStatutoryReportHtml(report, reqId) {
   <!-- Screen Action Bar -->
   <div class="no-print" style="background: #0b2545; color: #fff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
     <div>
-      <strong style="font-size: 14px; letter-spacing: 0.05em;">GOVERNMENT OF INDIA • STATUTORY COMPLIANCE DOSSIER</strong>
+      <strong style="font-size: 14px; letter-spacing: 0.05em;">NIRIKSHAK • STATUTORY COMPLIANCE DOSSIER</strong>
       <div style="font-size: 11px; opacity: 0.85;">Ref: ${refNo} | Inspected: ${dateFormatted}</div>
     </div>
     <div style="display: flex; gap: 10px;">
@@ -530,13 +530,13 @@ function generateStatutoryReportHtml(report, reqId) {
       <img src="${EMBLEM_BASE64}" width="58" height="58" style="object-fit: contain; border-radius: 50%;" alt="NIRIKSHAK Logo" />
       <div>
         <h1 style="margin: 0; font-size: 12pt; font-weight: 800; color: #0b2545; letter-spacing: 0.05em; text-transform: uppercase;">
-          Government of India
+          NIRIKSHAK Compliance Platform
         </h1>
         <h2 style="margin: 2px 0 0 0; font-size: 9pt; font-weight: 700; color: #0b2545;">
-          Ministry of Consumer Affairs, Food &amp; Public Distribution
+          Legal Metrology Inspection & Verification System
         </h2>
         <p style="margin: 2px 0 0 0; font-size: 8pt; color: #334155;">
-          Department of Consumer Affairs | Legal Metrology Division
+          Statutory Regulatory Enforcement Console | Legal Metrology Division
         </p>
         <p style="margin: 2px 0 0 0; font-size: 7.5pt; font-weight: 700; color: #4b5563;">
           Central E-Commerce &amp; Digital Marketplace Surveillance Directorate
@@ -619,7 +619,7 @@ function generateStatutoryReportHtml(report, reqId) {
   <!-- ======================================================================= -->
   <div class="page" style="padding-top: 13mm; padding-bottom: 12mm;">
     <div class="header-bar">
-      <span>GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY</span>
+      <span>NIRIKSHAK  |  LEGAL METROLOGY COMPLIANCE PLATFORM</span>
       <span>OFFICIAL RECORD: ${refNo}</span>
     </div>
 
@@ -719,7 +719,7 @@ function generateStatutoryReportHtml(report, reqId) {
   <!-- ======================================================================= -->
   <div class="page" style="padding-top: 13mm; padding-bottom: 12mm;">
     <div class="header-bar">
-      <span>GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY</span>
+      <span>NIRIKSHAK  |  LEGAL METROLOGY COMPLIANCE PLATFORM</span>
       <span>OFFICIAL RECORD: ${refNo}</span>
     </div>
 
@@ -770,7 +770,7 @@ function generateStatutoryReportHtml(report, reqId) {
   <!-- ======================================================================= -->
   <div class="page" style="padding-top: 13mm; padding-bottom: 12mm;">
     <div class="header-bar">
-      <span>GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY</span>
+      <span>NIRIKSHAK  |  LEGAL METROLOGY COMPLIANCE PLATFORM</span>
       <span>OFFICIAL RECORD: ${refNo}</span>
     </div>
 
@@ -838,7 +838,7 @@ function generateStatutoryReportHtml(report, reqId) {
   <!-- ======================================================================= -->
   <div class="page" style="padding-top: 13mm; padding-bottom: 12mm;">
     <div class="header-bar">
-      <span>GOVERNMENT OF INDIA  |  DIRECTORATE OF LEGAL METROLOGY</span>
+      <span>NIRIKSHAK  |  LEGAL METROLOGY COMPLIANCE PLATFORM</span>
       <span>OFFICIAL RECORD: ${refNo}</span>
     </div>
 
@@ -931,7 +931,7 @@ function generateStatutoryReportHtml(report, reqId) {
         <div style="border-top: 0.5px solid #1a1a1a; padding-top: 2px; text-align: center; margin-top: 14px;">
           <strong>Inspector / Verification Officer</strong><br>
           Legal Metrology Enforcement Branch<br>
-          Government of India
+          NIRIKSHAK Compliance Platform
         </div>
       </div>
     </div>
@@ -1030,7 +1030,7 @@ router.get("/:id", async (req, res) => {
       return res.send(htmlContent);
     }
 
-    // Generate statutory PDF using canonical Government of India DMI PDF generator
+    // Generate statutory PDF using canonical NIRIKSHAK Compliance Platform DMI PDF generator
     // Exactly identical to DMI portal PDF generator (0% styling variance)
     try {
       const pdfBuffer = await generatePdfReportBuffer(report, officer);

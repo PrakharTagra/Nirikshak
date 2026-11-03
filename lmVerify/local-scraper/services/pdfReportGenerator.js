@@ -71,7 +71,7 @@ function normalizeSeverity(sev) {
 
 /**
  * Generates the Official Statutory Compliance Assessment Report PDF
- * Matching the exact Government of India Legal Metrology Assessment Memorandum format.
+ * Matching the exact NIRIKSHAK Legal Metrology Assessment Memorandum format.
  *
  * STRICT REQUIREMENT: Digital Marketplace Inspection (DMI) format MUST NOT include
  * photographic evidence images, but preserves identical statutory headers, color theme,
@@ -93,7 +93,7 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   const contentWidth = pageWidth - margin * 2;          // 523.28 pt
 
   // =========================================================================
-  // OFFICIAL GOVERNMENT OF INDIA STATUTORY PALETTE (Exact Match to Statutory Memorandum)
+  // OFFICIAL NIRIKSHAK STATUTORY PALETTE (Exact Match to Statutory Memorandum)
   // =========================================================================
   const C_GOV_NAVY   = [11, 37, 69];    // #0B2545 (Official Deep Ashoka Navy)
   const C_CHARCOAL   = [26, 26, 26];    // #1A1A1A (Formal off-black)
@@ -505,17 +505,17 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.setTextColor(...C_CHARCOAL);
-  doc.text("GOVERNMENT OF INDIA", headerLeft, 42);
+  doc.text("NIRIKSHAK • STATUTORY COMPLIANCE DOSSIER", headerLeft, 42);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.5);
   doc.setTextColor(...C_CHARCOAL);
-  doc.text("MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION", headerLeft, 53);
+  doc.text("LEGAL METROLOGY COMPLIANCE PLATFORM", headerLeft, 53);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C_SLATE);
-  doc.text("DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION", headerLeft, 64);
+  doc.text("INSPECTION & VERIFICATION SYSTEM | ENFORCEMENT AUDIT", headerLeft, 64);
 
   // Memorandum Title & Subtitle (Centered)
   doc.setFont("helvetica", "bold");
@@ -1152,7 +1152,7 @@ export async function buildPdfReportDoc(scanData, officer = {}) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(...C_WHITE);
-    doc.text("GOVERNMENT OF INDIA | DIRECTORATE OF LEGAL METROLOGY", margin, 15);
+    doc.text("NIRIKSHAK | LEGAL METROLOGY COMPLIANCE PLATFORM", margin, 15);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);

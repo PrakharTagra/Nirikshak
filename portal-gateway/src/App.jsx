@@ -150,13 +150,13 @@ function IconClose({ size = 18, className = "" }) {
 const POLICIES = {
   helpline: {
     title: 'National Consumer Helpline (NCH)',
-    badge: 'Department of Consumer Affairs, Government of India',
+    badge: 'Legal Metrology Compliance Assistance',
     content: (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
         <div style={{ background: '#EFF6FF', borderLeft: '4px solid #06038D', padding: '0.85rem 1.25rem', borderRadius: '0 4px 4px 0' }}>
           <p style={{ fontWeight: 700, color: '#06038D', fontSize: '0.95rem', margin: 0 }}>Toll-Free National Helpline: 1915</p>
           <p style={{ margin: '0.25rem 0 0 0', color: '#475569', fontSize: '0.8rem' }}>
-            Operated under the Department of Consumer Affairs, Ministry of Consumer Affairs, Food & Public Distribution.
+            Consumer grievance and statutory redressal coordination portal.
           </p>
         </div>
         <div>
@@ -212,7 +212,7 @@ const POLICIES = {
     content: (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.6 }}>
         <div style={{ background: '#FFFBEB', borderLeft: '4px solid #D97706', padding: '0.85rem 1.25rem', borderRadius: '0 4px 4px 0' }}>
-          <p style={{ fontWeight: 700, color: '#78350F', margin: 0 }}>Restricted Official Government System</p>
+          <p style={{ fontWeight: 700, color: '#78350F', margin: 0 }}>Restricted Compliance Management System</p>
           <p style={{ margin: '0.25rem 0 0 0', color: '#92400E', fontSize: '0.8rem' }}>
             This platform is designated exclusively for appointed Controllers, Assistant Controllers, and authorized Legal Metrology Officers.
           </p>
@@ -230,7 +230,7 @@ const POLICIES = {
           </p>
         </div>
         <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
-          Department of Consumer Affairs, Government of India.
+          NIRIKSHAK · Statutory Verification &amp; Compliance Management System.
         </div>
       </div>
     ),
@@ -274,7 +274,7 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--govt-cream)' }}>
       
-      {/* Tier 1 - Official Government Utility Bar */}
+      {/* Tier 1 - Compliance Platform Utility Bar */}
       <div style={{
         backgroundColor: 'var(--govt-dark)',
         color: '#FFFFFF',
@@ -289,13 +289,13 @@ export default function App() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <img
-            src="/emblem-white.png"
-            alt="State Emblem of India"
+            src="/nirikshak_logo.png"
+            alt="NIRIKSHAK Logo"
             style={{ height: '16px', width: 'auto', display: 'block', opacity: 0.95 }}
-            onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+            onError={(e) => { e.currentTarget.src = '/logo.png'; }}
           />
           <span style={{ fontWeight: 600, letterSpacing: '0.04em' }}>
-            भारत सरकार | GOVERNMENT OF INDIA
+            NIRIKSHAK | LEGAL METROLOGY COMPLIANCE PLATFORM
           </span>
         </div>
 
@@ -406,28 +406,28 @@ export default function App() {
               boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.2)'
             }}>
               <img
-                src="/emblem-white.png"
-                alt="State Emblem of India"
+                src="/nirikshak_logo.png"
+                alt="NIRIKSHAK Logo"
                 style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
-                onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
               />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#FFFFFF', lineHeight: 1.25 }}>
-                उपभोक्ता मामले विभाग
+                विधिक मापविज्ञान अनुपालन प्रणाली
               </span>
               <span style={{ fontSize: '0.92rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FFFFFF', lineHeight: 1.25 }}>
-                Department of Consumer Affairs
+                Legal Metrology Compliance Platform
               </span>
               <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '0.15rem' }}>
-                Ministry of Consumer Affairs, Food & Public Distribution · Government of India
+                Inspection &amp; Verification System · Digital Regulatory Console
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Legal Metrology Division
+                  Statutory Verification System
                 </span>
                 <span style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.72rem' }}>•</span>
-                <span style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.75)' }}>विधिक मापविज्ञान प्रभाग</span>
+                <span style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.75)' }}>वैधानिक सत्यापन प्रणाली</span>
               </div>
             </div>
           </div>
@@ -1358,7 +1358,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Restricted Official Government Notice */}
+            {/* Restricted Compliance Notice */}
             <div style={{
               backgroundColor: '#FFFBEB',
               border: '1px solid #FCD34D',
@@ -1377,7 +1377,7 @@ export default function App() {
                 <strong style={{ display: 'block', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                   Statutory Security Notice &amp; Access Restriction:
                 </strong>
-                This is a secure Government of India computing platform designated exclusively for appointed Legal Metrology Officers. Unauthorized access, probing, tampering with inspection records, or attempting unauthorized data extraction is a cognizable offense punishable under Sections 43, 65, and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
+                This is a secure compliance management platform designated exclusively for authorized Legal Metrology Officers. Unauthorized access, probing, tampering with inspection records, or attempting unauthorized data extraction is a cognizable offense punishable under Sections 43, 65, and 66 of the Information Technology Act, 2000 and Section 318 of Bharatiya Nyaya Sanhita (BNS).
               </div>
             </div>
 
@@ -2119,7 +2119,7 @@ export default function App() {
 
       </main>
 
-      {/* Official Government Footer (Matching GovtFooter across all Portals) */}
+      {/* NIRIKSHAK Platform Footer */}
       <footer style={{ marginTop: 'auto', userSelect: 'none' }}>
         
         {/* Tricolor Ribbon above Footer (9px: 3px Saffron, 3px White, 3px Green) */}
@@ -2151,17 +2151,17 @@ export default function App() {
               {/* Left: Department Details */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                 <img
-                  src="/emblem-white.png"
-                  alt="Emblem"
+                  src="/nirikshak_logo.png"
+                  alt="NIRIKSHAK Logo"
                   style={{ height: '44px', width: 'auto', display: 'block', opacity: 0.95 }}
-                  onError={(e) => { e.currentTarget.src = '/emblem.png'; }}
+                  onError={(e) => { e.currentTarget.src = '/logo.png'; }}
                 />
                 <div>
                   <p style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.88rem', margin: 0 }}>
-                    Department of Consumer Affairs · उपभोक्ता मामले विभाग
+                    NIRIKSHAK · विधिक मापविज्ञान अनुपालन प्रणाली
                   </p>
                   <p style={{ color: 'rgba(255, 255, 255, 0.75)', margin: '0.2rem 0 0 0' }}>
-                    Ministry of Consumer Affairs, Food &amp; Public Distribution, Government of India
+                    Legal Metrology Compliance Platform · Inspection &amp; Verification System
                   </p>
                   <p style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: '0.7rem', margin: '0.2rem 0 0 0' }}>
                     Administered under The Legal Metrology (Packaged Commodities) Rules, 2011 · Notification G.S.R. 202(E)
@@ -2169,7 +2169,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Right: NIC & Digital India Info */}
+              {/* Right: Regulatory Enforcement Info */}
               <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
                 <div style={{
                   display: 'inline-flex',
@@ -2184,13 +2184,13 @@ export default function App() {
                   border: '1px solid rgba(255, 255, 255, 0.12)'
                 }}>
                   <IconBuilding size={13} />
-                  <span>Digital India Initiative</span>
+                  <span>Statutory Compliance Network</span>
                 </div>
                 <span style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.65)' }}>
-                  Designed, Developed &amp; Maintained for National Regulatory Enforcement
+                  Designed, Developed &amp; Maintained for Regulatory Enforcement
                 </span>
                 <span style={{ fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.5)' }}>
-                  National Legal Metrology Digital Verification System (NIRIKSHAK)
+                  Legal Metrology Digital Verification System (NIRIKSHAK)
                 </span>
               </div>
 
@@ -2208,7 +2208,7 @@ export default function App() {
               color: 'rgba(255, 255, 255, 0.65)'
             }}>
               <div>
-                © {new Date().getFullYear()} Government of India. All rights reserved. Content Owned by Department of Consumer Affairs.
+                © {new Date().getFullYear()} NIRIKSHAK. All rights reserved. Legal Metrology Compliance Platform.
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
@@ -2250,7 +2250,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Official Government Policy Dialog Modal */}
+      {/* Compliance Policy Dialog Modal */}
       {activePolicy && POLICIES[activePolicy] && (
         <div
           role="dialog"
@@ -2345,7 +2345,7 @@ export default function App() {
               alignItems: 'center'
             }}>
               <span style={{ fontSize: '0.72rem', color: 'var(--slate-500)', fontWeight: 600 }}>
-                Government of India · भारत सरकार
+                NIRIKSHAK · Statutory Verification Platform
               </span>
               <button
                 type="button"

@@ -133,7 +133,7 @@ export default function Login() {
                 <div className="flex items-start gap-2.5 bg-amber-50/80 p-3 rounded border border-amber-200 text-xs text-slate-700 leading-relaxed">
                   <span className="text-amber-700 text-sm mt-0.5">🔒</span>
                   <div>
-                    <strong className="text-amber-900 block font-semibold">Government Authorized System</strong>
+                    <strong className="text-amber-900 block font-semibold">Authorized Inspection Platform</strong>
                     Access restricted to registered Legal Metrology Controller Officers. Assistant Controllers and field personnel must use their designated credentials.
                   </div>
                 </div>

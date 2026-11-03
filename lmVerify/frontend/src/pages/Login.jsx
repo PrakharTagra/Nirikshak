@@ -171,7 +171,7 @@ export default function Login() {
                   <div className="flex items-start gap-2.5 bg-amber-50/80 p-3 rounded border border-amber-200 text-xs text-slate-700 leading-relaxed">
                     <span className="text-amber-700 text-sm mt-0.5">🔒</span>
                     <div>
-                      <strong className="text-amber-900 block font-semibold">Government Authorized System</strong>
+                      <strong className="text-amber-900 block font-semibold">Authorized Inspection Platform</strong>
                       Accounts are provisioned exclusively by the Controller of Legal Metrology (CLM). Unauthorized access or data tampering is prohibited under the Legal Metrology Act, 2009.
                     </div>
                   </div>

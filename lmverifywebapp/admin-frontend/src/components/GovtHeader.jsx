@@ -14,12 +14,12 @@ export default function GovtHeader({ user, onLogout }) {
 
   return (
     <header className="flex flex-col select-none shadow-sm">
-      {/* Tier 1 - Official Government Utility Bar */}
+      {/* Tier 1 - Compliance Platform Utility Bar */}
       <div className="bg-govt-dark text-white text-xs py-1 px-4 md:px-8 flex justify-between items-center border-b border-white/10">
         <div className="flex items-center gap-2">
-          {/* Top leftmost Indian Emblem Symbol mini badge */}
+          {/* Top leftmost Platform Symbol mini badge */}
           <Emblem light={true} size={16} className="opacity-90" />
-          <span className="font-medium tracking-wide">भारत सरकार | GOVERNMENT OF INDIA</span>
+          <span className="font-medium tracking-wide">NIRIKSHAK | LEGAL METROLOGY COMPLIANCE PLATFORM</span>
         </div>
         <div className="flex gap-4 items-center">
           <div className="hidden sm:flex items-center gap-1 bg-black/20 rounded px-1.5 py-0.5" aria-label="Text Size Controls">
@@ -73,27 +73,27 @@ export default function GovtHeader({ user, onLogout }) {
         {/* Subtle decorative background watermarks */}
         <div className="absolute right-0 top-0 bottom-0 w-96 bg-gradient-to-l from-white/[0.04] to-transparent pointer-events-none" />
         
-        {/* Left corner: Official National Emblem + Ministry Details */}
+        {/* Left corner: NIRIKSHAK Emblem + Platform Details */}
         <div className="flex items-center gap-4 z-10">
           <div className="p-1 rounded bg-white/5 border border-white/10 shadow-inner">
             <Emblem light={true} size={54} />
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-base md:text-lg leading-tight tracking-normal text-white">
-              उपभोक्ता मामले विभाग
+              विधिक मापविज्ञान अनुपालन प्रणाली
             </span>
             <span className="font-bold text-sm md:text-base leading-tight tracking-wider uppercase text-white/95">
-              Department of Consumer Affairs
+              Legal Metrology Compliance Platform
             </span>
             <span className="text-xs text-white/80 mt-0.5 font-normal">
-              Ministry of Consumer Affairs, Food & Public Distribution
+              Inspection & Verification System · Regulatory Console
             </span>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-[11px] font-semibold text-amber-300 tracking-wide uppercase">
-                Legal Metrology Division
+                Statutory Verification System
               </span>
               <span className="text-white/40 text-xs">•</span>
-              <span className="text-[11px] text-white/70">विधिक मापविज्ञान प्रभाग</span>
+              <span className="text-[11px] text-white/70">वैधानिक सत्यापन प्रणाली</span>
             </div>
           </div>
         </div>

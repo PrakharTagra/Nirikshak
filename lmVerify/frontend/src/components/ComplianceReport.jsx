@@ -419,13 +419,13 @@ export default function ComplianceReport({ report, officer }) {
           </div>
           <div className="text-center md:text-left flex-1">
             <h1 className="text-base sm:text-lg font-bold tracking-wide text-slate-900 uppercase">
-              GOVERNMENT OF INDIA
+              NIRIKSHAK • STATUTORY COMPLIANCE DOSSIER
             </h1>
             <h2 className="text-xs sm:text-sm font-bold text-slate-800">
-              MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION
+              LEGAL METROLOGY COMPLIANCE PLATFORM
             </h2>
             <p className="text-xs text-slate-600 font-medium">
-              DEPARTMENT OF CONSUMER AFFAIRS | LEGAL METROLOGY DIVISION
+              INSPECTION &amp; VERIFICATION SYSTEM | ENFORCEMENT AUDIT
             </p>
           </div>
         </div>
@@ -1007,7 +1007,7 @@ export default function ComplianceReport({ report, officer }) {
               <div className="pt-6 border-t border-slate-300 text-center">
                 <p className="font-bold text-slate-900 text-xs">Inspector / Verification Officer</p>
                 <p className="text-slate-600 text-[10px]">Legal Metrology Enforcement Branch</p>
-                <p className="text-slate-500 text-[10px]">Government of India</p>
+                <p className="text-slate-500 text-[10px]">Statutory Verification Platform</p>
               </div>
             </div>
           </div>

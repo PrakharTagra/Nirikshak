@@ -22,7 +22,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-govt-cream text-slate-900 font-sans antialiased">
-      {/* Official Government 3-Tier Header */}
+      {/* NIRIKSHAK Compliance 3-Tier Header */}
       <GovtHeader user={user} onLogout={handleLogout} />
 
       {/* Horizontal Navigation Bar matching lmverifywebapp */}
@@ -71,7 +71,7 @@ export default function DashboardLayout() {
         <Outlet />
       </main>
 
-      {/* Official Government Footer */}
+      {/* NIRIKSHAK Compliance Footer */}
       <GovtFooter />
     </div>
   );

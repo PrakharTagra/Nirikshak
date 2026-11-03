@@ -4,12 +4,12 @@ import Emblem from './Emblem';
 const POLICIES = {
   helpline: {
     title: 'National Consumer Helpline (NCH)',
-    badge: 'Ministry of Consumer Affairs, Food & Public Distribution',
+    badge: 'Legal Metrology Compliance Assistance',
     content: (
       <div className="space-y-4 text-xs text-slate-700 leading-relaxed">
         <div className="bg-blue-50 border-l-4 border-govt-navy p-3 rounded-r">
           <p className="font-bold text-govt-navy text-sm">Toll-Free National Helpline: 1915</p>
-          <p className="text-slate-600 mt-0.5">National Consumer Helpline is an initiative of the Department of Consumer Affairs, Government of India.</p>
+          <p className="text-slate-600 mt-0.5">Consumer grievance and statutory redressal coordination portal.</p>
         </div>
         <div>
           <h4 className="font-bold text-slate-900 mb-1">Assistance Channels</h4>
@@ -64,7 +64,7 @@ const POLICIES = {
     content: (
       <div className="space-y-4 text-xs text-slate-700 leading-relaxed">
         <div className="bg-amber-50 border-l-4 border-amber-600 p-3 rounded-r">
-          <p className="font-bold text-amber-950">Restricted Official Government System</p>
+          <p className="font-bold text-amber-950">Restricted Compliance Management System</p>
           <p className="text-slate-700 mt-0.5">
             This platform is designated exclusively for appointed Controllers, Assistant Controllers, and authorized Legal Metrology Officers.
           </p>
@@ -82,7 +82,7 @@ const POLICIES = {
           </p>
         </div>
         <div className="border-t border-slate-200 pt-3 text-[11px] text-slate-500">
-          Department of Consumer Affairs, Government of India.
+          NIRIKSHAK · Statutory Verification & Compliance Management System.
         </div>
       </div>
     ),
@@ -139,10 +139,10 @@ export default function GovtFooter() {
                 <Emblem light={true} size={42} className="opacity-95" />
                 <div>
                   <p className="font-semibold text-white text-sm">
-                    Department of Consumer Affairs · उपभोक्ता मामले विभाग
+                    NIRIKSHAK · विधिक मापविज्ञान अनुपालन प्रणाली
                   </p>
                   <p className="text-white/75 mt-0.5">
-                    Ministry of Consumer Affairs, Food & Public Distribution, Government of India
+                    Legal Metrology Compliance Platform · Inspection & Verification System
                   </p>
                   <p className="text-white/60 text-[11px] mt-0.5">
                     Administered under the Legal Metrology Act, 2009 & Legal Metrology (Packaged Commodities) Rules, 2011
@@ -153,10 +153,10 @@ export default function GovtFooter() {
               <div className="flex flex-col items-center md:items-end text-center md:text-right gap-1.5">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/10 text-white font-medium text-xs border border-white/15">
                   <span className="text-emerald-400">🏛️</span>
-                  <span>Digital India Initiative</span>
+                  <span>Statutory Compliance Network</span>
                 </div>
                 <span className="text-[11px] text-white/70">
-                  Designed, Developed & Hosted by National Informatics Centre (NIC)
+                  Designed, Developed & Maintained for Regulatory Enforcement
                 </span>
                 <span className="text-[10px] text-white/50">
                   Assistant Controller Statutory Verification Portal (NIRIKSHAK)
@@ -166,7 +166,7 @@ export default function GovtFooter() {
             
             <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/15 pt-5 gap-3">
               <p className="text-[11px] text-white/65">
-                © {new Date().getFullYear()} Government of India. All rights reserved. Content Owned by Department of Consumer Affairs.
+                © {new Date().getFullYear()} NIRIKSHAK. All rights reserved. Legal Metrology Compliance Platform.
               </p>
               <div className="flex flex-wrap justify-center items-center gap-3 text-[11px] text-white/80">
                 <button 
@@ -202,7 +202,7 @@ export default function GovtFooter() {
         </div>
       </footer>
 
-      {/* Official Government Policy Dialog Modal */}
+      {/* NIRIKSHAK Compliance Policy Dialog Modal */}
       {activePolicy && POLICIES[activePolicy] && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
@@ -251,7 +251,7 @@ export default function GovtFooter() {
             {/* Modal Footer */}
             <div className="bg-slate-50 px-5 py-3 border-t border-slate-200 flex justify-between items-center text-xs">
               <span className="text-slate-500 font-medium text-[11px]">
-                Government of India · भारत सरकार
+                NIRIKSHAK · Statutory Verification Platform
               </span>
               <button
                 onClick={closePolicy}
