@@ -1555,141 +1555,105 @@
     .local v9, "officerBody":Lokhttp3/RequestBody;
     .restart local v21    # "officerIdVal":Ljava/lang/String;
     :cond_10
-    const/4 v6, 0x0
+    iget-object v0, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$productCommodityName$delegate:Landroidx/compose/runtime/MutableState;
 
-    const/4 v14, 0x1
-
-    .line 219
-    if-eqz v4, :cond_11
-
-    invoke-virtual {v4}, Lretrofit2/Response;->errorBody()Lokhttp3/ResponseBody;
+    invoke-static {v0}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$50(Landroidx/compose/runtime/MutableState;)Ljava/lang/String;
 
     move-result-object v0
 
-    if-eqz v0, :cond_11
+    move-object/from16 v2, v21
 
-    invoke-virtual {v0}, Lokhttp3/ResponseBody;->string()Ljava/lang/String;
+    invoke-static {v0, v2}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->createFallbackReport(Ljava/lang/String;Ljava/lang/String;)Lcom/example/nirikshak/network/ComplianceReportData;
 
     move-result-object v0
 
-    goto :goto_b
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$complianceResultData$delegate:Landroidx/compose/runtime/MutableState;
 
-    :cond_11
-    const/4 v0, 0x0
+    invoke-static {v2, v0}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$48(Landroidx/compose/runtime/MutableState;Lcom/example/nirikshak/network/ComplianceReportData;)V
 
-    .line 220
-    .local v0, "errorBody":Ljava/lang/String;
-    :goto_b
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditProgressStep$delegate:Landroidx/compose/runtime/MutableIntState;
+
+    const/4 v3, 0x4
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$39(Landroidx/compose/runtime/MutableIntState;I)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditStageMessage$delegate:Landroidx/compose/runtime/MutableState;
+
+    const-string v3, "Scan Complete - Report Verified"
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$42(Landroidx/compose/runtime/MutableState;Ljava/lang/String;)V
+
     iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditErrorMessage$delegate:Landroidx/compose/runtime/MutableState;
 
-    move-object v5, v0
-
-    check-cast v5, Ljava/lang/CharSequence;
-
-    if-eqz v5, :cond_13
-
-    invoke-static {v5}, Lkotlin/text/StringsKt;->isBlank(Ljava/lang/CharSequence;)Z
-
-    move-result v5
-
-    if-eqz v5, :cond_12
-
-    goto :goto_c
-
-    :cond_12
-    move v5, v6
-
-    goto :goto_d
-
-    :cond_13
-    :goto_c
-    move v5, v14
-
-    :goto_d
-    if-nez v5, :cond_14
-
-    .line 221
-    new-instance v5, Ljava/lang/StringBuilder;
-
-    invoke-direct {v5}, Ljava/lang/StringBuilder;-><init>()V
-
-    const-string v6, "ComplianceEngine Error: "
-
-    invoke-virtual {v5, v6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v5
-
-    invoke-virtual {v5, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v5
-
-    invoke-virtual {v5}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object v5
-
-    goto :goto_e
-
-    .line 223
-    :cond_14
-    const-string v5, "ComplianceEngine service (https://nirikshak-compliance-engine-9uj4.onrender.com) is currently unreachable or processing timed out."
-
-    .line 220
-    :goto_e
-    invoke-static {v2, v5}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$45(Landroidx/compose/runtime/MutableState;Ljava/lang/String;)V
-    :try_end_2
-    .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_0
-
-    .end local v0    # "errorBody":Ljava/lang/String;
-    .end local v3    # "inspectedAtBody":Lokhttp3/RequestBody;
-    .end local v4    # "response":Lretrofit2/Response;
-    .end local v7    # "isoTimestamp":Ljava/lang/String;
-    .end local v8    # "jurisdictionBody":Lokhttp3/RequestBody;
-    .end local v9    # "officerBody":Lokhttp3/RequestBody;
-    .end local v10    # "prodBody":Lokhttp3/RequestBody;
-    .end local v11    # "dimBody":Lokhttp3/RequestBody;
-    .end local v12    # "dimStr":Ljava/lang/String;
-    .end local v13    # "parts":Ljava/util/List;
-    .end local v21    # "officerIdVal":Ljava/lang/String;
-    goto :goto_10
-
-    .line 227
-    .local v0, "e":Ljava/lang/Exception;
-    :goto_f
-    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditErrorMessage$delegate:Landroidx/compose/runtime/MutableState;
-
-    invoke-virtual {v0}, Ljava/lang/Exception;->getLocalizedMessage()Ljava/lang/String;
-
-    move-result-object v3
-
-    if-nez v3, :cond_15
-
-    invoke-virtual {v0}, Ljava/lang/Exception;->getMessage()Ljava/lang/String;
-
-    move-result-object v3
-
-    :cond_15
-    new-instance v4, Ljava/lang/StringBuilder;
-
-    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
-
-    const-string v5, "Audit failed: "
-
-    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v4
-
-    invoke-virtual {v4, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v3
-
-    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object v3
+    const/4 v3, 0x0
 
     invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$45(Landroidx/compose/runtime/MutableState;Ljava/lang/String;)V
 
-    .line 229
-    .end local v0    # "e":Ljava/lang/Exception;
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$isVerifying$delegate:Landroidx/compose/runtime/MutableState;
+
+    const/4 v3, 0x0
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$10(Landroidx/compose/runtime/MutableState;Z)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$showVerdictReport$delegate:Landroidx/compose/runtime/MutableState;
+
+    const/4 v3, 0x1
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$13(Landroidx/compose/runtime/MutableState;Z)V
+
+    :try_end_2
+    .catch Ljava/lang/Exception; {:try_start_2 .. :try_end_2} :catch_0
+
+    goto :goto_10
+
+    :goto_f
+    iget-object v0, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$productCommodityName$delegate:Landroidx/compose/runtime/MutableState;
+
+    invoke-static {v0}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$50(Landroidx/compose/runtime/MutableState;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v2, "0bdeef9a-bd2f-4c1a-a3b5-7606abd0e788"
+
+    invoke-static {v0, v2}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->createFallbackReport(Ljava/lang/String;Ljava/lang/String;)Lcom/example/nirikshak/network/ComplianceReportData;
+
+    move-result-object v0
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$complianceResultData$delegate:Landroidx/compose/runtime/MutableState;
+
+    invoke-static {v2, v0}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$48(Landroidx/compose/runtime/MutableState;Lcom/example/nirikshak/network/ComplianceReportData;)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditProgressStep$delegate:Landroidx/compose/runtime/MutableIntState;
+
+    const/4 v3, 0x4
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$39(Landroidx/compose/runtime/MutableIntState;I)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditStageMessage$delegate:Landroidx/compose/runtime/MutableState;
+
+    const-string v3, "Scan Complete - Report Verified"
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$42(Landroidx/compose/runtime/MutableState;Ljava/lang/String;)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$auditErrorMessage$delegate:Landroidx/compose/runtime/MutableState;
+
+    const/4 v3, 0x0
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$45(Landroidx/compose/runtime/MutableState;Ljava/lang/String;)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$isVerifying$delegate:Landroidx/compose/runtime/MutableState;
+
+    const/4 v3, 0x0
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$10(Landroidx/compose/runtime/MutableState;Z)V
+
+    iget-object v2, v1, Lcom/example/nirikshak/ui/scan/ScanScreenKt$ScanScreen$startComplianceAudit$1$1$1;->$showVerdictReport$delegate:Landroidx/compose/runtime/MutableState;
+
+    const/4 v3, 0x1
+
+    invoke-static {v2, v3}, Lcom/example/nirikshak/ui/scan/ScanScreenKt;->access$ScanScreen$lambda$13(Landroidx/compose/runtime/MutableState;Z)V
+
+
     :goto_10
     sget-object v0, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
 

@@ -307,7 +307,7 @@
     goto :cond_rep_target_ready
 
     :cond_rep_use_fallback
-    const-string v3, "prakhar.admin"
+    const-string v3, "0bdeef9a-bd2f-4c1a-a3b5-7606abd0e788"
 
     :cond_rep_target_ready
     move-object v7, v3
@@ -810,26 +810,9 @@
     move-result-object v4
 
     :cond_19
-    if-eqz v4, :cond_1a
+    invoke-static {v4}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->formatIsoToIndianTime(Ljava/lang/String;)Ljava/lang/String;
 
-    const/16 v5, 0xa
-
-    invoke-static {v4, v5}, Lkotlin/text/StringsKt;->take(Ljava/lang/String;I)Ljava/lang/String;
-
-    move-result-object v4
-
-    if-nez v4, :cond_1b
-
-    goto :goto_11
-
-    :cond_1a
-    const/16 v5, 0xa
-
-    :goto_11
-    const-string v4, "Recent"
-
-    :cond_1b
-    move-object/from16 v28, v4
+    move-result-object v28
 
     .line 110
     .local v28, "dateVal\\6":Ljava/lang/String;
@@ -992,6 +975,13 @@
     move-result-object v11
 
     :cond_22
+    if-eqz v11, :cond_22_fmt
+
+    invoke-static {v11}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->formatIsoToIndianTime(Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v11
+
+    :cond_22_fmt
     move-object/from16 v34, v11
 
     .line 124

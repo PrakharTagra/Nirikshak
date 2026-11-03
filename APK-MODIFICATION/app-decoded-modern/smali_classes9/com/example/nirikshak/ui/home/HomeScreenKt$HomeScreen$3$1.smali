@@ -482,7 +482,7 @@
     goto :cond_home_target_ready
 
     :cond_home_use_fallback
-    const-string v0, "prakhar.admin"
+    const-string v0, "0bdeef9a-bd2f-4c1a-a3b5-7606abd0e788"
 
     :cond_home_target_ready
     move-object v6, v0

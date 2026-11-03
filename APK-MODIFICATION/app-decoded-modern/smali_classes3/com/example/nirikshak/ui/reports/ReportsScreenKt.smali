@@ -4381,9 +4381,7 @@
 
     move-result-object v0
 
-    const/16 v1, 0xa
-
-    invoke-static {v0, v1}, Lkotlin/text/StringsKt;->take(Ljava/lang/String;I)Ljava/lang/String;
+    invoke-static {v0}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->formatIsoToIndianTime(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
 
