@@ -810,9 +810,26 @@
     move-result-object v4
 
     :cond_19
-    invoke-static {v4}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->formatIsoToIndianTime(Ljava/lang/String;)Ljava/lang/String;
+    if-eqz v4, :cond_1a
 
-    move-result-object v28
+    const/16 v5, 0xa
+
+    invoke-static {v4, v5}, Lkotlin/text/StringsKt;->take(Ljava/lang/String;I)Ljava/lang/String;
+
+    move-result-object v4
+
+    if-nez v4, :cond_1b
+
+    goto :goto_11
+
+    :cond_1a
+    const/16 v5, 0xa
+
+    :goto_11
+    const-string v4, "Recent"
+
+    :cond_1b
+    move-object/from16 v28, v4
 
     .line 110
     .local v28, "dateVal\\6":Ljava/lang/String;
@@ -975,13 +992,6 @@
     move-result-object v11
 
     :cond_22
-    if-eqz v11, :cond_22_fmt
-
-    invoke-static {v11}, Lcom/example/nirikshak/utils/ComplianceAuditHelper;->formatIsoToIndianTime(Ljava/lang/String;)Ljava/lang/String;
-
-    move-result-object v11
-
-    :cond_22_fmt
     move-object/from16 v34, v11
 
     .line 124
