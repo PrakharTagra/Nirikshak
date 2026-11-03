@@ -29,7 +29,29 @@
 
     const/16 v1, 0xa
 
-    if-ge v0, v1, :cond_1
+    if-ge v0, v1, :cond_pre
+
+    return-object p0
+
+    :cond_pre
+    const-string v0, "M"
+
+    invoke-virtual {p0, v0}, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_pre2
+
+    return-object p0
+
+    :cond_pre2
+    const-string v0, "T"
+
+    invoke-virtual {p0, v0}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
+
+    move-result v0
+
+    if-nez v0, :cond_1
 
     return-object p0
 
@@ -95,30 +117,13 @@
 
     move-result-object v0
     :try_end_0
-    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+    .catch Ljava/lang/Throwable; {:try_start_0 .. :try_end_0} :catch_0
 
     return-object v0
 
     :catch_0
     move-exception v0
 
-    invoke-virtual {p0}, Ljava/lang/String;->length()I
-
-    move-result v1
-
-    const/16 v2, 0xa
-
-    if-lt v1, v2, :cond_3
-
-    const/4 v1, 0x0
-
-    invoke-virtual {p0, v1, v2}, Ljava/lang/String;->substring(II)Ljava/lang/String;
-
-    move-result-object v1
-
-    return-object v1
-
-    :cond_3
     return-object p0
 .end method
 
